@@ -63,7 +63,7 @@ export default function CadastroLaboratorio() {
         <nav className={styles.nav}>
           <div className={styles.navSection}>
             <p className={styles.navLabel}>Principal</p>
-            <a href="/farmacia/favoritos" className={styles.navLink}>
+            <a href="/farmacias/favoritos" className={styles.navLink}>
               <span className={styles.navIcon}>⭐</span>
               <span className={styles.navText}>Favoritos</span>
             </a>

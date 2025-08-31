@@ -156,7 +156,7 @@ export default function ListaFuncionariosPage() {
           <nav className={styles.nav}>
             <div className={styles.navSection}>
               <p className={styles.navLabel}>Principal</p>
-              <a href="/farmacia/favoritos" className={styles.navLink}>
+              <a href="/farmacias/favoritos" className={styles.navLink}>
                 <span className={styles.navIcon}>⭐</span>
                 <span className={styles.navText}>Favoritos</span>
               </a>
@@ -168,7 +168,7 @@ export default function ListaFuncionariosPage() {
             
             <div className={styles.navSection}>
               <p className={styles.navLabel}>Gestão</p>
-              <a href="/farmacias/lista/funcionarios" className={`${styles.navLink} ${styles.active}`}>
+              <a href="/farmacias/cadastro/funcionario/lista" className={`${styles.navLink} ${styles.active}`}>
                 <span className={styles.navIcon}>👩‍⚕️</span>
                 <span className={styles.navText}>Funcionários</span>
               </a>

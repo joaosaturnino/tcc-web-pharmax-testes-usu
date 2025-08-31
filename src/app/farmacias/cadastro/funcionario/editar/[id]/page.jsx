@@ -150,7 +150,7 @@ export default function EditarFuncionarioPage() {
             
             <div className="nav-section">
               <p className="nav-label">Gestão</p>
-              <a href="/farmacias/lista/funcionarios" className="nav-link">
+              <a href="/farmacias/cadastro/funcionario/lista" className="nav-link">
                 <span className="nav-icon">👩‍⚕️</span>
                 <span className="nav-text">Funcionários</span>
               </a>
