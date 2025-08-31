@@ -1,0 +1,51 @@
+.rodape {
+  background: #fafafa;
+  color: #458B00;
+  padding: 2rem 0 1rem 0;
+  width: 100%;
+  border-top: 0.2rem solid #458B00;
+}
+
+.conteudoRodape {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 2rem;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 2rem 1rem;
+}
+
+.secaoRodape h4 {
+  margin-bottom: 0.5rem;
+  font-size: 1.6rem;
+  color: #458B00;
+}
+
+.secaoRodape p, .secaoRodape a {
+  font-size: 1.3rem;
+  color: #666;
+  margin-bottom: 0.3rem;
+  text-decoration: none;
+}
+
+.secaoRodape a:hover {
+  color: #A2CD5A;
+  text-decoration: underline;
+}
+
+.rodapeInferior {
+  text-align: center;
+  font-size: 1.2rem;
+  color: #458B00;
+  margin-top: 1rem;
+  padding-top: 1rem;
+  border-top: 1px solid #eee;
+}
+
+@media (max-width: 800px) {
+  .conteudoRodape {
+    grid-template-columns: 1fr;
+    gap: 1.5rem;
+    text-align: center;
+  }
+}

@@ -1,0 +1,298 @@
+/*
+ * ESTILOS GERAIS DA PÁGINA
+ * Layout principal da página
+ */
+.container {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+
+/* Cabeçalho com logo e navegação */
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1rem 2rem;
+  background-color: #fff;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+
+/* Logo da empresa */
+.logo h1 {
+  color: #458B00;
+  margin: 0;
+}
+
+
+/* Menu de navegação */
+.nav {
+  display: flex;
+  gap: 1.5rem;
+  align-items: center;
+}
+
+
+/* Links do menu */
+.nav a {
+  text-decoration: none;
+  color: #333;
+  font-weight: 500;
+  transition: color 0.3s;
+}
+
+
+.nav a:hover {
+  color: #458B00;
+}
+
+
+.active {
+  color: #458B00 !important;
+  font-weight: 600;
+}
+
+
+/* Botão de usuário no menu */
+.userBtn {
+  background-color: #458B00;
+  color: white !important;
+  padding: 0.5rem 1rem;
+  border-radius: 4px;
+}
+
+
+/* Seção principal (hero) com mensagem e busca */
+.principal {
+  background: linear-gradient(135deg, #458B00 0%, #A2CD5A 100%);
+  color: white;
+  padding: 4rem 2rem;
+  text-align: center;
+}
+
+
+.principal h2 {
+  font-size: 2.5rem;
+  margin-bottom: 1rem;
+}
+
+
+.principal p {
+  font-size: 1.2rem;
+  margin-bottom: 2rem;
+  opacity: 0.9;
+}
+
+
+/* Caixa de busca */
+.caixaBusca {
+  display: flex;
+  max-width: 500px;
+  margin: 0 auto;
+}
+
+
+.caixaBusca input {
+  flex: 1;
+  padding: 0.8rem;
+  border: none;
+  border-radius: 4px 0 0 4px;
+  font-size: 1rem;
+}
+
+
+.caixaBusca button {
+  background-color: #FF9F43;
+  color: white;
+  border: none;
+  padding: 0 1.5rem;
+  border-radius: 0 4px 4px 0;
+  cursor: pointer;
+  font-weight: 600;
+}
+
+
+/* Seção de diferenciais da empresa */
+.recursos {
+  padding: 4rem 2rem;
+  text-align: center;
+  background-color: #f8f9fa;
+}
+
+
+.recursos h3 {
+  font-size: 2rem;
+  margin-bottom: 3rem;
+  color: #333;
+}
+
+
+/* Cards de diferenciais */
+.gradeRecursos {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 2rem;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+
+.cartaoRecurso {
+  background: white;
+  padding: 2rem;
+  border-radius: 8px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  transition: transform 0.3s;
+}
+
+
+.cartaoRecurso:hover {
+  transform: translateY(-5px);
+}
+
+
+.iconeRecurso {
+  font-size: 2.5rem;
+  margin-bottom: 1rem;
+}
+
+
+.cartaoRecurso h4 {
+  font-size: 1.2rem;
+  margin-bottom: 0.5rem;
+  color: #333;
+}
+
+
+.cartaoRecurso p {
+  color: #666;
+  line-height: 1.6;
+}
+
+
+/* Seção de produtos em destaque */
+.produtos {
+  padding: 4rem 2rem;
+  text-align: center;
+}
+
+
+.produtos h3 {
+  font-size: 2rem;
+  margin-bottom: 3rem;
+  color: #333;
+}
+
+
+/* Grid dos produtos */
+.gradeProdutos {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 2rem;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+
+/* Card de produto */
+.cartaoProduto {
+  background: white;
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  transition: transform 0.3s;
+}
+
+
+.cartaoProduto:hover {
+  transform: translateY(-5px);
+}
+
+
+.containerImagemProduto {
+  height: 200px;
+  background-color: #fff;
+  background-size: 20px 20px;
+  background-position: 0 0, 10px 10px;
+}
+
+
+.imagemProduto {
+  object-fit: scale-down;
+  width: 100%;
+  height: 100%;
+}
+
+
+.cartaoProduto h4 {
+  font-size: 1.2rem;
+  margin: 1rem 0 0.5rem;
+  color: #333;
+}
+
+
+.cartaoProduto p {
+  color: #666;
+  margin-bottom: 0.5rem;
+}
+
+
+.preco {
+  display: block;
+  font-size: 1.3rem;
+  font-weight: 600;
+  color: #458B00;
+  margin: 1rem 0;
+}
+
+
+.cartaoProduto button {
+  width: 100%;
+  padding: 0.8rem;
+  background-color: #458B00;
+  color: white;
+  border: none;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+
+.cartaoProduto button:hover {
+  background-color: #A2CD5A;
+}
+
+
+/* Responsividade para mobile */
+@media (max-width: 768px) {
+  .header,
+  .cabecalho {
+    flex-direction: column;
+    padding: 1rem;
+  }
+  .nav,
+  .menu {
+    margin-top: 1rem;
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+  .principal h2 {
+    font-size: 2rem;
+  }
+  .caixaBusca {
+    flex-direction: column;
+  }
+  .caixaBusca input {
+    border-radius: 4px;
+    margin-bottom: 0.5rem;
+  }
+  .caixaBusca button {
+    border-radius: 4px;
+    padding: 0.8rem;
+  }
+}
+
+
+

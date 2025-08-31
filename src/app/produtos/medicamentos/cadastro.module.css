@@ -1,0 +1,289 @@
+/* Estilos modernizados */
+.containerModerno {
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 24px;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  color: #333;
+  background: #f8f9fa;
+  min-height: 100vh;
+}
+
+.header {
+  margin-bottom: 32px;
+  text-align: center;
+}
+
+.titulo {
+  font-size: 2.5rem;
+  font-weight: 700;
+  color: #2c3e50;
+  margin-bottom: 8px;
+}
+
+.subtitulo {
+  font-size: 1.1rem;
+  color: #7f8c8d;
+  margin: 0;
+}
+
+.acoesRapidas {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 20px;
+  margin-bottom: 32px;
+  background: white;
+  padding: 20px;
+  border-radius: 12px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+}
+
+.botoesAcao {
+  display: flex;
+  gap: 16px;
+}
+
+.botaoPrimario {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: #3498db;
+  color: white;
+  padding: 12px 20px;
+  border-radius: 8px;
+  text-decoration: none;
+  font-weight: 600;
+  transition: all 0.2s ease;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.botaoPrimario:hover {
+  background: #2980b9;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+}
+
+.iconeBotao {
+  font-size: 1.2rem;
+}
+
+.buscaContainer {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.campoBusca {
+  padding: 12px 16px 12px 40px;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  font-size: 1rem;
+  width: 300px;
+  transition: all 0.2s ease;
+}
+
+.campoBusca:focus {
+  outline: none;
+  border-color: #3498db;
+  box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.2);
+}
+
+.iconeBusca {
+  position: absolute;
+  left: 12px;
+  color: #7f8c8d;
+}
+
+.tabelaContainer {
+  background: white;
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+  margin-bottom: 24px;
+  overflow-x: auto;
+}
+
+.tabelaModernizada {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.tabelaModernizada th {
+  background: #f8f9fa;
+  padding: 16px;
+  text-align: left;
+  font-weight: 600;
+  color: #2c3e50;
+  border-bottom: 2px solid #e9ecef;
+}
+
+.tabelaModernizada td {
+  padding: 16px;
+  border-bottom: 1px solid #e9ecef;
+}
+
+.tabelaModernizada tr:hover {
+  background: #f8f9fa;
+}
+
+.containerImagem {
+  display: flex;
+  justify-content: center;
+}
+
+.imagemMedicamento {
+  width: 60px;
+  height: 60px;
+  object-fit: cover;
+  border-radius: 8px;
+  border: 1px solid #eee;
+}
+
+.nomeMedicamento {
+  font-weight: 600;
+  color: #2c3e50;
+}
+
+.descricaoPequena {
+  font-size: 0.85rem;
+  color: #7f8c8d;
+  margin-top: 4px;
+}
+
+.tag {
+  display: inline-block;
+  padding: 4px 8px;
+  border-radius: 4px;
+  font-size: 0.85rem;
+  font-weight: 500;
+  background: #e9ecef;
+  color: #495057;
+}
+
+.tag.genérico {
+  background: #d4edda;
+  color: #155724;
+}
+
+.tag.similar {
+  background: #fff3cd;
+  color: #856404;
+}
+
+.quantidade {
+  display: flex;
+  align-items: baseline;
+  gap: 4px;
+  font-weight: 600;
+}
+
+.unidade {
+  font-size: 0.8rem;
+  color: #7f8c8d;
+  font-weight: normal;
+}
+
+.preco {
+  font-weight: 700;
+  color: #27ae60;
+}
+
+.acoes {
+  display: flex;
+  gap: 8px;
+}
+
+.botaoEditar, .botaoExcluir {
+  border: none;
+  padding: 8px 12px;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  font-size: 1.1rem;
+}
+
+.botaoEditar {
+  background: #fff3cd;
+  color: #856404;
+}
+
+.botaoEditar:hover {
+  background: #ffeaa7;
+}
+
+.botaoExcluir {
+  background: #f8d7da;
+  color: #721c24;
+}
+
+.botaoExcluir:hover {
+  background: #f5c6cb;
+}
+
+.vazio {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 60px 20px;
+  background: white;
+  border-radius: 12px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+}
+
+.vazioConteudo {
+  text-align: center;
+  max-width: 400px;
+}
+
+.vazioConteudo h3 {
+  color: #6c757d;
+  margin-bottom: 12px;
+}
+
+.vazioConteudo p {
+  color: #adb5bd;
+  margin-bottom: 24px;
+}
+
+.rodape {
+  background: white;
+  padding: 16px 20px;
+  border-radius: 12px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+  text-align: center;
+  color: #6c757d;
+}
+
+/* Responsividade */
+@media (max-width: 768px) {
+  .containerModerno {
+    padding: 16px;
+  }
+  
+  .acoesRapidas {
+    flex-direction: column;
+    align-items: stretch;
+  }
+  
+  .botoesAcao {
+    flex-direction: column;
+  }
+  
+  .buscaContainer {
+    width: 100%;
+  }
+  
+  .campoBusca {
+    width: 100%;
+  }
+  
+  .tabelaContainer {
+    overflow-x: auto;
+  }
+  
+  .tabelaModernizada {
+    min-width: 800px;
+  }
+}

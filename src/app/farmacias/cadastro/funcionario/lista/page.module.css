@@ -1,0 +1,894 @@
+/* Estilos para a lista de funcionários */
+.listaHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 2rem;
+  flex-wrap: wrap;
+  gap: 1rem;
+}
+
+.listaHeader h2 {
+  font-size: 1.75rem;
+  font-weight: 600;
+  margin: 0;
+  color: #1e293b;
+}
+
+.listaHeader p {
+  color: #64748b;
+  margin: 0;
+}
+
+.tableContainer {
+  overflow-x: auto;
+  border-radius: 8px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  background: white;
+}
+
+.funcionariosTable {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.funcionariosTable th {
+  background-color: #f8fafc;
+  padding: 1rem;
+  text-align: left;
+  font-weight: 600;
+  color: #374151;
+  border-bottom: 2px solid #e5e7eb;
+}
+
+.funcionariosTable td {
+  padding: 1rem;
+  border-bottom: 1px solid #e5e7eb;
+  vertical-align: middle;
+}
+
+.funcionarioInfo {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.funcionarioAvatar {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 600;
+  font-size: 1rem;
+}
+
+.funcionarioNome {
+  font-weight: 500;
+  color: #1e293b;
+}
+
+.funcionarioUsuario {
+  font-size: 0.875rem;
+  color: #64748b;
+}
+
+.nivelBadge {
+  padding: 0.35rem 0.75rem;
+  border-radius: 20px;
+  font-size: 0.875rem;
+  font-weight: 500;
+  text-transform: capitalize;
+}
+
+.nivelBadge.administrador {
+  background-color: #dc3545;
+  color: white;
+}
+
+.nivelBadge.gerente {
+  background-color: #fd7e14;
+  color: white;
+}
+
+.nivelBadge.supervisor {
+  background-color: #20c997;
+  color: white;
+}
+
+.nivelBadge.funcionário {
+  background-color: #0d6efd;
+  color: white;
+}
+
+.nivelBadge.visitante {
+  background-color: #6c757d;
+  color: white;
+}
+
+.acoes {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.editarButton, .excluirButton {
+  padding: 0.5rem;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 1rem;
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+}
+
+.editarButton {
+  background-color: #fff3cd;
+  color: #856404;
+}
+
+.editarButton:hover {
+  background-color: #ffeaa7;
+}
+
+.excluirButton {
+  background-color: #f8d7da;
+  color: #721c24;
+}
+
+.excluirButton:hover {
+  background-color: #f5c6cb;
+}
+
+.semRegistros {
+  text-align: center;
+  padding: 2rem;
+  color: #6c757d;
+  font-style: italic;
+}
+
+.listaFooter {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 1.5rem;
+  padding-top: 1rem;
+  border-top: 1px solid #e5e7eb;
+}
+
+.totalRegistros {
+  color: #64748b;
+  font-size: 0.9rem;
+}
+
+/* Responsividade */
+@media (max-width: 768px) {
+  .listaHeader {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+  
+  .funcionariosTable {
+    min-width: 600px;
+  }
+  
+  .acoes {
+    flex-direction: column;
+  }
+}
+
+@media (max-width: 480px) {
+  .funcionarioInfo {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.5rem;
+  }
+  
+  .funcionarioAvatar {
+    width: 32px;
+    height: 32px;
+    font-size: 0.875rem;
+  }
+}
+
+/* Layout Principal */
+.dashboard {
+  min-height: 100vh;
+  background-color: #f8fafc;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Header */
+.header {
+  background: white;
+  padding: 16px 30px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  position: sticky;
+  top: 0;
+  z-index: 100;
+}
+
+.headerLeft {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.menuToggle {
+  background: none;
+  border: none;
+  font-size: 20px;
+  cursor: pointer;
+  padding: 8px;
+  border-radius: 6px;
+  transition: background 0.3s ease;
+  display: none;
+}
+
+.menuToggle:hover {
+  background: #f1f5f9;
+}
+
+.title {
+  font-size: 24px;
+  font-weight: 600;
+  color: #1e293b;
+  margin: 0;
+}
+
+.headerActions {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.searchBox {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.searchInput {
+  padding: 10px 40px 10px 12px;
+  border: 2px solid #e2e8f0;
+  border-radius: 8px;
+  font-size: 14px;
+  width: 250px;
+  transition: border-color 0.3s ease;
+}
+
+.searchInput:focus {
+  outline: none;
+  border-color: #3498db;
+}
+
+.searchIcon {
+  position: absolute;
+  right: 12px;
+  color: #64748b;
+}
+
+.userMenu {
+  display: flex;
+  align-items: center;
+}
+
+.userAvatar {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: #3498db;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  font-weight: 600;
+  font-size: 18px;
+}
+
+/* Wrapper de Conteúdo */
+.contentWrapper {
+  display: flex;
+  flex: 1;
+  position: relative;
+}
+
+/* Sidebar Não Fixa */
+.sidebar {
+  width: 280px;
+  background: linear-gradient(180deg, #2c3e50 0%, #34495e 100%);
+  color: white;
+  display: flex;
+  flex-direction: column;
+  transition: transform 0.3s ease;
+  box-shadow: 2px 0 10px rgba(0,0,0,0.1);
+  z-index: 90;
+}
+
+.sidebarHeader {
+  padding: 20px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 1px solid rgba(255,255,255,0.1);
+}
+
+.logo {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.logoIcon {
+  font-size: 24px;
+}
+
+.logoText {
+  font-size: 20px;
+  font-weight: bold;
+}
+
+.sidebarClose {
+  display: none;
+  background: none;
+  border: none;
+  color: white;
+  cursor: pointer;
+  font-size: 24px;
+  padding: 0;
+  width: 30px;
+  height: 30px;
+  border-radius: 4px;
+  transition: background 0.3s ease;
+}
+
+.sidebarClose:hover {
+  background: rgba(255,255,255,0.1);
+}
+
+.nav {
+  flex: 1;
+  padding: 20px 0;
+}
+
+.navSection {
+  margin-bottom: 30px;
+}
+
+.navLabel {
+  padding: 0 20px 10px;
+  font-size: 12px;
+  text-transform: uppercase;
+  color: #95a5a6;
+  font-weight: 600;
+  letter-spacing: 0.5px;
+}
+
+.navLink {
+  display: flex;
+  align-items: center;
+  padding: 12px 20px;
+  color: #bdc3c7;
+  text-decoration: none;
+  transition: all 0.3s ease;
+  gap: 12px;
+  position: relative;
+  border: none;
+  background: none;
+  width: 100%;
+  text-align: left;
+  font-family: inherit;
+}
+
+.navLink:hover {
+  background: rgba(255,255,255,0.1);
+  color: white;
+}
+
+.navLink.active {
+  background: rgba(52, 152, 219, 0.2);
+  color: white;
+  border-left: 4px solid #3498db;
+}
+
+.navIcon {
+  font-size: 18px;
+  width: 24px;
+  text-align: center;
+}
+
+.navText {
+  font-size: 14px;
+  font-weight: 500;
+  flex: 1;
+}
+
+.userPanel {
+  padding: 20px;
+  border-top: 1px solid rgba(255,255,255,0.1);
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.userAvatar {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: rgba(255,255,255,0.1);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 18px;
+}
+
+.userInfo {
+  flex: 1;
+}
+
+.userName {
+  font-size: 14px;
+  font-weight: 600;
+  margin: 0;
+}
+
+.userRole {
+  font-size: 12px;
+  color: #95a5a6;
+  margin: 0;
+}
+
+/* Conteúdo Principal */
+.mainContent {
+  flex: 1;
+  padding: 0;
+  min-height: calc(100vh - 80px);
+  overflow-y: auto;
+  background: #f8fafc;
+}
+
+/* Formulário */
+.formContainer {
+  max-width: 1000px;
+  margin: 0 auto;
+  padding: 30px;
+}
+
+.formHeader {
+  text-align: center;
+  margin-bottom: 40px;
+}
+
+.formHeader h2 {
+  font-size: 28px;
+  font-weight: 700;
+  color: #1e293b;
+  margin: 0 0 8px 0;
+}
+
+.formHeader p {
+  font-size: 16px;
+  color: #64748b;
+  margin: 0;
+}
+
+.form {
+  background: white;
+  border-radius: 16px;
+  padding: 40px;
+  box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+}
+
+.formGrid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 40px;
+  margin-bottom: 40px;
+}
+
+.formSection {
+  border-left: 4px solid #3498db;
+  padding-left: 20px;
+}
+
+.sectionTitle {
+  font-size: 18px;
+  font-weight: 600;
+  color: #1e293b;
+  margin: 0 0 24px 0;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.sectionIcon {
+  font-size: 20px;
+}
+
+.formGroup {
+  margin-bottom: 20px;
+}
+
+.formRow {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+}
+
+.inputLabel {
+  display: block;
+  font-size: 14px;
+  font-weight: 600;
+  color: #374151;
+  margin-bottom: 8px;
+}
+
+.inputLabel::after {
+  content: '';
+  display: inline-block;
+  width: 4px;
+  height: 4px;
+  background: #ef4444;
+  border-radius: 50%;
+  margin-left: 4px;
+  vertical-align: super;
+}
+
+.modernInput {
+  width: 100%;
+  padding: 12px 16px;
+  border: 2px solid #e5e7eb;
+  border-radius: 8px;
+  font-size: 14px;
+  transition: all 0.3s ease;
+  background: white;
+}
+
+.modernInput:focus {
+  outline: none;
+  border-color: #3498db;
+  box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.1);
+}
+
+.modernInput::placeholder {
+  color: #9ca3af;
+}
+
+select.modernInput {
+  appearance: none;
+  background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%236b7280' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='m6 8 4 4 4-4'/%3e%3c/svg%3e");
+  background-position: right 12px center;
+  background-repeat: no-repeat;
+  background-size: 16px;
+  padding-right: 40px;
+}
+
+/* Ações do Formulário */
+.formActions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 16px;
+  padding-top: 32px;
+  border-top: 1px solid #e5e7eb;
+}
+
+.cancelButton {
+  padding: 12px 24px;
+  border: 2px solid #d1d5db;
+  border-radius: 8px;
+  background: white;
+  color: #374151;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.cancelButton:hover {
+  background: #f9fafb;
+  border-color: #9ca3af;
+}
+
+.submitButton {
+  padding: 12px 24px;
+  border: none;
+  border-radius: 8px;
+  background: linear-gradient(135deg, #3498db 0%, #2980b9 100%);
+  color: white;
+  font-weight: 600;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  transition: all 0.3s ease;
+}
+
+.submitButton:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(52, 152, 219, 0.3);
+}
+
+.buttonIcon {
+  font-size: 16px;
+}
+
+/* Overlay para mobile */
+.overlay {
+  display: none;
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.5);
+  z-index: 80;
+}
+
+/* Responsividade */
+@media (max-width: 1024px) {
+  .formGrid {
+    grid-template-columns: 1fr;
+    gap: 30px;
+  }
+  
+  .searchInput {
+    width: 200px;
+  }
+}
+
+@media (max-width: 768px) {
+  .menuToggle {
+    display: block;
+  }
+  
+  .sidebar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    transform: translateX(-100%);
+    z-index: 90;
+  }
+  
+  .sidebarOpen {
+    transform: translateX(0);
+  }
+  
+  .sidebarClose {
+    display: block;
+  }
+  
+  .overlay {
+    display: block;
+  }
+  
+  .header {
+    padding: 16px 20px;
+  }
+  
+  .headerActions {
+    flex-wrap: wrap;
+    gap: 12px;
+  }
+  
+  .searchInput {
+    width: 180px;
+  }
+  
+  .formContainer {
+    padding: 20px;
+  }
+  
+  .form {
+    padding: 24px;
+  }
+  
+  .formRow {
+    grid-template-columns: 1fr;
+    gap: 0;
+  }
+  
+  .formActions {
+    flex-direction: column;
+  }
+  
+  .cancelButton, .submitButton {
+    width: 100%;
+    justify-content: center;
+  }
+}
+
+@media (max-width: 480px) {
+  .header {
+    flex-direction: column;
+    gap: 16px;
+    align-items: flex-start;
+  }
+  
+  .headerActions {
+    width: 100%;
+    justify-content: space-between;
+  }
+  
+  .searchBox {
+    width: 100%;
+  }
+  
+  .searchInput {
+    width: 100%;
+  }
+  
+  .formContainer {
+    padding: 16px;
+  }
+  
+  .form {
+    padding: 20px;
+  }
+  
+  .formHeader h2 {
+    font-size: 24px;
+  }
+}
+
+.formGroup {
+  margin-bottom: 1.25rem;
+}
+
+.inputLabel {
+  display: block;
+  margin-bottom: 0.5rem;
+  font-weight: 500;
+  color: #333;
+}
+
+.checkboxGroup {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  margin-top: 0.5rem;
+}
+
+.checkboxLabel {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  cursor: pointer;
+}
+
+.checkboxText {
+  font-size: 0.95rem;
+  color: #495057;
+}
+
+.checkboxLabel input[type="checkbox"] {
+  width: 18px;
+  height: 18px;
+  accent-color: #3b82f6;
+}
+
+.formActions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 1rem;
+  margin-top: 2rem;
+  padding-top: 1.5rem;
+  border-top: 1px solid #e9ecef;
+}
+
+.cancelButton {
+  padding: 0.75rem 1.5rem;
+  background-color: #f8f9fa;
+  color: #495057;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background-color 0.15s ease;
+}
+
+.cancelButton:hover {
+  background-color: #e9ecef;
+}
+
+.submitButton {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.75rem 1.5rem;
+  background-color: #3b82f6;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background-color 0.15s ease;
+}
+
+.submitButton:hover {
+  background-color: #2563eb;
+}
+
+.buttonIcon {
+  font-size: 1.1rem;
+}
+
+/* Responsividade */
+@media (max-width: 1024px) {
+  .formGrid {
+    grid-template-columns: 1fr;
+    gap: 1.5rem;
+  }
+  
+  .sidebar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    z-index: 1000;
+    transform: translateX(-100%);
+  }
+  
+  .sidebarOpen {
+    transform: translateX(0);
+  }
+  
+  .sidebarClose {
+    display: block;
+  }
+  
+  .overlay {
+    display: block;
+  }
+  
+  .headerActions {
+    display: none;
+  }
+}
+
+@media (max-width: 768px) {
+  .mainContent {
+    padding: 1rem;
+  }
+  
+  .formContainer {
+    padding: 1.5rem;
+  }
+  
+  .formRow {
+    grid-template-columns: 1fr;
+    gap: 0;
+  }
+  
+  .searchInput {
+    width: 180px;
+  }
+
+}
+@media (max-width: 480px) {
+  .header {
+    padding: 1rem;
+  }
+  
+  .title {
+    font-size: 1.25rem;
+  }
+  
+  .formActions {
+    flex-direction: column;
+  }
+  
+  .cancelButton, .submitButton {
+    width: 100%;
+    justify-content: center;
+  }
+
+}

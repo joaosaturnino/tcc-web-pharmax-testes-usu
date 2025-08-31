@@ -1,0 +1,17 @@
+.containerBotao {
+    padding: 1rem;
+    border: 0.5rem solid #afb;
+    background-color: #aaf;
+    margin: 1rem;
+    cursor: pointer;
+    border-radius: 2rem;
+}
+
+.containerBotao:hover {
+    border-color: #ff1;
+}
+
+.txtBotao {
+    color: #ff1;
+    letter-spacing: 0.5rem;
+}
