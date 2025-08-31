@@ -128,7 +128,7 @@ export default function FavoritosFarmaciaPage() {
             
             <div className={styles.navSection}>
               <p className={styles.navLabel}>Gestão</p>
-              <a href="/farmacias/cadastro/funcionario" className={styles.navLink}>
+              <a href="/farmacias/cadastro/funcionario/lista" className={styles.navLink}>
                 <span className={styles.navIcon}>👩‍⚕️</span>
                 <span className={styles.navText}>Funcionários</span>
               </a>
