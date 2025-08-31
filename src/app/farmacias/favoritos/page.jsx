@@ -1,12 +1,14 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
 import styles from "./favoritos.module.css";
 
 export default function FavoritosFarmaciaPage() {
   const [favoritos, setFavoritos] = useState([]);
   const [loading, setLoading] = useState(true);
   const [sidebarOpen, setSidebarOpen] = useState(false);
+  const router = useRouter();
 
   useEffect(() => {
     // Mock para desenvolvimento (substituir pelo fetch real)
@@ -49,6 +51,28 @@ export default function FavoritosFarmaciaPage() {
     }, 800);
   }, []);
 
+  // Função para fazer logout
+  const handleLogout = async () => {
+    try {
+      // Aqui você implementaria a lógica real de logout
+      // Por exemplo, limpar tokens, cookies, etc.
+      
+      // Simulação de uma requisição de logout
+      // await fetch('/api/auth/logout', { method: 'POST' });
+      
+      // Limpar dados de autenticação do localStorage/sessionStorage (se aplicável)
+      localStorage.removeItem('authToken');
+      sessionStorage.removeItem('userData');
+      
+      // Redirecionar para a página de login
+      router.push('/login');
+    } catch (error) {
+      console.error('Erro ao fazer logout:', error);
+      // Mesmo em caso de erro, redirecionar para a página de login
+      router.push('/login');
+    }
+  };
+
   if (loading) {
     return (
       <div className={styles.dashboard}>
@@ -65,35 +89,15 @@ export default function FavoritosFarmaciaPage() {
       {/* Header com botão para toggle da sidebar */}
       <header className={styles.header}>
         <div className={styles.headerLeft}>
-          {/* <button 
+          <button 
             className={styles.menuToggle}
             onClick={() => setSidebarOpen(!sidebarOpen)}
           >
             ☰
-          </button> */}
+          </button>
           <h1 className={styles.title}>Medicamentos Favoritados</h1>
         </div>
-        <div className={styles.headerActions}>
-          <button className={styles.notificationBtn}>
-            <span className={styles.bellIcon}>🔔</span>
-            <span className={styles.notificationBadge}>3</span>
-          </button>
-          <div className={styles.searchBox}>
-            <input 
-              type="text" 
-              placeholder="Buscar favoritos..." 
-              className={styles.searchInput}
-            />
-            <span className={styles.searchIcon}>🔍</span>
-          </div>
-          <button className={styles.actionBtn}>
-            <span className={styles.btnIcon}>📊</span>
-            Exportar CSV
-          </button>
-          <div className={styles.userMenu}>
-            <span className={styles.userShort}>AD</span>
-          </div>
-        </div>
+        
       </header>
 
       <div className={styles.contentWrapper}>
@@ -140,11 +144,16 @@ export default function FavoritosFarmaciaPage() {
             
             <div className={styles.navSection}>
               <p className={styles.navLabel}>Sistema</p>
-              <a href="/config" className={styles.navLink}>
+              <a href="../../configuracoes" className={styles.navLink}>
                 <span className={styles.navIcon}>⚙️</span>
                 <span className={styles.navText}>Configurações</span>
               </a>
-              <button className={styles.navLink}>
+              <a href="/perfil" className={`${styles.navLink} ${styles.active}`}>
+                <span className={styles.navIcon}>👤</span>
+                <span className={styles.navText}>Meu Perfil</span>
+              </a>
+              {/* Botão Sair com funcionalidade implementada */}
+              <button className={styles.navLink} onClick={handleLogout}>
                 <span className={styles.navIcon}>🚪</span>
                 <span className={styles.navText}>Sair</span>
               </button>

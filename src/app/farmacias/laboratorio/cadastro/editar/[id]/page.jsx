@@ -145,6 +145,10 @@ export default function EditarMedicamento() {
                 <span className={styles.navIcon}>⚙️</span>
                 <span className={styles.navText}>Configurações</span>
               </a>
+              <a href="/farmacias/perfil" className={`${styles.navLink} ${styles.active}`}>
+                <span className={styles.navIcon}>👤</span>
+                <span className={styles.navText}>Meu Perfil</span>
+              </a>
               <button className={styles.navLink}>
                 <span className={styles.navIcon}>🚪</span>
                 <span className={styles.navText}>Sair</span>

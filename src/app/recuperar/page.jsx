@@ -31,7 +31,7 @@ export default function Login() {
       );
       
       setIsLoading(false);
-      router.push("farmacias/favoritos");
+      router.push("produtos/medicamentos");
     } else {
       setIsLoading(false);
       alert("Preencha todos os campos!");
@@ -127,7 +127,7 @@ export default function Login() {
         <div className={styles.header}>
           <div className={styles.logo}>
             <span className={styles.logoIcon}>💊</span>
-            <span className={styles.logoText}>PharmaX</span>
+            <span className={styles.logoText}>PharmaSystem</span>
           </div>
           <h1 className={styles.titulo}>Bem-vindo de volta</h1>
           <p className={styles.subtitulo}>Faça login em sua conta para continuar</p>
@@ -203,6 +203,15 @@ export default function Login() {
             )}
           </button>
 
+          <div className={styles.divider}>
+            <span>ou</span>
+          </div>
+
+          <button type="button" className={styles.googleBtn} disabled={isLoading}>
+            <span className={styles.googleIcon}>🔍</span>
+            Entrar com Google
+          </button>
+
           <p className={styles.linkCadastro}>
             Não tem uma conta?{" "}
             <span
@@ -218,8 +227,8 @@ export default function Login() {
       <div className={styles.illustration}>
         <div className={styles.illustrationContent}>
           <div className={styles.pharmaIcon}>💊</div>
-          <h2>PharmaX</h2>
-          <p>Sistema de Busca e Comparação de Preços de Medicamentos em uma única plataforma</p>
+          <h2>Gestão Farmacêutica Inteligente</h2>
+          <p>Controle completo de medicamentos, estoque e clientes em uma única plataforma</p>
         </div>
       </div>
 

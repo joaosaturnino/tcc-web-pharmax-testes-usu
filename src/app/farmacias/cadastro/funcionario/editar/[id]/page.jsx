@@ -166,6 +166,10 @@ export default function EditarFuncionarioPage() {
                 <span className="nav-icon">⚙️</span>
                 <span className="nav-text">Configurações</span>
               </a>
+              <a href="/farmacias/perfil" className={`${styles.navLink} ${styles.active}`}>
+                <span className={styles.navIcon}>👤</span>
+                <span className={styles.navText}>Meu Perfil</span>
+              </a>
               <button className="nav-link">
                 <span className="nav-icon">🚪</span>
                 <span className="nav-text">Sair</span>

@@ -51,7 +51,7 @@ function ListagemMedicamentos() {
   };
 
   const handleEditar = (id) => {
-    router.push(`/produtos/medicamentos/editar/${id}`);
+    router.push(`/farmacias/produtos/medicamentos/editar/${id}`);
   };
 
   return (
@@ -68,20 +68,11 @@ function ListagemMedicamentos() {
           <h1 className={styles.titulo}>💊 Painel de Medicamentos</h1>
         </div>
         <div className={styles.headerActions}>
-          <div className={styles.searchBox}>
-            <input 
-              type="text" 
-              placeholder="Buscar medicamentos..." 
-              className={styles.searchInput}
-            />
-            <span className={styles.searchIcon}>🔍</span>
-          </div>
-          <Link href="/medicamentos/cadastro" className={styles.botaoPrincipal}>
+          
+          <Link href="/farmacias/produtos/medicamentos/cadastro" className={styles.botaoPrincipal}>
             ➕ Novo Medicamento
           </Link>
-          <div className={styles.userMenu}>
-            <span className={styles.userAvatar}>👤</span>
-          </div>
+          
         </div>
       </header>
 
@@ -121,7 +112,7 @@ function ListagemMedicamentos() {
                 <span className={styles.navIcon}>👩‍⚕️</span>
                 <span className={styles.navText}>Funcionários</span>
               </a>
-              <a href="/laboratorio/lista" className={styles.navLink}>
+              <a href="/farmacias/laboratorio/lista" className={styles.navLink}>
                 <span className={styles.navIcon}>🏭</span>
                 <span className={styles.navText}>Laboratórios</span>
               </a>
@@ -129,9 +120,13 @@ function ListagemMedicamentos() {
             
             <div className={styles.navSection}>
               <p className={styles.navLabel}>Sistema</p>
-              <a href="/config" className={styles.navLink}>
+              <a href="../../configuracoes" className={styles.navLink}>
                 <span className={styles.navIcon}>⚙️</span>
                 <span className={styles.navText}>Configurações</span>
+              </a>
+              <a href="/farmacias/perfil" className={`${styles.navLink} ${styles.active}`}>
+                <span className={styles.navIcon}>👤</span>
+                <span className={styles.navText}>Meu Perfil</span>
               </a>
               <button className={styles.navLink}>
                 <span className={styles.navIcon}>🚪</span>
@@ -167,20 +162,6 @@ function ListagemMedicamentos() {
               <div className={styles.statContent}>
                 <h3>{medicamentos.length}</h3>
                 <p>Total de Medicamentos</p>
-              </div>
-            </div>
-            <div className={styles.statCard}>
-              <div className={styles.statIcon}>📦</div>
-              <div className={styles.statContent}>
-                <h3>{medicamentos.reduce((acc, med) => acc + med.quantidade, 0)}</h3>
-                <p>Unidades em Estoque</p>
-              </div>
-            </div>
-            <div className={styles.statCard}>
-              <div className={styles.statIcon}>💰</div>
-              <div className={styles.statContent}>
-                <h3>{currency.format(medicamentos.reduce((acc, med) => acc + (med.preco * med.quantidade), 0))}</h3>
-                <p>Valor Total</p>
               </div>
             </div>
           </div>

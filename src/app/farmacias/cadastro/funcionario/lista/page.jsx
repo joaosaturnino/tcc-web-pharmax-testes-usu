@@ -172,7 +172,7 @@ export default function ListaFuncionariosPage() {
                 <span className={styles.navIcon}>👩‍⚕️</span>
                 <span className={styles.navText}>Funcionários</span>
               </a>
-              <a href="/laboratorio/lista" className={styles.navLink}>
+              <a href="/farmacias/laboratorio/lista" className={styles.navLink}>
                 <span className={styles.navIcon}>🏭</span>
                 <span className={styles.navText}>Laboratórios</span>
               </a>
@@ -180,9 +180,13 @@ export default function ListaFuncionariosPage() {
             
             <div className={styles.navSection}>
               <p className={styles.navLabel}>Sistema</p>
-              <a href="/config" className={styles.navLink}>
+              <a href="../../../configuracoes" className={styles.navLink}>
                 <span className={styles.navIcon}>⚙️</span>
                 <span className={styles.navText}>Configurações</span>
+              </a>
+              <a href="/farmacias/perfil" className={`${styles.navLink} ${styles.active}`}>
+                <span className={styles.navIcon}>👤</span>
+                <span className={styles.navText}>Meu Perfil</span>
               </a>
               <button className={styles.navLink}>
                 <span className={styles.navIcon}>🚪</span>

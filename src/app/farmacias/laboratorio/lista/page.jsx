@@ -87,23 +87,13 @@ export default function ListaLaboratorios() {
           <h1 className={styles.title}>🏭 Laboratórios</h1>
         </div>
         <div className={styles.headerActions}>
-          <div className={styles.searchBox}>
-            <input 
-              type="text" 
-              placeholder="Buscar laboratórios..." 
-              className={styles.searchInput}
-              value={filtro}
-              onChange={(e) => setFiltro(e.target.value)}
-            />
-            <span className={styles.searchIcon}>🔍</span>
-          </div>
+          
+           
           <Link href="/farmacias/laboratorio/cadastro" className={styles.submitButton}>
             <span className={styles.buttonIcon}>➕</span>
             Novo Laboratório
           </Link>
-          <div className={styles.userMenu}>
-            <span className={styles.userAvatar}>👤</span>
-          </div>
+          
         </div>
       </header>
 
@@ -138,11 +128,11 @@ export default function ListaLaboratorios() {
             
             <div className={styles.navSection}>
               <p className={styles.navLabel}>Gestão</p>
-              <a href="/farmacias/cadastro/funcionario" className={styles.navLink}>
+              <a href="/farmacias/cadastro/funcionario/lista" className={styles.navLink}>
                 <span className={styles.navIcon}>👩‍⚕️</span>
                 <span className={styles.navText}>Funcionários</span>
               </a>
-              <a href="/laboratorio/lista" className={`${styles.navLink} ${styles.active}`}>
+              <a href="/farmacias/laboratorio/lista" className={`${styles.navLink} ${styles.active}`}>
                 <span className={styles.navIcon}>🏭</span>
                 <span className={styles.navText}>Laboratórios</span>
                 <span className={styles.notificationBadge}>{laboratorios.length}</span>
@@ -151,9 +141,13 @@ export default function ListaLaboratorios() {
             
             <div className={styles.navSection}>
               <p className={styles.navLabel}>Sistema</p>
-              <a href="/config" className={styles.navLink}>
+              <a href="../../../configuracoes" className={styles.navLink}>
                 <span className={styles.navIcon}>⚙️</span>
                 <span className={styles.navText}>Configurações</span>
+              </a>
+              <a href="/farmacias/perfil" className={`${styles.navLink} ${styles.active}`}>
+                <span className={styles.navIcon}>👤</span>
+                <span className={styles.navText}>Meu Perfil</span>
               </a>
               <button className={styles.navLink}>
                 <span className={styles.navIcon}>🚪</span>

@@ -75,11 +75,11 @@ export default function CadastroLaboratorio() {
           
           <div className={styles.navSection}>
             <p className={styles.navLabel}>Gestão</p>
-            <a href="/farmacias/cadastro/funcionario" className={styles.navLink}>
+            <a href="/farmacias/cadastro/funcionario/lista" className={styles.navLink}>
               <span className={styles.navIcon}>👩‍⚕️</span>
               <span className={styles.navText}>Funcionários</span>
             </a>
-            <a href="/laboratorio/lista" className={`${styles.navLink} ${styles.active}`}>
+            <a href="/farmacias/laboratorio/lista" className={`${styles.navLink} ${styles.active}`}>
               <span className={styles.navIcon}>🏭</span>
               <span className={styles.navText}>Laboratórios</span>
             </a>
@@ -87,10 +87,14 @@ export default function CadastroLaboratorio() {
           
           <div className={styles.navSection}>
             <p className={styles.navLabel}>Sistema</p>
-            <a href="/config" className={styles.navLink}>
+            <a href="../../../configuracoes" className={styles.navLink}>
               <span className={styles.navIcon}>⚙️</span>
               <span className={styles.navText}>Configurações</span>
             </a>
+            <a href="/farmacias/perfil" className={`${styles.navLink} ${styles.active}`}>
+                <span className={styles.navIcon}>👤</span>
+                <span className={styles.navText}>Meu Perfil</span>
+              </a>
             <button className={styles.navLink}>
               <span className={styles.navIcon}>🚪</span>
               <span className={styles.navText}>Sair</span>
@@ -113,15 +117,7 @@ export default function CadastroLaboratorio() {
       <main className={styles.mainContent}>
         <header className={styles.pageHeader}>
           <h1 className={styles.pageTitle}>Cadastro de Laboratório</h1>
-          <div className={styles.headerActions}>
-            <button className={styles.notificationBtn}>
-              <span className={styles.bellIcon}>🔔</span>
-              <span className={styles.notificationBadge}>3</span>
-            </button>
-            <div className={styles.userMenu}>
-              <span className={styles.userShort}>AD</span>
-            </div>
-          </div>
+          
         </header>
 
         <div className={styles.contentCard}>

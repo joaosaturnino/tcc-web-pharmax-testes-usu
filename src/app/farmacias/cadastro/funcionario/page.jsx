@@ -43,19 +43,7 @@ export default function CadastroFuncionarioPage() {
           </button>
           <h1 className={styles.title}>👩‍⚕️ Cadastro de Funcionário</h1>
         </div>
-        <div className={styles.headerActions}>
-          <div className={styles.searchBox}>
-            <input 
-              type="text" 
-              placeholder="Buscar funcionários..." 
-              className={styles.searchInput}
-            />
-            <span className={styles.searchIcon}>🔍</span>
-          </div>
-          <div className={styles.userMenu}>
-            <span className={styles.userAvatar}>👤</span>
-          </div>
-        </div>
+        
       </header>
 
       <div className={styles.contentWrapper}>
@@ -89,11 +77,11 @@ export default function CadastroFuncionarioPage() {
             
             <div className={styles.navSection}>
               <p className={styles.navLabel}>Gestão</p>
-              <a href="/farmacias/cadastro/funcionario" className={`${styles.navLink} ${styles.active}`}>
+              <a href="/farmacias/cadastro/funcionario/lista" className={`${styles.navLink} ${styles.active}`}>
                 <span className={styles.navIcon}>👩‍⚕️</span>
                 <span className={styles.navText}>Funcionários</span>
               </a>
-              <a href="/laboratorio/lista" className={styles.navLink}>
+              <a href="/farmacias/laboratorio/lista" className={styles.navLink}>
                 <span className={styles.navIcon}>🏭</span>
                 <span className={styles.navText}>Laboratórios</span>
               </a>
@@ -101,9 +89,13 @@ export default function CadastroFuncionarioPage() {
             
             <div className={styles.navSection}>
               <p className={styles.navLabel}>Sistema</p>
-              <a href="/config" className={styles.navLink}>
+              <a href="../../../configuracoes" className={styles.navLink}>
                 <span className={styles.navIcon}>⚙️</span>
                 <span className={styles.navText}>Configurações</span>
+              </a>
+              <a href="/farmacias/perfil" className={`${styles.navLink} ${styles.active}`}>
+                <span className={styles.navIcon}>👤</span>
+                <span className={styles.navText}>Meu Perfil</span>
               </a>
               <button className={styles.navLink}>
                 <span className={styles.navIcon}>🚪</span>
