@@ -115,7 +115,7 @@ export default function FavoritosFarmaciaPage() {
           <nav className={styles.nav}>
             <div className={styles.navSection}>
               <p className={styles.navLabel}>Principal</p>
-              <a href="/farmacia/favoritos" className={`${styles.navLink} ${styles.active}`}>
+              <a href="/farmacias/favoritos" className={`${styles.navLink} ${styles.active}`}>
                 <span className={styles.navIcon}>⭐</span>
                 <span className={styles.navText}>Favoritos</span>
                 <span className={styles.notificationBadge}>{favoritos.length}</span>
