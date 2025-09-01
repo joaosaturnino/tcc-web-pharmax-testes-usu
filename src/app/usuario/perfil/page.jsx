@@ -3,7 +3,13 @@
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import styles from "./perfil.module.css";
-import { FaBuilding, FaIdCard, FaMapMarkerAlt, FaPhoneAlt, FaEnvelope } from "react-icons/fa";
+import {
+  FaBuilding,
+  FaIdCard,
+  FaMapMarkerAlt,
+  FaPhoneAlt,
+  FaEnvelope,
+} from "react-icons/fa";
 
 export default function PerfilFarmacia() {
   const router = useRouter();
@@ -54,21 +60,39 @@ export default function PerfilFarmacia() {
     alert("Dados atualizados com sucesso!");
   };
 
-  if (!farmacia) return <p className={styles.titulo}>Nenhuma farmácia cadastrada.</p>;
+  if (!farmacia)
+    return <p className={styles.titulo}>Nenhuma farmácia cadastrada.</p>;
 
   const campos = [
     { label: "Nome", value: formData.nome, name: "nome", icon: <FaBuilding /> },
     { label: "CNPJ", value: formData.cnpj, name: "cnpj", icon: <FaIdCard /> },
-    { label: "Endereço", value: formData.endereco, name: "endereco", icon: <FaMapMarkerAlt /> },
-    { label: "Telefone", value: formData.telefone, name: "telefone", icon: <FaPhoneAlt /> },
-    { label: "Email", value: formData.email, name: "email", icon: <FaEnvelope /> },
+    {
+      label: "Endereço",
+      value: formData.endereco,
+      name: "endereco",
+      icon: <FaMapMarkerAlt />,
+    },
+    {
+      label: "Telefone",
+      value: formData.telefone,
+      name: "telefone",
+      icon: <FaPhoneAlt />,
+    },
+    {
+      label: "Email",
+      value: formData.email,
+      name: "email",
+      icon: <FaEnvelope />,
+    },
   ];
 
   return (
     <div className={styles.container}>
       <h1 className={styles.titulo}>{farmacia.nome}</h1>
 
-      {previewLogo && <img src={previewLogo} alt="Logo" className={styles.logoPreview} />}
+      {previewLogo && (
+        <img src={previewLogo} alt="Logo" className={styles.logoPreview} />
+      )}
 
       {!editando ? (
         <div className={styles.cardsContainer}>
@@ -83,8 +107,15 @@ export default function PerfilFarmacia() {
           ))}
 
           <div className={styles.botaoContainer}>
-            <button className={styles.botao} onClick={handleEdit}>Editar Dados</button>
-            <button className={`${styles.botao} ${styles.botaoCancel}`} onClick={handleLogout}>Logout</button>
+            <button className={styles.botao} onClick={handleEdit}>
+              Editar Dados
+            </button>
+            <button
+              className={`${styles.botao} ${styles.botaoCancel}`}
+              onClick={handleLogout}
+            >
+              Logout
+            </button>
           </div>
         </div>
       ) : (
@@ -114,11 +145,25 @@ export default function PerfilFarmacia() {
             />
           </div>
 
-          {previewLogo && <img src={previewLogo} alt="Pré-visualização" className={styles.logoPreview} />}
+          {previewLogo && (
+            <img
+              src={previewLogo}
+              alt="Pré-visualização"
+              className={styles.logoPreview}
+            />
+          )}
 
           <div className={styles.botaoContainer}>
-            <button type="submit" className={styles.botao}>Salvar Alterações</button>
-            <button type="button" className={`${styles.botao} ${styles.botaoCancel}`} onClick={() => setEditando(false)}>Cancelar</button>
+            <button type="submit" className={styles.botao}>
+              Salvar Alterações
+            </button>
+            <button
+              type="button"
+              className={`${styles.botao} ${styles.botaoCancel}`}
+              onClick={() => setEditando(false)}
+            >
+              Cancelar
+            </button>
           </div>
         </form>
       )}

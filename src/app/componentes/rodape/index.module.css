@@ -1,9 +1,9 @@
 .rodape {
   background: #fafafa;
-  color: #458B00;
+  color: #458b00;
   padding: 2rem 0 1rem 0;
   width: 100%;
-  border-top: 0.2rem solid #458B00;
+  border-top: 0.2rem solid #458b00;
 }
 
 .conteudoRodape {
@@ -18,10 +18,11 @@
 .secaoRodape h4 {
   margin-bottom: 0.5rem;
   font-size: 1.6rem;
-  color: #458B00;
+  color: #458b00;
 }
 
-.secaoRodape p, .secaoRodape a {
+.secaoRodape p,
+.secaoRodape a {
   font-size: 1.3rem;
   color: #666;
   margin-bottom: 0.3rem;
@@ -29,14 +30,14 @@
 }
 
 .secaoRodape a:hover {
-  color: #A2CD5A;
+  color: #a2cd5a;
   text-decoration: underline;
 }
 
 .rodapeInferior {
   text-align: center;
   font-size: 1.2rem;
-  color: #458B00;
+  color: #458b00;
   margin-top: 1rem;
   padding-top: 1rem;
   border-top: 1px solid #eee;

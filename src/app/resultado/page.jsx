@@ -1,19 +1,17 @@
-'use client';
+"use client";
 
-
-import Image from 'next/image';
-import Link from 'next/link';
-import { useSearchParams } from 'next/navigation';
-import { useState, useEffect } from 'react';
-import styles from './page.module.css';
-
+import Image from "next/image";
+import Link from "next/link";
+import { useSearchParams } from "next/navigation";
+import { useState, useEffect } from "react";
+import styles from "./page.module.css";
 
 // Componente da página de resultados
 export default function Resultados() {
   const searchParams = useSearchParams();
-  const query = searchParams.get('q') || '';
+  const query = searchParams.get("q") || "";
   const [termoBusca, setTermoBusca] = useState(query);
- 
+
   // Dados de exemplo - em uma aplicação real, viriam da busca
   const todosMedicamentos = [
     {
@@ -21,87 +19,90 @@ export default function Resultados() {
       nome: "Paracetamol 750mg",
       laboratorio: "Medley",
       descricao: "Analgésico e antitérmico. Alivia dores e reduz a febre.",
-      preco: 8.90,
+      preco: 8.9,
       imagem: "/paracetamol.jpg",
       categoria: "Analgésicos",
       necessitaReceita: false,
-      emEstoque: true
+      emEstoque: true,
     },
     {
       id: 2,
       nome: "Ibuprofeno 400mg",
       laboratorio: "Eurofarma",
-      descricao: "Anti-inflamatório não esteroidal. Alivia dores e inflamações.",
-      preco: 12.50,
+      descricao:
+        "Anti-inflamatório não esteroidal. Alivia dores e inflamações.",
+      preco: 12.5,
       imagem: "/omeprazol.jpg",
       categoria: "Anti-inflamatórios",
       necessitaReceita: false,
-      emEstoque: true
+      emEstoque: true,
     },
     {
       id: 3,
       nome: "Omeprazol 20mg",
       laboratorio: "EMS",
-      descricao: "Inibidor de bomba de prótons. Tratamento de gastrite e refluxo.",
-      preco: 15.50,
+      descricao:
+        "Inibidor de bomba de prótons. Tratamento de gastrite e refluxo.",
+      preco: 15.5,
       imagem: "/omeprazol.jpg",
       categoria: "Gastrointestinais",
       necessitaReceita: false,
-      emEstoque: true
+      emEstoque: true,
     },
     {
       id: 4,
       nome: "Dipirona Monoidratada 500mg",
       laboratorio: "Sanofi",
-      descricao: "Analgésico e antitérmico. Alivia dores de intensidade moderada.",
-      preco: 6.50,
+      descricao:
+        "Analgésico e antitérmico. Alivia dores de intensidade moderada.",
+      preco: 6.5,
       imagem: "/dipirona.jpg",
       categoria: "Analgésicos",
       necessitaReceita: false,
-      emEstoque: true
+      emEstoque: true,
     },
     {
       id: 5,
       nome: "Amoxicilina 500mg",
       laboratorio: "Neo Química",
-      descricao: "Antibiótico de amplo espectro. Tratamento de infecções bacterianas.",
-      preco: 24.90,
+      descricao:
+        "Antibiótico de amplo espectro. Tratamento de infecções bacterianas.",
+      preco: 24.9,
       imagem: "/paracetamol.jpg", // Imagem temporária
       categoria: "Antibióticos",
       necessitaReceita: true,
-      emEstoque: true
+      emEstoque: true,
     },
     {
       id: 6,
       nome: "Loratadina 10mg",
       laboratorio: "Aché",
-      descricao: "Antialérgico. Alivia sintomas de rinite alérgica e urticária.",
+      descricao:
+        "Antialérgico. Alivia sintomas de rinite alérgica e urticária.",
       preco: 9.75,
       imagem: "/dipirona.jpg", // Imagem temporária
       categoria: "Antialérgicos",
       necessitaReceita: false,
-      emEstoque: false
-    }
+      emEstoque: false,
+    },
   ];
-
 
   // Filtrar medicamentos baseado no termo de busca
   const medicamentosFiltrados = termoBusca
-    ? todosMedicamentos.filter(med =>
-        med.nome.toLowerCase().includes(termoBusca.toLowerCase()) ||
-        med.descricao.toLowerCase().includes(termoBusca.toLowerCase()) ||
-        med.categoria.toLowerCase().includes(termoBusca.toLowerCase()) ||
-        med.laboratorio.toLowerCase().includes(termoBusca.toLowerCase())
+    ? todosMedicamentos.filter(
+        (med) =>
+          med.nome.toLowerCase().includes(termoBusca.toLowerCase()) ||
+          med.descricao.toLowerCase().includes(termoBusca.toLowerCase()) ||
+          med.categoria.toLowerCase().includes(termoBusca.toLowerCase()) ||
+          med.laboratorio.toLowerCase().includes(termoBusca.toLowerCase())
       )
     : todosMedicamentos;
-
 
   const handleNovaBusca = (e) => {
     e.preventDefault();
     const input = e.target.elements.busca;
     setTermoBusca(input.value);
   };
-
 
   return (
     <div className={styles.container}>
@@ -110,7 +111,7 @@ export default function Resultados() {
         <Link href="/" className={styles.logoLink}>
           <h1></h1>
         </Link>
-       
+
         {/* Campo de busca na página de resultados */}
         <form className={styles.caixaBusca} onSubmit={handleNovaBusca}>
           <input
@@ -121,12 +122,11 @@ export default function Resultados() {
           />
           <button type="submit">Buscar</button>
         </form>
-       
+
         <Link href="/" className={styles.voltarLink}>
           ← Voltar
         </Link>
       </header>
-
 
       {/* Conteúdo principal */}
       <main className={styles.main}>
@@ -138,11 +138,10 @@ export default function Resultados() {
           </p>
         </div>
 
-
         {/* Lista de resultados */}
         <div className={styles.listaResultados}>
           {medicamentosFiltrados.length > 0 ? (
-            medicamentosFiltrados.map(medicamento => (
+            medicamentosFiltrados.map((medicamento) => (
               <div key={medicamento.id} className={styles.cardMedicamento}>
                 <div className={styles.imagemContainer}>
                   <Image
@@ -156,24 +155,32 @@ export default function Resultados() {
                     <div className={styles.esgotado}>Esgotado</div>
                   )}
                 </div>
-               
+
                 <div className={styles.infoMedicamento}>
                   <h3>{medicamento.nome}</h3>
-                  <p className={styles.laboratorio}>{medicamento.laboratorio}</p>
+                  <p className={styles.laboratorio}>
+                    {medicamento.laboratorio}
+                  </p>
                   <p className={styles.descricao}>{medicamento.descricao}</p>
                   <div className={styles.tags}>
-                    <span className={styles.categoria}>{medicamento.categoria}</span>
+                    <span className={styles.categoria}>
+                      {medicamento.categoria}
+                    </span>
                     {medicamento.necessitaReceita && (
-                      <span className={styles.avisoReceita}>Receita Obrigatória</span>
+                      <span className={styles.avisoReceita}>
+                        Receita Obrigatória
+                      </span>
                     )}
                     {!medicamento.emEstoque && (
                       <span className={styles.indisponivel}>Indisponível</span>
                     )}
                   </div>
                 </div>
-               
+
                 <div className={styles.precoContainer}>
-                  <span className={styles.preco}>R$ {medicamento.preco.toFixed(2)}</span>
+                  <span className={styles.preco}>
+                    R$ {medicamento.preco.toFixed(2)}
+                  </span>
                   {/* Botão de adicionar ao carrinho removido */}
                 </div>
               </div>
@@ -187,7 +194,10 @@ export default function Resultados() {
                 height={100}
               />
               <h3>Nenhum medicamento encontrado</h3>
-              <p>Tente ajustar os termos da sua busca ou explore nossas categorias.</p>
+              <p>
+                Tente ajustar os termos da sua busca ou explore nossas
+                categorias.
+              </p>
               <Link href="/" className={styles.botaoVoltar}>
                 Voltar para a página inicial
               </Link>
@@ -198,6 +208,3 @@ export default function Resultados() {
     </div>
   );
 }
-
-
-

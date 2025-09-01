@@ -8,7 +8,6 @@
   flex-direction: column;
 }
 
-
 /* Cabeçalho com logo e navegação */
 .header {
   display: flex;
@@ -19,13 +18,11 @@
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
-
 /* Logo da empresa */
 .logo h1 {
-  color: #458B00;
+  color: #458b00;
   margin: 0;
 }
-
 
 /* Menu de navegação */
 .nav {
@@ -33,7 +30,6 @@
   gap: 1.5rem;
   align-items: center;
 }
-
 
 /* Links do menu */
 .nav a {
@@ -43,41 +39,35 @@
   transition: color 0.3s;
 }
 
-
 .nav a:hover {
-  color: #458B00;
+  color: #458b00;
 }
 
-
 .active {
-  color: #458B00 !important;
+  color: #458b00 !important;
   font-weight: 600;
 }
 
-
 /* Botão de usuário no menu */
 .userBtn {
-  background-color: #458B00;
+  background-color: #458b00;
   color: white !important;
   padding: 0.5rem 1rem;
   border-radius: 4px;
 }
 
-
 /* Seção principal (hero) com mensagem e busca */
 .principal {
-  background: linear-gradient(135deg, #458B00 0%, #A2CD5A 100%);
+  background: linear-gradient(135deg, #458b00 0%, #a2cd5a 100%);
   color: white;
   padding: 4rem 2rem;
   text-align: center;
 }
 
-
 .principal h2 {
   font-size: 2.5rem;
   margin-bottom: 1rem;
 }
-
 
 .principal p {
   font-size: 1.2rem;
@@ -85,14 +75,12 @@
   opacity: 0.9;
 }
 
-
 /* Caixa de busca */
 .caixaBusca {
   display: flex;
   max-width: 500px;
   margin: 0 auto;
 }
-
 
 .caixaBusca input {
   flex: 1;
@@ -102,9 +90,8 @@
   font-size: 1rem;
 }
 
-
 .caixaBusca button {
-  background-color: #FF9F43;
+  background-color: #ff9f43;
   color: white;
   border: none;
   padding: 0 1.5rem;
@@ -113,7 +100,6 @@
   font-weight: 600;
 }
 
-
 /* Seção de diferenciais da empresa */
 .recursos {
   padding: 4rem 2rem;
@@ -121,13 +107,11 @@
   background-color: #f8f9fa;
 }
 
-
 .recursos h3 {
   font-size: 2rem;
   margin-bottom: 3rem;
   color: #333;
 }
-
 
 /* Cards de diferenciais */
 .gradeRecursos {
@@ -138,7 +122,6 @@
   margin: 0 auto;
 }
 
-
 .cartaoRecurso {
   background: white;
   padding: 2rem;
@@ -147,17 +130,14 @@
   transition: transform 0.3s;
 }
 
-
 .cartaoRecurso:hover {
   transform: translateY(-5px);
 }
-
 
 .iconeRecurso {
   font-size: 2.5rem;
   margin-bottom: 1rem;
 }
-
 
 .cartaoRecurso h4 {
   font-size: 1.2rem;
@@ -165,12 +145,10 @@
   color: #333;
 }
 
-
 .cartaoRecurso p {
   color: #666;
   line-height: 1.6;
 }
-
 
 /* Seção de produtos em destaque */
 .produtos {
@@ -178,13 +156,11 @@
   text-align: center;
 }
 
-
 .produtos h3 {
   font-size: 2rem;
   margin-bottom: 3rem;
   color: #333;
 }
-
 
 /* Grid dos produtos */
 .gradeProdutos {
@@ -195,7 +171,6 @@
   margin: 0 auto;
 }
 
-
 /* Card de produto */
 .cartaoProduto {
   background: white;
@@ -205,11 +180,9 @@
   transition: transform 0.3s;
 }
 
-
 .cartaoProduto:hover {
   transform: translateY(-5px);
 }
-
 
 .containerImagemProduto {
   height: 200px;
@@ -218,13 +191,11 @@
   background-position: 0 0, 10px 10px;
 }
 
-
 .imagemProduto {
   object-fit: scale-down;
   width: 100%;
   height: 100%;
 }
-
 
 .cartaoProduto h4 {
   font-size: 1.2rem;
@@ -232,26 +203,23 @@
   color: #333;
 }
 
-
 .cartaoProduto p {
   color: #666;
   margin-bottom: 0.5rem;
 }
 
-
 .preco {
   display: block;
   font-size: 1.3rem;
   font-weight: 600;
-  color: #458B00;
+  color: #458b00;
   margin: 1rem 0;
 }
-
 
 .cartaoProduto button {
   width: 100%;
   padding: 0.8rem;
-  background-color: #458B00;
+  background-color: #458b00;
   color: white;
   border: none;
   font-weight: 600;
@@ -259,11 +227,9 @@
   transition: background-color 0.3s;
 }
 
-
 .cartaoProduto button:hover {
-  background-color: #A2CD5A;
+  background-color: #a2cd5a;
 }
-
 
 /* Responsividade para mobile */
 @media (max-width: 768px) {
@@ -293,6 +259,3 @@
     padding: 0.8rem;
   }
 }
-
-
-

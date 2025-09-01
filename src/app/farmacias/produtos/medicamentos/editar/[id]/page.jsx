@@ -71,7 +71,7 @@ export default function EditarMedicamento() {
       {/* Header com botão para toggle da sidebar */}
       <header className={styles.header}>
         <div className={styles.headerLeft}>
-          <button 
+          <button
             className={styles.menuToggle}
             onClick={() => setSidebarOpen(!sidebarOpen)}
           >
@@ -83,20 +83,24 @@ export default function EditarMedicamento() {
 
       <div className={styles.contentWrapper}>
         {/* Sidebar */}
-        <aside className={`${styles.sidebar} ${sidebarOpen ? styles.sidebarOpen : ''}`}>
+        <aside
+          className={`${styles.sidebar} ${
+            sidebarOpen ? styles.sidebarOpen : ""
+          }`}
+        >
           <div className={styles.sidebarHeader}>
             <div className={styles.logo}>
               <span className={styles.logoIcon}>💊</span>
               <span className={styles.logoText}>PharmaX</span>
             </div>
-            <button 
+            <button
               className={styles.sidebarClose}
               onClick={() => setSidebarOpen(false)}
             >
               ×
             </button>
           </div>
-          
+
           <nav className={styles.nav}>
             <div className={styles.navSection}>
               <p className={styles.navLabel}>Principal</p>
@@ -104,15 +108,21 @@ export default function EditarMedicamento() {
                 <span className={styles.navIcon}>⭐</span>
                 <span className={styles.navText}>Favoritos</span>
               </a>
-              <a href="/farmacias/produtos/medicamentos" className={`${styles.navLink} ${styles.active}`}>
+              <a
+                href="/farmacias/produtos/medicamentos"
+                className={`${styles.navLink} ${styles.active}`}
+              >
                 <span className={styles.navIcon}>💊</span>
                 <span className={styles.navText}>Medicamentos</span>
               </a>
             </div>
-            
+
             <div className={styles.navSection}>
               <p className={styles.navLabel}>Gestão</p>
-              <a href="/farmacias/cadastro/funcionario/lista" className={styles.navLink}>
+              <a
+                href="/farmacias/cadastro/funcionario/lista"
+                className={styles.navLink}
+              >
                 <span className={styles.navIcon}>👩‍⚕️</span>
                 <span className={styles.navText}>Funcionários</span>
               </a>
@@ -121,7 +131,7 @@ export default function EditarMedicamento() {
                 <span className={styles.navText}>Laboratórios</span>
               </a>
             </div>
-            
+
             {/* <div className={styles.navSection}>
               <p className={styles.navLabel}>Sistema</p>
               <a href="/config" className={styles.navLink}>
@@ -134,7 +144,7 @@ export default function EditarMedicamento() {
               </button>
             </div> */}
           </nav>
-          
+
           <div className={styles.userPanel}>
             <div className={styles.userAvatar}>
               <span>👤</span>
@@ -148,7 +158,7 @@ export default function EditarMedicamento() {
 
         {/* Overlay para fechar a sidebar ao clicar fora (apenas em mobile) */}
         {sidebarOpen && (
-          <div 
+          <div
             className={styles.overlay}
             onClick={() => setSidebarOpen(false)}
           />
@@ -174,7 +184,7 @@ export default function EditarMedicamento() {
                     placeholder="Digite o nome do medicamento"
                   />
                 </div>
-                
+
                 <div className={styles.formGroup}>
                   <label className={styles.label} htmlFor="dosagem">
                     Dosagem:
@@ -190,7 +200,7 @@ export default function EditarMedicamento() {
                     placeholder="Ex: 500mg"
                   />
                 </div>
-                
+
                 <div className={styles.formGroup}>
                   <label className={styles.label} htmlFor="quantidade">
                     Quantidade:
@@ -225,7 +235,7 @@ export default function EditarMedicamento() {
                     placeholder="0,00"
                   />
                 </div>
-                
+
                 <div className={styles.formGroup}>
                   <label className={styles.label} htmlFor="tipo">
                     Tipo de Produto
@@ -266,14 +276,20 @@ export default function EditarMedicamento() {
                     <option value="Cápsula">Cápsula</option>
                     <option value="Pastilhas">Pastilhas</option>
                     <option value="Drágeas">Drágeas</option>
-                    <option value="Pós para Reconstituição">Pós para Reconstituição</option>
+                    <option value="Pós para Reconstituição">
+                      Pós para Reconstituição
+                    </option>
                     <option value="Gotas">Gotas</option>
                     <option value="Xarope">Xarope</option>
                     <option value="Solução Oral">Solução Oral</option>
                     <option value="Suspensão">Suspensão</option>
-                    <option value="Comprimidos Sublinguais">Comprimidos Sublinguais</option>
+                    <option value="Comprimidos Sublinguais">
+                      Comprimidos Sublinguais
+                    </option>
                     <option value="Soluções">Soluções</option>
-                    <option value="Suspensões Injetáveis">Suspensões Injetáveis</option>
+                    <option value="Suspensões Injetáveis">
+                      Suspensões Injetáveis
+                    </option>
                     <option value="Soluções Tópicas">Soluções Tópicas</option>
                     <option value="Pomadas">Pomadas</option>
                     <option value="Cremes">Cremes</option>
@@ -283,25 +299,33 @@ export default function EditarMedicamento() {
                     <option value="Spray">Spray</option>
                     <option value="Gotas Nasais">Gotas Nasais</option>
                     <option value="Colírios">Colírios</option>
-                    <option value="Pomadas Oftálmicas">Pomadas Oftálmicas</option>
-                    <option value="Gotas Auriculares ou Otológicas">Gotas Auriculares ou Otológicas</option>
-                    <option value="Pomadas Auriculares">Pomadas Auriculares</option>
+                    <option value="Pomadas Oftálmicas">
+                      Pomadas Oftálmicas
+                    </option>
+                    <option value="Gotas Auriculares ou Otológicas">
+                      Gotas Auriculares ou Otológicas
+                    </option>
+                    <option value="Pomadas Auriculares">
+                      Pomadas Auriculares
+                    </option>
                     <option value="Aerosol">Aerosol</option>
-                    <option value="Comprimidos Vaginais">Comprimidos Vaginais</option>
+                    <option value="Comprimidos Vaginais">
+                      Comprimidos Vaginais
+                    </option>
                     <option value="Óvulos">Óvulos</option>
                     <option value="Supositórios">Supositórios</option>
                     <option value="Enemas">Enemas</option>
                   </select>
                 </div>
-                
+
                 <div className={styles.formGroup}>
                   <label className={styles.label} htmlFor="laboratorio">
                     Laboratório:
                   </label>
-                  <select 
+                  <select
                     className={styles.select}
-                    id="laboratorio" 
-                    name="laboratorio" 
+                    id="laboratorio"
+                    name="laboratorio"
                     required
                     value={medicamento.laboratorio}
                     onChange={handleChange}
@@ -365,7 +389,11 @@ export default function EditarMedicamento() {
                   Salvar Alterações
                 </button>
 
-                <button type="button" className={styles.botaoSecondary} onClick={() => router.back()}>
+                <button
+                  type="button"
+                  className={styles.botaoSecondary}
+                  onClick={() => router.back()}
+                >
                   Cancelar
                 </button>
               </div>

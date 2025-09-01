@@ -5,15 +5,14 @@ import { useRouter } from "next/navigation";
 import styles from "../../../app/medicamentos/cadastro/cadastro.module.css";
 // import Cabecalho from "./componentes/cabecalho";
 
-const imagemPadrao = "https://www.institutoaron.com.br/static/img/large/c28a030a59bae1283321c340cdc846df.webp";
+const imagemPadrao =
+  "https://www.institutoaron.com.br/static/img/large/c28a030a59bae1283321c340cdc846df.webp";
 
 // Util para formatar preço em BRL com fallback seguro
 const currency =
   typeof Intl !== "undefined"
     ? new Intl.NumberFormat("pt-BR", { style: "currency", currency: "BRL" })
     : { format: (v) => `R$ ${Number(v).toFixed(2)}` };
-
-    
 
 const medicamentosIniciais = [
   {
@@ -38,8 +37,7 @@ const medicamentosIniciais = [
     descricao: "Analgésico e antitérmico.",
     laboratorio: "Neo Química",
     preco: 8.9, // <-- ADICIONADO
-    imagem:
-      "",
+    imagem: "",
   },
 ];
 
@@ -58,10 +56,7 @@ function ListagemMedicamentos() {
   };
 
   return (
-
-    
     <div className={styles.containermed}>
-      
       <h1 className={styles.titulo}>Painel de Controle</h1>
       <div
         style={{
@@ -94,7 +89,6 @@ function ListagemMedicamentos() {
         >
           + Novo Medicamento
         </Link>
-        
       </div>
       {medicamentos.length === 0 ? (
         <p style={{ textAlign: "center" }}>Nenhum medicamento cadastrado.</p>

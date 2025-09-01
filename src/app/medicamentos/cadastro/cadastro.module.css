@@ -4,8 +4,8 @@
   padding: 32px 24px;
   background: #fff;
   border-radius: 12px;
-  box-shadow: 0 2px 16px rgba(0,0,0,0.08);
-  font-family: 'montserrat';
+  box-shadow: 0 2px 16px rgba(0, 0, 0, 0.08);
+  font-family: "montserrat";
 }
 
 .containermed {
@@ -14,15 +14,15 @@
   padding: 32px 24px;
   background: #fff;
   border-radius: 12px;
-  box-shadow: 0 2px 16px rgba(0,0,0,0.08);
-  font-family: 'montserrat';
+  box-shadow: 0 2px 16px rgba(0, 0, 0, 0.08);
+  font-family: "montserrat";
 }
 
 .titulo {
   text-align: center;
   margin-bottom: 24px;
-  color: #27408B;
-  font-family: 'montserrat';
+  color: #27408b;
+  font-family: "montserrat";
 }
 
 .label {
@@ -62,7 +62,7 @@
 .bottao {
   width: 100%;
   padding: 10px 0;
-  background: #458B00;
+  background: #458b00;
   color: #fff;
   border: none;
   border-radius: 5px;
@@ -75,7 +75,7 @@
 .bottao1 {
   width: 100%;
   padding: 10px 0;
-  background: #458B00;
+  background: #458b00;
   color: #fff;
   border: none;
   border-radius: 5px;
@@ -94,7 +94,6 @@
   background: #006400;
 }
 
-
 .formGroup {
   margin-bottom: 18px;
   display: flex;
@@ -108,16 +107,17 @@
   background: #fff;
   border-radius: 8px;
   overflow: hidden;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
 }
 
-.tabela th, .tabela td {
+.tabela th,
+.tabela td {
   padding: 12px 8px;
   text-align: left;
 }
 
 .tabela th {
-  background: #27408B;
+  background: #27408b;
   color: #fff;
   font-weight: 600;
 }
@@ -149,4 +149,3 @@
   display: block;
   margin: 0 auto;
 }
-

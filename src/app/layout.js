@@ -1,4 +1,4 @@
-'use client';
+"use client";
 
 import { usePathname } from "next/navigation";
 import { Geist, Geist_Mono } from "next/font/google";
@@ -25,7 +25,18 @@ export default function RootLayout({ children }) {
 
   // 2. Defina as rotas para cada cabeçalho
   const useSecondaryHeader = ["/home"].includes(pathname);
-  const useThirdHeader = ["/index", "/farmacias/cadastro", "/farmacias/favoritos", "/farmacias/produtos/medicamentos", "/farmacias/laboratorio/lista", "/farmacias/laboratorio/cadastro", "/farmacias/laboratorio/cadastro/editar/1", "/farmacias/cadastro/funcionario", "/farmacias/cadastro/funcionario/lista", "/farmacias/cadastro/funcionario/editar/1"].includes(pathname); // ✅ Adicione as rotas do terceiro cabeçalho aqui
+  const useThirdHeader = [
+    "/index",
+    "/farmacias/cadastro",
+    "/farmacias/favoritos",
+    "/farmacias/produtos/medicamentos",
+    "/farmacias/laboratorio/lista",
+    "/farmacias/laboratorio/cadastro",
+    "/farmacias/laboratorio/cadastro/editar/1",
+    "/farmacias/cadastro/funcionario",
+    "/farmacias/cadastro/funcionario/lista",
+    "/farmacias/cadastro/funcionario/editar/1",
+  ].includes(pathname); // ✅ Adicione as rotas do terceiro cabeçalho aqui
 
   // Função para renderizar o cabeçalho correto
   const renderHeader = () => {

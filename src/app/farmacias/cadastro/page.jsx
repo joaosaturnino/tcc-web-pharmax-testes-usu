@@ -32,16 +32,16 @@ export default function CadastroFarmacia() {
   };
 
   const processFile = (file) => {
-    if (file && file.type.startsWith('image/')) {
+    if (file && file.type.startsWith("image/")) {
       setFarmacia({ ...farmacia, logo: file });
-      
+
       const reader = new FileReader();
       reader.onload = (e) => {
         setPreview(e.target.result);
       };
       reader.readAsDataURL(file);
     } else if (file) {
-      alert('Por favor, selecione apenas arquivos de imagem.');
+      alert("Por favor, selecione apenas arquivos de imagem.");
     }
   };
 
@@ -58,7 +58,7 @@ export default function CadastroFarmacia() {
   const handleDrop = (e) => {
     e.preventDefault();
     setIsDragging(false);
-    
+
     const files = e.dataTransfer.files;
     if (files.length > 0) {
       processFile(files[0]);
@@ -68,16 +68,16 @@ export default function CadastroFarmacia() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setIsSubmitting(true);
-    
+
     try {
       // Simular um delay para demonstração
-      await new Promise(resolve => setTimeout(resolve, 1500));
-      
+      await new Promise((resolve) => setTimeout(resolve, 1500));
+
       // Salvando no localStorage
-      const dadosFarmacia = { 
-        ...farmacia, 
+      const dadosFarmacia = {
+        ...farmacia,
         // Não salvar a preview no localStorage (é uma string muito grande)
-        logo: farmacia.logo ? farmacia.logo.name : null 
+        logo: farmacia.logo ? farmacia.logo.name : null,
       };
       localStorage.setItem("farmacia", JSON.stringify(dadosFarmacia));
 
@@ -104,9 +104,11 @@ export default function CadastroFarmacia() {
           <span className={styles.logoText}>PharmaSystem</span>
         </div>
         <h1 className={styles.titulo}>Cadastro de Farmácia</h1>
-        <p className={styles.subtitulo}>Preencha os dados abaixo para criar sua conta</p>
+        <p className={styles.subtitulo}>
+          Preencha os dados abaixo para criar sua conta
+        </p>
       </div>
-      
+
       <div className={styles.formContainer}>
         <form onSubmit={handleSubmit} className={styles.form}>
           <div className={styles.formGrid}>
@@ -186,20 +188,32 @@ export default function CadastroFarmacia() {
                 required
               />
               <div className={styles.passwordStrength}>
-                <div className={`${styles.strengthBar} ${farmacia.senha.length > 0 ? styles.weak : ''} ${farmacia.senha.length > 5 ? styles.medium : ''} ${farmacia.senha.length > 8 ? styles.strong : ''}`}></div>
+                <div
+                  className={`${styles.strengthBar} ${
+                    farmacia.senha.length > 0 ? styles.weak : ""
+                  } ${farmacia.senha.length > 5 ? styles.medium : ""} ${
+                    farmacia.senha.length > 8 ? styles.strong : ""
+                  }`}
+                ></div>
                 <span className={styles.strengthText}>
-                  {farmacia.senha.length === 0 ? 'Força da senha' : 
-                   farmacia.senha.length < 6 ? 'Fraca' : 
-                   farmacia.senha.length < 9 ? 'Média' : 'Forte'}
+                  {farmacia.senha.length === 0
+                    ? "Força da senha"
+                    : farmacia.senha.length < 6
+                    ? "Fraca"
+                    : farmacia.senha.length < 9
+                    ? "Média"
+                    : "Forte"}
                 </span>
               </div>
             </div>
 
             <div className={`${styles.formGroup} ${styles.fullWidth}`}>
               <label className={styles.label}>Logo da Farmácia</label>
-              
-              <div 
-                className={`${styles.fileUploadContainer} ${isDragging ? styles.dragging : ''}`}
+
+              <div
+                className={`${styles.fileUploadContainer} ${
+                  isDragging ? styles.dragging : ""
+                }`}
                 onDragOver={handleDragOver}
                 onDragLeave={handleDragLeave}
                 onDrop={handleDrop}
@@ -213,17 +227,21 @@ export default function CadastroFarmacia() {
                   onChange={handleFileChange}
                   className={styles.fileInput}
                 />
-                
+
                 {preview ? (
                   <div className={styles.previewContainer}>
-                    <img src={preview} alt="Pré-visualização" className={styles.logoPreview} />
-                    <button 
-                      type="button" 
+                    <img
+                      src={preview}
+                      alt="Pré-visualização"
+                      className={styles.logoPreview}
+                    />
+                    <button
+                      type="button"
                       className={styles.removeImageBtn}
                       onClick={(e) => {
                         e.stopPropagation();
                         setPreview(null);
-                        setFarmacia({...farmacia, logo: null});
+                        setFarmacia({ ...farmacia, logo: null });
                       }}
                     >
                       ✕
@@ -239,26 +257,28 @@ export default function CadastroFarmacia() {
                   </div>
                 )}
               </div>
-              
+
               {farmacia.logo && (
                 <div className={styles.fileInfo}>
                   <span>Arquivo selecionado: {farmacia.logo.name}</span>
-                  <span>Tamanho: {(farmacia.logo.size / 1024).toFixed(2)} KB</span>
+                  <span>
+                    Tamanho: {(farmacia.logo.size / 1024).toFixed(2)} KB
+                  </span>
                 </div>
               )}
             </div>
           </div>
 
           <div className={styles.formActions}>
-            <button 
-              type="button" 
+            <button
+              type="button"
               className={styles.cancelButton}
               onClick={() => router.back()}
             >
               Cancelar
             </button>
-            <button 
-              type="submit" 
+            <button
+              type="submit"
               className={styles.submitButton}
               disabled={isSubmitting}
             >
@@ -273,9 +293,14 @@ export default function CadastroFarmacia() {
             </button>
           </div>
         </form>
-        
+
         <div className={styles.loginRedirect}>
-          <p>Já possui uma conta? <a href="/login" className={styles.loginLink}>Faça login</a></p>
+          <p>
+            Já possui uma conta?{" "}
+            <a href="/login" className={styles.loginLink}>
+              Faça login
+            </a>
+          </p>
         </div>
       </div>
     </div>

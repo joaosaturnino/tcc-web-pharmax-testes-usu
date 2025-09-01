@@ -1,14 +1,13 @@
-'use client'
+"use client";
 
-import { useState } from 'react';
-import Link from 'next/link';
-import { usePathname } from 'next/navigation';
-import { MdMenu } from 'react-icons/md';
+import { useState } from "react";
+import Link from "next/link";
+import { usePathname } from "next/navigation";
+import { MdMenu } from "react-icons/md";
 
-import styles from './index.module.css';
+import styles from "./index.module.css";
 
 function Cabecalho() {
-
   const [mobile, setMobile] = useState(false);
 
   const rota = usePathname();
@@ -22,14 +21,20 @@ function Cabecalho() {
       <div className={styles.menu}>
         <div>
           {/* Substitua o caminho abaixo pela sua imagem de logo */}
-          <img src="/temp/LogoEscrita.png" alt="Logo PharmaX" className={styles.logoImg} />
+          <img
+            src="/temp/LogoEscrita.png"
+            alt="Logo PharmaX"
+            className={styles.logoImg}
+          />
         </div>
         <nav className={styles.menuGrande}>
           <Link
-          href='/sobre'
-          onClick={ativaMenu}
-          className={rota === '/sobre' ? styles.active : ''}
-        >Sobre</Link>
+            href="/sobre"
+            onClick={ativaMenu}
+            className={rota === "/sobre" ? styles.active : ""}
+          >
+            Sobre
+          </Link>
         </nav>
         <div className={styles.menuMobile}>
           <MdMenu onClick={ativaMenu} className={styles.icon} id="logo" />
@@ -37,29 +42,41 @@ function Cabecalho() {
       </div>
 
       <div
-        className={mobile === false ? styles.menuMobileExpandidon : styles.menuMobileExpandidos}
+        className={
+          mobile === false
+            ? styles.menuMobileExpandidon
+            : styles.menuMobileExpandidos
+        }
         id="mostraOpMobile"
       >
         <Link
-          href='/'
+          href="/"
           onClick={ativaMenu}
-          className={rota === './contato' ? styles.active : ''}
-        >Home</Link>
+          className={rota === "./contato" ? styles.active : ""}
+        >
+          Home
+        </Link>
         <Link
-          href='/produtos/medicamentos'
+          href="/produtos/medicamentos"
           onClick={ativaMenu}
-          className={rota === '/produtos/medicamentos' ? styles.active : ''}
-        >Controle</Link>
+          className={rota === "/produtos/medicamentos" ? styles.active : ""}
+        >
+          Controle
+        </Link>
         <Link
-          href='/sobre'
+          href="/sobre"
           onClick={ativaMenu}
-          className={rota === '/sobre' ? styles.active : ''}
-        >Sobre</Link>
+          className={rota === "/sobre" ? styles.active : ""}
+        >
+          Sobre
+        </Link>
         <Link
-          href='/usuario/perfil'
+          href="/usuario/perfil"
           onClick={ativaMenu}
-          className={rota === '/usuario/perfil' ? styles.active : ''}
-        >Perfil</Link>
+          className={rota === "/usuario/perfil" ? styles.active : ""}
+        >
+          Perfil
+        </Link>
       </div>
     </header>
   );

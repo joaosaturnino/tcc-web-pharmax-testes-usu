@@ -13,7 +13,7 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
   position: sticky;
   top: 0;
   z-index: 100;
@@ -112,7 +112,7 @@
   display: flex;
   flex-direction: column;
   transition: transform 0.3s ease;
-  box-shadow: 2px 0 10px rgba(0,0,0,0.1);
+  box-shadow: 2px 0 10px rgba(0, 0, 0, 0.1);
   z-index: 90;
 }
 
@@ -121,7 +121,7 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  border-bottom: 1px solid rgba(255,255,255,0.1);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
 }
 
 .logo {
@@ -154,7 +154,7 @@
 }
 
 .sidebarClose:hover {
-  background: rgba(255,255,255,0.1);
+  background: rgba(255, 255, 255, 0.1);
 }
 
 .nav {
@@ -192,7 +192,7 @@
 }
 
 .navLink:hover {
-  background: rgba(255,255,255,0.1);
+  background: rgba(255, 255, 255, 0.1);
   color: white;
 }
 
@@ -216,7 +216,7 @@
 
 .userPanel {
   padding: 20px;
-  border-top: 1px solid rgba(255,255,255,0.1);
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
   display: flex;
   align-items: center;
   gap: 12px;
@@ -226,7 +226,7 @@
   width: 40px;
   height: 40px;
   border-radius: 50%;
-  background: rgba(255,255,255,0.1);
+  background: rgba(255, 255, 255, 0.1);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -287,7 +287,7 @@
   background: white;
   border-radius: 16px;
   padding: 40px;
-  box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
 }
 
 .formGrid {
@@ -335,7 +335,7 @@
 }
 
 .inputLabel::after {
-  content: '';
+  content: "";
   display: inline-block;
   width: 4px;
   height: 4px;
@@ -440,7 +440,7 @@ select.modernInput {
     grid-template-columns: 1fr;
     gap: 30px;
   }
-  
+
   .searchInput {
     width: 200px;
   }
@@ -450,7 +450,7 @@ select.modernInput {
   .menuToggle {
     display: block;
   }
-  
+
   .sidebar {
     position: fixed;
     top: 0;
@@ -459,50 +459,51 @@ select.modernInput {
     transform: translateX(-100%);
     z-index: 90;
   }
-  
+
   .sidebarOpen {
     transform: translateX(0);
   }
-  
+
   .sidebarClose {
     display: block;
   }
-  
+
   .overlay {
     display: block;
   }
-  
+
   .header {
     padding: 16px 20px;
   }
-  
+
   .headerActions {
     flex-wrap: wrap;
     gap: 12px;
   }
-  
+
   .searchInput {
     width: 180px;
   }
-  
+
   .formContainer {
     padding: 20px;
   }
-  
+
   .form {
     padding: 24px;
   }
-  
+
   .formRow {
     grid-template-columns: 1fr;
     gap: 0;
   }
-  
+
   .formActions {
     flex-direction: column;
   }
-  
-  .cancelButton, .submitButton {
+
+  .cancelButton,
+  .submitButton {
     width: 100%;
     justify-content: center;
   }
@@ -514,28 +515,28 @@ select.modernInput {
     gap: 16px;
     align-items: flex-start;
   }
-  
+
   .headerActions {
     width: 100%;
     justify-content: space-between;
   }
-  
+
   .searchBox {
     width: 100%;
   }
-  
+
   .searchInput {
     width: 100%;
   }
-  
+
   .formContainer {
     padding: 16px;
   }
-  
+
   .form {
     padding: 20px;
   }
-  
+
   .formHeader h2 {
     font-size: 24px;
   }
@@ -629,7 +630,7 @@ select.modernInput {
     grid-template-columns: 1fr;
     gap: 1.5rem;
   }
-  
+
   .sidebar {
     position: fixed;
     top: 0;
@@ -638,19 +639,19 @@ select.modernInput {
     z-index: 1000;
     transform: translateX(-100%);
   }
-  
+
   .sidebarOpen {
     transform: translateX(0);
   }
-  
+
   .sidebarClose {
     display: block;
   }
-  
+
   .overlay {
     display: block;
   }
-  
+
   .headerActions {
     display: none;
   }
@@ -660,37 +661,36 @@ select.modernInput {
   .mainContent {
     padding: 1rem;
   }
-  
+
   .formContainer {
     padding: 1.5rem;
   }
-  
+
   .formRow {
     grid-template-columns: 1fr;
     gap: 0;
   }
-  
+
   .searchInput {
     width: 180px;
   }
-
 }
 @media (max-width: 480px) {
   .header {
     padding: 1rem;
   }
-  
+
   .title {
     font-size: 1.25rem;
   }
-  
+
   .formActions {
     flex-direction: column;
   }
-  
-  .cancelButton, .submitButton {
+
+  .cancelButton,
+  .submitButton {
     width: 100%;
     justify-content: center;
   }
-
 }

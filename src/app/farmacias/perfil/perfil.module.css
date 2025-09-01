@@ -235,7 +235,8 @@
   cursor: pointer;
 }
 
-.navLink:hover, .navLink.active {
+.navLink:hover,
+.navLink.active {
   background: rgba(255, 255, 255, 0.1);
   color: white;
 }
@@ -315,8 +316,12 @@
 }
 
 @keyframes spin {
-  0% { transform: rotate(0deg); }
-  100% { transform: rotate(360deg); }
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
 }
 
 /* Profile Header */
@@ -425,7 +430,9 @@
   font-size: 18px;
 }
 
-.editBtn, .saveBtn, .cancelBtn {
+.editBtn,
+.saveBtn,
+.cancelBtn {
   padding: 8px 16px;
   border-radius: 6px;
   font-size: 14px;
@@ -498,7 +505,8 @@
   align-items: center;
 }
 
-.formGroup input, .formGroup select {
+.formGroup input,
+.formGroup select {
   padding: 10px;
   border: 1px solid #ddd;
   border-radius: 6px;
@@ -506,7 +514,8 @@
   transition: all 0.3s ease;
 }
 
-.formGroup input:focus, .formGroup select:focus {
+.formGroup input:focus,
+.formGroup select:focus {
   outline: none;
   border-color: #3498db;
   box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.2);
@@ -567,7 +576,7 @@
   right: 0;
   bottom: 0;
   background-color: #ccc;
-  transition: .4s;
+  transition: 0.4s;
   border-radius: 24px;
 }
 
@@ -579,7 +588,7 @@
   left: 4px;
   bottom: 4px;
   background-color: white;
-  transition: .4s;
+  transition: 0.4s;
   border-radius: 50%;
 }
 
@@ -596,12 +605,12 @@ input:checked + .slider:before {
   .formGrid {
     grid-template-columns: 1fr;
   }
-  
+
   .profileHeader {
     flex-direction: column;
     text-align: center;
   }
-  
+
   .statsSection {
     justify-content: center;
   }
@@ -613,23 +622,23 @@ input:checked + .slider:before {
     left: -280px;
     height: 100vh;
   }
-  
+
   .sidebarOpen {
     left: 0;
   }
-  
+
   .sidebarClose {
     display: block;
   }
-  
+
   .overlay {
     display: block;
   }
-  
+
   .headerActions {
     display: none;
   }
-  
+
   .searchBox {
     display: none;
   }
@@ -639,28 +648,30 @@ input:checked + .slider:before {
   .mainContent {
     padding: 15px;
   }
-  
-  .profileHeader, .profileContent {
+
+  .profileHeader,
+  .profileContent {
     padding: 15px;
   }
-  
+
   .statsSection {
     flex-direction: column;
     gap: 15px;
   }
-  
+
   .sectionHeader {
     flex-direction: column;
     align-items: flex-start;
     gap: 10px;
   }
-  
+
   .editActions {
     width: 100%;
     justify-content: space-between;
   }
-  
-  .saveBtn, .cancelBtn {
+
+  .saveBtn,
+  .cancelBtn {
     flex: 1;
   }
 }

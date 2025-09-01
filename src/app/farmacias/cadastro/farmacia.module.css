@@ -1,12 +1,12 @@
 .container {
   min-height: 100vh;
-  
+
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
   padding: 20px;
-  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
 }
 
 .header {
@@ -113,7 +113,7 @@
 }
 
 .strengthBar::after {
-  content: '';
+  content: "";
   position: absolute;
   left: 0;
   top: 0;
@@ -272,8 +272,12 @@
 }
 
 @keyframes spin {
-  0% { transform: rotate(0deg); }
-  100% { transform: rotate(360deg); }
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
 }
 
 .loginRedirect {
@@ -299,24 +303,25 @@
   .container {
     padding: 15px;
   }
-  
+
   .formContainer {
     padding: 25px;
   }
-  
+
   .formGrid {
     grid-template-columns: 1fr;
   }
-  
+
   .formGroup.fullWidth {
     grid-column: 1;
   }
-  
+
   .formActions {
     flex-direction: column;
   }
-  
-  .cancelButton, .submitButton {
+
+  .cancelButton,
+  .submitButton {
     width: 100%;
     justify-content: center;
   }
@@ -326,11 +331,11 @@
   .titulo {
     font-size: 24px;
   }
-  
+
   .logoText {
     font-size: 20px;
   }
-  
+
   .formContainer {
     padding: 20px;
   }
@@ -457,15 +462,15 @@
     padding: 20px;
     min-height: 120px;
   }
-  
+
   .uploadIcon {
     font-size: 24px;
   }
-  
+
   .uploadText p {
     font-size: 14px;
   }
-  
+
   .logoPreview {
     width: 120px;
     height: 120px;

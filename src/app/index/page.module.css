@@ -1,7 +1,7 @@
 .container {
   min-height: 100vh;
   display: flex;
-  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
   background: #f8fafc;
 }
 
@@ -129,7 +129,7 @@
 }
 
 .strengthBar::after {
-  content: '';
+  content: "";
   position: absolute;
   left: 0;
   top: 0;
@@ -226,8 +226,12 @@
 }
 
 @keyframes spin {
-  0% { transform: rotate(0deg); }
-  100% { transform: rotate(360deg); }
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
 }
 
 .divider {
@@ -239,7 +243,7 @@
 
 .divider::before,
 .divider::after {
-  content: '';
+  content: "";
   flex: 1;
   height: 1px;
   background: #e2e8f0;
@@ -343,18 +347,18 @@
   .container {
     flex-direction: column;
   }
-  
+
   .loginCard {
     max-width: none;
     padding: 24px;
   }
-  
+
   .options {
     flex-direction: column;
     align-items: flex-start;
     gap: 12px;
   }
-  
+
   .forgotPassword {
     align-self: flex-end;
   }
@@ -364,16 +368,17 @@
   .titulo {
     font-size: 24px;
   }
-  
+
   .logoText {
     font-size: 20px;
   }
-  
+
   .input {
     padding: 14px;
   }
-  
-  .botao, .googleBtn {
+
+  .botao,
+  .googleBtn {
     padding: 14px;
   }
 }

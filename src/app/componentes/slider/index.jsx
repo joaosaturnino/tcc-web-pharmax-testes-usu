@@ -1,9 +1,8 @@
 "use client";
 import Image from "next/image";
-import { Carousel } from 'react-responsive-carousel';
+import { Carousel } from "react-responsive-carousel";
 import style from "./index.module.css";
 import "react-responsive-carousel/lib/styles/carousel.min.css";
-
 
 export default function Slider({ imagens }) {
   return (
@@ -22,6 +21,3 @@ export default function Slider({ imagens }) {
     </Carousel>
   );
 }
-
-
-

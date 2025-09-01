@@ -21,9 +21,19 @@ export default function FavoritosFarmaciaPage() {
           userAvatar: "👩",
           favoritedAt: "2025-08-01T10:22:00Z",
           meds: [
-            { id: "m1", nome: "Paracetamol 500mg", dosagem: "500mg", status: "em_estoque" },
-            { id: "m2", nome: "Omeprazol 20mg", dosagem: "20mg", status: "pendente" }
-          ]
+            {
+              id: "m1",
+              nome: "Paracetamol 500mg",
+              dosagem: "500mg",
+              status: "em_estoque",
+            },
+            {
+              id: "m2",
+              nome: "Omeprazol 20mg",
+              dosagem: "20mg",
+              status: "pendente",
+            },
+          ],
         },
         {
           userId: "u2",
@@ -32,8 +42,13 @@ export default function FavoritosFarmaciaPage() {
           userAvatar: "👨",
           favoritedAt: "2025-08-05T15:12:00Z",
           meds: [
-            { id: "m3", nome: "Cetirizina 10mg", dosagem: "10mg", status: "indisponivel" }
-          ]
+            {
+              id: "m3",
+              nome: "Cetirizina 10mg",
+              dosagem: "10mg",
+              status: "indisponivel",
+            },
+          ],
         },
         {
           userId: "u3",
@@ -42,10 +57,20 @@ export default function FavoritosFarmaciaPage() {
           userAvatar: "👩",
           favoritedAt: "2025-08-10T09:45:00Z",
           meds: [
-            { id: "m4", nome: "Dipirona 500mg", dosagem: "500mg", status: "em_estoque" },
-            { id: "m5", nome: "Amoxilina 500mg", dosagem: "500mg", status: "em_estoque" }
-          ]
-        }
+            {
+              id: "m4",
+              nome: "Dipirona 500mg",
+              dosagem: "500mg",
+              status: "em_estoque",
+            },
+            {
+              id: "m5",
+              nome: "Amoxilina 500mg",
+              dosagem: "500mg",
+              status: "em_estoque",
+            },
+          ],
+        },
       ]);
       setLoading(false);
     }, 800);
@@ -56,20 +81,20 @@ export default function FavoritosFarmaciaPage() {
     try {
       // Aqui você implementaria a lógica real de logout
       // Por exemplo, limpar tokens, cookies, etc.
-      
+
       // Simulação de uma requisição de logout
       // await fetch('/api/auth/logout', { method: 'POST' });
-      
+
       // Limpar dados de autenticação do localStorage/sessionStorage (se aplicável)
-      localStorage.removeItem('authToken');
-      sessionStorage.removeItem('userData');
-      
+      localStorage.removeItem("authToken");
+      sessionStorage.removeItem("userData");
+
       // Redirecionar para a página de login
-      router.push('/login');
+      router.push("/login");
     } catch (error) {
-      console.error('Erro ao fazer logout:', error);
+      console.error("Erro ao fazer logout:", error);
       // Mesmo em caso de erro, redirecionar para a página de login
-      router.push('/login');
+      router.push("/login");
     }
   };
 
@@ -89,7 +114,7 @@ export default function FavoritosFarmaciaPage() {
       {/* Header com botão para toggle da sidebar */}
       <header className={styles.header}>
         <div className={styles.headerLeft}>
-          <button 
+          <button
             className={styles.menuToggle}
             onClick={() => setSidebarOpen(!sidebarOpen)}
           >
@@ -97,42 +122,56 @@ export default function FavoritosFarmaciaPage() {
           </button>
           <h1 className={styles.title}>Medicamentos Favoritados</h1>
         </div>
-        
       </header>
 
       <div className={styles.contentWrapper}>
         {/* Sidebar Não Fixa - Integrada ao fluxo do documento */}
-        <aside className={`${styles.sidebar} ${sidebarOpen ? styles.sidebarOpen : ''}`}>
+        <aside
+          className={`${styles.sidebar} ${
+            sidebarOpen ? styles.sidebarOpen : ""
+          }`}
+        >
           <div className={styles.sidebarHeader}>
             <div className={styles.logo}>
               <span className={styles.logoIcon}>💊</span>
               <span className={styles.logoText}>PharmaX</span>
             </div>
-            <button 
+            <button
               className={styles.sidebarClose}
               onClick={() => setSidebarOpen(false)}
             >
               ×
             </button>
           </div>
-          
+
           <nav className={styles.nav}>
             <div className={styles.navSection}>
               <p className={styles.navLabel}>Principal</p>
-              <a href="/farmacias/favoritos" className={`${styles.navLink} ${styles.active}`}>
+              <a
+                href="/farmacias/favoritos"
+                className={`${styles.navLink} ${styles.active}`}
+              >
                 <span className={styles.navIcon}>⭐</span>
                 <span className={styles.navText}>Favoritos</span>
-                <span className={styles.notificationBadge}>{favoritos.length}</span>
+                <span className={styles.notificationBadge}>
+                  {favoritos.length}
+                </span>
               </a>
-              <a href="/farmacias/produtos/medicamentos" className={styles.navLink}>
+              <a
+                href="/farmacias/produtos/medicamentos"
+                className={styles.navLink}
+              >
                 <span className={styles.navIcon}>💊</span>
                 <span className={styles.navText}>Medicamentos</span>
               </a>
             </div>
-            
+
             <div className={styles.navSection}>
               <p className={styles.navLabel}>Gestão</p>
-              <a href="/farmacias/cadastro/funcionario/lista" className={styles.navLink}>
+              <a
+                href="/farmacias/cadastro/funcionario/lista"
+                className={styles.navLink}
+              >
                 <span className={styles.navIcon}>👩‍⚕️</span>
                 <span className={styles.navText}>Funcionários</span>
               </a>
@@ -141,14 +180,17 @@ export default function FavoritosFarmaciaPage() {
                 <span className={styles.navText}>Laboratórios</span>
               </a>
             </div>
-            
+
             <div className={styles.navSection}>
               {/* <p className={styles.navLabel}>Sistema</p> */}
               {/* <a href="../../configuracoes" className={styles.navLink}>
                 <span className={styles.navIcon}>⚙️</span>
                 <span className={styles.navText}>Configurações</span>
               </a> */}
-              <a href="./perfil" className={`${styles.navLink} ${styles.active}`}>
+              <a
+                href="./perfil"
+                className={`${styles.navLink} ${styles.active}`}
+              >
                 <span className={styles.navIcon}>👤</span>
                 <span className={styles.navText}>Meu Perfil</span>
               </a>
@@ -159,7 +201,7 @@ export default function FavoritosFarmaciaPage() {
               </button>
             </div>
           </nav>
-          
+
           <div className={styles.userPanel}>
             <div className={styles.userAvatar}>
               <span>👤</span>
@@ -173,7 +215,7 @@ export default function FavoritosFarmaciaPage() {
 
         {/* Overlay para fechar a sidebar ao clicar fora (apenas em mobile) */}
         {sidebarOpen && (
-          <div 
+          <div
             className={styles.overlay}
             onClick={() => setSidebarOpen(false)}
           />
@@ -192,14 +234,23 @@ export default function FavoritosFarmaciaPage() {
             <div className={styles.statCard}>
               <div className={styles.statIcon}>💊</div>
               <div className={styles.statContent}>
-                <h3>{favoritos.reduce((acc, user) => acc + user.meds.length, 0)}</h3>
+                <h3>
+                  {favoritos.reduce((acc, user) => acc + user.meds.length, 0)}
+                </h3>
                 <p>Medicamentos</p>
               </div>
             </div>
             <div className={styles.statCard}>
               <div className={styles.statIcon}>✅</div>
               <div className={styles.statContent}>
-                <h3>{favoritos.reduce((acc, user) => acc + user.meds.filter(m => m.status === 'em_estoque').length, 0)}</h3>
+                <h3>
+                  {favoritos.reduce(
+                    (acc, user) =>
+                      acc +
+                      user.meds.filter((m) => m.status === "em_estoque").length,
+                    0
+                  )}
+                </h3>
                 <p>Disponíveis</p>
               </div>
             </div>
@@ -217,13 +268,16 @@ export default function FavoritosFarmaciaPage() {
                       <h2>{user.userName}</h2>
                       <p>{user.userEmail}</p>
                       <span className={styles.favoriteDate}>
-                        Favoritado em {new Date(user.favoritedAt).toLocaleDateString()}
+                        Favoritado em{" "}
+                        {new Date(user.favoritedAt).toLocaleDateString()}
                       </span>
                     </div>
                   </div>
                   <button
                     className={styles.contactBtn}
-                    onClick={() => (window.location.href = `mailto:${user.userEmail}`)}
+                    onClick={() =>
+                      (window.location.href = `mailto:${user.userEmail}`)
+                    }
                     title="Enviar e-mail"
                   >
                     ✉️ Contatar

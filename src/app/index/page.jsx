@@ -23,13 +23,13 @@ export default function Login() {
 
     if (email && senha) {
       // Simular um processo de login
-      await new Promise(resolve => setTimeout(resolve, 1500));
-      
+      await new Promise((resolve) => setTimeout(resolve, 1500));
+
       localStorage.setItem(
         "farmacia",
         JSON.stringify({ email, senha, nome: "Minha Farmácia" })
       );
-      
+
       setIsLoading(false);
       router.push("farmacias/favoritos");
     } else {
@@ -40,7 +40,7 @@ export default function Login() {
 
   const handleForgotPassword = async (e) => {
     e.preventDefault();
-    
+
     if (!recoveryEmail) {
       alert("Por favor, informe seu e-mail.");
       return;
@@ -48,19 +48,19 @@ export default function Login() {
 
     // Simular envio de e-mail
     setIsLoading(true);
-    await new Promise(resolve => setTimeout(resolve, 2000));
-    
+    await new Promise((resolve) => setTimeout(resolve, 2000));
+
     // Avançar para a etapa de código
     setRecoveryStep(2);
     setIsLoading(false);
-    
+
     // Em produção, aqui você enviaria o e-mail com o código
     console.log(`Código de recuperação enviado para: ${recoveryEmail}`);
   };
 
   const verifyRecoveryCode = async (e) => {
     e.preventDefault();
-    
+
     if (!recoveryCode) {
       alert("Por favor, informe o código recebido.");
       return;
@@ -68,8 +68,8 @@ export default function Login() {
 
     // Simular verificação do código
     setIsLoading(true);
-    await new Promise(resolve => setTimeout(resolve, 1500));
-    
+    await new Promise((resolve) => setTimeout(resolve, 1500));
+
     // Avançar para a etapa de nova senha
     setRecoveryStep(3);
     setIsLoading(false);
@@ -77,17 +77,17 @@ export default function Login() {
 
   const resetPassword = async (e) => {
     e.preventDefault();
-    
+
     if (!newPassword || !confirmPassword) {
       alert("Por favor, preencha todos os campos.");
       return;
     }
-    
+
     if (newPassword !== confirmPassword) {
       alert("As senhas não coincidem.");
       return;
     }
-    
+
     if (newPassword.length < 6) {
       alert("A senha deve ter pelo menos 6 caracteres.");
       return;
@@ -95,11 +95,11 @@ export default function Login() {
 
     // Simular redefinição de senha
     setIsLoading(true);
-    await new Promise(resolve => setTimeout(resolve, 2000));
-    
+    await new Promise((resolve) => setTimeout(resolve, 2000));
+
     // Em produção, aqui você atualizaria a senha no banco de dados
     console.log(`Senha redefinida para: ${recoveryEmail}`);
-    
+
     // Fechar o modal e resetar o estado
     setShowForgotPassword(false);
     setRecoveryStep(1);
@@ -108,8 +108,10 @@ export default function Login() {
     setNewPassword("");
     setConfirmPassword("");
     setIsLoading(false);
-    
-    alert("Senha redefinida com sucesso! Você já pode fazer login com a nova senha.");
+
+    alert(
+      "Senha redefinida com sucesso! Você já pode fazer login com a nova senha."
+    );
   };
 
   const closeRecoveryModal = () => {
@@ -130,7 +132,9 @@ export default function Login() {
             <span className={styles.logoText}>PharmaX</span>
           </div>
           <h1 className={styles.titulo}>Bem-vindo de volta</h1>
-          <p className={styles.subtitulo}>Faça login em sua conta para continuar</p>
+          <p className={styles.subtitulo}>
+            Faça login em sua conta para continuar
+          </p>
         </div>
 
         <form className={styles.form} onSubmit={handleSubmit}>
@@ -169,7 +173,13 @@ export default function Login() {
               </button>
             </div>
             <div className={styles.passwordStrength}>
-              <div className={`${styles.strengthBar} ${senha.length > 0 ? styles.weak : ''} ${senha.length > 5 ? styles.medium : ''} ${senha.length > 8 ? styles.strong : ''}`}></div>
+              <div
+                className={`${styles.strengthBar} ${
+                  senha.length > 0 ? styles.weak : ""
+                } ${senha.length > 5 ? styles.medium : ""} ${
+                  senha.length > 8 ? styles.strong : ""
+                }`}
+              ></div>
             </div>
           </div>
 
@@ -178,8 +188,8 @@ export default function Login() {
               <input type="checkbox" disabled={isLoading} />
               <span>Lembrar-me</span>
             </label>
-            <button 
-              type="button" 
+            <button
+              type="button"
               className={styles.forgotPasswordBtn}
               onClick={() => setShowForgotPassword(true)}
               disabled={isLoading}
@@ -188,11 +198,7 @@ export default function Login() {
             </button>
           </div>
 
-          <button 
-            type="submit" 
-            className={styles.botao}
-            disabled={isLoading}
-          >
+          <button type="submit" className={styles.botao} disabled={isLoading}>
             {isLoading ? (
               <>
                 <span className={styles.spinner}></span>
@@ -219,7 +225,10 @@ export default function Login() {
         <div className={styles.illustrationContent}>
           <div className={styles.pharmaIcon}>💊</div>
           <h2>PharmaX</h2>
-          <p>Sistema de Busca e Comparação de Preços de Medicamentos em uma única plataforma</p>
+          <p>
+            Sistema de Busca e Comparação de Preços de Medicamentos em uma única
+            plataforma
+          </p>
         </div>
       </div>
 
@@ -233,7 +242,7 @@ export default function Login() {
                 {recoveryStep === 2 && "Verificar Código"}
                 {recoveryStep === 3 && "Nova Senha"}
               </h2>
-              <button 
+              <button
                 className={styles.modalClose}
                 onClick={closeRecoveryModal}
                 disabled={isLoading}
@@ -283,7 +292,9 @@ export default function Login() {
               {recoveryStep === 2 && (
                 <form onSubmit={verifyRecoveryCode}>
                   <div className={styles.formGroup}>
-                    <label className={styles.label}>Código de verificação</label>
+                    <label className={styles.label}>
+                      Código de verificação
+                    </label>
                     <input
                       type="text"
                       className={styles.input}
@@ -295,7 +306,8 @@ export default function Login() {
                     />
                   </div>
                   <p className={styles.helpText}>
-                    Verifique sua caixa de entrada e insira o código de 6 dígitos.
+                    Verifique sua caixa de entrada e insira o código de 6
+                    dígitos.
                   </p>
                   <div className={styles.modalActions}>
                     <button

@@ -1,28 +1,37 @@
-'use client';
+"use client";
 
-import { useState } from 'react';
-import { useRouter } from 'next/navigation';
-import styles from './cadastro.module.css';
+import { useState } from "react";
+import { useRouter } from "next/navigation";
+import styles from "./cadastro.module.css";
 
 function CadastroMedicamento() {
-  const [nome, setNome] = useState('');
-  const [dosagem, setDosagem] = useState('');
-  const [quantidade, setQuantidade] = useState('');
-  const [tipo, setTipo] = useState('');
-  const [forma, setForma] = useState('');
-  const [descricao, setDescricao] = useState('');
-  const [preco, setPreco] = useState('');
-  const [laboratorio, setLaboratorio] = useState('');
+  const [nome, setNome] = useState("");
+  const [dosagem, setDosagem] = useState("");
+  const [quantidade, setQuantidade] = useState("");
+  const [tipo, setTipo] = useState("");
+  const [forma, setForma] = useState("");
+  const [descricao, setDescricao] = useState("");
+  const [preco, setPreco] = useState("");
+  const [laboratorio, setLaboratorio] = useState("");
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const router = useRouter();
 
   const handleSubmit = (e) => {
     e.preventDefault();
     // Aqui você pode adicionar a lógica para enviar os dados para o backend
-    console.log({ nome, dosagem, preco, descricao, quantidade, tipo, forma, laboratorio });
-    
+    console.log({
+      nome,
+      dosagem,
+      preco,
+      descricao,
+      quantidade,
+      tipo,
+      forma,
+      laboratorio,
+    });
+
     // Redireciona para a página de listagem de medicamentos após o cadastro
-    router.push('/farmacias/produtos/medicamentos');
+    router.push("/farmacias/produtos/medicamentos");
   };
 
   return (
@@ -30,7 +39,7 @@ function CadastroMedicamento() {
       {/* Header com botão para toggle da sidebar */}
       <header className={styles.header}>
         <div className={styles.headerLeft}>
-          <button 
+          <button
             className={styles.menuToggle}
             onClick={() => setSidebarOpen(!sidebarOpen)}
           >
@@ -38,25 +47,28 @@ function CadastroMedicamento() {
           </button>
           <h1 className={styles.title}>Cadastro de Medicamentos</h1>
         </div>
-        
       </header>
 
       <div className={styles.contentWrapper}>
         {/* Sidebar */}
-        <aside className={`${styles.sidebar} ${sidebarOpen ? styles.sidebarOpen : ''}`}>
+        <aside
+          className={`${styles.sidebar} ${
+            sidebarOpen ? styles.sidebarOpen : ""
+          }`}
+        >
           <div className={styles.sidebarHeader}>
             <div className={styles.logo}>
               <span className={styles.logoIcon}>💊</span>
               <span className={styles.logoText}>PharmaX</span>
             </div>
-            <button 
+            <button
               className={styles.sidebarClose}
               onClick={() => setSidebarOpen(false)}
             >
               ×
             </button>
           </div>
-          
+
           <nav className={styles.nav}>
             <div className={styles.navSection}>
               <p className={styles.navLabel}>Principal</p>
@@ -64,15 +76,21 @@ function CadastroMedicamento() {
                 <span className={styles.navIcon}>⭐</span>
                 <span className={styles.navText}>Favoritos</span>
               </a>
-              <a href="/farmacias/produtos/medicamentos" className={`${styles.navLink} ${styles.active}`}>
+              <a
+                href="/farmacias/produtos/medicamentos"
+                className={`${styles.navLink} ${styles.active}`}
+              >
                 <span className={styles.navIcon}>💊</span>
                 <span className={styles.navText}>Medicamentos</span>
               </a>
             </div>
-            
+
             <div className={styles.navSection}>
               <p className={styles.navLabel}>Gestão</p>
-              <a href="/farmacias/cadastro/funcionario/lista" className={styles.navLink}>
+              <a
+                href="/farmacias/cadastro/funcionario/lista"
+                className={styles.navLink}
+              >
                 <span className={styles.navIcon}>👩‍⚕️</span>
                 <span className={styles.navText}>Funcionários</span>
               </a>
@@ -81,7 +99,7 @@ function CadastroMedicamento() {
                 <span className={styles.navText}>Laboratórios</span>
               </a>
             </div>
-            
+
             {/* <div className={styles.navSection}>
               <p className={styles.navLabel}>Sistema</p>
               <a href="/config" className={styles.navLink}>
@@ -94,7 +112,7 @@ function CadastroMedicamento() {
               </button>
             </div> */}
           </nav>
-          
+
           <div className={styles.userPanel}>
             <div className={styles.userAvatar}>
               <span>👤</span>
@@ -108,7 +126,7 @@ function CadastroMedicamento() {
 
         {/* Overlay para fechar a sidebar ao clicar fora (apenas em mobile) */}
         {sidebarOpen && (
-          <div 
+          <div
             className={styles.overlay}
             onClick={() => setSidebarOpen(false)}
           />
@@ -120,7 +138,9 @@ function CadastroMedicamento() {
             <form onSubmit={handleSubmit} className={styles.form}>
               <div className={styles.formGrid}>
                 <div className={styles.formGroup}>
-                  <label className={styles.label} htmlFor="nome">Nome do Medicamento:</label>
+                  <label className={styles.label} htmlFor="nome">
+                    Nome do Medicamento:
+                  </label>
                   <input
                     className={styles.input}
                     type="text"
@@ -131,9 +151,11 @@ function CadastroMedicamento() {
                     placeholder="Digite o nome do medicamento"
                   />
                 </div>
-                
+
                 <div className={styles.formGroup}>
-                  <label className={styles.label} htmlFor="dosagem">Dosagem:</label>
+                  <label className={styles.label} htmlFor="dosagem">
+                    Dosagem:
+                  </label>
                   <input
                     className={styles.input}
                     type="text"
@@ -144,9 +166,11 @@ function CadastroMedicamento() {
                     placeholder="Ex: 500mg"
                   />
                 </div>
-                
+
                 <div className={styles.formGroup}>
-                  <label className={styles.label} htmlFor="quantidade">Quantidade:</label>
+                  <label className={styles.label} htmlFor="quantidade">
+                    Quantidade:
+                  </label>
                   <input
                     className={styles.input}
                     id="quantidade"
@@ -160,7 +184,9 @@ function CadastroMedicamento() {
                 </div>
 
                 <div className={styles.formGroup}>
-                  <label className={styles.label} htmlFor="preco">Preço (R$):</label>
+                  <label className={styles.label} htmlFor="preco">
+                    Preço (R$):
+                  </label>
                   <input
                     className={styles.input}
                     type="number"
@@ -174,9 +200,11 @@ function CadastroMedicamento() {
                     placeholder="0,00"
                   />
                 </div>
-                
+
                 <div className={styles.formGroup}>
-                  <label className={styles.label} htmlFor="tipo">Tipo de Produto</label>
+                  <label className={styles.label} htmlFor="tipo">
+                    Tipo de Produto
+                  </label>
                   <select
                     className={styles.select}
                     id="tipo"
@@ -197,7 +225,9 @@ function CadastroMedicamento() {
                 </div>
 
                 <div className={styles.formGroup}>
-                  <label className={styles.label} htmlFor="forma">Forma Farmacêutica</label>
+                  <label className={styles.label} htmlFor="forma">
+                    Forma Farmacêutica
+                  </label>
                   <select
                     className={styles.select}
                     id="forma"
@@ -238,20 +268,22 @@ function CadastroMedicamento() {
                     <option value="29">Enemas</option>
                   </select>
                 </div>
-                
+
                 <div className={styles.formGroup}>
-                  <label className={styles.label} htmlFor="laboratorio">Laboratório:</label>
-                  <select 
+                  <label className={styles.label} htmlFor="laboratorio">
+                    Laboratório:
+                  </label>
+                  <select
                     className={styles.select}
-                    id="laboratorio" 
-                    name="laboratorio" 
+                    id="laboratorio"
+                    name="laboratorio"
                     required
                     value={laboratorio}
                     onChange={(e) => setLaboratorio(e.target.value)}
                   >
                     <option value="">Selecione o laboratório</option>
                     <option value="1">Neo Química</option>
-                    <option value="2">EMS</option> 
+                    <option value="2">EMS</option>
                     <option value="3">Eurofarma</option>
                     <option value="4">Aché</option>
                     <option value="5">União Química</option>
@@ -259,7 +291,7 @@ function CadastroMedicamento() {
                     <option value="7">Sanofi</option>
                     <option value="8">Geolab</option>
                     <option value="9">Merck</option>
-                    <option value="10">Legrand</option> 
+                    <option value="10">Legrand</option>
                     <option value="11">Natulab</option>
                     <option value="12">Germed</option>
                     <option value="13">Prati Donaduzzi</option>
@@ -267,18 +299,20 @@ function CadastroMedicamento() {
                     <option value="15">Hipera CH</option>
                     <option value="16">Sandoz</option>
                     <option value="17">Med Química</option>
-                    <option value="18">Mantecorp Farmasa</option> 
+                    <option value="18">Mantecorp Farmasa</option>
                   </select>
                 </div>
 
                 <div className={styles.formGroup}>
-                  <label className={styles.label} htmlFor="imagem">Imagem:</label>
+                  <label className={styles.label} htmlFor="imagem">
+                    Imagem:
+                  </label>
                   <div className={styles.fileInputContainer}>
-                    <input 
-                      type="file" 
-                      id="imagem" 
-                      name="imagem" 
-                      accept="image/*" 
+                    <input
+                      type="file"
+                      id="imagem"
+                      name="imagem"
+                      accept="image/*"
                       className={styles.fileInput}
                     />
                     <label htmlFor="imagem" className={styles.fileInputLabel}>
@@ -289,7 +323,9 @@ function CadastroMedicamento() {
               </div>
 
               <div className={styles.formGroup}>
-                <label className={styles.label} htmlFor="descricao">Descrição:</label>
+                <label className={styles.label} htmlFor="descricao">
+                  Descrição:
+                </label>
                 <textarea
                   className={styles.textarea}
                   id="descricao"
@@ -306,7 +342,11 @@ function CadastroMedicamento() {
                   💾 Cadastrar Medicamento
                 </button>
 
-                <button type="button" className={styles.botaoSecondary} onClick={() => router.back()}>
+                <button
+                  type="button"
+                  className={styles.botaoSecondary}
+                  onClick={() => router.back()}
+                >
                   Cancelar
                 </button>
               </div>

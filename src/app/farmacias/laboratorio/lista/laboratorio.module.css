@@ -13,7 +13,7 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
   position: sticky;
   top: 0;
   z-index: 100;
@@ -131,7 +131,7 @@
   display: flex;
   flex-direction: column;
   transition: transform 0.3s ease;
-  box-shadow: 2px 0 10px rgba(0,0,0,0.1);
+  box-shadow: 2px 0 10px rgba(0, 0, 0, 0.1);
   z-index: 90;
 }
 
@@ -140,7 +140,7 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  border-bottom: 1px solid rgba(255,255,255,0.1);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
 }
 
 .logo {
@@ -173,7 +173,7 @@
 }
 
 .sidebarClose:hover {
-  background: rgba(255,255,255,0.1);
+  background: rgba(255, 255, 255, 0.1);
 }
 
 .nav {
@@ -211,7 +211,7 @@
 }
 
 .navLink:hover {
-  background: rgba(255,255,255,0.1);
+  background: rgba(255, 255, 255, 0.1);
   color: white;
 }
 
@@ -244,7 +244,7 @@
 
 .userPanel {
   padding: 20px;
-  border-top: 1px solid rgba(255,255,255,0.1);
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
   display: flex;
   align-items: center;
   gap: 12px;
@@ -314,7 +314,7 @@
   background: white;
   padding: 1.5rem;
   border-radius: 12px;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
   display: flex;
   align-items: center;
   gap: 1rem;
@@ -348,7 +348,7 @@
 .tableContainer {
   overflow-x: auto;
   border-radius: 12px;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
   background: white;
   margin-bottom: 2rem;
 }
@@ -430,7 +430,8 @@
   gap: 0.5rem;
 }
 
-.editarButton, .excluirButton {
+.editarButton,
+.excluirButton {
   padding: 0.75rem;
   border: none;
   border-radius: 8px;
@@ -480,7 +481,7 @@
   padding: 1.5rem;
   background: white;
   border-radius: 12px;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
 }
 
 .totalRegistros {
@@ -512,7 +513,7 @@
   .menuToggle {
     display: block;
   }
-  
+
   .sidebar {
     position: fixed;
     top: 0;
@@ -521,53 +522,53 @@
     transform: translateX(-100%);
     z-index: 90;
   }
-  
+
   .sidebarOpen {
     transform: translateX(0);
   }
-  
+
   .sidebarClose {
     display: block;
   }
-  
+
   .overlay {
     display: block;
   }
-  
+
   .header {
     padding: 16px 20px;
   }
-  
+
   .headerActions {
     flex-wrap: wrap;
     gap: 12px;
   }
-  
+
   .searchInput {
     width: 200px;
   }
-  
+
   .mainContent {
     padding: 20px;
   }
-  
+
   .listaHeader {
     flex-direction: column;
   }
-  
+
   .statsGrid {
     grid-template-columns: 1fr;
     width: 100%;
   }
-  
+
   .laboratoriosTable {
     min-width: 800px;
   }
-  
+
   .acoes {
     flex-direction: column;
   }
-  
+
   .submitButton {
     width: 100%;
     justify-content: center;
@@ -580,41 +581,41 @@
     gap: 16px;
     align-items: flex-start;
   }
-  
+
   .headerActions {
     width: 100%;
     justify-content: space-between;
   }
-  
+
   .searchBox {
     width: 100%;
   }
-  
+
   .searchInput {
     width: 100%;
   }
-  
+
   .mainContent {
     padding: 16px;
   }
-  
+
   .statCard {
     flex-direction: column;
     text-align: center;
   }
-  
+
   .statIcon {
     width: 50px;
     height: 50px;
     font-size: 1.5rem;
   }
-  
+
   .labInfo {
     flex-direction: column;
     align-items: flex-start;
     gap: 0.5rem;
   }
-  
+
   .labAvatar {
     width: 35px;
     height: 35px;

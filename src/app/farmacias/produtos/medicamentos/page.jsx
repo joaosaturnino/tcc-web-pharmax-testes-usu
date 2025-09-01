@@ -59,7 +59,7 @@ function ListagemMedicamentos() {
       {/* Header */}
       <header className={styles.header}>
         <div className={styles.headerLeft}>
-          <button 
+          <button
             className={styles.menuToggle}
             onClick={() => setSidebarOpen(!sidebarOpen)}
           >
@@ -68,30 +68,35 @@ function ListagemMedicamentos() {
           <h1 className={styles.titulo}>💊 Painel de Medicamentos</h1>
         </div>
         <div className={styles.headerActions}>
-          
-          <Link href="/farmacias/produtos/medicamentos/cadastro" className={styles.botaoPrincipal}>
+          <Link
+            href="/farmacias/produtos/medicamentos/cadastro"
+            className={styles.botaoPrincipal}
+          >
             ➕ Novo Medicamento
           </Link>
-          
         </div>
       </header>
 
       <div className={styles.contentWrapper}>
         {/* Sidebar Não Fixa */}
-        <aside className={`${styles.sidebar} ${sidebarOpen ? styles.sidebarOpen : ''}`}>
+        <aside
+          className={`${styles.sidebar} ${
+            sidebarOpen ? styles.sidebarOpen : ""
+          }`}
+        >
           <div className={styles.sidebarHeader}>
             <div className={styles.logo}>
               <span className={styles.logoIcon}>💊</span>
               <span className={styles.logoText}>PharmaX</span>
             </div>
-            <button 
+            <button
               className={styles.sidebarClose}
               onClick={() => setSidebarOpen(false)}
             >
               ×
             </button>
           </div>
-          
+
           <nav className={styles.nav}>
             <div className={styles.navSection}>
               <p className={styles.navLabel}>Principal</p>
@@ -99,16 +104,24 @@ function ListagemMedicamentos() {
                 <span className={styles.navIcon}>⭐</span>
                 <span className={styles.navText}>Favoritos</span>
               </a>
-              <a href="/farmacias/produtos/medicamentos" className={`${styles.navLink} ${styles.active}`}>
+              <a
+                href="/farmacias/produtos/medicamentos"
+                className={`${styles.navLink} ${styles.active}`}
+              >
                 <span className={styles.navIcon}>💊</span>
                 <span className={styles.navText}>Medicamentos</span>
-                <span className={styles.notificationBadge}>{medicamentos.length}</span>
+                <span className={styles.notificationBadge}>
+                  {medicamentos.length}
+                </span>
               </a>
             </div>
-            
+
             <div className={styles.navSection}>
               <p className={styles.navLabel}>Gestão</p>
-              <a href="/farmacias/cadastro/funcionario/lista" className={styles.navLink}>
+              <a
+                href="/farmacias/cadastro/funcionario/lista"
+                className={styles.navLink}
+              >
                 <span className={styles.navIcon}>👩‍⚕️</span>
                 <span className={styles.navText}>Funcionários</span>
               </a>
@@ -117,7 +130,7 @@ function ListagemMedicamentos() {
                 <span className={styles.navText}>Laboratórios</span>
               </a>
             </div>
-            
+
             {/* <div className={styles.navSection}>
               <p className={styles.navLabel}>Sistema</p>
               <a href="../../configuracoes" className={styles.navLink}>
@@ -134,7 +147,7 @@ function ListagemMedicamentos() {
               </button>
             </div> */}
           </nav>
-          
+
           <div className={styles.userPanel}>
             <div className={styles.userAvatar}>
               <span>👤</span>
@@ -148,7 +161,7 @@ function ListagemMedicamentos() {
 
         {/* Overlay para mobile */}
         {sidebarOpen && (
-          <div 
+          <div
             className={styles.overlay}
             onClick={() => setSidebarOpen(false)}
           />
@@ -172,7 +185,10 @@ function ListagemMedicamentos() {
                 <div className={styles.emptyIcon}>💊</div>
                 <h3>Nenhum medicamento cadastrado</h3>
                 <p>Comece cadastrando seu primeiro medicamento.</p>
-                <Link href="/medicamentos/cadastro" className={styles.botaoPrincipal}>
+                <Link
+                  href="/medicamentos/cadastro"
+                  className={styles.botaoPrincipal}
+                >
                   ➕ Novo Medicamento
                 </Link>
               </div>
@@ -206,10 +222,14 @@ function ListagemMedicamentos() {
                           <span className={styles.medName}>{med.nome}</span>
                         </td>
                         <td>
-                          <span className={styles.medDosage}>{med.dosagem}</span>
+                          <span className={styles.medDosage}>
+                            {med.dosagem}
+                          </span>
                         </td>
                         <td>
-                          <span className={styles.medQuantity}>{med.quantidade}</span>
+                          <span className={styles.medQuantity}>
+                            {med.quantidade}
+                          </span>
                         </td>
                         <td className={styles.money}>
                           {currency.format(Number(med.preco ?? 0))}
@@ -221,7 +241,9 @@ function ListagemMedicamentos() {
                           <span className={styles.medForm}>{med.forma}</span>
                         </td>
                         <td>
-                          <span className={styles.medLab}>{med.laboratorio}</span>
+                          <span className={styles.medLab}>
+                            {med.laboratorio}
+                          </span>
                         </td>
                         <td>
                           <div className={styles.actionButtons}>

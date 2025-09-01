@@ -46,20 +46,22 @@ export default function CadastroLaboratorio() {
   return (
     <div className={styles.dashboardContainer}>
       {/* Sidebar Moderna */}
-      <aside className={`${styles.sidebar} ${sidebarOpen ? styles.sidebarOpen : ''}`}>
+      <aside
+        className={`${styles.sidebar} ${sidebarOpen ? styles.sidebarOpen : ""}`}
+      >
         <div className={styles.sidebarHeader}>
           <div className={styles.logo}>
             <span className={styles.logoIcon}>💊</span>
             <span className={styles.logoText}>PharmaX</span>
           </div>
-          <button 
+          <button
             className={styles.sidebarToggle}
             onClick={() => setSidebarOpen(!sidebarOpen)}
           >
-            {sidebarOpen ? '←' : '→'}
+            {sidebarOpen ? "←" : "→"}
           </button>
         </div>
-        
+
         <nav className={styles.nav}>
           <div className={styles.navSection}>
             <p className={styles.navLabel}>Principal</p>
@@ -67,24 +69,33 @@ export default function CadastroLaboratorio() {
               <span className={styles.navIcon}>⭐</span>
               <span className={styles.navText}>Favoritos</span>
             </a>
-            <a href="/farmacias/produtos/medicamentos" className={styles.navLink}>
+            <a
+              href="/farmacias/produtos/medicamentos"
+              className={styles.navLink}
+            >
               <span className={styles.navIcon}>💊</span>
               <span className={styles.navText}>Medicamentos</span>
             </a>
           </div>
-          
+
           <div className={styles.navSection}>
             <p className={styles.navLabel}>Gestão</p>
-            <a href="/farmacias/cadastro/funcionario/lista" className={styles.navLink}>
+            <a
+              href="/farmacias/cadastro/funcionario/lista"
+              className={styles.navLink}
+            >
               <span className={styles.navIcon}>👩‍⚕️</span>
               <span className={styles.navText}>Funcionários</span>
             </a>
-            <a href="/farmacias/laboratorio/lista" className={`${styles.navLink} ${styles.active}`}>
+            <a
+              href="/farmacias/laboratorio/lista"
+              className={`${styles.navLink} ${styles.active}`}
+            >
               <span className={styles.navIcon}>🏭</span>
               <span className={styles.navText}>Laboratórios</span>
             </a>
           </div>
-          
+
           {/* <div className={styles.navSection}>
             <p className={styles.navLabel}>Sistema</p>
             <a href="../../../configuracoes" className={styles.navLink}>
@@ -101,7 +112,7 @@ export default function CadastroLaboratorio() {
             </button>
           </div> */}
         </nav>
-        
+
         <div className={styles.userPanel}>
           <div className={styles.userAvatar}>
             <span>👤</span>
@@ -117,7 +128,6 @@ export default function CadastroLaboratorio() {
       <main className={styles.mainContent}>
         <header className={styles.pageHeader}>
           <h1 className={styles.pageTitle}>Cadastro de Laboratório</h1>
-          
         </header>
 
         <div className={styles.contentCard}>
@@ -202,7 +212,9 @@ export default function CadastroLaboratorio() {
                     Escolher arquivo
                   </label>
                   {laboratorio.logo && (
-                    <span className={styles.fileName}>{laboratorio.logo.name}</span>
+                    <span className={styles.fileName}>
+                      {laboratorio.logo.name}
+                    </span>
                   )}
                 </div>
               </div>
@@ -212,14 +224,18 @@ export default function CadastroLaboratorio() {
               <div className={styles.previewContainer}>
                 <label className={styles.inputLabel}>Pré-visualização</label>
                 <div className={styles.previewBox}>
-                  <img src={preview} alt="Pré-visualização" className={styles.logoPreview} />
+                  <img
+                    src={preview}
+                    alt="Pré-visualização"
+                    className={styles.logoPreview}
+                  />
                 </div>
               </div>
             )}
 
             <div className={styles.formActions}>
-              <button 
-                type="button" 
+              <button
+                type="button"
                 className={styles.cancelButton}
                 onClick={() => router.back()}
               >

@@ -23,7 +23,7 @@ export default function ListaFuncionariosPage() {
         endereco: "Rua das Flores, 123 - São Paulo/SP",
         usuario: "maria.silva",
         nivelAcesso: "Administrador",
-        dataCadastro: "2023-01-15"
+        dataCadastro: "2023-01-15",
       },
       {
         id: 2,
@@ -35,7 +35,7 @@ export default function ListaFuncionariosPage() {
         endereco: "Av. Paulista, 1000 - São Paulo/SP",
         usuario: "joao.santos",
         nivelAcesso: "Gerente",
-        dataCadastro: "2023-02-20"
+        dataCadastro: "2023-02-20",
       },
       {
         id: 3,
@@ -47,7 +47,7 @@ export default function ListaFuncionariosPage() {
         endereco: "Rua Augusta, 500 - São Paulo/SP",
         usuario: "ana.costa",
         nivelAcesso: "Funcionário",
-        dataCadastro: "2023-03-10"
+        dataCadastro: "2023-03-10",
       },
       {
         id: 4,
@@ -59,7 +59,7 @@ export default function ListaFuncionariosPage() {
         endereco: "Rua Consolação, 789 - São Paulo/SP",
         usuario: "pedro.oliveira",
         nivelAcesso: "Supervisor",
-        dataCadastro: "2023-04-15"
+        dataCadastro: "2023-04-15",
       },
       {
         id: 5,
@@ -71,8 +71,8 @@ export default function ListaFuncionariosPage() {
         endereco: "Alameda Santos, 456 - São Paulo/SP",
         usuario: "carla.rodrigues",
         nivelAcesso: "Visitante",
-        dataCadastro: "2023-05-22"
-      }
+        dataCadastro: "2023-05-22",
+      },
     ];
     setFuncionarios(dadosExemplo);
   }, []);
@@ -87,21 +87,30 @@ export default function ListaFuncionariosPage() {
 
   const handleExcluir = (id) => {
     if (confirm("Tem certeza que deseja excluir este funcionário?")) {
-      setFuncionarios(funcionarios.filter(func => func.id !== id));
+      setFuncionarios(funcionarios.filter((func) => func.id !== id));
     }
   };
 
-  const funcionariosFiltrados = funcionarios.filter(funcionario =>
-    funcionario.nome.toLowerCase().includes(filtro.toLowerCase()) ||
-    funcionario.email.toLowerCase().includes(filtro.toLowerCase()) ||
-    funcionario.nivelAcesso.toLowerCase().includes(filtro.toLowerCase())
+  const funcionariosFiltrados = funcionarios.filter(
+    (funcionario) =>
+      funcionario.nome.toLowerCase().includes(filtro.toLowerCase()) ||
+      funcionario.email.toLowerCase().includes(filtro.toLowerCase()) ||
+      funcionario.nivelAcesso.toLowerCase().includes(filtro.toLowerCase())
   );
 
   // Função para gerar cor baseada no nome
   const getAvatarColor = (nome) => {
     const colors = [
-      '#3498db', '#2ecc71', '#e74c3c', '#f39c12', '#9b59b6', 
-      '#1abc9c', '#d35400', '#c0392b', '#16a085', '#27ae60'
+      "#3498db",
+      "#2ecc71",
+      "#e74c3c",
+      "#f39c12",
+      "#9b59b6",
+      "#1abc9c",
+      "#d35400",
+      "#c0392b",
+      "#16a085",
+      "#27ae60",
     ];
     const index = nome.charCodeAt(0) % colors.length;
     return colors[index];
@@ -112,7 +121,7 @@ export default function ListaFuncionariosPage() {
       {/* Header */}
       <header className={styles.header}>
         <div className={styles.headerLeft}>
-          <button 
+          <button
             className={styles.menuToggle}
             onClick={() => setSidebarOpen(!sidebarOpen)}
           >
@@ -139,20 +148,24 @@ export default function ListaFuncionariosPage() {
 
       <div className={styles.contentWrapper}>
         {/* Sidebar Não Fixa */}
-        <aside className={`${styles.sidebar} ${sidebarOpen ? styles.sidebarOpen : ''}`}>
+        <aside
+          className={`${styles.sidebar} ${
+            sidebarOpen ? styles.sidebarOpen : ""
+          }`}
+        >
           <div className={styles.sidebarHeader}>
             <div className={styles.logo}>
               <span className={styles.logoIcon}>💊</span>
               <span className={styles.logoText}>PharmaX</span>
             </div>
-            <button 
+            <button
               className={styles.sidebarClose}
               onClick={() => setSidebarOpen(false)}
             >
               ×
             </button>
           </div>
-          
+
           <nav className={styles.nav}>
             <div className={styles.navSection}>
               <p className={styles.navLabel}>Principal</p>
@@ -160,15 +173,21 @@ export default function ListaFuncionariosPage() {
                 <span className={styles.navIcon}>⭐</span>
                 <span className={styles.navText}>Favoritos</span>
               </a>
-              <a href="/farmacias/produtos/medicamentos" className={styles.navLink}>
+              <a
+                href="/farmacias/produtos/medicamentos"
+                className={styles.navLink}
+              >
                 <span className={styles.navIcon}>💊</span>
                 <span className={styles.navText}>Medicamentos</span>
               </a>
             </div>
-            
+
             <div className={styles.navSection}>
               <p className={styles.navLabel}>Gestão</p>
-              <a href="/farmacias/cadastro/funcionario/lista" className={`${styles.navLink} ${styles.active}`}>
+              <a
+                href="/farmacias/cadastro/funcionario/lista"
+                className={`${styles.navLink} ${styles.active}`}
+              >
                 <span className={styles.navIcon}>👩‍⚕️</span>
                 <span className={styles.navText}>Funcionários</span>
               </a>
@@ -177,7 +196,7 @@ export default function ListaFuncionariosPage() {
                 <span className={styles.navText}>Laboratórios</span>
               </a>
             </div>
-            
+
             {/* <div className={styles.navSection}>
               <p className={styles.navLabel}>Sistema</p>
               <a href="../../../configuracoes" className={styles.navLink}>
@@ -194,7 +213,7 @@ export default function ListaFuncionariosPage() {
               </button>
             </div> */}
           </nav>
-          
+
           <div className={styles.userPanel}>
             <div className={styles.userAvatar}>
               <span>👤</span>
@@ -208,7 +227,7 @@ export default function ListaFuncionariosPage() {
 
         {/* Overlay para mobile */}
         {sidebarOpen && (
-          <div 
+          <div
             className={styles.overlay}
             onClick={() => setSidebarOpen(false)}
           />
@@ -222,7 +241,7 @@ export default function ListaFuncionariosPage() {
                 <h2>Funcionários Cadastrados</h2>
                 <p>Gerencie os funcionários do sistema</p>
               </div>
-              <button 
+              <button
                 className={styles.submitButton}
                 onClick={handleNovoFuncionario}
               >
@@ -249,9 +268,13 @@ export default function ListaFuncionariosPage() {
                       <tr key={funcionario.id}>
                         <td>
                           <div className={styles.funcionarioInfo}>
-                            <div 
+                            <div
                               className={styles.funcionarioAvatar}
-                              style={{ backgroundColor: getAvatarColor(funcionario.nome) }}
+                              style={{
+                                backgroundColor: getAvatarColor(
+                                  funcionario.nome
+                                ),
+                              }}
                             >
                               {funcionario.nome.charAt(0)}
                             </div>
@@ -268,23 +291,29 @@ export default function ListaFuncionariosPage() {
                         <td>{funcionario.email}</td>
                         <td>{funcionario.telefone}</td>
                         <td>
-                          <span className={`${styles.nivelBadge} ${styles[funcionario.nivelAcesso.toLowerCase()]}`}>
+                          <span
+                            className={`${styles.nivelBadge} ${
+                              styles[funcionario.nivelAcesso.toLowerCase()]
+                            }`}
+                          >
                             {funcionario.nivelAcesso}
                           </span>
                         </td>
                         <td>
-                          {new Date(funcionario.dataCadastro).toLocaleDateString('pt-BR')}
+                          {new Date(
+                            funcionario.dataCadastro
+                          ).toLocaleDateString("pt-BR")}
                         </td>
                         <td>
                           <div className={styles.acoes}>
-                            <button 
+                            <button
                               className={styles.editarButton}
                               onClick={() => handleEditar(funcionario.id)}
                               title="Editar funcionário"
                             >
                               ✏️
                             </button>
-                            <button 
+                            <button
                               className={styles.excluirButton}
                               onClick={() => handleExcluir(funcionario.id)}
                               title="Excluir funcionário"
@@ -298,7 +327,9 @@ export default function ListaFuncionariosPage() {
                   ) : (
                     <tr>
                       <td colSpan="6" className={styles.semRegistros}>
-                        {filtro ? "Nenhum funcionário encontrado com o filtro aplicado" : "Nenhum funcionário cadastrado"}
+                        {filtro
+                          ? "Nenhum funcionário encontrado com o filtro aplicado"
+                          : "Nenhum funcionário cadastrado"}
                       </td>
                     </tr>
                   )}

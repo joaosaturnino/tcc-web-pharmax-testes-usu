@@ -18,21 +18,21 @@ export default function ConfiguracoesSistema() {
     notificacoesSMS: false,
     // Backup
     backupAutomatico: true,
-    frequenciaBackup: "diario"
+    frequenciaBackup: "diario",
   });
 
   // Aplicar configurações de tema e fonte ao carregar a página
   useEffect(() => {
     const temaSalvo = localStorage.getItem("tema");
     const fonteSalva = localStorage.getItem("tamanhoFonte");
-    
+
     if (temaSalvo) {
-      setConfiguracoes(prev => ({ ...prev, tema: temaSalvo }));
+      setConfiguracoes((prev) => ({ ...prev, tema: temaSalvo }));
       document.documentElement.setAttribute("data-tema", temaSalvo);
     }
-    
+
     if (fonteSalva) {
-      setConfiguracoes(prev => ({ ...prev, tamanhoFonte: fonteSalva }));
+      setConfiguracoes((prev) => ({ ...prev, tamanhoFonte: fonteSalva }));
       document.documentElement.setAttribute("data-fonte", fonteSalva);
     }
   }, []);
@@ -52,17 +52,17 @@ export default function ConfiguracoesSistema() {
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target;
     const novoValor = type === "checkbox" ? checked : value;
-    
+
     setConfiguracoes({
       ...configuracoes,
-      [name]: novoValor
+      [name]: novoValor,
     });
 
     // Aplicar mudanças imediatas para tema e tamanho de fonte
     if (name === "tema") {
       aplicarTema(novoValor);
     }
-    
+
     if (name === "tamanhoFonte") {
       aplicarTamanhoFonte(novoValor);
     }
@@ -87,13 +87,13 @@ export default function ConfiguracoesSistema() {
         notificacoesEmail: true,
         notificacoesSMS: false,
         backupAutomatico: true,
-        frequenciaBackup: "diario"
+        frequenciaBackup: "diario",
       };
-      
+
       setConfiguracoes(configuracoesPadrao);
       aplicarTema("claro");
       aplicarTamanhoFonte("medio");
-      
+
       alert("Configurações restauradas para os valores padrão!");
     }
   };
@@ -103,7 +103,7 @@ export default function ConfiguracoesSistema() {
       {/* Header com botão para toggle da sidebar */}
       <header className="header">
         <div className="headerLeft">
-          <button 
+          <button
             className="menuToggle"
             onClick={() => setSidebarOpen(!sidebarOpen)}
           >
@@ -120,20 +120,20 @@ export default function ConfiguracoesSistema() {
 
       <div className="contentWrapper">
         {/* Sidebar */}
-        <aside className={`sidebar ${sidebarOpen ? 'sidebarOpen' : ''}`}>
+        <aside className={`sidebar ${sidebarOpen ? "sidebarOpen" : ""}`}>
           <div className="sidebarHeader">
             <div className="logo">
               <span className="logoIcon">💊</span>
               <span className="logoText">PharmaX</span>
             </div>
-            <button 
+            <button
               className="sidebarClose"
               onClick={() => setSidebarOpen(false)}
             >
               ×
             </button>
           </div>
-          
+
           <nav className="nav">
             <div className="navSection">
               <p className="navLabel">Principal</p>
@@ -150,10 +150,13 @@ export default function ConfiguracoesSistema() {
                 <span className="navText">Medicamentos</span>
               </a>
             </div>
-            
+
             <div className="navSection">
               <p className="navLabel">Gestão</p>
-              <a href="/farmacias/cadastro/funcionario/lista" className="navLink">
+              <a
+                href="/farmacias/cadastro/funcionario/lista"
+                className="navLink"
+              >
                 <span className="navIcon">👩‍⚕️</span>
                 <span className="navText">Funcionários</span>
               </a>
@@ -162,21 +165,21 @@ export default function ConfiguracoesSistema() {
                 <span className="navText">Laboratórios</span>
               </a>
             </div>
-            
+
             <div className="navSection">
               {/* <p className="navLabel">Sistema</p>
               <a href="../../../configuracoes" className="navLink active">
                 <span className="navIcon">⚙️</span>
                 <span className="navText">Configurações</span>
               </a> */}
-              
+
               {/* <button className="navLink">
                 <span className="navIcon">🚪</span>
                 <span className="navText">Sair</span>
               </button> */}
             </div>
           </nav>
-          
+
           <div className="userPanel">
             <div className="userAvatar">
               <span>👤</span>
@@ -190,10 +193,7 @@ export default function ConfiguracoesSistema() {
 
         {/* Overlay para fechar a sidebar ao clicar fora (apenas em mobile) */}
         {sidebarOpen && (
-          <div 
-            className="overlay"
-            onClick={() => setSidebarOpen(false)}
-          />
+          <div className="overlay" onClick={() => setSidebarOpen(false)} />
         )}
 
         {/* Conteúdo Principal */}
@@ -230,7 +230,7 @@ export default function ConfiguracoesSistema() {
                       </label>
                     </div>
                   </div>
-                  
+
                   <div className="formGroup">
                     <label className="label" htmlFor="tamanhoFonte">
                       Tamanho da Fonte:
@@ -267,7 +267,7 @@ export default function ConfiguracoesSistema() {
                       required
                     />
                   </div>
-                  
+
                   <div className="formGroup">
                     <label className="label" htmlFor="cnpj">
                       CNPJ:
@@ -282,7 +282,7 @@ export default function ConfiguracoesSistema() {
                       required
                     />
                   </div>
-                  
+
                   <div className="formGroup">
                     <label className="label" htmlFor="endereco">
                       Endereço:
@@ -297,7 +297,7 @@ export default function ConfiguracoesSistema() {
                       required
                     />
                   </div>
-                  
+
                   <div className="formGroup">
                     <label className="label" htmlFor="telefone">
                       Telefone:
@@ -312,7 +312,7 @@ export default function ConfiguracoesSistema() {
                       required
                     />
                   </div>
-                  
+
                   <div className="formGroup">
                     <label className="label" htmlFor="email">
                       E-mail:
@@ -341,10 +341,12 @@ export default function ConfiguracoesSistema() {
                         checked={configuracoes.notificacoesEmail}
                         onChange={handleChange}
                       />
-                      <span className="checkboxLabel">Receber notificações por e-mail</span>
+                      <span className="checkboxLabel">
+                        Receber notificações por e-mail
+                      </span>
                     </label>
                   </div>
-                  
+
                   <div className="formGroup">
                     <label className="checkboxOption">
                       <input
@@ -353,7 +355,9 @@ export default function ConfiguracoesSistema() {
                         checked={configuracoes.notificacoesSMS}
                         onChange={handleChange}
                       />
-                      <span className="checkboxLabel">Receber notificações por SMS</span>
+                      <span className="checkboxLabel">
+                        Receber notificações por SMS
+                      </span>
                     </label>
                   </div>
                 </div>
@@ -373,7 +377,7 @@ export default function ConfiguracoesSistema() {
                       <span className="checkboxLabel">Backup automático</span>
                     </label>
                   </div>
-                  
+
                   {configuracoes.backupAutomatico && (
                     <div className="formGroup">
                       <label className="label" htmlFor="frequenciaBackup">
@@ -396,7 +400,11 @@ export default function ConfiguracoesSistema() {
               </div>
 
               <div className="formActions">
-                <button type="button" className="botaoSecondary" onClick={resetConfiguracoes}>
+                <button
+                  type="button"
+                  className="botaoSecondary"
+                  onClick={resetConfiguracoes}
+                >
                   Restaurar Padrões
                 </button>
                 <button type="submit" className="botaoPrincipal">
@@ -419,14 +427,14 @@ export default function ConfiguracoesSistema() {
           --cor-borda: #e2e8f0;
           --cor-primaria: #3498db;
           --cor-hover: #f1f5f9;
-          
+
           /* Tamanhos de fonte */
           --fonte-pequena: 0.875rem;
           --fonte-media: 1rem;
           --fonte-grande: 1.125rem;
           --fonte-titulo: 1.5rem;
         }
-        
+
         [data-tema="escuro"] {
           --cor-fundo: #1e293b;
           --cor-fundo-card: #334155;
@@ -436,21 +444,21 @@ export default function ConfiguracoesSistema() {
           --cor-primaria: #60a5fa;
           --cor-hover: #334155;
         }
-        
+
         [data-fonte="pequeno"] {
           --fonte-pequena: 0.75rem;
           --fonte-media: 0.875rem;
           --fonte-grande: 1rem;
           --fonte-titulo: 1.25rem;
         }
-        
+
         [data-fonte="grande"] {
           --fonte-pequena: 1rem;
           --fonte-media: 1.125rem;
           --fonte-grande: 1.25rem;
           --fonte-titulo: 1.75rem;
         }
-        
+
         /* Aplicar variáveis */
         body {
           background-color: var(--cor-fundo);
@@ -458,7 +466,7 @@ export default function ConfiguracoesSistema() {
           font-size: var(--fonte-media);
           transition: background-color 0.3s ease, color 0.3s ease;
         }
-        
+
         /* Layout Principal */
         .dashboard {
           min-height: 100vh;
@@ -474,7 +482,7 @@ export default function ConfiguracoesSistema() {
           display: flex;
           justify-content: space-between;
           align-items: center;
-          box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+          box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
           position: sticky;
           top: 0;
           z-index: 100;
@@ -548,7 +556,7 @@ export default function ConfiguracoesSistema() {
           display: flex;
           flex-direction: column;
           transition: transform 0.3s ease;
-          box-shadow: 2px 0 10px rgba(0,0,0,0.1);
+          box-shadow: 2px 0 10px rgba(0, 0, 0, 0.1);
           z-index: 90;
         }
 
@@ -557,7 +565,7 @@ export default function ConfiguracoesSistema() {
           display: flex;
           justify-content: space-between;
           align-items: center;
-          border-bottom: 1px solid rgba(255,255,255,0.1);
+          border-bottom: 1px solid rgba(255, 255, 255, 0.1);
         }
 
         .logo {
@@ -590,7 +598,7 @@ export default function ConfiguracoesSistema() {
         }
 
         .sidebarClose:hover {
-          background: rgba(255,255,255,0.1);
+          background: rgba(255, 255, 255, 0.1);
         }
 
         .nav {
@@ -628,7 +636,7 @@ export default function ConfiguracoesSistema() {
         }
 
         .navLink:hover {
-          background: rgba(255,255,255,0.1);
+          background: rgba(255, 255, 255, 0.1);
           color: white;
         }
 
@@ -652,7 +660,7 @@ export default function ConfiguracoesSistema() {
 
         .userPanel {
           padding: 20px;
-          border-top: 1px solid rgba(255,255,255,0.1);
+          border-top: 1px solid rgba(255, 255, 255, 0.1);
           display: flex;
           align-items: center;
           gap: 12px;
@@ -662,7 +670,7 @@ export default function ConfiguracoesSistema() {
           width: 40px;
           height: 40px;
           border-radius: 50%;
-          background: rgba(255,255,255,0.1);
+          background: rgba(255, 255, 255, 0.1);
           display: flex;
           align-items: center;
           justify-content: center;
@@ -707,7 +715,7 @@ export default function ConfiguracoesSistema() {
           border-radius: 12px;
           padding: 24px;
           margin-bottom: 24px;
-          box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+          box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
         }
 
         .sectionTitle {
@@ -737,7 +745,8 @@ export default function ConfiguracoesSistema() {
           font-size: var(--fonte-pequena);
         }
 
-        .input, .select {
+        .input,
+        .select {
           width: 100%;
           padding: 12px 16px;
           border: 2px solid var(--cor-borda);
@@ -749,7 +758,8 @@ export default function ConfiguracoesSistema() {
           color: var(--cor-texto);
         }
 
-        .input:focus, .select:focus {
+        .input:focus,
+        .select:focus {
           outline: none;
           border-color: var(--cor-primaria);
         }
@@ -854,7 +864,7 @@ export default function ConfiguracoesSistema() {
           .menuToggle {
             display: block;
           }
-          
+
           .sidebar {
             position: fixed;
             top: 0;
@@ -863,36 +873,37 @@ export default function ConfiguracoesSistema() {
             transform: translateX(-100%);
             z-index: 90;
           }
-          
+
           .sidebarOpen {
             transform: translateX(0);
           }
-          
+
           .sidebarClose {
             display: block;
           }
-          
+
           .overlay {
             display: block;
           }
-          
+
           .header {
             padding: 16px 20px;
           }
-          
+
           .configContainer {
             padding: 20px;
           }
-          
+
           .configSection {
             padding: 20px;
           }
-          
+
           .formActions {
             flex-direction: column;
           }
-          
-          .botaoPrincipal, .botaoSecondary {
+
+          .botaoPrincipal,
+          .botaoSecondary {
             width: 100%;
             justify-content: center;
           }
@@ -904,16 +915,16 @@ export default function ConfiguracoesSistema() {
             gap: 16px;
             align-items: flex-start;
           }
-          
+
           .headerActions {
             width: 100%;
             justify-content: space-between;
           }
-          
+
           .configContainer {
             padding: 16px;
           }
-          
+
           .configSection {
             padding: 16px;
           }

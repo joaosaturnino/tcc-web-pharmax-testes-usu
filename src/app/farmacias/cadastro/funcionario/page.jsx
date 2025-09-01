@@ -35,7 +35,7 @@ export default function CadastroFuncionarioPage() {
       {/* Header */}
       <header className={styles.header}>
         <div className={styles.headerLeft}>
-          <button 
+          <button
             className={styles.menuToggle}
             onClick={() => setSidebarOpen(!sidebarOpen)}
           >
@@ -43,25 +43,28 @@ export default function CadastroFuncionarioPage() {
           </button>
           <h1 className={styles.title}>👩‍⚕️ Cadastro de Funcionário</h1>
         </div>
-        
       </header>
 
       <div className={styles.contentWrapper}>
         {/* Sidebar Não Fixa */}
-        <aside className={`${styles.sidebar} ${sidebarOpen ? styles.sidebarOpen : ''}`}>
+        <aside
+          className={`${styles.sidebar} ${
+            sidebarOpen ? styles.sidebarOpen : ""
+          }`}
+        >
           <div className={styles.sidebarHeader}>
             <div className={styles.logo}>
               <span className={styles.logoIcon}>💊</span>
               <span className={styles.logoText}>PharmaX</span>
             </div>
-            <button 
+            <button
               className={styles.sidebarClose}
               onClick={() => setSidebarOpen(false)}
             >
               ×
             </button>
           </div>
-          
+
           <nav className={styles.nav}>
             <div className={styles.navSection}>
               <p className={styles.navLabel}>Principal</p>
@@ -69,15 +72,21 @@ export default function CadastroFuncionarioPage() {
                 <span className={styles.navIcon}>⭐</span>
                 <span className={styles.navText}>Favoritos</span>
               </a>
-              <a href="/farmacias/produtos/medicamentos" className={styles.navLink}>
+              <a
+                href="/farmacias/produtos/medicamentos"
+                className={styles.navLink}
+              >
                 <span className={styles.navIcon}>💊</span>
                 <span className={styles.navText}>Medicamentos</span>
               </a>
             </div>
-            
+
             <div className={styles.navSection}>
               <p className={styles.navLabel}>Gestão</p>
-              <a href="/farmacias/cadastro/funcionario/lista" className={`${styles.navLink} ${styles.active}`}>
+              <a
+                href="/farmacias/cadastro/funcionario/lista"
+                className={`${styles.navLink} ${styles.active}`}
+              >
                 <span className={styles.navIcon}>👩‍⚕️</span>
                 <span className={styles.navText}>Funcionários</span>
               </a>
@@ -86,7 +95,7 @@ export default function CadastroFuncionarioPage() {
                 <span className={styles.navText}>Laboratórios</span>
               </a>
             </div>
-            
+
             {/* <div className={styles.navSection}>
               <p className={styles.navLabel}>Sistema</p>
               <a href="../../../configuracoes" className={styles.navLink}>
@@ -103,7 +112,7 @@ export default function CadastroFuncionarioPage() {
               </button>
             </div> */}
           </nav>
-          
+
           <div className={styles.userPanel}>
             <div className={styles.userAvatar}>
               <span>👤</span>
@@ -117,7 +126,7 @@ export default function CadastroFuncionarioPage() {
 
         {/* Overlay para mobile */}
         {sidebarOpen && (
-          <div 
+          <div
             className={styles.overlay}
             onClick={() => setSidebarOpen(false)}
           />
@@ -139,11 +148,9 @@ export default function CadastroFuncionarioPage() {
                     <span className={styles.sectionIcon}>👤</span>
                     Informações Pessoais
                   </h3>
-                  
+
                   <div className={styles.formGroup}>
-                    <label className={styles.inputLabel}>
-                      Nome Completo *
-                    </label>
+                    <label className={styles.inputLabel}>Nome Completo *</label>
                     <input
                       className={styles.modernInput}
                       type="text"
@@ -157,9 +164,7 @@ export default function CadastroFuncionarioPage() {
 
                   <div className={styles.formRow}>
                     <div className={styles.formGroup}>
-                      <label className={styles.inputLabel}>
-                        CPF *
-                      </label>
+                      <label className={styles.inputLabel}>CPF *</label>
                       <input
                         className={styles.modernInput}
                         type="text"
@@ -186,9 +191,7 @@ export default function CadastroFuncionarioPage() {
                   </div>
 
                   <div className={styles.formGroup}>
-                    <label className={styles.inputLabel}>
-                      E-mail *
-                    </label>
+                    <label className={styles.inputLabel}>E-mail *</label>
                     <input
                       className={styles.modernInput}
                       type="email"
@@ -201,9 +204,7 @@ export default function CadastroFuncionarioPage() {
                   </div>
 
                   <div className={styles.formGroup}>
-                    <label className={styles.inputLabel}>
-                      Telefone
-                    </label>
+                    <label className={styles.inputLabel}>Telefone</label>
                     <input
                       className={styles.modernInput}
                       type="tel"
@@ -215,9 +216,7 @@ export default function CadastroFuncionarioPage() {
                   </div>
 
                   <div className={styles.formGroup}>
-                    <label className={styles.inputLabel}>
-                      Endereço
-                    </label>
+                    <label className={styles.inputLabel}>Endereço</label>
                     <input
                       className={styles.modernInput}
                       type="text"
@@ -252,9 +251,7 @@ export default function CadastroFuncionarioPage() {
                   </div>
 
                   <div className={styles.formGroup}>
-                    <label className={styles.inputLabel}>
-                      Senha *
-                    </label>
+                    <label className={styles.inputLabel}>Senha *</label>
                     <input
                       className={styles.modernInput}
                       type="password"
@@ -282,7 +279,9 @@ export default function CadastroFuncionarioPage() {
                       <option value="Gerente">Gerente</option>
                       <option value="Supervisor">Supervisor</option>
                       <option value="Funcionário">Funcionário</option>
-                      <option value="Visitante">Visitante (Somente leitura)</option>
+                      <option value="Visitante">
+                        Visitante (Somente leitura)
+                      </option>
                     </select>
                   </div>
 
@@ -293,19 +292,27 @@ export default function CadastroFuncionarioPage() {
                     <div className={styles.checkboxGroup}>
                       <label className={styles.checkboxLabel}>
                         <input type="checkbox" name="acessoRelatorios" />
-                        <span className={styles.checkboxText}>Acesso a relatórios</span>
+                        <span className={styles.checkboxText}>
+                          Acesso a relatórios
+                        </span>
                       </label>
                       <label className={styles.checkboxLabel}>
                         <input type="checkbox" name="acessoEstoque" />
-                        <span className={styles.checkboxText}>Gerenciar estoque</span>
+                        <span className={styles.checkboxText}>
+                          Gerenciar estoque
+                        </span>
                       </label>
                       <label className={styles.checkboxLabel}>
                         <input type="checkbox" name="acessoFinanceiro" />
-                        <span className={styles.checkboxText}>Acesso financeiro</span>
+                        <span className={styles.checkboxText}>
+                          Acesso financeiro
+                        </span>
                       </label>
                       <label className={styles.checkboxLabel}>
                         <input type="checkbox" name="acessoConfiguracoes" />
-                        <span className={styles.checkboxText}>Configurações do sistema</span>
+                        <span className={styles.checkboxText}>
+                          Configurações do sistema
+                        </span>
                       </label>
                     </div>
                   </div>
@@ -313,17 +320,14 @@ export default function CadastroFuncionarioPage() {
               </div>
 
               <div className={styles.formActions}>
-                <button 
-                  type="button" 
+                <button
+                  type="button"
                   className={styles.cancelButton}
                   onClick={() => router.back()}
                 >
                   Cancelar
                 </button>
-                <button 
-                  type="submit" 
-                  className={styles.submitButton}
-                >
+                <button type="submit" className={styles.submitButton}>
                   <span className={styles.buttonIcon}>💾</span>
                   Cadastrar Funcionário
                 </button>

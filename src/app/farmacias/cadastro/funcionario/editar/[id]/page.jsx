@@ -8,7 +8,7 @@ export default function EditarFuncionarioPage() {
   const router = useRouter();
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [loading, setLoading] = useState(true);
-  
+
   const [form, setForm] = useState({
     nome: "",
     email: "",
@@ -22,7 +22,7 @@ export default function EditarFuncionarioPage() {
     acessoRelatorios: false,
     acessoEstoque: false,
     acessoFinanceiro: false,
-    acessoConfiguracoes: false
+    acessoConfiguracoes: false,
   });
 
   // Dados de exemplo (em uma aplicação real, viriam de uma API)
@@ -44,7 +44,7 @@ export default function EditarFuncionarioPage() {
         acessoEstoque: true,
         acessoFinanceiro: true,
         acessoConfiguracoes: true,
-        dataCadastro: "2023-01-15"
+        dataCadastro: "2023-01-15",
       };
 
       setForm({
@@ -60,9 +60,9 @@ export default function EditarFuncionarioPage() {
         acessoRelatorios: funcionario.acessoRelatorios,
         acessoEstoque: funcionario.acessoEstoque,
         acessoFinanceiro: funcionario.acessoFinanceiro,
-        acessoConfiguracoes: funcionario.acessoConfiguracoes
+        acessoConfiguracoes: funcionario.acessoConfiguracoes,
       });
-      
+
       setLoading(false);
     }, 1000);
   }, []);
@@ -71,7 +71,7 @@ export default function EditarFuncionarioPage() {
     const { name, value, type, checked } = e.target;
     setForm({
       ...form,
-      [name]: type === 'checkbox' ? checked : value
+      [name]: type === "checkbox" ? checked : value,
     });
   };
 
@@ -96,7 +96,7 @@ export default function EditarFuncionarioPage() {
       {/* Header */}
       <header className="header">
         <div className="header-left">
-          <button 
+          <button
             className="menu-toggle"
             onClick={() => setSidebarOpen(!sidebarOpen)}
           >
@@ -104,25 +104,24 @@ export default function EditarFuncionarioPage() {
           </button>
           <h1 className="title">✏️ Editar Funcionário</h1>
         </div>
-        
       </header>
 
       <div className="content-wrapper">
         {/* Sidebar Não Fixa */}
-        <aside className={`sidebar ${sidebarOpen ? 'sidebar-open' : ''}`}>
+        <aside className={`sidebar ${sidebarOpen ? "sidebar-open" : ""}`}>
           <div className="sidebar-header">
             <div className="logo">
               <span className="logo-icon">💊</span>
               <span className="logo-text">PharmaX</span>
             </div>
-            <button 
+            <button
               className="sidebar-close"
               onClick={() => setSidebarOpen(false)}
             >
               ×
             </button>
           </div>
-          
+
           <nav className="nav">
             <div className="nav-section">
               <p className="nav-label">Principal</p>
@@ -135,10 +134,13 @@ export default function EditarFuncionarioPage() {
                 <span className="nav-text">Medicamentos</span>
               </a>
             </div>
-            
+
             <div className="nav-section">
               <p className="nav-label">Gestão</p>
-              <a href="/farmacias/cadastro/funcionario/lista" className="nav-link">
+              <a
+                href="/farmacias/cadastro/funcionario/lista"
+                className="nav-link"
+              >
                 <span className="nav-icon">👩‍⚕️</span>
                 <span className="nav-text">Funcionários</span>
               </a>
@@ -147,7 +149,7 @@ export default function EditarFuncionarioPage() {
                 <span className="nav-text">Laboratórios</span>
               </a>
             </div>
-            
+
             {/* <div className="nav-section">
               <p className="nav-label">Sistema</p>
               <a href="/config" className="nav-link">
@@ -164,7 +166,7 @@ export default function EditarFuncionarioPage() {
               </button>
             </div> */}
           </nav>
-          
+
           <div className="user-panel">
             <div className="user-avatar">
               <span>👤</span>
@@ -178,10 +180,7 @@ export default function EditarFuncionarioPage() {
 
         {/* Overlay para mobile */}
         {sidebarOpen && (
-          <div 
-            className="overlay"
-            onClick={() => setSidebarOpen(false)}
-          />
+          <div className="overlay" onClick={() => setSidebarOpen(false)} />
         )}
 
         {/* Conteúdo Principal */}
@@ -200,11 +199,9 @@ export default function EditarFuncionarioPage() {
                     <span className="section-icon">👤</span>
                     Informações Pessoais
                   </h3>
-                  
+
                   <div className="form-group">
-                    <label className="input-label">
-                      Nome Completo *
-                    </label>
+                    <label className="input-label">Nome Completo *</label>
                     <input
                       className="modern-input"
                       type="text"
@@ -218,9 +215,7 @@ export default function EditarFuncionarioPage() {
 
                   <div className="form-row">
                     <div className="form-group">
-                      <label className="input-label">
-                        CPF *
-                      </label>
+                      <label className="input-label">CPF *</label>
                       <input
                         className="modern-input"
                         type="text"
@@ -233,9 +228,7 @@ export default function EditarFuncionarioPage() {
                     </div>
 
                     <div className="form-group">
-                      <label className="input-label">
-                        Data de Nascimento
-                      </label>
+                      <label className="input-label">Data de Nascimento</label>
                       <input
                         className="modern-input"
                         type="date"
@@ -247,9 +240,7 @@ export default function EditarFuncionarioPage() {
                   </div>
 
                   <div className="form-group">
-                    <label className="input-label">
-                      E-mail *
-                    </label>
+                    <label className="input-label">E-mail *</label>
                     <input
                       className="modern-input"
                       type="email"
@@ -262,9 +253,7 @@ export default function EditarFuncionarioPage() {
                   </div>
 
                   <div className="form-group">
-                    <label className="input-label">
-                      Telefone
-                    </label>
+                    <label className="input-label">Telefone</label>
                     <input
                       className="modern-input"
                       type="tel"
@@ -276,9 +265,7 @@ export default function EditarFuncionarioPage() {
                   </div>
 
                   <div className="form-group">
-                    <label className="input-label">
-                      Endereço
-                    </label>
+                    <label className="input-label">Endereço</label>
                     <input
                       className="modern-input"
                       type="text"
@@ -298,9 +285,7 @@ export default function EditarFuncionarioPage() {
                   </h3>
 
                   <div className="form-group">
-                    <label className="input-label">
-                      Nome de Usuário *
-                    </label>
+                    <label className="input-label">Nome de Usuário *</label>
                     <input
                       className="modern-input"
                       type="text"
@@ -313,9 +298,7 @@ export default function EditarFuncionarioPage() {
                   </div>
 
                   <div className="form-group">
-                    <label className="input-label">
-                      Senha *
-                    </label>
+                    <label className="input-label">Senha *</label>
                     <input
                       className="modern-input"
                       type="password"
@@ -328,9 +311,7 @@ export default function EditarFuncionarioPage() {
                   </div>
 
                   <div className="form-group">
-                    <label className="input-label">
-                      Nível de Acesso *
-                    </label>
+                    <label className="input-label">Nível de Acesso *</label>
                     <select
                       className="modern-input"
                       name="nivelAcesso"
@@ -343,50 +324,54 @@ export default function EditarFuncionarioPage() {
                       <option value="Gerente">Gerente</option>
                       <option value="Supervisor">Supervisor</option>
                       <option value="Funcionário">Funcionário</option>
-                      <option value="Visitante">Visitante (Somente leitura)</option>
+                      <option value="Visitante">
+                        Visitante (Somente leitura)
+                      </option>
                     </select>
                   </div>
 
                   <div className="form-group">
-                    <label className="input-label">
-                      Permissões Especiais
-                    </label>
+                    <label className="input-label">Permissões Especiais</label>
                     <div className="checkbox-group">
                       <label className="checkbox-label">
-                        <input 
-                          type="checkbox" 
-                          name="acessoRelatorios" 
+                        <input
+                          type="checkbox"
+                          name="acessoRelatorios"
                           checked={form.acessoRelatorios}
                           onChange={handleChange}
                         />
-                        <span className="checkbox-text">Acesso a relatórios</span>
+                        <span className="checkbox-text">
+                          Acesso a relatórios
+                        </span>
                       </label>
                       <label className="checkbox-label">
-                        <input 
-                          type="checkbox" 
-                          name="acessoEstoque" 
+                        <input
+                          type="checkbox"
+                          name="acessoEstoque"
                           checked={form.acessoEstoque}
                           onChange={handleChange}
                         />
                         <span className="checkbox-text">Gerenciar estoque</span>
                       </label>
                       <label className="checkbox-label">
-                        <input 
-                          type="checkbox" 
-                          name="acessoFinanceiro" 
+                        <input
+                          type="checkbox"
+                          name="acessoFinanceiro"
                           checked={form.acessoFinanceiro}
                           onChange={handleChange}
                         />
                         <span className="checkbox-text">Acesso financeiro</span>
                       </label>
                       <label className="checkbox-label">
-                        <input 
-                          type="checkbox" 
-                          name="acessoConfiguracoes" 
+                        <input
+                          type="checkbox"
+                          name="acessoConfiguracoes"
                           checked={form.acessoConfiguracoes}
                           onChange={handleChange}
                         />
-                        <span className="checkbox-text">Configurações do sistema</span>
+                        <span className="checkbox-text">
+                          Configurações do sistema
+                        </span>
                       </label>
                     </div>
                   </div>
@@ -394,17 +379,16 @@ export default function EditarFuncionarioPage() {
               </div>
 
               <div className="form-actions">
-                <button 
-                  type="button" 
+                <button
+                  type="button"
                   className="cancel-button"
-                  onClick={() => router.push("/farmacias/cadastro/funcionario/lista")}
+                  onClick={() =>
+                    router.push("/farmacias/cadastro/funcionario/lista")
+                  }
                 >
                   Cancelar
                 </button>
-                <button 
-                  type="submit" 
-                  className="submit-button"
-                >
+                <button type="submit" className="submit-button">
                   <span className="button-icon">💾</span>
                   Atualizar Funcionário
                 </button>
@@ -430,7 +414,7 @@ export default function EditarFuncionarioPage() {
           display: flex;
           justify-content: space-between;
           align-items: center;
-          box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+          box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
           position: sticky;
           top: 0;
           z-index: 100;
@@ -529,7 +513,7 @@ export default function EditarFuncionarioPage() {
           display: flex;
           flex-direction: column;
           transition: transform 0.3s ease;
-          box-shadow: 2px 0 10px rgba(0,0,0,0.1);
+          box-shadow: 2px 0 10px rgba(0, 0, 0, 0.1);
           z-index: 90;
         }
 
@@ -538,7 +522,7 @@ export default function EditarFuncionarioPage() {
           display: flex;
           justify-content: space-between;
           align-items: center;
-          border-bottom: 1px solid rgba(255,255,255,0.1);
+          border-bottom: 1px solid rgba(255, 255, 255, 0.1);
         }
 
         .logo {
@@ -571,7 +555,7 @@ export default function EditarFuncionarioPage() {
         }
 
         .sidebar-close:hover {
-          background: rgba(255,255,255,0.1);
+          background: rgba(255, 255, 255, 0.1);
         }
 
         .nav {
@@ -609,7 +593,7 @@ export default function EditarFuncionarioPage() {
         }
 
         .nav-link:hover {
-          background: rgba(255,255,255,0.1);
+          background: rgba(255, 255, 255, 0.1);
           color: white;
         }
 
@@ -633,7 +617,7 @@ export default function EditarFuncionarioPage() {
 
         .user-panel {
           padding: 20px;
-          border-top: 1px solid rgba(255,255,255,0.1);
+          border-top: 1px solid rgba(255, 255, 255, 0.1);
           display: flex;
           align-items: center;
           gap: 12px;
@@ -643,7 +627,7 @@ export default function EditarFuncionarioPage() {
           width: 40px;
           height: 40px;
           border-radius: 50%;
-          background: rgba(255,255,255,0.1);
+          background: rgba(255, 255, 255, 0.1);
           display: flex;
           align-items: center;
           justify-content: center;
@@ -704,7 +688,7 @@ export default function EditarFuncionarioPage() {
           background: white;
           border-radius: 16px;
           padding: 40px;
-          box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+          box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
         }
 
         .form-grid {
@@ -752,7 +736,7 @@ export default function EditarFuncionarioPage() {
         }
 
         .input-label::after {
-          content: '*';
+          content: "*";
           color: #ef4444;
           margin-left: 4px;
         }
@@ -900,8 +884,12 @@ export default function EditarFuncionarioPage() {
         }
 
         @keyframes spin {
-          0% { transform: rotate(0deg); }
-          100% { transform: rotate(360deg); }
+          0% {
+            transform: rotate(0deg);
+          }
+          100% {
+            transform: rotate(360deg);
+          }
         }
 
         /* Responsividade */
@@ -910,7 +898,7 @@ export default function EditarFuncionarioPage() {
             grid-template-columns: 1fr;
             gap: 30px;
           }
-          
+
           .search-input {
             width: 200px;
           }
@@ -924,7 +912,7 @@ export default function EditarFuncionarioPage() {
           .menu-toggle {
             display: block;
           }
-          
+
           .sidebar {
             position: fixed;
             top: 0;
@@ -933,50 +921,51 @@ export default function EditarFuncionarioPage() {
             transform: translateX(-100%);
             z-index: 90;
           }
-          
+
           .sidebar-open {
             transform: translateX(0);
           }
-          
+
           .sidebar-close {
             display: block;
           }
-          
+
           .overlay {
             display: block;
           }
-          
+
           .header {
             padding: 16px 20px;
           }
-          
+
           .header-actions {
             flex-wrap: wrap;
             gap: 12px;
           }
-          
+
           .search-input {
             width: 180px;
           }
-          
+
           .form-container {
             padding: 20px;
           }
-          
+
           .form {
             padding: 24px;
           }
-          
+
           .form-row {
             grid-template-columns: 1fr;
             gap: 0;
           }
-          
+
           .form-actions {
             flex-direction: column;
           }
-          
-          .cancel-button, .submit-button {
+
+          .cancel-button,
+          .submit-button {
             width: 100%;
             justify-content: center;
           }
@@ -988,28 +977,28 @@ export default function EditarFuncionarioPage() {
             gap: 16px;
             align-items: flex-start;
           }
-          
+
           .header-actions {
             width: 100%;
             justify-content: space-between;
           }
-          
+
           .search-box {
             width: 100%;
           }
-          
+
           .search-input {
             width: 100%;
           }
-          
+
           .form-container {
             padding: 16px;
           }
-          
+
           .form {
             padding: 20px;
           }
-          
+
           .form-header h2 {
             font-size: 24px;
           }

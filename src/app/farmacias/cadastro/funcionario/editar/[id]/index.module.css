@@ -13,7 +13,7 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
   position: sticky;
   top: 0;
   z-index: 100;
@@ -112,7 +112,7 @@
   display: flex;
   flex-direction: column;
   transition: transform 0.3s ease;
-  box-shadow: 2px 0 10px rgba(0,0,0,0.1);
+  box-shadow: 2px 0 10px rgba(0, 0, 0, 0.1);
   z-index: 90;
 }
 
@@ -121,7 +121,7 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  border-bottom: 1px solid rgba(255,255,255,0.1);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
 }
 
 .logo-editar {
@@ -154,7 +154,7 @@
 }
 
 .sidebar-close-editar:hover {
-  background: rgba(255,255,255,0.1);
+  background: rgba(255, 255, 255, 0.1);
 }
 
 .nav-editar {
@@ -192,7 +192,7 @@
 }
 
 .nav-link-editar:hover {
-  background: rgba(255,255,255,0.1);
+  background: rgba(255, 255, 255, 0.1);
   color: white;
 }
 
@@ -216,7 +216,7 @@
 
 .user-panel-editar {
   padding: 20px;
-  border-top: 1px solid rgba(255,255,255,0.1);
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
   display: flex;
   align-items: center;
   gap: 12px;
@@ -226,7 +226,7 @@
   width: 40px;
   height: 40px;
   border-radius: 50%;
-  background: rgba(255,255,255,0.1);
+  background: rgba(255, 255, 255, 0.1);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -287,7 +287,7 @@
   background: white;
   border-radius: 16px;
   padding: 40px;
-  box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
 }
 
 .form-grid-editar {
@@ -335,7 +335,7 @@
 }
 
 .input-label-editar::after {
-  content: '*';
+  content: "*";
   color: #ef4444;
   margin-left: 4px;
 }
@@ -483,8 +483,12 @@ select.modern-input-editar {
 }
 
 @keyframes spin {
-  0% { transform: rotate(0deg); }
-  100% { transform: rotate(360deg); }
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
 }
 
 /* Responsividade */
@@ -493,7 +497,7 @@ select.modern-input-editar {
     grid-template-columns: 1fr;
     gap: 30px;
   }
-  
+
   .search-input-editar {
     width: 200px;
   }
@@ -507,7 +511,7 @@ select.modern-input-editar {
   .menu-toggle-editar {
     display: block;
   }
-  
+
   .sidebar-editar {
     position: fixed;
     top: 0;
@@ -516,50 +520,51 @@ select.modern-input-editar {
     transform: translateX(-100%);
     z-index: 90;
   }
-  
+
   .sidebar-open-editar {
     transform: translateX(0);
   }
-  
+
   .sidebar-close-editar {
     display: block;
   }
-  
+
   .overlay-editar {
     display: block;
   }
-  
+
   .header-editar {
     padding: 16px 20px;
   }
-  
+
   .header-actions-editar {
     flex-wrap: wrap;
     gap: 12px;
   }
-  
+
   .search-input-editar {
     width: 180px;
   }
-  
+
   .form-container-editar {
     padding: 20px;
   }
-  
+
   .form-editar {
     padding: 24px;
   }
-  
+
   .form-row-editar {
     grid-template-columns: 1fr;
     gap: 0;
   }
-  
+
   .form-actions-editar {
     flex-direction: column;
   }
-  
-  .cancel-button-editar, .submit-button-editar {
+
+  .cancel-button-editar,
+  .submit-button-editar {
     width: 100%;
     justify-content: center;
   }
@@ -571,28 +576,28 @@ select.modern-input-editar {
     gap: 16px;
     align-items: flex-start;
   }
-  
+
   .header-actions-editar {
     width: 100%;
     justify-content: space-between;
   }
-  
+
   .search-box-editar {
     width: 100%;
   }
-  
+
   .search-input-editar {
     width: 100%;
   }
-  
+
   .form-container-editar {
     padding: 16px;
   }
-  
+
   .form-editar {
     padding: 20px;
   }
-  
+
   .form-header-editar h2 {
     font-size: 24px;
   }

@@ -3,7 +3,7 @@
   max-width: 1280px;
   margin: 0 auto;
   padding: 24px;
-  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
   color: #333;
   background: #f8f9fa;
   min-height: 100vh;
@@ -195,7 +195,8 @@
   gap: 8px;
 }
 
-.botaoEditar, .botaoExcluir {
+.botaoEditar,
+.botaoExcluir {
   border: none;
   padding: 8px 12px;
   border-radius: 6px;
@@ -261,28 +262,28 @@
   .containerModerno {
     padding: 16px;
   }
-  
+
   .acoesRapidas {
     flex-direction: column;
     align-items: stretch;
   }
-  
+
   .botoesAcao {
     flex-direction: column;
   }
-  
+
   .buscaContainer {
     width: 100%;
   }
-  
+
   .campoBusca {
     width: 100%;
   }
-  
+
   .tabelaContainer {
     overflow-x: auto;
   }
-  
+
   .tabelaModernizada {
     min-width: 800px;
   }
