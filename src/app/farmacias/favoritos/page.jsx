@@ -143,12 +143,12 @@ export default function FavoritosFarmaciaPage() {
             </div>
             
             <div className={styles.navSection}>
-              <p className={styles.navLabel}>Sistema</p>
-              <a href="../../configuracoes" className={styles.navLink}>
+              {/* <p className={styles.navLabel}>Sistema</p> */}
+              {/* <a href="../../configuracoes" className={styles.navLink}>
                 <span className={styles.navIcon}>⚙️</span>
                 <span className={styles.navText}>Configurações</span>
-              </a>
-              <a href="/perfil" className={`${styles.navLink} ${styles.active}`}>
+              </a> */}
+              <a href="./perfil" className={`${styles.navLink} ${styles.active}`}>
                 <span className={styles.navIcon}>👤</span>
                 <span className={styles.navText}>Meu Perfil</span>
               </a>

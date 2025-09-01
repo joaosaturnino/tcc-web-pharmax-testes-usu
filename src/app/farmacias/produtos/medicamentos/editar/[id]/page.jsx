@@ -41,7 +41,7 @@ export default function EditarMedicamento() {
   useEffect(() => {
     const encontrado = medicamentosFake.find((m) => m.id === id);
     if (encontrado) setMedicamento(encontrado);
-    else router.push("/produtos/medicamentos");
+    else router.push("/farmacias/produtos/medicamentos");
   }, [id, router]);
 
   const handleChange = (e) => {
@@ -53,7 +53,7 @@ export default function EditarMedicamento() {
     e.preventDefault();
     alert("Medicamento atualizado com sucesso!");
     // Aqui você pode enviar para o backend
-    router.push("/produtos/medicamentos");
+    router.push("/farmacias/produtos/medicamentos");
   };
 
   if (!medicamento)
@@ -78,19 +78,6 @@ export default function EditarMedicamento() {
             ☰
           </button>
           <h1 className={styles.titulo}>Editar Medicamento</h1>
-        </div>
-        <div className={styles.headerActions}>
-          <div className={styles.searchBox}>
-            <input 
-              type="text" 
-              placeholder="Buscar medicamentos..." 
-              className={styles.searchInput}
-            />
-            <span className={styles.searchIcon}>🔍</span>
-          </div>
-          <div className={styles.userMenu}>
-            <div className={styles.userAvatar}>AD</div>
-          </div>
         </div>
       </header>
 
@@ -135,7 +122,7 @@ export default function EditarMedicamento() {
               </a>
             </div>
             
-            <div className={styles.navSection}>
+            {/* <div className={styles.navSection}>
               <p className={styles.navLabel}>Sistema</p>
               <a href="/config" className={styles.navLink}>
                 <span className={styles.navIcon}>⚙️</span>
@@ -145,7 +132,7 @@ export default function EditarMedicamento() {
                 <span className={styles.navIcon}>🚪</span>
                 <span className={styles.navText}>Sair</span>
               </button>
-            </div>
+            </div> */}
           </nav>
           
           <div className={styles.userPanel}>

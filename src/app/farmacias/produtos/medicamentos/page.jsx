@@ -118,7 +118,7 @@ function ListagemMedicamentos() {
               </a>
             </div>
             
-            <div className={styles.navSection}>
+            {/* <div className={styles.navSection}>
               <p className={styles.navLabel}>Sistema</p>
               <a href="../../configuracoes" className={styles.navLink}>
                 <span className={styles.navIcon}>⚙️</span>
@@ -132,7 +132,7 @@ function ListagemMedicamentos() {
                 <span className={styles.navIcon}>🚪</span>
                 <span className={styles.navText}>Sair</span>
               </button>
-            </div>
+            </div> */}
           </nav>
           
           <div className={styles.userPanel}>

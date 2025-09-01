@@ -137,6 +137,10 @@ export default function ConfiguracoesSistema() {
           <nav className="nav">
             <div className="navSection">
               <p className="navLabel">Principal</p>
+              <a href="/farmacias/perfil" className="navLink">
+                <span className="navIcon">👤</span>
+                <span className="navText">Meus Dados</span>
+              </a>
               <a href="/farmacias/favoritos" className="navLink">
                 <span className="navIcon">⭐</span>
                 <span className="navText">Favoritos</span>
@@ -160,19 +164,16 @@ export default function ConfiguracoesSistema() {
             </div>
             
             <div className="navSection">
-              <p className="navLabel">Sistema</p>
+              {/* <p className="navLabel">Sistema</p>
               <a href="../../../configuracoes" className="navLink active">
                 <span className="navIcon">⚙️</span>
                 <span className="navText">Configurações</span>
-              </a>
-              <a href="/farmacias/perfil" className="navLink active">
-                <span className="navIcon">👤</span>
-                <span className="navText">Meu Perfil</span>
-              </a>
-              <button className="navLink">
+              </a> */}
+              
+              {/* <button className="navLink">
                 <span className="navIcon">🚪</span>
                 <span className="navText">Sair</span>
-              </button>
+              </button> */}
             </div>
           </nav>
           

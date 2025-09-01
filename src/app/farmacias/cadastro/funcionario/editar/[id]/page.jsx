@@ -79,7 +79,7 @@ export default function EditarFuncionarioPage() {
     e.preventDefault();
     console.log("Dados atualizados:", form);
     alert("Funcionário atualizado com sucesso!");
-    router.push("/farmacias/lista/funcionarios");
+    router.push("/farmacias/cadastro/funcionario/lista");
   };
 
   if (loading) {
@@ -104,19 +104,7 @@ export default function EditarFuncionarioPage() {
           </button>
           <h1 className="title">✏️ Editar Funcionário</h1>
         </div>
-        <div className="header-actions">
-          <div className="search-box">
-            <input 
-              type="text" 
-              placeholder="Buscar funcionários..." 
-              className="search-input"
-            />
-            <span className="search-icon">🔍</span>
-          </div>
-          <div className="user-menu">
-            <span className="user-avatar">👤</span>
-          </div>
-        </div>
+        
       </header>
 
       <div className="content-wrapper">
@@ -154,13 +142,13 @@ export default function EditarFuncionarioPage() {
                 <span className="nav-icon">👩‍⚕️</span>
                 <span className="nav-text">Funcionários</span>
               </a>
-              <a href="/laboratorio/lista" className="nav-link">
+              <a href="/farmacias/laboratorio/lista" className="nav-link">
                 <span className="nav-icon">🏭</span>
                 <span className="nav-text">Laboratórios</span>
               </a>
             </div>
             
-            <div className="nav-section">
+            {/* <div className="nav-section">
               <p className="nav-label">Sistema</p>
               <a href="/config" className="nav-link">
                 <span className="nav-icon">⚙️</span>
@@ -174,7 +162,7 @@ export default function EditarFuncionarioPage() {
                 <span className="nav-icon">🚪</span>
                 <span className="nav-text">Sair</span>
               </button>
-            </div>
+            </div> */}
           </nav>
           
           <div className="user-panel">
@@ -409,7 +397,7 @@ export default function EditarFuncionarioPage() {
                 <button 
                   type="button" 
                   className="cancel-button"
-                  onClick={() => router.push("/farmacias/lista/funcionarios")}
+                  onClick={() => router.push("/farmacias/cadastro/funcionario/lista")}
                 >
                   Cancelar
                 </button>

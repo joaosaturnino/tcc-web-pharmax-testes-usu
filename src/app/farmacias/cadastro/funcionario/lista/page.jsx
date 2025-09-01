@@ -120,7 +120,7 @@ export default function ListaFuncionariosPage() {
           </button>
           <h1 className={styles.title}>👥 Lista de Funcionários</h1>
         </div>
-        <div className={styles.headerActions}>
+        {/* <div className={styles.headerActions}>
           <div className={styles.searchBox}>
             <input 
               type="text" 
@@ -134,7 +134,7 @@ export default function ListaFuncionariosPage() {
           <div className={styles.userMenu}>
             <span className={styles.userAvatar}>👤</span>
           </div>
-        </div>
+        </div> */}
       </header>
 
       <div className={styles.contentWrapper}>
@@ -178,7 +178,7 @@ export default function ListaFuncionariosPage() {
               </a>
             </div>
             
-            <div className={styles.navSection}>
+            {/* <div className={styles.navSection}>
               <p className={styles.navLabel}>Sistema</p>
               <a href="../../../configuracoes" className={styles.navLink}>
                 <span className={styles.navIcon}>⚙️</span>
@@ -192,7 +192,7 @@ export default function ListaFuncionariosPage() {
                 <span className={styles.navIcon}>🚪</span>
                 <span className={styles.navText}>Sair</span>
               </button>
-            </div>
+            </div> */}
           </nav>
           
           <div className={styles.userPanel}>

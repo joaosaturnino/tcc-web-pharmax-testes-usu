@@ -85,7 +85,7 @@ export default function CadastroLaboratorio() {
             </a>
           </div>
           
-          <div className={styles.navSection}>
+          {/* <div className={styles.navSection}>
             <p className={styles.navLabel}>Sistema</p>
             <a href="../../../configuracoes" className={styles.navLink}>
               <span className={styles.navIcon}>⚙️</span>
@@ -99,7 +99,7 @@ export default function CadastroLaboratorio() {
               <span className={styles.navIcon}>🚪</span>
               <span className={styles.navText}>Sair</span>
             </button>
-          </div>
+          </div> */}
         </nav>
         
         <div className={styles.userPanel}>

@@ -22,7 +22,7 @@ function CadastroMedicamento() {
     console.log({ nome, dosagem, preco, descricao, quantidade, tipo, forma, laboratorio });
     
     // Redireciona para a página de listagem de medicamentos após o cadastro
-    router.push('/produtos/medicamentos');
+    router.push('/farmacias/produtos/medicamentos');
   };
 
   return (
@@ -38,23 +38,7 @@ function CadastroMedicamento() {
           </button>
           <h1 className={styles.title}>Cadastro de Medicamentos</h1>
         </div>
-        <div className={styles.headerActions}>
-          <button className={styles.notificationBtn}>
-            <span className={styles.bellIcon}>🔔</span>
-            <span className={styles.notificationBadge}>3</span>
-          </button>
-          <div className={styles.searchBox}>
-            <input 
-              type="text" 
-              placeholder="Buscar medicamentos..." 
-              className={styles.searchInput}
-            />
-            <span className={styles.searchIcon}>🔍</span>
-          </div>
-          <div className={styles.userMenu}>
-            <span className={styles.userShort}>AD</span>
-          </div>
-        </div>
+        
       </header>
 
       <div className={styles.contentWrapper}>
@@ -98,7 +82,7 @@ function CadastroMedicamento() {
               </a>
             </div>
             
-            <div className={styles.navSection}>
+            {/* <div className={styles.navSection}>
               <p className={styles.navLabel}>Sistema</p>
               <a href="/config" className={styles.navLink}>
                 <span className={styles.navIcon}>⚙️</span>
@@ -108,7 +92,7 @@ function CadastroMedicamento() {
                 <span className={styles.navIcon}>🚪</span>
                 <span className={styles.navText}>Sair</span>
               </button>
-            </div>
+            </div> */}
           </nav>
           
           <div className={styles.userPanel}>
