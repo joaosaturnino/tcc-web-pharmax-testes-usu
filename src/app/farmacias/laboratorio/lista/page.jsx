@@ -83,9 +83,10 @@ export default function ListaLaboratorios() {
             className={styles.menuToggle}
             onClick={() => setSidebarOpen(!sidebarOpen)}
           >
-            ☰
+            {/* ☰ */}
           </button>
           <h1 className={styles.title}>🏭 Laboratórios</h1>
+          {/* <h1 className={styles.title}>🏭 Laboratórios</h1> */}
         </div>
         <div className={styles.headerActions}>
           <Link
@@ -107,7 +108,7 @@ export default function ListaLaboratorios() {
         >
           <div className={styles.sidebarHeader}>
             <div className={styles.logo}>
-              <span className={styles.logoIcon}>💊</span>
+              {/* <span className={styles.logoIcon}>💊</span> */}
               <span className={styles.logoText}>PharmaX</span>
             </div>
             <button
@@ -122,14 +123,14 @@ export default function ListaLaboratorios() {
             <div className={styles.navSection}>
               <p className={styles.navLabel}>Principal</p>
               <a href="/farmacias/favoritos" className={styles.navLink}>
-                <span className={styles.navIcon}>⭐</span>
+                {/* <span className={styles.navIcon}>⭐</span> */}
                 <span className={styles.navText}>Favoritos</span>
               </a>
               <a
                 href="/farmacias/produtos/medicamentos"
                 className={styles.navLink}
               >
-                <span className={styles.navIcon}>💊</span>
+                {/* <span className={styles.navIcon}>💊</span> */}
                 <span className={styles.navText}>Medicamentos</span>
               </a>
             </div>
@@ -140,14 +141,14 @@ export default function ListaLaboratorios() {
                 href="/farmacias/cadastro/funcionario/lista"
                 className={styles.navLink}
               >
-                <span className={styles.navIcon}>👩‍⚕️</span>
+                {/* <span className={styles.navIcon}>👩‍⚕️</span> */}
                 <span className={styles.navText}>Funcionários</span>
               </a>
               <a
                 href="/farmacias/laboratorio/lista"
                 className={`${styles.navLink} ${styles.active}`}
               >
-                <span className={styles.navIcon}>🏭</span>
+                {/* <span className={styles.navIcon}>🏭</span> */}
                 <span className={styles.navText}>Laboratórios</span>
                 <span className={styles.notificationBadge}>
                   {laboratorios.length}
@@ -172,7 +173,7 @@ export default function ListaLaboratorios() {
             </div> */}
           </nav>
 
-          <div className={styles.userPanel}>
+          {/* <div className={styles.userPanel}>
             <div className={styles.userAvatar}>
               <span>👤</span>
             </div>
@@ -180,7 +181,7 @@ export default function ListaLaboratorios() {
               <p className={styles.userName}>Administrador</p>
               <p className={styles.userRole}>Supervisor</p>
             </div>
-          </div>
+          </div> */}
         </aside>
 
         {/* Overlay para mobile */}
@@ -201,13 +202,13 @@ export default function ListaLaboratorios() {
               </div>
               <div className={styles.statsGrid}>
                 <div className={styles.statCard}>
-                  <div className={styles.statIcon}>🏭</div>
+                  {/* <div className={styles.statIcon}>🏭</div>
                   <div className={styles.statContent}>
                     <h3>{laboratorios.length}</h3>
                     <p>Total</p>
-                  </div>
+                  </div> */}
                 </div>
-                <div className={styles.statCard}>
+                {/* <div className={styles.statCard}>
                   <div className={styles.statIcon}>✅</div>
                   <div className={styles.statContent}>
                     <h3>
@@ -218,8 +219,8 @@ export default function ListaLaboratorios() {
                     </h3>
                     <p>Ativos</p>
                   </div>
-                </div>
-                <div className={styles.statCard}>
+                </div> */}
+                {/* <div className={styles.statCard}>
                   <div className={styles.statIcon}>❌</div>
                   <div className={styles.statContent}>
                     <h3>
@@ -230,7 +231,7 @@ export default function ListaLaboratorios() {
                     </h3>
                     <p>Inativos</p>
                   </div>
-                </div>
+                </div> */}
               </div>
             </div>
 

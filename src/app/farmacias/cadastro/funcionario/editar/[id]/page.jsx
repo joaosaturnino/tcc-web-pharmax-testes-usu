@@ -100,9 +100,11 @@ export default function EditarFuncionarioPage() {
             className="menu-toggle"
             onClick={() => setSidebarOpen(!sidebarOpen)}
           >
-            ☰
+            
           </button>
-          <h1 className="title">✏️ Editar Funcionário</h1>
+          <h1 className="title"> Editar Funcionário</h1>
+          {/* <h1 className="title">✏️ Editar Funcionário</h1> */}
+          
         </div>
       </header>
 
@@ -111,7 +113,7 @@ export default function EditarFuncionarioPage() {
         <aside className={`sidebar ${sidebarOpen ? "sidebar-open" : ""}`}>
           <div className="sidebar-header">
             <div className="logo">
-              <span className="logo-icon">💊</span>
+              {/* <span className="logo-icon">💊</span> */}
               <span className="logo-text">PharmaX</span>
             </div>
             <button
@@ -126,11 +128,11 @@ export default function EditarFuncionarioPage() {
             <div className="nav-section">
               <p className="nav-label">Principal</p>
               <a href="/farmacias/favoritos" className="nav-link">
-                <span className="nav-icon">⭐</span>
+                {/* <span className="nav-icon">⭐</span> */}
                 <span className="nav-text">Favoritos</span>
               </a>
               <a href="/farmacias/produtos/medicamentos" className="nav-link">
-                <span className="nav-icon">💊</span>
+                {/* <span className="nav-icon">💊</span> */}
                 <span className="nav-text">Medicamentos</span>
               </a>
             </div>
@@ -141,11 +143,11 @@ export default function EditarFuncionarioPage() {
                 href="/farmacias/cadastro/funcionario/lista"
                 className="nav-link"
               >
-                <span className="nav-icon">👩‍⚕️</span>
+                {/* <span className="nav-icon">👩‍⚕️</span> */}
                 <span className="nav-text">Funcionários</span>
               </a>
               <a href="/farmacias/laboratorio/lista" className="nav-link">
-                <span className="nav-icon">🏭</span>
+                {/* <span className="nav-icon">🏭</span> */}
                 <span className="nav-text">Laboratórios</span>
               </a>
             </div>
@@ -167,7 +169,7 @@ export default function EditarFuncionarioPage() {
             </div> */}
           </nav>
 
-          <div className="user-panel">
+          {/* <div className="user-panel">
             <div className="user-avatar">
               <span>👤</span>
             </div>
@@ -175,7 +177,7 @@ export default function EditarFuncionarioPage() {
               <p className="user-name">Administrador</p>
               <p className="user-role">Supervisor</p>
             </div>
-          </div>
+          </div> */}
         </aside>
 
         {/* Overlay para mobile */}
@@ -196,7 +198,7 @@ export default function EditarFuncionarioPage() {
                 {/* Informações Pessoais */}
                 <div className="form-section">
                   <h3 className="section-title">
-                    <span className="section-icon">👤</span>
+                    {/* <span className="section-icon">👤</span> */}
                     Informações Pessoais
                   </h3>
 
@@ -280,7 +282,7 @@ export default function EditarFuncionarioPage() {
                 {/* Informações de Acesso */}
                 <div className="form-section">
                   <h3 className="section-title">
-                    <span className="section-icon">🔐</span>
+                    {/* <span className="section-icon">🔐</span> */}
                     Acesso ao Sistema
                   </h3>
 
@@ -389,7 +391,7 @@ export default function EditarFuncionarioPage() {
                   Cancelar
                 </button>
                 <button type="submit" className="submit-button">
-                  <span className="button-icon">💾</span>
+                  {/* <span className="button-icon">💾</span> */}
                   Atualizar Funcionário
                 </button>
               </div>

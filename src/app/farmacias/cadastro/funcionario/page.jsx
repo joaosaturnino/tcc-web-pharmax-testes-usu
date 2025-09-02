@@ -39,9 +39,10 @@ export default function CadastroFuncionarioPage() {
             className={styles.menuToggle}
             onClick={() => setSidebarOpen(!sidebarOpen)}
           >
-            ☰
+           
           </button>
-          <h1 className={styles.title}>👩‍⚕️ Cadastro de Funcionário</h1>
+          <h1 className={styles.title}> Cadastro de Funcionário</h1>
+          {/* <h1 className={styles.title}>👩‍⚕️ Cadastro de Funcionário</h1> */}
         </div>
       </header>
 
@@ -54,14 +55,14 @@ export default function CadastroFuncionarioPage() {
         >
           <div className={styles.sidebarHeader}>
             <div className={styles.logo}>
-              <span className={styles.logoIcon}>💊</span>
+              {/* <span className={styles.logoIcon}>💊</span> */}
               <span className={styles.logoText}>PharmaX</span>
             </div>
             <button
               className={styles.sidebarClose}
               onClick={() => setSidebarOpen(false)}
             >
-              ×
+              {/* × */}
             </button>
           </div>
 
@@ -69,14 +70,14 @@ export default function CadastroFuncionarioPage() {
             <div className={styles.navSection}>
               <p className={styles.navLabel}>Principal</p>
               <a href="/farmacias/favoritos" className={styles.navLink}>
-                <span className={styles.navIcon}>⭐</span>
+                {/* <span className={styles.navIcon}>⭐</span> */}
                 <span className={styles.navText}>Favoritos</span>
               </a>
               <a
                 href="/farmacias/produtos/medicamentos"
                 className={styles.navLink}
               >
-                <span className={styles.navIcon}>💊</span>
+                {/* <span className={styles.navIcon}>💊</span> */}
                 <span className={styles.navText}>Medicamentos</span>
               </a>
             </div>
@@ -87,11 +88,11 @@ export default function CadastroFuncionarioPage() {
                 href="/farmacias/cadastro/funcionario/lista"
                 className={`${styles.navLink} ${styles.active}`}
               >
-                <span className={styles.navIcon}>👩‍⚕️</span>
+                {/* <span className={styles.navIcon}>👩‍⚕️</span> */}
                 <span className={styles.navText}>Funcionários</span>
               </a>
               <a href="/farmacias/laboratorio/lista" className={styles.navLink}>
-                <span className={styles.navIcon}>🏭</span>
+                {/* <span className={styles.navIcon}>🏭</span> */}
                 <span className={styles.navText}>Laboratórios</span>
               </a>
             </div>
@@ -113,7 +114,7 @@ export default function CadastroFuncionarioPage() {
             </div> */}
           </nav>
 
-          <div className={styles.userPanel}>
+          {/* <div className={styles.userPanel}>
             <div className={styles.userAvatar}>
               <span>👤</span>
             </div>
@@ -121,7 +122,7 @@ export default function CadastroFuncionarioPage() {
               <p className={styles.userName}>Administrador</p>
               <p className={styles.userRole}>Supervisor</p>
             </div>
-          </div>
+          </div> */}
         </aside>
 
         {/* Overlay para mobile */}
@@ -145,7 +146,7 @@ export default function CadastroFuncionarioPage() {
                 {/* Informações Pessoais */}
                 <div className={styles.formSection}>
                   <h3 className={styles.sectionTitle}>
-                    <span className={styles.sectionIcon}>👤</span>
+                    {/* <span className={styles.sectionIcon}>👤</span> */}
                     Informações Pessoais
                   </h3>
 
@@ -231,7 +232,7 @@ export default function CadastroFuncionarioPage() {
                 {/* Informações de Acesso */}
                 <div className={styles.formSection}>
                   <h3 className={styles.sectionTitle}>
-                    <span className={styles.sectionIcon}>🔐</span>
+                    {/* <span className={styles.sectionIcon}>🔐</span> */}
                     Acesso ao Sistema
                   </h3>
 
@@ -328,7 +329,7 @@ export default function CadastroFuncionarioPage() {
                   Cancelar
                 </button>
                 <button type="submit" className={styles.submitButton}>
-                  <span className={styles.buttonIcon}>💾</span>
+                  {/* <span className={styles.buttonIcon}>💾</span> */}
                   Cadastrar Funcionário
                 </button>
               </div>

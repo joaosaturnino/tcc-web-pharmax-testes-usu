@@ -98,209 +98,241 @@ export default function CadastroFarmacia() {
 
   return (
     <div className={styles.container}>
-      <div className={styles.header}>
-        <div className={styles.logo}>
-          <span className={styles.logoIcon}>💊</span>
-          <span className={styles.logoText}>PharmaSystem</span>
+      <div className={styles.backgroundPattern}></div>
+      
+      <div className={styles.contentWrapper}>
+        <div className={styles.header}>
+          <div className={styles.logo}>
+            <span className={styles.logoIcon}>💊</span>
+            <span className={styles.logoText}>PharmaX</span>
+          </div>
+          <h1 className={styles.titulo}>Cadastro de Farmácia</h1>
+          <p className={styles.subtitulo}>
+            Preencha os dados abaixo para criar sua conta
+          </p>
         </div>
-        <h1 className={styles.titulo}>Cadastro de Farmácia</h1>
-        <p className={styles.subtitulo}>
-          Preencha os dados abaixo para criar sua conta
-        </p>
-      </div>
 
-      <div className={styles.formContainer}>
-        <form onSubmit={handleSubmit} className={styles.form}>
-          <div className={styles.formGrid}>
-            <div className={styles.formGroup}>
-              <label className={styles.label}>Nome da Farmácia *</label>
-              <input
-                className={styles.input}
-                type="text"
-                name="nome"
-                value={farmacia.nome}
-                onChange={handleChange}
-                placeholder="Digite o nome da farmácia"
-                required
-              />
-            </div>
-
-            <div className={styles.formGroup}>
-              <label className={styles.label}>CNPJ *</label>
-              <input
-                className={styles.input}
-                type="text"
-                name="cnpj"
-                value={farmacia.cnpj}
-                onChange={handleChange}
-                placeholder="00.000.000/0000-00"
-                required
-              />
-            </div>
-
-            <div className={styles.formGroup}>
-              <label className={styles.label}>Endereço Completo *</label>
-              <input
-                className={styles.input}
-                type="text"
-                name="endereco"
-                value={farmacia.endereco}
-                onChange={handleChange}
-                placeholder="Rua, número, bairro, cidade"
-                required
-              />
-            </div>
-
-            <div className={styles.formGroup}>
-              <label className={styles.label}>Telefone</label>
-              <input
-                className={styles.input}
-                type="tel"
-                name="telefone"
-                value={farmacia.telefone}
-                onChange={handleChange}
-                placeholder="(11) 99999-9999"
-              />
-            </div>
-
-            <div className={styles.formGroup}>
-              <label className={styles.label}>E-mail *</label>
-              <input
-                className={styles.input}
-                type="email"
-                name="email"
-                value={farmacia.email}
-                onChange={handleChange}
-                placeholder="seu@email.com"
-                required
-              />
-            </div>
-
-            <div className={styles.formGroup}>
-              <label className={styles.label}>Senha *</label>
-              <input
-                className={styles.input}
-                type="password"
-                name="senha"
-                value={farmacia.senha}
-                onChange={handleChange}
-                placeholder="Crie uma senha segura"
-                required
-              />
-              <div className={styles.passwordStrength}>
-                <div
-                  className={`${styles.strengthBar} ${
-                    farmacia.senha.length > 0 ? styles.weak : ""
-                  } ${farmacia.senha.length > 5 ? styles.medium : ""} ${
-                    farmacia.senha.length > 8 ? styles.strong : ""
-                  }`}
-                ></div>
-                <span className={styles.strengthText}>
-                  {farmacia.senha.length === 0
-                    ? "Força da senha"
-                    : farmacia.senha.length < 6
-                    ? "Fraca"
-                    : farmacia.senha.length < 9
-                    ? "Média"
-                    : "Forte"}
-                </span>
-              </div>
-            </div>
-
-            <div className={`${styles.formGroup} ${styles.fullWidth}`}>
-              <label className={styles.label}>Logo da Farmácia</label>
-
-              <div
-                className={`${styles.fileUploadContainer} ${
-                  isDragging ? styles.dragging : ""
-                }`}
-                onDragOver={handleDragOver}
-                onDragLeave={handleDragLeave}
-                onDrop={handleDrop}
-                onClick={triggerFileInput}
-              >
+        <div className={styles.formContainer}>
+          <form onSubmit={handleSubmit} className={styles.form}>
+            <div className={styles.formGrid}>
+              <div className={styles.formGroup}>
+                <label className={styles.label}>Nome da Farmácia *</label>
                 <input
-                  ref={fileInputRef}
-                  type="file"
-                  id="logo"
-                  accept="image/*"
-                  onChange={handleFileChange}
-                  className={styles.fileInput}
+                  className={styles.input}
+                  type="text"
+                  name="nome"
+                  value={farmacia.nome}
+                  onChange={handleChange}
+                  placeholder="Digite o nome da farmácia"
+                  required
                 />
+              </div>
 
-                {preview ? (
-                  <div className={styles.previewContainer}>
-                    <img
-                      src={preview}
-                      alt="Pré-visualização"
-                      className={styles.logoPreview}
-                    />
-                    <button
-                      type="button"
-                      className={styles.removeImageBtn}
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        setPreview(null);
-                        setFarmacia({ ...farmacia, logo: null });
-                      }}
-                    >
-                      ✕
-                    </button>
+              <div className={styles.formGroup}>
+                <label className={styles.label}>CNPJ *</label>
+                <input
+                  className={styles.input}
+                  type="text"
+                  name="cnpj"
+                  value={farmacia.cnpj}
+                  onChange={handleChange}
+                  placeholder="00.000.000/0000-00"
+                  required
+                />
+              </div>
+
+              <div className={styles.formGroup}>
+                <label className={styles.label}>Endereço Completo *</label>
+                <input
+                  className={styles.input}
+                  type="text"
+                  name="endereco"
+                  value={farmacia.endereco}
+                  onChange={handleChange}
+                  placeholder="Rua, número, bairro, cidade"
+                  required
+                />
+              </div>
+
+              <div className={styles.formGroup}>
+                <label className={styles.label}>Telefone</label>
+                <input
+                  className={styles.input}
+                  type="tel"
+                  name="telefone"
+                  value={farmacia.telefone}
+                  onChange={handleChange}
+                  placeholder="(11) 99999-9999"
+                />
+              </div>
+
+              <div className={styles.formGroup}>
+                <label className={styles.label}>E-mail *</label>
+                <input
+                  className={styles.input}
+                  type="email"
+                  name="email"
+                  value={farmacia.email}
+                  onChange={handleChange}
+                  placeholder="seu@email.com"
+                  required
+                />
+              </div>
+
+              <div className={styles.formGroup}>
+                <label className={styles.label}>Senha *</label>
+                <input
+                  className={styles.input}
+                  type="password"
+                  name="senha"
+                  value={farmacia.senha}
+                  onChange={handleChange}
+                  placeholder="Crie uma senha segura"
+                  required
+                />
+                <div className={styles.passwordStrength}>
+                  <div className={styles.strengthBars}>
+                    <div
+                      className={`${styles.strengthBar} ${
+                        farmacia.senha.length > 0 ? styles.weak : ""
+                      } ${farmacia.senha.length > 5 ? styles.medium : ""} ${
+                        farmacia.senha.length > 8 ? styles.strong : ""
+                      }`}
+                    ></div>
+                    <div
+                      className={`${styles.strengthBar} ${
+                        farmacia.senha.length > 3 ? styles.weak : ""
+                      } ${farmacia.senha.length > 6 ? styles.medium : ""} ${
+                        farmacia.senha.length > 9 ? styles.strong : ""
+                      }`}
+                    ></div>
+                    <div
+                      className={`${styles.strengthBar} ${
+                        farmacia.senha.length > 5 ? styles.weak : ""
+                      } ${farmacia.senha.length > 7 ? styles.medium : ""} ${
+                        farmacia.senha.length > 10 ? styles.strong : ""
+                      }`}
+                    ></div>
                   </div>
-                ) : (
-                  <div className={styles.uploadArea}>
-                    <span className={styles.uploadIcon}>📁</span>
-                    <div className={styles.uploadText}>
-                      <p>Clique para selecionar ou arraste uma imagem</p>
-                      <span>Formatos: JPG, PNG, SVG (Máx. 5MB)</span>
+                  <span className={styles.strengthText}>
+                    {farmacia.senha.length === 0
+                      ? "Força da senha"
+                      : farmacia.senha.length < 6
+                      ? "Fraca"
+                      : farmacia.senha.length < 9
+                      ? "Média"
+                      : "Forte"}
+                  </span>
+                </div>
+              </div>
+
+              <div className={`${styles.formGroup} ${styles.fullWidth}`}>
+                <label className={styles.label}>Logo da Farmácia</label>
+
+                <div
+                  className={`${styles.fileUploadContainer} ${
+                    isDragging ? styles.dragging : ""
+                  } ${preview ? styles.hasPreview : ""}`}
+                  onDragOver={handleDragOver}
+                  onDragLeave={handleDragLeave}
+                  onDrop={handleDrop}
+                  onClick={triggerFileInput}
+                >
+                  <input
+                    ref={fileInputRef}
+                    type="file"
+                    id="logo"
+                    accept="image/*"
+                    onChange={handleFileChange}
+                    className={styles.fileInput}
+                  />
+
+                  {preview ? (
+                    <div className={styles.previewContainer}>
+                      <img
+                        src={preview}
+                        alt="Pré-visualização"
+                        className={styles.logoPreview}
+                      />
+                      <button
+                        type="button"
+                        className={styles.removeImageBtn}
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          setPreview(null);
+                          setFarmacia({ ...farmacia, logo: null });
+                        }}
+                      >
+                        ✕
+                      </button>
                     </div>
+                  ) : (
+                    <div className={styles.uploadArea}>
+                      <div className={styles.uploadIcon}>
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+                          <path d="M14 2H6C4.9 2 4.01 2.9 4.01 4L4 20C4 21.1 4.89 22 5.99 22H18C19.1 22 20 21.1 20 20V8L14 2Z" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                          <path d="M14 2V8H20" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                          <path d="M16 13H8" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                          <path d="M16 17H8" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                          <path d="M10 9H8" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                        </svg>
+                      </div>
+                      <div className={styles.uploadText}>
+                        <p>Clique para selecionar ou arraste uma imagem</p>
+                        <span>Formatos: JPG, PNG, SVG (Máx. 5MB)</span>
+                      </div>
+                    </div>
+                  )}
+                </div>
+
+                {farmacia.logo && (
+                  <div className={styles.fileInfo}>
+                    <span>Arquivo selecionado: {farmacia.logo.name}</span>
+                    <span>
+                      Tamanho: {(farmacia.logo.size / 1024).toFixed(2)} KB
+                    </span>
                   </div>
                 )}
               </div>
-
-              {farmacia.logo && (
-                <div className={styles.fileInfo}>
-                  <span>Arquivo selecionado: {farmacia.logo.name}</span>
-                  <span>
-                    Tamanho: {(farmacia.logo.size / 1024).toFixed(2)} KB
-                  </span>
-                </div>
-              )}
             </div>
-          </div>
 
-          <div className={styles.formActions}>
-            <button
-              type="button"
-              className={styles.cancelButton}
-              onClick={() => router.back()}
-            >
-              Cancelar
-            </button>
-            <button
-              type="submit"
-              className={styles.submitButton}
-              disabled={isSubmitting}
-            >
-              {isSubmitting ? (
-                <>
-                  <span className={styles.spinner}></span>
-                  Cadastrando...
-                </>
-              ) : (
-                "Cadastrar Farmácia"
-              )}
-            </button>
-          </div>
-        </form>
+            <div className={styles.formActions}>
+              <button
+                type="button"
+                className={styles.cancelButton}
+                onClick={() => router.back()}
+                disabled={isSubmitting}
+              >
+                Cancelar
+              </button>
+              <button
+                type="submit"
+                className={styles.submitButton}
+                disabled={isSubmitting}
+              >
+                {isSubmitting ? (
+                  <>
+                    <span className={styles.spinner}></span>
+                    Cadastrando...
+                  </>
+                ) : (
+                  <>
+                    <span className={styles.buttonIcon}>🏥</span>
+                    Cadastrar Farmácia
+                  </>
+                )}
+              </button>
+            </div>
+          </form>
 
-        <div className={styles.loginRedirect}>
-          <p>
-            Já possui uma conta?{" "}
-            <a href="/login" className={styles.loginLink}>
-              Faça login
-            </a>
-          </p>
+          <div className={styles.loginRedirect}>
+            <p>
+              Já possui uma conta?{" "}
+              <a href="/login" className={styles.loginLink}>
+                Faça login
+              </a>
+            </p>
+          </div>
         </div>
       </div>
     </div>

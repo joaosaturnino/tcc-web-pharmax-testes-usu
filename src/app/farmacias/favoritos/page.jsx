@@ -94,7 +94,7 @@ export default function FavoritosFarmaciaPage() {
     } catch (error) {
       console.error("Erro ao fazer logout:", error);
       // Mesmo em caso de erro, redirecionar para a página de login
-      router.push("/login");
+      router.push("/home");
     }
   };
 
@@ -118,7 +118,7 @@ export default function FavoritosFarmaciaPage() {
             className={styles.menuToggle}
             onClick={() => setSidebarOpen(!sidebarOpen)}
           >
-            ☰
+            {/* ☰ */}
           </button>
           <h1 className={styles.title}>Medicamentos Favoritados</h1>
         </div>
@@ -133,7 +133,7 @@ export default function FavoritosFarmaciaPage() {
         >
           <div className={styles.sidebarHeader}>
             <div className={styles.logo}>
-              <span className={styles.logoIcon}>💊</span>
+              {/* <span className={styles.logoIcon}>💊</span> */}
               <span className={styles.logoText}>PharmaX</span>
             </div>
             <button
@@ -151,7 +151,7 @@ export default function FavoritosFarmaciaPage() {
                 href="/farmacias/favoritos"
                 className={`${styles.navLink} ${styles.active}`}
               >
-                <span className={styles.navIcon}>⭐</span>
+                {/* <span className={styles.navIcon}>⭐</span> */}
                 <span className={styles.navText}>Favoritos</span>
                 <span className={styles.notificationBadge}>
                   {favoritos.length}
@@ -161,7 +161,7 @@ export default function FavoritosFarmaciaPage() {
                 href="/farmacias/produtos/medicamentos"
                 className={styles.navLink}
               >
-                <span className={styles.navIcon}>💊</span>
+                {/* <span className={styles.navIcon}>💊</span> */}
                 <span className={styles.navText}>Medicamentos</span>
               </a>
             </div>
@@ -172,11 +172,11 @@ export default function FavoritosFarmaciaPage() {
                 href="/farmacias/cadastro/funcionario/lista"
                 className={styles.navLink}
               >
-                <span className={styles.navIcon}>👩‍⚕️</span>
+                {/* <span className={styles.navIcon}>👩‍⚕️</span> */}
                 <span className={styles.navText}>Funcionários</span>
               </a>
               <a href="/farmacias/laboratorio/lista" className={styles.navLink}>
-                <span className={styles.navIcon}>🏭</span>
+                {/* <span className={styles.navIcon}>🏭</span> */}
                 <span className={styles.navText}>Laboratórios</span>
               </a>
             </div>
@@ -187,29 +187,29 @@ export default function FavoritosFarmaciaPage() {
                 <span className={styles.navIcon}>⚙️</span>
                 <span className={styles.navText}>Configurações</span>
               </a> */}
-              <a
+              {/* <a
                 href="./perfil"
-                className={`${styles.navLink} ${styles.active}`}
+                className={styles.navLink}
               >
                 <span className={styles.navIcon}>👤</span>
                 <span className={styles.navText}>Meu Perfil</span>
-              </a>
+              </a> */}
               {/* Botão Sair com funcionalidade implementada */}
-              <button className={styles.navLink} onClick={handleLogout}>
+              {/* <button className={styles.navLink} onClick={handleLogout}>
                 <span className={styles.navIcon}>🚪</span>
                 <span className={styles.navText}>Sair</span>
-              </button>
+              </button> */}
             </div>
           </nav>
 
           <div className={styles.userPanel}>
-            <div className={styles.userAvatar}>
-              <span>👤</span>
-            </div>
-            <div className={styles.userInfo}>
-              <p className={styles.userName}>Administrador</p>
-              <p className={styles.userRole}>Supervisor</p>
-            </div>
+            <a
+                href="./perfil"
+                className={styles.navLink}
+              >
+                {/* <span className={styles.navIcon}>👤</span> */}
+                <span className={styles.navText}>Meu Perfil</span>
+              </a>
           </div>
         </aside>
 
@@ -224,14 +224,14 @@ export default function FavoritosFarmaciaPage() {
         {/* Conteúdo Principal */}
         <main className={styles.mainContent}>
           <div className={styles.statsGrid}>
-            <div className={styles.statCard}>
+            {/* <div className={styles.statCard}>
               <div className={styles.statIcon}>⭐</div>
               <div className={styles.statContent}>
                 <h3>{favoritos.length}</h3>
                 <p>Total de Favoritos</p>
               </div>
-            </div>
-            <div className={styles.statCard}>
+            </div> */}
+            {/* <div className={styles.statCard}>
               <div className={styles.statIcon}>💊</div>
               <div className={styles.statContent}>
                 <h3>
@@ -239,8 +239,8 @@ export default function FavoritosFarmaciaPage() {
                 </h3>
                 <p>Medicamentos</p>
               </div>
-            </div>
-            <div className={styles.statCard}>
+            </div> */}
+            {/* <div className={styles.statCard}>
               <div className={styles.statIcon}>✅</div>
               <div className={styles.statContent}>
                 <h3>
@@ -253,7 +253,7 @@ export default function FavoritosFarmaciaPage() {
                 </h3>
                 <p>Disponíveis</p>
               </div>
-            </div>
+            </div> */}
           </div>
 
           <div className={styles.grid}>
@@ -315,7 +315,7 @@ export default function FavoritosFarmaciaPage() {
 
           {favoritos.length === 0 && !loading && (
             <div className={styles.emptyState}>
-              <div className={styles.emptyIcon}>⭐</div>
+              {/* <div className={styles.emptyIcon}>⭐</div> */}
               <h3>Nenhum favorito encontrado</h3>
               <p>Os medicamentos favoritados pelos clientes aparecerão aqui.</p>
             </div>

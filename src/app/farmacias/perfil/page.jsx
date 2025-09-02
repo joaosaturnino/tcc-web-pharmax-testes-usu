@@ -66,10 +66,10 @@ export default function PerfilUsuarioPage() {
     try {
       localStorage.removeItem("authToken");
       sessionStorage.removeItem("userData");
-      router.push("/login");
+      router.push("../../home");
     } catch (error) {
       console.error("Erro ao fazer logout:", error);
-      router.push("/login");
+      router.push("../../home");
     }
   };
 
@@ -263,33 +263,30 @@ export default function PerfilUsuarioPage() {
             </div>
 
             <div className={styles.navSection}>
-              <p className={styles.navLabel}>Sistema</p>
-              <a href="../../configuracoes" className={styles.navLink}>
+              {/* <p className={styles.navLabel}>Sistema</p> */}
+              {/* <a href="../../configuracoes" className={styles.navLink}>
                 <span className={styles.navIcon}>⚙️</span>
                 <span className={styles.navText}>Configurações</span>
-              </a>
-              <a
+              </a> */}
+              {/* <a
                 href="/farmacias/perfil"
-                className={`${styles.navLink} ${styles.active}`}
+                className={styles.navLink}
               >
                 <span className={styles.navIcon}>👤</span>
                 <span className={styles.navText}>Meu Perfil</span>
-              </a>
-              <button className={styles.navLink} onClick={handleLogout}>
+              </a> */}
+              {/* <button className={styles.navLink} onClick={handleLogout}>
                 <span className={styles.navIcon}>🚪</span>
                 <span className={styles.navText}>Sair</span>
-              </button>
+              </button> */}
             </div>
           </nav>
 
           <div className={styles.userPanel}>
-            <div className={styles.userAvatar}>
-              <span>{userData.avatar}</span>
-            </div>
-            <div className={styles.userInfo}>
-              <p className={styles.userName}>{userData.nome}</p>
-              <p className={styles.userRole}>{userData.cargo}</p>
-            </div>
+            <button className={styles.navLink} onClick={handleLogout}>
+                <span className={styles.navIcon}>🚪</span>
+                <span className={styles.navText}>Sair</span>
+              </button>
           </div>
         </aside>
 

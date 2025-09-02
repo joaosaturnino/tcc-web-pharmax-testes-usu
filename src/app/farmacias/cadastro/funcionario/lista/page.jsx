@@ -214,7 +214,7 @@ export default function ListaFuncionariosPage() {
             </div> */}
           </nav>
 
-          <div className={styles.userPanel}>
+          {/* <div className={styles.userPanel}>
             <div className={styles.userAvatar}>
               <span>👤</span>
             </div>
@@ -222,7 +222,7 @@ export default function ListaFuncionariosPage() {
               <p className={styles.userName}>Administrador</p>
               <p className={styles.userRole}>Supervisor</p>
             </div>
-          </div>
+          </div> */}
         </aside>
 
         {/* Overlay para mobile */}
