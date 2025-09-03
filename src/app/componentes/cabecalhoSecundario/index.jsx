@@ -35,48 +35,7 @@ function Cabecalho() {
             Empresa
           </Link>
         </nav>
-        {/* <div className={styles.menuMobile}>
-          <MdMenu onClick={ativaMenu} className={styles.icon} id="logo" />
-        </div> */}
       </div>
-
-      {/* <div
-        className={
-          mobile === false
-            ? styles.menuMobileExpandidon
-            : styles.menuMobileExpandidos
-        }
-        id="mostraOpMobile"
-      >
-        <Link
-          href="/"
-          onClick={ativaMenu}
-          className={rota === "./contato" ? styles.active : ""}
-        >
-          Home
-        </Link>
-        <Link
-          href="/produtos/medicamentos"
-          onClick={ativaMenu}
-          className={rota === "/produtos/medicamentos" ? styles.active : ""}
-        >
-          Controle
-        </Link>
-        <Link
-          href="/sobre"
-          onClick={ativaMenu}
-          className={rota === "/sobre" ? styles.active : ""}
-        >
-          Sobre
-        </Link>
-        <Link
-          href="/usuario/perfil"
-          onClick={ativaMenu}
-          className={rota === "/usuario/perfil" ? styles.active : ""}
-        >
-          Perfil
-        </Link>
-      </div> */}
     </header>
   );
 }

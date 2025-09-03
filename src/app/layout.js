@@ -40,7 +40,14 @@ export default function RootLayout({ children }) {
     "/farmacias/perfil",
     "/sobre",
     "/farmacias/produtos/medicamentos/editar/1",
-    "/usuario/login"
+    "/usuario/login",
+    "/funcionario/produtos/medicamentos",
+    "/funcionario/produtos/medicamentos/cadastro",
+    "/funcionario/produtos/medicamentos/editar/1",
+    "/funcionario/laboratorio/lista",
+    "/funcionario/laboratorio/cadastro",
+    "/funcionario/laboratorio/cadastro/editar/1",
+    "/contato"
   ].includes(pathname); // ✅ Adicione as rotas do terceiro cabeçalho aqui
 
   // Função para renderizar o cabeçalho correto

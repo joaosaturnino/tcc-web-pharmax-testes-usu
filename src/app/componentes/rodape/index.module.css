@@ -23,7 +23,7 @@
 }
 
 .secaoRodape h4::after {
-  content: '';
+  content: "";
   position: absolute;
   left: 0;
   bottom: 0;
@@ -173,18 +173,19 @@
     gap: 1.5rem;
     padding: 0 1rem;
   }
-  
+
   .rodapeInferiorConteudo {
     flex-direction: column;
     gap: 0.75rem;
     text-align: center;
   }
-  
-  .logo, .secaoRodape:first-child {
+
+  .logo,
+  .secaoRodape:first-child {
     grid-column: 1 / -1;
     text-align: center;
   }
-  
+
   .secaoRodape h4::after {
     left: 50%;
     transform: translateX(-50%);
@@ -196,11 +197,11 @@
     grid-template-columns: 1fr;
     gap: 1.25rem;
   }
-  
+
   .redesSociais {
     justify-content: center;
   }
-  
+
   .legalLinks {
     flex-wrap: wrap;
     justify-content: center;

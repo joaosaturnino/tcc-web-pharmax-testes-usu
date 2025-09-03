@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import Image from "next/image";    
 import styles from "./page.module.css";
@@ -19,6 +19,52 @@ export default function Login() {
   const [recoveryCode, setRecoveryCode] = useState("");
   const [newPassword, setNewPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
+  const [rememberMe, setRememberMe] = useState(false); // Estado para o checkbox
+
+  // Carregar credenciais salvas ao inicializar o componente
+  useEffect(() => {
+    const savedCredentials = localStorage.getItem("rememberedCredentials");
+    if (savedCredentials) {
+      const { email: savedEmail, senha: savedSenha } = JSON.parse(savedCredentials);
+      setEmail(savedEmail);
+      setSenha(savedSenha);
+      setRememberMe(true);
+    }
+  }, []);
+
+  // Função para determinar o tipo de usuário baseado no email
+  const determinarTipoUsuario = (email) => {
+    // Lógica para determinar o tipo de usuário baseado no email
+    // Você pode modificar esta lógica conforme suas necessidades
+    
+    if (email.includes('@admin.') || email === 'admin@pharmax.com') {
+      return 'admin';
+    } else if (email.includes('@farmacia.') || email.includes('@farm.')) {
+      return 'farmacia';
+    } else if (email.includes('@cliente.') || email.includes('@user.')) {
+      return 'cliente';
+    } else {
+      // Por padrão, assumimos que é um cliente
+      return 'cliente';
+    }
+  };
+
+  // Função para redirecionar o usuário baseado no seu tipo
+  const redirecionarUsuario = (tipoUsuario) => {
+    switch (tipoUsuario) {
+      case 'admin':
+        router.push("/farmacias/favoritos");
+        break;
+      case 'farmacia':
+        router.push("/funcionario/produtos/medicamentos");
+        break;
+      case 'cliente':
+        router.push("/cliente/produtos");
+        break;
+      default:
+        router.push("/cliente/produtos");
+    }
+  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -28,13 +74,47 @@ export default function Login() {
       // Simular um processo de login
       await new Promise((resolve) => setTimeout(resolve, 1500));
 
-      localStorage.setItem(
-        "farmacia",
-        JSON.stringify({ email, senha, nome: "Minha Farmácia" })
-      );
+      // Determinar o tipo de usuário baseado no email
+      const tipoUsuario = determinarTipoUsuario(email);
+      
+      // Salvar dados do usuário no localStorage
+      const userData = { 
+        email, 
+        senha, 
+        nome: "Usuário PharmaX", 
+        tipo: tipoUsuario,
+        // Dados adicionais simulados baseados no tipo de usuário
+        ...(tipoUsuario === 'admin' && { 
+          nome: "Administrador PharmaX",
+          permissoes: ["gerenciar_usuarios", "gerenciar_farmacias", "visualizar_relatorios"]
+        }),
+        ...(tipoUsuario === 'farmacia' && { 
+          nome: "Minha Farmácia",
+          idFarmacia: "12345",
+          endereco: "Rua das Flores, 123"
+        }),
+        ...(tipoUsuario === 'cliente' && { 
+          nome: "João Silva",
+          telefone: "(11) 99999-9999",
+          endereco: "Av. Principal, 456"
+        })
+      };
+
+      localStorage.setItem("usuario", JSON.stringify(userData));
+
+      // Salvar credenciais se "Lembrar-me" estiver marcado
+      if (rememberMe) {
+        localStorage.setItem("rememberedCredentials", JSON.stringify({ email, senha }));
+      } else {
+        // Remover credenciais salvas se não estiver marcado
+        localStorage.removeItem("rememberedCredentials");
+      }
 
       setIsLoading(false);
-      router.push("/farmacias/favoritos");
+      
+      // Redirecionar para a tela apropriada baseada no tipo de usuário
+      redirecionarUsuario(tipoUsuario);
+      
     } else {
       setIsLoading(false);
       alert("Preencha todos os campos!");
@@ -131,7 +211,7 @@ export default function Login() {
       <div className={styles.loginCard}>
         <div className={styles.header}>
           <div className={styles.logo}>
-            <span className={styles.logoIcon}>💊</span>
+            {/* <span className={styles.logoIcon}>💊</span> */}
             <span className={styles.logoText}>PharmaX</span>
           </div>
           <h1 className={styles.titulo}>Bem-vindo de volta</h1>
@@ -188,7 +268,12 @@ export default function Login() {
 
           <div className={styles.options}>
             <label className={styles.remember}>
-              <input type="checkbox" disabled={isLoading} />
+              <input 
+                type="checkbox" 
+                checked={rememberMe}
+                onChange={(e) => setRememberMe(e.target.checked)}
+                disabled={isLoading} 
+              />
               <span>Lembrar-me</span>
             </label>
             <button
@@ -215,7 +300,7 @@ export default function Login() {
           <p className={styles.linkCadastro}>
             Não tem uma conta?{" "}
             <span
-              onClick={() => !isLoading && router.push("/farmacias/cadastro")}
+              onClick={() => !isLoading && router.push("/cadastro")}
               className={styles.link}
             >
               Cadastre-se
