@@ -2,7 +2,10 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import Image from "next/image";    
 import styles from "./page.module.css";
+
+// import LogoEscrita from "../../../../public/temp/LogoEscrita.png"
 
 export default function Login() {
   const router = useRouter();
@@ -31,7 +34,7 @@ export default function Login() {
       );
 
       setIsLoading(false);
-      router.push("farmacias/favoritos");
+      router.push("/farmacias/favoritos");
     } else {
       setIsLoading(false);
       alert("Preencha todos os campos!");
@@ -219,17 +222,6 @@ export default function Login() {
             </span>
           </p>
         </form>
-      </div>
-
-      <div className={styles.illustration}>
-        <div className={styles.illustrationContent}>
-          <div className={styles.pharmaIcon}>💊</div>
-          <h2>PharmaX</h2>
-          <p>
-            Sistema de Busca e Comparação de Preços de Medicamentos em uma única
-            plataforma
-          </p>
-        </div>
       </div>
 
       {/* Modal de Recuperação de Senha */}

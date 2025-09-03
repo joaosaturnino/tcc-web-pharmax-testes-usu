@@ -12,9 +12,9 @@ function Cabecalho() {
 
   const rota = usePathname();
 
-  function ativaMenu() {
-    setMobile(!mobile);
-  }
+  // function ativaMenu() {
+  //   setMobile(!mobile);
+  // }
 
   return (
     <header className={styles.containerNav}>
@@ -35,12 +35,12 @@ function Cabecalho() {
             Empresa
           </Link>
         </nav>
-        <div className={styles.menuMobile}>
+        {/* <div className={styles.menuMobile}>
           <MdMenu onClick={ativaMenu} className={styles.icon} id="logo" />
-        </div>
+        </div> */}
       </div>
 
-      <div
+      {/* <div
         className={
           mobile === false
             ? styles.menuMobileExpandidon
@@ -76,7 +76,7 @@ function Cabecalho() {
         >
           Perfil
         </Link>
-      </div>
+      </div> */}
     </header>
   );
 }

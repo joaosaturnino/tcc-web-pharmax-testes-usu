@@ -125,9 +125,10 @@ export default function ListaFuncionariosPage() {
             className={styles.menuToggle}
             onClick={() => setSidebarOpen(!sidebarOpen)}
           >
-            ☰
+            {/* ☰ */}
           </button>
-          <h1 className={styles.title}>👥 Lista de Funcionários</h1>
+          {/* <h1 className={styles.title}>👥 Lista de Funcionários</h1> */}
+          <h1 className={styles.title}> Lista de Funcionários</h1>
         </div>
         {/* <div className={styles.headerActions}>
           <div className={styles.searchBox}>
@@ -155,7 +156,7 @@ export default function ListaFuncionariosPage() {
         >
           <div className={styles.sidebarHeader}>
             <div className={styles.logo}>
-              <span className={styles.logoIcon}>💊</span>
+              {/* <span className={styles.logoIcon}>💊</span> */}
               <span className={styles.logoText}>PharmaX</span>
             </div>
             <button
@@ -170,14 +171,14 @@ export default function ListaFuncionariosPage() {
             <div className={styles.navSection}>
               <p className={styles.navLabel}>Principal</p>
               <a href="/farmacias/favoritos" className={styles.navLink}>
-                <span className={styles.navIcon}>⭐</span>
+                {/* <span className={styles.navIcon}>⭐</span> */}
                 <span className={styles.navText}>Favoritos</span>
               </a>
               <a
                 href="/farmacias/produtos/medicamentos"
                 className={styles.navLink}
               >
-                <span className={styles.navIcon}>💊</span>
+                {/* <span className={styles.navIcon}>💊</span> */}
                 <span className={styles.navText}>Medicamentos</span>
               </a>
             </div>
@@ -188,11 +189,11 @@ export default function ListaFuncionariosPage() {
                 href="/farmacias/cadastro/funcionario/lista"
                 className={`${styles.navLink} ${styles.active}`}
               >
-                <span className={styles.navIcon}>👩‍⚕️</span>
+                {/* <span className={styles.navIcon}>👩‍⚕️</span> */}
                 <span className={styles.navText}>Funcionários</span>
               </a>
               <a href="/farmacias/laboratorio/lista" className={styles.navLink}>
-                <span className={styles.navIcon}>🏭</span>
+                {/* <span className={styles.navIcon}>🏭</span> */}
                 <span className={styles.navText}>Laboratórios</span>
               </a>
             </div>

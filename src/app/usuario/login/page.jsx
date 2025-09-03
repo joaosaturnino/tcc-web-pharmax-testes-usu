@@ -2,7 +2,10 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import styles from "./page.module.css";
+import Image from "next/image";    
+import styles from "./login.module.css";
+
+import LogoEscrita from "../../../../public/temp/LogoEscrita.png"
 
 export default function Login() {
   const router = useRouter();
@@ -31,7 +34,7 @@ export default function Login() {
       );
 
       setIsLoading(false);
-      router.push("produtos/medicamentos");
+      router.push("/home");
     } else {
       setIsLoading(false);
       alert("Preencha todos os campos!");
@@ -128,7 +131,7 @@ export default function Login() {
       <div className={styles.loginCard}>
         <div className={styles.header}>
           <div className={styles.logo}>
-            <span className={styles.logoIcon}>💊</span>
+            {/* <span className={styles.logoIcon}>💊</span> */}
             <span className={styles.logoText}>PharmaX</span>
           </div>
           <h1 className={styles.titulo}>Bem-vindo de volta</h1>
@@ -223,11 +226,20 @@ export default function Login() {
 
       <div className={styles.illustration}>
         <div className={styles.illustrationContent}>
-          <div className={styles.pharmaIcon}>💊</div>
-          <h2>Gestão Farmacêutica Inteligente</h2>
+          {/* <div className={styles.pharmaIcon}>💊</div> */}
+          {/* <div className={styles.logoBox}>
+        <Image
+          // src="public/temp/LogoEscrita.png"
+          src= {LogoEscrita}
+          alt="Logo PharmaX"
+          width={500}
+          height={500}
+          className={styles.logo}
+        />
+      </div> */}
+          <h2>PharmaX</h2>
           <p>
-            Controle completo de medicamentos, estoque e clientes em uma única
-            plataforma
+            Sistema de Busca e Comparação de Preços de Medicamentos
           </p>
         </div>
       </div>

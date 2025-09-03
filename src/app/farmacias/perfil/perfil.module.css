@@ -158,8 +158,8 @@
 
 .sidebar {
   width: 280px;
-  background: #2c3e50;
-  color: white;
+  background: #191970;
+  color: #CDC1C5;
   padding: 20px 0;
   display: flex;
   flex-direction: column;
@@ -214,7 +214,7 @@
   padding: 0 15px;
   margin-bottom: 10px;
   font-size: 12px;
-  color: rgba(255, 255, 255, 0.6);
+  color: #696969;
   text-transform: uppercase;
   letter-spacing: 1px;
 }
@@ -224,7 +224,7 @@
   align-items: center;
   gap: 12px;
   padding: 12px 15px;
-  color: rgba(255, 255, 255, 0.8);
+  color: #CDC1C5;
   text-decoration: none;
   border-radius: 6px;
   transition: all 0.3s ease;
@@ -235,10 +235,15 @@
   cursor: pointer;
 }
 
-.navLink:hover,
-.navLink.active {
+.navLink:hover {
   background: rgba(255, 255, 255, 0.1);
   color: white;
+}
+
+.navLink.active {
+  background: rgba(52, 152, 219, 0.2);
+  color: #DCDCDC; /*ESSE*/
+  border-left: 4px solid #3498db;
 }
 
 .navIcon {
@@ -441,13 +446,13 @@
 }
 
 .editBtn {
-  background: #3498db;
+  background: #458B00;
   color: white;
   border: none;
 }
 
 .editBtn:hover {
-  background: #2980b9;
+  background: #006400;
 }
 
 .saveBtn {
@@ -517,8 +522,8 @@
 .formGroup input:focus,
 .formGroup select:focus {
   outline: none;
-  border-color: #3498db;
-  box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.2);
+  border-color: #458B00;
+  /* box-shadow: 0 0 0 0.5px #2F4F4F; */
 }
 
 /* Security Section */
@@ -771,8 +776,8 @@ input:checked + .slider:before {
 
 .modalForm input:focus {
   outline: none;
-  border-color: #3498db;
-  box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.2);
+  border-color: #458B00;
+  /* box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.2); */
 }
 
 .inputError {

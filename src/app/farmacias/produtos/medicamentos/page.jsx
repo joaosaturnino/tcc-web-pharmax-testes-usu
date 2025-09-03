@@ -63,9 +63,10 @@ function ListagemMedicamentos() {
             className={styles.menuToggle}
             onClick={() => setSidebarOpen(!sidebarOpen)}
           >
-            ☰
+            {/* ☰ */}
           </button>
-          <h1 className={styles.titulo}>💊 Painel de Medicamentos</h1>
+          {/* <h1 className={styles.titulo}>💊 Painel de Medicamentos</h1> */}
+          <h1 className={styles.titulo}> Painel de Medicamentos</h1>
         </div>
         <div className={styles.headerActions}>
           <Link
@@ -86,7 +87,7 @@ function ListagemMedicamentos() {
         >
           <div className={styles.sidebarHeader}>
             <div className={styles.logo}>
-              <span className={styles.logoIcon}>💊</span>
+              {/* <span className={styles.logoIcon}>💊</span> */}
               <span className={styles.logoText}>PharmaX</span>
             </div>
             <button
@@ -101,14 +102,14 @@ function ListagemMedicamentos() {
             <div className={styles.navSection}>
               <p className={styles.navLabel}>Principal</p>
               <a href="/farmacias/favoritos" className={styles.navLink}>
-                <span className={styles.navIcon}>⭐</span>
+                {/* <span className={styles.navIcon}>⭐</span> */}
                 <span className={styles.navText}>Favoritos</span>
               </a>
               <a
                 href="/farmacias/produtos/medicamentos"
                 className={`${styles.navLink} ${styles.active}`}
               >
-                <span className={styles.navIcon}>💊</span>
+                {/* <span className={styles.navIcon}>💊</span> */}
                 <span className={styles.navText}>Medicamentos</span>
                 <span className={styles.notificationBadge}>
                   {medicamentos.length}
@@ -122,11 +123,11 @@ function ListagemMedicamentos() {
                 href="/farmacias/cadastro/funcionario/lista"
                 className={styles.navLink}
               >
-                <span className={styles.navIcon}>👩‍⚕️</span>
+                {/* <span className={styles.navIcon}>👩‍⚕️</span> */}
                 <span className={styles.navText}>Funcionários</span>
               </a>
               <a href="/farmacias/laboratorio/lista" className={styles.navLink}>
-                <span className={styles.navIcon}>🏭</span>
+                {/* <span className={styles.navIcon}>🏭</span> */}
                 <span className={styles.navText}>Laboratórios</span>
               </a>
             </div>
@@ -171,7 +172,7 @@ function ListagemMedicamentos() {
         <main className={styles.mainContent}>
           <div className={styles.statsGrid}>
             <div className={styles.statCard}>
-              <div className={styles.statIcon}>💊</div>
+              {/* <div className={styles.statIcon}>💊</div> */}
               <div className={styles.statContent}>
                 <h3>{medicamentos.length}</h3>
                 <p>Total de Medicamentos</p>
@@ -182,7 +183,7 @@ function ListagemMedicamentos() {
           <div className={styles.tableContainer}>
             {medicamentos.length === 0 ? (
               <div className={styles.emptyState}>
-                <div className={styles.emptyIcon}>💊</div>
+                {/* <div className={styles.emptyIcon}>💊</div> */}
                 <h3>Nenhum medicamento cadastrado</h3>
                 <p>Comece cadastrando seu primeiro medicamento.</p>
                 <Link

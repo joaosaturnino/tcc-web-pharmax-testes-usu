@@ -226,7 +226,7 @@ export default function PerfilUsuarioPage() {
         >
           <div className={styles.sidebarHeader}>
             <div className={styles.logo}>
-              <span className={styles.logoIcon}>💊</span>
+              {/* <span className={styles.logoIcon}>💊</span> */}
               <span className={styles.logoText}>PharmaX</span>
             </div>
           </div>
@@ -235,14 +235,14 @@ export default function PerfilUsuarioPage() {
             <div className={styles.navSection}>
               <p className={styles.navLabel}>Principal</p>
               <a href="/farmacias/favoritos" className={styles.navLink}>
-                <span className={styles.navIcon}>⭐</span>
+                {/* <span className={styles.navIcon}>⭐</span> */}
                 <span className={styles.navText}>Favoritos</span>
               </a>
               <a
                 href="/farmacias/produtos/medicamentos"
                 className={styles.navLink}
               >
-                <span className={styles.navIcon}>💊</span>
+                {/* <span className={styles.navIcon}>💊</span> */}
                 <span className={styles.navText}>Medicamentos</span>
               </a>
             </div>
@@ -253,11 +253,11 @@ export default function PerfilUsuarioPage() {
                 href="/farmacias/cadastro/funcionario/lista"
                 className={styles.navLink}
               >
-                <span className={styles.navIcon}>👩‍⚕️</span>
+                {/* <span className={styles.navIcon}>👩‍⚕️</span> */}
                 <span className={styles.navText}>Funcionários</span>
               </a>
               <a href="/farmacias/laboratorio/lista" className={styles.navLink}>
-                <span className={styles.navIcon}>🏭</span>
+                {/* <span className={styles.navIcon}>🏭</span> */}
                 <span className={styles.navText}>Laboratórios</span>
               </a>
             </div>
@@ -284,7 +284,7 @@ export default function PerfilUsuarioPage() {
 
           <div className={styles.userPanel}>
             <button className={styles.navLink} onClick={handleLogout}>
-                <span className={styles.navIcon}>🚪</span>
+                {/* <span className={styles.navIcon}>🚪</span> */}
                 <span className={styles.navText}>Sair</span>
               </button>
           </div>
@@ -550,7 +550,7 @@ export default function PerfilUsuarioPage() {
             </div>
 
             <div className={styles.sectionHeader}>
-              <h3>Segurança</h3>
+              {/* <h3>Segurança</h3> */}
               <button
                 className={styles.editBtn}
                 onClick={() => setShowPasswordModal(true)}
@@ -559,7 +559,7 @@ export default function PerfilUsuarioPage() {
               </button>
             </div>
 
-            <div className={styles.securitySection}>
+            {/* <div className={styles.securitySection}>
               <div className={styles.securityItem}>
                 <span className={styles.securityIcon}>🔒</span>
                 <div>
@@ -585,7 +585,7 @@ export default function PerfilUsuarioPage() {
                   <span className={styles.slider}></span>
                 </label>
               </div>
-            </div>
+            </div> */}
           </div>
         </main>
       </div>
@@ -607,7 +607,7 @@ export default function PerfilUsuarioPage() {
             <form onSubmit={handlePasswordSubmit} className={styles.modalForm}>
               {passwordSuccess ? (
                 <div className={styles.successMessage}>
-                  <span className={styles.successIcon}>✅</span>
+                  {/* <span className={styles.successIcon}>✅</span> */}
                   <p>Senha alterada com sucesso!</p>
                 </div>
               ) : (

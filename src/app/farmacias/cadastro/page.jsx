@@ -103,7 +103,7 @@ export default function CadastroFarmacia() {
       <div className={styles.contentWrapper}>
         <div className={styles.header}>
           <div className={styles.logo}>
-            <span className={styles.logoIcon}>💊</span>
+            {/* <span className={styles.logoIcon}>💊</span> */}
             <span className={styles.logoText}>PharmaX</span>
           </div>
           <h1 className={styles.titulo}>Cadastro de Farmácia</h1>
@@ -317,7 +317,7 @@ export default function CadastroFarmacia() {
                   </>
                 ) : (
                   <>
-                    <span className={styles.buttonIcon}>🏥</span>
+                    {/* <span className={styles.buttonIcon}>🏥</span> */}
                     Cadastrar Farmácia
                   </>
                 )}
@@ -328,7 +328,7 @@ export default function CadastroFarmacia() {
           <div className={styles.loginRedirect}>
             <p>
               Já possui uma conta?{" "}
-              <a href="/login" className={styles.loginLink}>
+              <a href="/usuario/login" className={styles.loginLink}>
                 Faça login
               </a>
             </p>

@@ -8,13 +8,13 @@ import { MdMenu } from "react-icons/md";
 import styles from "./index.module.css";
 
 function Cabecalho() {
-  const [mobile, setMobile] = useState(false);
+  // const [mobile, setMobile] = useState(false);
 
   const rota = usePathname();
 
-  function ativaMenu() {
-    setMobile(!mobile);
-  }
+  // function ativaMenu() {
+  //   setMobile(!mobile);
+  // }
 
   return (
     <header className={styles.containerNav}>
@@ -28,20 +28,20 @@ function Cabecalho() {
           />
         </div>
         <nav className={styles.menuGrande}>
-          <Link
+          {/* <Link
             href="/sobre"
             onClick={ativaMenu}
             className={rota === "/sobre" ? styles.active : ""}
           >
             Sobre
-          </Link>
+          </Link> */}
         </nav>
-        <div className={styles.menuMobile}>
+        {/* <div className={styles.menuMobile}>
           <MdMenu onClick={ativaMenu} className={styles.icon} id="logo" />
-        </div>
+        </div> */}
       </div>
 
-      <div
+      {/* <div
         className={
           mobile === false
             ? styles.menuMobileExpandidon
@@ -77,7 +77,7 @@ function Cabecalho() {
         >
           Perfil
         </Link>
-      </div>
+      </div> */}
     </header>
   );
 }

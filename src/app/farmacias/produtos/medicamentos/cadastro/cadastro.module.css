@@ -57,8 +57,8 @@
 /* Sidebar Não Fixa */
 .sidebar {
   width: 280px;
-  background: linear-gradient(180deg, #2c3e50 0%, #34495e 100%);
-  color: white;
+  background: #191970;
+  color: #CDC1C5;
   display: flex;
   flex-direction: column;
   transition: transform 0.3s ease;
@@ -120,7 +120,7 @@
   padding: 0 20px 10px;
   font-size: 12px;
   text-transform: uppercase;
-  color: #95a5a6;
+  color: #696969;
   font-weight: 600;
   letter-spacing: 0.5px;
 }
@@ -129,7 +129,7 @@
   display: flex;
   align-items: center;
   padding: 12px 20px;
-  color: #bdc3c7;
+  color: #CDC1C5;
   text-decoration: none;
   transition: all 0.3s ease;
   gap: 12px;
@@ -143,7 +143,7 @@
 
 .navLink.active {
   background: rgba(52, 152, 219, 0.2);
-  color: white;
+  color: #DCDCDC;
   border-left: 4px solid #3498db;
 }
 
@@ -207,10 +207,10 @@
   margin-bottom: 40px;
 }
 
-.formSection {
-  border-left: 4px solid #3498db;
+/* .formSection {
+  border-left: 4px solid #191970;
   padding-left: 20px;
-}
+} */
 
 .sectionTitle {
   font-size: 18px;
@@ -262,7 +262,7 @@
 
 .modernInput:focus {
   outline: none;
-  border-color: #3498db;
+  border-color: #458B00;
   box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.1);
 }
 
@@ -294,7 +294,7 @@ select.modernInput {
 
 .modernTextarea:focus {
   outline: none;
-  border-color: #3498db;
+  border-color: #458B00;
   box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.1);
 }
 
@@ -332,7 +332,7 @@ select.modernInput {
   padding: 12px 24px;
   border: none;
   border-radius: 8px;
-  background: linear-gradient(135deg, #3498db 0%, #2980b9 100%);
+  background: #458B00;
   color: white;
   font-weight: 600;
   cursor: pointer;
@@ -344,7 +344,7 @@ select.modernInput {
 
 .submitButton:hover:not(:disabled) {
   transform: translateY(-1px);
-  box-shadow: 0 4px 12px rgba(52, 152, 219, 0.3);
+  box-shadow: 0 4px 12px #2F4F4F;
 }
 
 .submitButton:disabled {

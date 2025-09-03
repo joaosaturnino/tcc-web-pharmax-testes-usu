@@ -85,7 +85,7 @@ export default function ListaLaboratorios() {
           >
             {/* ☰ */}
           </button>
-          <h1 className={styles.title}>🏭 Laboratórios</h1>
+          <h1 className={styles.title}> Laboratórios</h1>
           {/* <h1 className={styles.title}>🏭 Laboratórios</h1> */}
         </div>
         <div className={styles.headerActions}>
@@ -200,15 +200,15 @@ export default function ListaLaboratorios() {
                 <h2>Laboratórios Cadastrados</h2>
                 <p>Gerencie os laboratórios parceiros</p>
               </div>
-              <div className={styles.statsGrid}>
+              {/* <div className={styles.statsGrid}>
                 <div className={styles.statCard}>
-                  {/* <div className={styles.statIcon}>🏭</div>
+                  <div className={styles.statIcon}>🏭</div>
                   <div className={styles.statContent}>
                     <h3>{laboratorios.length}</h3>
                     <p>Total</p>
-                  </div> */}
+                  </div>
                 </div>
-                {/* <div className={styles.statCard}>
+                <div className={styles.statCard}>
                   <div className={styles.statIcon}>✅</div>
                   <div className={styles.statContent}>
                     <h3>
@@ -219,8 +219,8 @@ export default function ListaLaboratorios() {
                     </h3>
                     <p>Ativos</p>
                   </div>
-                </div> */}
-                {/* <div className={styles.statCard}>
+                </div>
+                <div className={styles.statCard}>
                   <div className={styles.statIcon}>❌</div>
                   <div className={styles.statContent}>
                     <h3>
@@ -231,8 +231,8 @@ export default function ListaLaboratorios() {
                     </h3>
                     <p>Inativos</p>
                   </div>
-                </div> */}
-              </div>
+                </div>
+              </div> */}
             </div>
 
             <div className={styles.tableContainer}>

@@ -8,7 +8,7 @@
 /* Sidebar Não Fixa */
 .sidebar {
   width: 280px;
-  background: linear-gradient(180deg, #2c3e50 0%, #34495e 100%);
+  background: #191970;
   color: white;
   display: flex;
   flex-direction: column;

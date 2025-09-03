@@ -347,8 +347,8 @@ export default function CadastroLaboratorioPage() {
         /* Sidebar Não Fixa */
         .sidebar {
           width: 280px;
-          background: linear-gradient(180deg, #2c3e50 0%, #34495e 100%);
-          color: white;
+          background: #191970;
+          color: #CDC1C5;
           display: flex;
           flex-direction: column;
           transition: transform 0.3s ease;
@@ -410,7 +410,7 @@ export default function CadastroLaboratorioPage() {
           padding: 0 20px 10px;
           font-size: 12px;
           text-transform: uppercase;
-          color: #95a5a6;
+          color: #696969;
           font-weight: 600;
           letter-spacing: 0.5px;
         }
@@ -419,7 +419,7 @@ export default function CadastroLaboratorioPage() {
           display: flex;
           align-items: center;
           padding: 12px 20px;
-          color: #bdc3c7;
+          color: #CDC1C5;
           text-decoration: none;
           transition: all 0.3s ease;
           gap: 12px;
@@ -438,7 +438,7 @@ export default function CadastroLaboratorioPage() {
 
         .nav-link.active {
           background: rgba(52, 152, 219, 0.2);
-          color: white;
+          color: #DCDCDC;
           border-left: 4px solid #3498db;
         }
 
@@ -537,10 +537,10 @@ export default function CadastroLaboratorioPage() {
           margin-bottom: 40px;
         }
 
-        .form-section {
-          border-left: 4px solid #3498db;
-          padding-left: 20px;
-        }
+        // .form-section {
+        //   border-left: 4px solid #3498db;
+        //   padding-left: 20px;
+        // }
 
         .section-title {
           font-size: 18px;
@@ -586,7 +586,7 @@ export default function CadastroLaboratorioPage() {
 
         .modern-input:focus {
           outline: none;
-          border-color: #3498db;
+          border-color: #458B00;
           box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.1);
         }
 
@@ -616,8 +616,8 @@ export default function CadastroLaboratorioPage() {
         }
 
         .file-label:hover {
-          border-color: #3498db;
-          background: #e3f2fd;
+          border-color: #458B00;
+          background: #F5FFFA;
         }
 
         .file-icon {
@@ -678,7 +678,7 @@ export default function CadastroLaboratorioPage() {
           padding: 12px 24px;
           border: none;
           border-radius: 8px;
-          background: linear-gradient(135deg, #3498db 0%, #2980b9 100%);
+          background: #458B00;
           color: white;
           font-weight: 600;
           cursor: pointer;
@@ -690,7 +690,7 @@ export default function CadastroLaboratorioPage() {
 
         .submit-button:hover {
           transform: translateY(-1px);
-          box-shadow: 0 4px 12px rgba(52, 152, 219, 0.3);
+          box-shadow: 0 4px 12px #2F4F4F;
         }
 
         .button-icon {

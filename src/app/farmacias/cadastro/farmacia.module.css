@@ -359,14 +359,14 @@
 }
 
 .loginLink {
-  color: #4facfe;
+  color: #458b00;
   text-decoration: none;
   font-weight: 600;
   transition: color 0.3s ease;
 }
 
 .loginLink:hover {
-  color: #3690f0;
+  color: #006400;
   text-decoration: underline;
 }
 
