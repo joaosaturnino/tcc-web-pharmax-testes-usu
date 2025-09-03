@@ -179,13 +179,13 @@
 }
 
 .fileUploadContainer:hover {
-  border-color: #4facfe;
-  background: #f0f9ff;
+  border-color: #458B00;
+  background: #F5FFFA;
 }
 
 .fileUploadContainer.dragging {
-  border-color: #4facfe;
-  background: #e0f2fe;
+  border-color: #458B00;
+  background: #F5FFFA;
   transform: scale(1.02);
 }
 
