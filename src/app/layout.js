@@ -24,7 +24,7 @@ export default function RootLayout({ children }) {
   const pathname = usePathname();
 
   // 2. Defina as rotas para cada cabeçalho
-  const useSecondaryHeader = ["/home"].includes(pathname);
+  const useSecondaryHeader = ["/home", "/pesquisa"].includes(pathname);
   const useThirdHeader = [
     "/index",
     "/farmacias/cadastro",
