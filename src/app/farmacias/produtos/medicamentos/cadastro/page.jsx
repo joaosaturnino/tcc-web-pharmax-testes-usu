@@ -54,10 +54,8 @@ export default function CadastroMedicamentoPage() {
             className={styles.menuToggle}
             onClick={() => setSidebarOpen(!sidebarOpen)}
           >
-            
           </button>
           <h1 className={styles.title}> Cadastro de Medicamento</h1>
-          {/* <h1 className={styles.title}>💊 Cadastro de Medicamento</h1> */}
         </div>
       </header>
 
@@ -66,7 +64,6 @@ export default function CadastroMedicamentoPage() {
         <aside className={`${styles.sidebar} ${sidebarOpen ? styles.sidebarOpen : ""}`}>
           <div className={styles.sidebarHeader}>
             <div className={styles.logo}>
-              {/* <span className={styles.logoIcon}>💊</span> */}
               <span className={styles.logoText}>PharmaX</span>
             </div>
             <button
@@ -81,14 +78,12 @@ export default function CadastroMedicamentoPage() {
             <div className={styles.navSection}>
               <p className={styles.navLabel}>Principal</p>
               <a href="/farmacias/favoritos" className={styles.navLink}>
-                {/* <span className={styles.navIcon}>⭐</span> */}
                 <span className={styles.navText}>Favoritos</span>
               </a>
               <a
                 href="/farmacias/produtos/medicamentos"
                 className={`${styles.navLink} ${styles.active}`}
               >
-                {/* <span className={styles.navIcon}>💊</span> */}
                 <span className={styles.navText}>Medicamentos</span>
               </a>
             </div>
@@ -99,11 +94,9 @@ export default function CadastroMedicamentoPage() {
                 href="/farmacias/cadastro/funcionario/lista"
                 className={styles.navLink}
               >
-                {/* <span className={styles.navIcon}>👩‍⚕️</span> */}
                 <span className={styles.navText}>Funcionários</span>
               </a>
               <a href="/farmacias/laboratorio/lista" className={styles.navLink}>
-                {/* <span className={styles.navIcon}>🏭</span> */}
                 <span className={styles.navText}>Laboratórios</span>
               </a>
             </div>
@@ -128,12 +121,11 @@ export default function CadastroMedicamentoPage() {
                 {/* Informações Básicas */}
                 <div className={styles.formSection}>
                   <h3 className={styles.sectionTitle}>
-                    {/* <span className={styles.sectionIcon}>📋</span> */}
                     Informações Básicas
                   </h3>
 
                   <div className={styles.formGroup}>
-                    <label className={styles.inputLabel}>Nome do Medicamento *</label>
+                    <label className={styles.inputLabel}>Nome do Medicamento</label>
                     <input
                       className={styles.modernInput}
                       type="text"
@@ -147,7 +139,7 @@ export default function CadastroMedicamentoPage() {
 
                   <div className={styles.formRow}>
                     <div className={styles.formGroup}>
-                      <label className={styles.inputLabel}>Dosagem *</label>
+                      <label className={styles.inputLabel}>Dosagem</label>
                       <input
                         className={styles.modernInput}
                         type="text"
@@ -160,7 +152,7 @@ export default function CadastroMedicamentoPage() {
                     </div>
 
                     <div className={styles.formGroup}>
-                      <label className={styles.inputLabel}>Quantidade *</label>
+                      <label className={styles.inputLabel}>Quantidade</label>
                       <input
                         className={styles.modernInput}
                         type="number"
@@ -175,7 +167,7 @@ export default function CadastroMedicamentoPage() {
                   </div>
 
                   <div className={styles.formGroup}>
-                    <label className={styles.inputLabel}>Preço (R$) *</label>
+                    <label className={styles.inputLabel}>Preço (R$)</label>
                     <input
                       className={styles.modernInput}
                       type="number"
@@ -193,12 +185,11 @@ export default function CadastroMedicamentoPage() {
                 {/* Informações Técnicas */}
                 <div className={styles.formSection}>
                   <h3 className={styles.sectionTitle}>
-                    {/* <span className={styles.sectionIcon}>🔬</span> */}
                     Informações Técnicas
                   </h3>
 
                   <div className={styles.formGroup}>
-                    <label className={styles.inputLabel}>Tipo de Produto *</label>
+                    <label className={styles.inputLabel}>Tipo de Produto</label>
                     <select
                       className={styles.modernInput}
                       name="tipo"
@@ -218,7 +209,7 @@ export default function CadastroMedicamentoPage() {
                   </div>
 
                   <div className={styles.formGroup}>
-                    <label className={styles.inputLabel}>Forma Farmacêutica *</label>
+                    <label className={styles.inputLabel}>Forma Farmacêutica</label>
                     <select
                       className={styles.modernInput}
                       name="forma"
@@ -260,7 +251,7 @@ export default function CadastroMedicamentoPage() {
                   </div>
 
                   <div className={styles.formGroup}>
-                    <label className={styles.inputLabel}>Laboratório *</label>
+                    <label className={styles.inputLabel}>Laboratório</label>
                     <select
                       className={styles.modernInput}
                       name="laboratorio"
@@ -311,7 +302,7 @@ export default function CadastroMedicamentoPage() {
                   Descrição
                 </h3>
                 <div className={styles.formGroup}>
-                  <label className={styles.inputLabel}>Descrição *</label>
+                  <label className={styles.inputLabel}>Descrição</label>
                   <textarea
                     className={styles.modernTextarea}
                     name="descricao"
@@ -345,7 +336,6 @@ export default function CadastroMedicamentoPage() {
                     </>
                   ) : (
                     <>
-                      {/* <span className={styles.buttonIcon}>💾</span> */}
                       Cadastrar Medicamento
                     </>
                   )}

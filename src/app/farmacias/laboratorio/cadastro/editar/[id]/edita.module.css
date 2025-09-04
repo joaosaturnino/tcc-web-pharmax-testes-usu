@@ -188,7 +188,7 @@
   position: absolute;
   top: -5px;
   right: -5px;
-  background: #e74c3c;
+  background: #cd0000;
   color: white;
   font-size: 10px;
   width: 18px;
@@ -367,7 +367,7 @@
 
 .inputLabel::after {
   content: '*';
-  color: #e53e3e;
+  color: #cd0000;
   margin-left: 4px;
 }
 
@@ -446,7 +446,7 @@
   position: absolute;
   top: 8px;
   right: 8px;
-  background: #e53e3e;
+  background: #cd0000;
   color: white;
   border: none;
   border-radius: 50%;

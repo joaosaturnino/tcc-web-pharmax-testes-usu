@@ -1,5 +1,5 @@
 /* Layout Principal */
-.dashboard-editar {
+.dashboard {
   min-height: 100vh;
   background-color: #f8fafc;
   display: flex;
@@ -7,7 +7,7 @@
 }
 
 /* Header */
-.header-editar {
+.header {
   background: white;
   padding: 16px 30px;
   display: flex;
@@ -19,13 +19,13 @@
   z-index: 100;
 }
 
-.header-left-editar {
+.headerLeft {
   display: flex;
   align-items: center;
   gap: 16px;
 }
 
-.menu-toggle-editar {
+.menuToggle {
   background: none;
   border: none;
   font-size: 20px;
@@ -36,76 +36,26 @@
   display: none;
 }
 
-.menu-toggle-editar:hover {
+.menuToggle:hover {
   background: #f1f5f9;
 }
 
-.title-editar {
+.title {
   font-size: 24px;
   font-weight: 600;
   color: #1e293b;
   margin: 0;
 }
 
-.header-actions-editar {
-  display: flex;
-  align-items: center;
-  gap: 16px;
-}
-
-.search-box-editar {
-  position: relative;
-  display: flex;
-  align-items: center;
-}
-
-.search-input-editar {
-  padding: 10px 40px 10px 12px;
-  border: 2px solid #e2e8f0;
-  border-radius: 8px;
-  font-size: 14px;
-  width: 250px;
-  transition: border-color 0.3s ease;
-}
-
-.search-input-editar:focus {
-  outline: none;
-  border-color: #3498db;
-}
-
-.search-icon-editar {
-  position: absolute;
-  right: 12px;
-  color: #64748b;
-}
-
-.user-menu-editar {
-  display: flex;
-  align-items: center;
-}
-
-.user-avatar-editar {
-  width: 40px;
-  height: 40px;
-  border-radius: 50%;
-  background: #3498db;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: white;
-  font-weight: 600;
-  font-size: 18px;
-}
-
 /* Wrapper de Conteúdo */
-.content-wrapper-editar {
+.contentWrapper {
   display: flex;
   flex: 1;
   position: relative;
 }
 
 /* Sidebar Não Fixa */
-.sidebar-editar {
+.sidebar {
   width: 280px;
   background: #191970;
   color: #CDC1C5;
@@ -116,7 +66,7 @@
   z-index: 90;
 }
 
-.sidebar-header-editar {
+.sidebarHeader {
   padding: 20px;
   display: flex;
   justify-content: space-between;
@@ -124,22 +74,18 @@
   border-bottom: 1px solid rgba(255, 255, 255, 0.1);
 }
 
-.logo-editar {
+.logo {
   display: flex;
   align-items: center;
   gap: 12px;
 }
 
-.logo-icon-editar {
-  font-size: 24px;
-}
-
-.logo-text-editar {
+.logoText {
   font-size: 20px;
   font-weight: bold;
 }
 
-.sidebar-close-editar {
+.sidebarClose {
   display: none;
   background: none;
   border: none;
@@ -153,33 +99,33 @@
   transition: background 0.3s ease;
 }
 
-.sidebar-close-editar:hover {
+.sidebarClose:hover {
   background: rgba(255, 255, 255, 0.1);
 }
 
-.nav-editar {
+.nav {
   flex: 1;
   padding: 20px 0;
 }
 
-.nav-section-editar {
+.navSection {
   margin-bottom: 30px;
 }
 
-.nav-label-editar {
+.navLabel {
   padding: 0 20px 10px;
   font-size: 12px;
   text-transform: uppercase;
-  color: #95a5a6;
+  color: #696969;
   font-weight: 600;
   letter-spacing: 0.5px;
 }
 
-.nav-link-editar {
+.navLink {
   display: flex;
   align-items: center;
   padding: 12px 20px;
-  color: #bdc3c7;
+  color: #CDC1C5;
   text-decoration: none;
   transition: all 0.3s ease;
   gap: 12px;
@@ -191,66 +137,19 @@
   font-family: inherit;
 }
 
-.nav-link-editar:hover {
+.navLink:hover {
   background: rgba(255, 255, 255, 0.1);
   color: white;
 }
 
-.nav-link-editar.active {
-  background: rgba(52, 152, 219, 0.2);
-  color: white;
-  border-left: 4px solid #3498db;
-}
-
-.nav-icon-editar {
-  font-size: 18px;
-  width: 24px;
-  text-align: center;
-}
-
-.nav-text-editar {
+.navText {
   font-size: 14px;
   font-weight: 500;
   flex: 1;
 }
 
-.user-panel-editar {
-  padding: 20px;
-  border-top: 1px solid rgba(255, 255, 255, 0.1);
-  display: flex;
-  align-items: center;
-  gap: 12px;
-}
-
-.user-avatar-editar {
-  width: 40px;
-  height: 40px;
-  border-radius: 50%;
-  background: rgba(255, 255, 255, 0.1);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 18px;
-}
-
-.user-info-editar {
-  flex: 1;
-}
-
-.user-name-editar {
-  font-size: 14px;
-  font-weight: 600;
-  margin: 0;
-}
-
-.user-role-editar {
-  font-size: 12px;
-  color: #95a5a6;
-  margin: 0;
-}
-
 /* Conteúdo Principal */
-.main-content-editar {
+.mainContent {
   flex: 1;
   padding: 0;
   min-height: calc(100vh - 80px);
@@ -259,50 +158,46 @@
 }
 
 /* Formulário */
-.form-container-editar {
+.formContainer {
   max-width: 1000px;
   margin: 0 auto;
   padding: 30px;
 }
 
-.form-header-editar {
+.formHeader {
   text-align: center;
   margin-bottom: 40px;
 }
 
-.form-header-editar h2 {
+.formHeader h2 {
   font-size: 28px;
   font-weight: 700;
   color: #1e293b;
   margin: 0 0 8px 0;
 }
 
-.form-header-editar p {
+.formHeader p {
   font-size: 16px;
   color: #64748b;
   margin: 0;
 }
 
-.form-editar {
+.form {
   background: white;
   border-radius: 16px;
   padding: 40px;
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
 }
 
-.form-grid-editar {
+.formGrid {
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: 40px;
   margin-bottom: 40px;
 }
 
-.form-section-editar {
-  border-left: 4px solid #3498db;
-  padding-left: 20px;
-}
 
-.section-title-editar {
+.sectionTitle {
   font-size: 18px;
   font-weight: 600;
   color: #1e293b;
@@ -312,21 +207,17 @@
   gap: 8px;
 }
 
-.section-icon-editar {
-  font-size: 20px;
-}
-
-.form-group-editar {
+.formGroup {
   margin-bottom: 20px;
 }
 
-.form-row-editar {
+.formRow {
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: 16px;
 }
 
-.input-label-editar {
+.inputLabel {
   display: block;
   font-size: 14px;
   font-weight: 600;
@@ -334,13 +225,13 @@
   margin-bottom: 8px;
 }
 
-.input-label-editar::after {
+.inputLabel::after {
   content: "*";
   color: #ef4444;
   margin-left: 4px;
 }
 
-.modern-input-editar {
+.modernInput {
   width: 100%;
   padding: 12px 16px;
   border: 2px solid #e5e7eb;
@@ -350,17 +241,17 @@
   background: white;
 }
 
-.modern-input-editar:focus {
+.modernInput:focus {
   outline: none;
-  border-color: #3498db;
+  border-color: #458B00;
   box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.1);
 }
 
-.modern-input-editar::placeholder {
+.modernInput::placeholder {
   color: #9ca3af;
 }
 
-select.modern-input-editar {
+select.modernInput {
   appearance: none;
   background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%236b7280' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='m6 8 4 4 4-4'/%3e%3c/svg%3e");
   background-position: right 12px center;
@@ -370,14 +261,14 @@ select.modern-input-editar {
 }
 
 /* Checkbox Group */
-.checkbox-group-editar {
+.checkboxGroup {
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: 12px;
   margin-top: 8px;
 }
 
-.checkbox-label-editar {
+.checkboxLabel {
   display: flex;
   align-items: center;
   gap: 8px;
@@ -387,23 +278,23 @@ select.modern-input-editar {
   transition: background-color 0.2s ease;
 }
 
-.checkbox-label-editar:hover {
+.checkboxLabel:hover {
   background-color: #f8f9fa;
 }
 
-.checkbox-text-editar {
+.checkboxText {
   font-size: 14px;
   color: #374151;
 }
 
-.checkbox-label-editar input[type="checkbox"] {
+.checkboxLabel input[type="checkbox"] {
   width: 18px;
   height: 18px;
-  accent-color: #3498db;
+  accent-color: #458B00;
 }
 
 /* Ações do Formulário */
-.form-actions-editar {
+.formActions {
   display: flex;
   justify-content: flex-end;
   gap: 16px;
@@ -411,7 +302,7 @@ select.modern-input-editar {
   border-top: 1px solid #e5e7eb;
 }
 
-.cancel-button-editar {
+.cancelButton {
   padding: 12px 24px;
   border: 2px solid #d1d5db;
   border-radius: 8px;
@@ -422,16 +313,16 @@ select.modern-input-editar {
   transition: all 0.3s ease;
 }
 
-.cancel-button-editar:hover {
+.cancelButton:hover {
   background: #f9fafb;
   border-color: #9ca3af;
 }
 
-.submit-button-editar {
+.submitButton {
   padding: 12px 24px;
   border: none;
   border-radius: 8px;
-  background: linear-gradient(135deg, #3498db 0%, #2980b9 100%);
+  background: #458B00;
   color: white;
   font-weight: 600;
   cursor: pointer;
@@ -441,17 +332,13 @@ select.modern-input-editar {
   transition: all 0.3s ease;
 }
 
-.submit-button-editar:hover {
+.submitButton:hover {
   transform: translateY(-1px);
-  box-shadow: 0 4px 12px rgba(52, 152, 219, 0.3);
-}
-
-.button-icon-editar {
-  font-size: 16px;
+  box-shadow: 0 4px 12px #2F4F4F;
 }
 
 /* Overlay para mobile */
-.overlay-editar {
+.overlay {
   display: none;
   position: fixed;
   top: 0;
@@ -463,7 +350,7 @@ select.modern-input-editar {
 }
 
 /* Loading */
-.loading-container {
+.loadingContainer {
   display: flex;
   flex-direction: column;
   justify-content: center;
@@ -473,7 +360,7 @@ select.modern-input-editar {
   background: #f8fafc;
 }
 
-.loading-spinner {
+.loadingSpinner {
   width: 40px;
   height: 40px;
   border: 4px solid #e2e8f0;
@@ -493,26 +380,22 @@ select.modern-input-editar {
 
 /* Responsividade */
 @media (max-width: 1024px) {
-  .form-grid-editar {
+  .formGrid {
     grid-template-columns: 1fr;
     gap: 30px;
   }
 
-  .search-input-editar {
-    width: 200px;
-  }
-
-  .checkbox-group-editar {
+  .checkboxGroup {
     grid-template-columns: 1fr;
   }
 }
 
 @media (max-width: 768px) {
-  .menu-toggle-editar {
+  .menuToggle {
     display: block;
   }
 
-  .sidebar-editar {
+  .sidebar {
     position: fixed;
     top: 0;
     left: 0;
@@ -521,84 +404,62 @@ select.modern-input-editar {
     z-index: 90;
   }
 
-  .sidebar-open-editar {
+  .sidebarOpen {
     transform: translateX(0);
   }
 
-  .sidebar-close-editar {
+  .sidebarClose {
     display: block;
   }
 
-  .overlay-editar {
+  .overlay {
     display: block;
   }
 
-  .header-editar {
+  .header {
     padding: 16px 20px;
   }
 
-  .header-actions-editar {
-    flex-wrap: wrap;
-    gap: 12px;
-  }
-
-  .search-input-editar {
-    width: 180px;
-  }
-
-  .form-container-editar {
+  .formContainer {
     padding: 20px;
   }
 
-  .form-editar {
+  .form {
     padding: 24px;
   }
 
-  .form-row-editar {
+  .formRow {
     grid-template-columns: 1fr;
     gap: 0;
   }
 
-  .form-actions-editar {
+  .formActions {
     flex-direction: column;
   }
 
-  .cancel-button-editar,
-  .submit-button-editar {
+  .cancelButton,
+  .submitButton {
     width: 100%;
     justify-content: center;
   }
 }
 
 @media (max-width: 480px) {
-  .header-editar {
+  .header {
     flex-direction: column;
     gap: 16px;
     align-items: flex-start;
   }
 
-  .header-actions-editar {
-    width: 100%;
-    justify-content: space-between;
-  }
-
-  .search-box-editar {
-    width: 100%;
-  }
-
-  .search-input-editar {
-    width: 100%;
-  }
-
-  .form-container-editar {
+  .formContainer {
     padding: 16px;
   }
 
-  .form-editar {
+  .form {
     padding: 20px;
   }
 
-  .form-header-editar h2 {
+  .formHeader h2 {
     font-size: 24px;
   }
 }

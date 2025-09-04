@@ -55,10 +55,8 @@ export default function CadastroLaboratorioPage() {
             className="menu-toggle"
             onClick={() => setSidebarOpen(!sidebarOpen)}
           >
-            {/* ☰ */}
           </button>
           <h1 className="title"> Cadastro de Laboratório</h1>
-          {/* <h1 className="title">🏭 Cadastro de Laboratório</h1> */}
         </div>
       </header>
 
@@ -67,14 +65,12 @@ export default function CadastroLaboratorioPage() {
         <aside className={`sidebar ${sidebarOpen ? "sidebar-open" : ""}`}>
           <div className="sidebar-header">
             <div className="logo">
-              {/* <span className="logo-icon">💊</span> */}
               <span className="logo-text">PharmaX</span>
             </div>
             <button
               className="sidebar-close"
               onClick={() => setSidebarOpen(false)}
             >
-              ×
             </button>
           </div>
 
@@ -83,7 +79,6 @@ export default function CadastroLaboratorioPage() {
               <p className="nav-label">Principal</p>
               
               <a href="/funcionario/produtos/medicamentos" className="nav-link">
-                {/* <span className="nav-icon">💊</span> */}
                 <span className="nav-text">Medicamentos</span>
               </a>
             </div>
@@ -95,15 +90,10 @@ export default function CadastroLaboratorioPage() {
                 href="/funcionario/laboratorio/lista"
                 className="nav-link active"
               >
-                {/* <span className="nav-icon">🏭</span> */}
                 <span className="nav-text">Laboratórios</span>
               </a>
             </div>
-
-            
           </nav>
-
-          
         </aside>
 
         {/* Overlay para mobile */}
@@ -124,12 +114,11 @@ export default function CadastroLaboratorioPage() {
                 {/* Informações do Laboratório */}
                 <div className="form-section">
                   <h3 className="section-title">
-                    {/* <span className="section-icon">🏭</span> */}
                     Informações do Laboratório
                   </h3>
 
                   <div className="form-group">
-                    <label className="input-label">Nome do Laboratório *</label>
+                    <label className="input-label">Nome do Laboratório</label>
                     <input
                       className="modern-input"
                       type="text"
@@ -142,7 +131,7 @@ export default function CadastroLaboratorioPage() {
                   </div>
 
                   <div className="form-group">
-                    <label className="input-label">CNPJ *</label>
+                    <label className="input-label">CNPJ</label>
                     <input
                       className="modern-input"
                       type="text"
@@ -155,7 +144,7 @@ export default function CadastroLaboratorioPage() {
                   </div>
 
                   <div className="form-group">
-                    <label className="input-label">E-mail *</label>
+                    <label className="input-label">E-mail</label>
                     <input
                       className="modern-input"
                       type="email"
@@ -183,12 +172,11 @@ export default function CadastroLaboratorioPage() {
                 {/* Endereço e Logo */}
                 <div className="form-section">
                   <h3 className="section-title">
-                    {/* <span className="section-icon">📍</span> */}
                     Localização e Identidade Visual
                   </h3>
 
                   <div className="form-group">
-                    <label className="input-label">Endereço Completo *</label>
+                    <label className="input-label">Endereço Completo</label>
                     <input
                       className="modern-input"
                       type="text"
@@ -212,7 +200,6 @@ export default function CadastroLaboratorioPage() {
                         accept="image/*"
                       />
                       <label htmlFor="logo-upload" className="file-label">
-                        {/* <span className="file-icon">📁</span> */}
                         Selecionar arquivo
                       </label>
                       {form.logo && (
@@ -247,7 +234,6 @@ export default function CadastroLaboratorioPage() {
                   Cancelar
                 </button>
                 <button type="submit" className="submit-button">
-                  {/* <span className="button-icon">💾</span> */}
                   Cadastrar Laboratório
                 </button>
               </div>

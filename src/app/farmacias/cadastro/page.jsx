@@ -103,7 +103,6 @@ export default function CadastroFarmacia() {
       <div className={styles.contentWrapper}>
         <div className={styles.header}>
           <div className={styles.logo}>
-            {/* <span className={styles.logoIcon}>💊</span> */}
             <span className={styles.logoText}>PharmaX</span>
           </div>
           <h1 className={styles.titulo}>Cadastro de Farmácia</h1>
@@ -116,7 +115,7 @@ export default function CadastroFarmacia() {
           <form onSubmit={handleSubmit} className={styles.form}>
             <div className={styles.formGrid}>
               <div className={styles.formGroup}>
-                <label className={styles.label}>Nome da Farmácia *</label>
+                <label className={styles.label}>Nome da Farmácia</label>
                 <input
                   className={styles.input}
                   type="text"
@@ -129,7 +128,7 @@ export default function CadastroFarmacia() {
               </div>
 
               <div className={styles.formGroup}>
-                <label className={styles.label}>CNPJ *</label>
+                <label className={styles.label}>CNPJ</label>
                 <input
                   className={styles.input}
                   type="text"
@@ -142,7 +141,7 @@ export default function CadastroFarmacia() {
               </div>
 
               <div className={styles.formGroup}>
-                <label className={styles.label}>Endereço Completo *</label>
+                <label className={styles.label}>Endereço Completo</label>
                 <input
                   className={styles.input}
                   type="text"
@@ -167,7 +166,7 @@ export default function CadastroFarmacia() {
               </div>
 
               <div className={styles.formGroup}>
-                <label className={styles.label}>E-mail *</label>
+                <label className={styles.label}>E-mail</label>
                 <input
                   className={styles.input}
                   type="email"
@@ -180,7 +179,7 @@ export default function CadastroFarmacia() {
               </div>
 
               <div className={styles.formGroup}>
-                <label className={styles.label}>Senha *</label>
+                <label className={styles.label}>Senha</label>
                 <input
                   className={styles.input}
                   type="password"
@@ -317,7 +316,6 @@ export default function CadastroFarmacia() {
                   </>
                 ) : (
                   <>
-                    {/* <span className={styles.buttonIcon}>🏥</span> */}
                     Cadastrar Farmácia
                   </>
                 )}

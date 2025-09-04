@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
-// import styles from "./funcionario.module.css";
+import styles from "./index.module.css";
 
 export default function EditarFuncionarioPage() {
   const router = useRouter();
@@ -84,128 +84,93 @@ export default function EditarFuncionarioPage() {
 
   if (loading) {
     return (
-      <div className="loading-container">
-        <div className="loading-spinner"></div>
+      <div className={styles.loadingContainer}>
+        <div className={styles.loadingSpinner}></div>
         <span>Carregando dados do funcionário...</span>
       </div>
     );
   }
 
   return (
-    <div className="dashboard">
+    <div className={styles.dashboard}>
       {/* Header */}
-      <header className="header">
-        <div className="header-left">
+      <header className={styles.header}>
+        <div className={styles.headerLeft}>
           <button
-            className="menu-toggle"
+            className={styles.menuToggle}
             onClick={() => setSidebarOpen(!sidebarOpen)}
           >
-            
           </button>
-          <h1 className="title"> Editar Funcionário</h1>
-          {/* <h1 className="title">✏️ Editar Funcionário</h1> */}
-          
+          <h1 className={styles.title}> Editar Funcionário</h1>
         </div>
       </header>
 
-      <div className="content-wrapper">
+      <div className={styles.contentWrapper}>
         {/* Sidebar Não Fixa */}
-        <aside className={`sidebar ${sidebarOpen ? "sidebar-open" : ""}`}>
-          <div className="sidebar-header">
-            <div className="logo">
-              {/* <span className="logo-icon">💊</span> */}
-              <span className="logo-text">PharmaX</span>
+        <aside className={`${styles.sidebar} ${sidebarOpen ? styles.sidebarOpen : ""}`}>
+          <div className={styles.sidebarHeader}>
+            <div className={styles.logo}>
+              <span className={styles.logoText}>PharmaX</span>
             </div>
             <button
-              className="sidebar-close"
+              className={styles.sidebarClose}
               onClick={() => setSidebarOpen(false)}
             >
               ×
             </button>
           </div>
 
-          <nav className="nav">
-            <div className="nav-section">
-              <p className="nav-label">Principal</p>
-              <a href="/farmacias/favoritos" className="nav-link">
-                {/* <span className="nav-icon">⭐</span> */}
-                <span className="nav-text">Favoritos</span>
+          <nav className={styles.nav}>
+            <div className={styles.navSection}>
+              <p className={styles.navLabel}>Principal</p>
+              <a href="/farmacias/favoritos" className={styles.navLink}>
+                <span className={styles.navText}>Favoritos</span>
               </a>
-              <a href="/farmacias/produtos/medicamentos" className="nav-link">
-                {/* <span className="nav-icon">💊</span> */}
-                <span className="nav-text">Medicamentos</span>
+              <a href="/farmacias/produtos/medicamentos" className={styles.navLink}>
+                <span className={styles.navText}>Medicamentos</span>
               </a>
             </div>
 
-            <div className="nav-section">
-              <p className="nav-label">Gestão</p>
+            <div className={styles.navSection}>
+              <p className={styles.navLabel}>Gestão</p>
               <a
                 href="/farmacias/cadastro/funcionario/lista"
-                className="nav-link"
+                className={styles.navLink}
               >
-                {/* <span className="nav-icon">👩‍⚕️</span> */}
-                <span className="nav-text">Funcionários</span>
+                <span className={styles.navText}>Funcionários</span>
               </a>
-              <a href="/farmacias/laboratorio/lista" className="nav-link">
-                {/* <span className="nav-icon">🏭</span> */}
-                <span className="nav-text">Laboratórios</span>
+              <a href="/farmacias/laboratorio/lista" className={styles.navLink}>
+                <span className={styles.navText}>Laboratórios</span>
               </a>
             </div>
-
-            {/* <div className="nav-section">
-              <p className="nav-label">Sistema</p>
-              <a href="/config" className="nav-link">
-                <span className="nav-icon">⚙️</span>
-                <span className="nav-text">Configurações</span>
-              </a>
-              <a href="/farmacias/perfil" className={`${styles.navLink} ${styles.active}`}>
-                <span className={styles.navIcon}>👤</span>
-                <span className={styles.navText}>Meu Perfil</span>
-              </a>
-              <button className="nav-link">
-                <span className="nav-icon">🚪</span>
-                <span className="nav-text">Sair</span>
-              </button>
-            </div> */}
           </nav>
-
-          {/* <div className="user-panel">
-            <div className="user-avatar">
-              <span>👤</span>
-            </div>
-            <div className="user-info">
-              <p className="user-name">Administrador</p>
-              <p className="user-role">Supervisor</p>
-            </div>
-          </div> */}
         </aside>
 
         {/* Overlay para mobile */}
         {sidebarOpen && (
-          <div className="overlay" onClick={() => setSidebarOpen(false)} />
+          <div className={styles.overlay} onClick={() => setSidebarOpen(false)} />
         )}
 
         {/* Conteúdo Principal */}
-        <main className="main-content">
-          <div className="form-container">
-            <div className="form-header">
+        <main className={styles.mainContent}>
+          <div className={styles.formContainer}>
+            <div className={styles.formHeader}>
               <h2>Editar Funcionário</h2>
               <p>Atualize os dados do colaborador</p>
             </div>
 
-            <form onSubmit={handleSubmit} className="form">
-              <div className="form-grid">
+            <form onSubmit={handleSubmit} className={styles.form}>
+              <div className={styles.formGrid}>
                 {/* Informações Pessoais */}
-                <div className="form-section">
-                  <h3 className="section-title">
-                    {/* <span className="section-icon">👤</span> */}
+                <div className={styles.formSection}>
+                  <h3 className={styles.sectionTitle}>
                     Informações Pessoais
                   </h3>
 
-                  <div className="form-group">
-                    <label className="input-label">Nome Completo *</label>
+                  <div className={styles.formGroup}>
+                    <label className={styles.inputLabel}>Nome Completo *</label>
                     <input
-                      className="modern-input"
+                      className={styles.modernInput}
                       type="text"
                       name="nome"
                       value={form.nome}
@@ -215,11 +180,11 @@ export default function EditarFuncionarioPage() {
                     />
                   </div>
 
-                  <div className="form-row">
-                    <div className="form-group">
-                      <label className="input-label">CPF *</label>
+                  <div className={styles.formRow}>
+                    <div className={styles.formGroup}>
+                      <label className={styles.inputLabel}>CPF *</label>
                       <input
-                        className="modern-input"
+                        className={styles.modernInput}
                         type="text"
                         name="cpf"
                         value={form.cpf}
@@ -229,10 +194,10 @@ export default function EditarFuncionarioPage() {
                       />
                     </div>
 
-                    <div className="form-group">
-                      <label className="input-label">Data de Nascimento</label>
+                    <div className={styles.formGroup}>
+                      <label className={styles.inputLabel}>Data de Nascimento</label>
                       <input
-                        className="modern-input"
+                        className={styles.modernInput}
                         type="date"
                         name="dataNascimento"
                         value={form.dataNascimento}
@@ -241,10 +206,10 @@ export default function EditarFuncionarioPage() {
                     </div>
                   </div>
 
-                  <div className="form-group">
-                    <label className="input-label">E-mail *</label>
+                  <div className={styles.formGroup}>
+                    <label className={styles.inputLabel}>E-mail *</label>
                     <input
-                      className="modern-input"
+                      className={styles.modernInput}
                       type="email"
                       name="email"
                       value={form.email}
@@ -254,10 +219,10 @@ export default function EditarFuncionarioPage() {
                     />
                   </div>
 
-                  <div className="form-group">
-                    <label className="input-label">Telefone</label>
+                  <div className={styles.formGroup}>
+                    <label className={styles.inputLabel}>Telefone</label>
                     <input
-                      className="modern-input"
+                      className={styles.modernInput}
                       type="tel"
                       name="telefone"
                       value={form.telefone}
@@ -266,10 +231,10 @@ export default function EditarFuncionarioPage() {
                     />
                   </div>
 
-                  <div className="form-group">
-                    <label className="input-label">Endereço</label>
+                  <div className={styles.formGroup}>
+                    <label className={styles.inputLabel}>Endereço</label>
                     <input
-                      className="modern-input"
+                      className={styles.modernInput}
                       type="text"
                       name="endereco"
                       value={form.endereco}
@@ -280,16 +245,15 @@ export default function EditarFuncionarioPage() {
                 </div>
 
                 {/* Informações de Acesso */}
-                <div className="form-section">
-                  <h3 className="section-title">
-                    {/* <span className="section-icon">🔐</span> */}
+                <div className={styles.formSection}>
+                  <h3 className={styles.sectionTitle}>
                     Acesso ao Sistema
                   </h3>
 
-                  <div className="form-group">
-                    <label className="input-label">Nome de Usuário *</label>
+                  <div className={styles.formGroup}>
+                    <label className={styles.inputLabel}>Nome de Usuário *</label>
                     <input
-                      className="modern-input"
+                      className={styles.modernInput}
                       type="text"
                       name="usuario"
                       value={form.usuario}
@@ -299,10 +263,10 @@ export default function EditarFuncionarioPage() {
                     />
                   </div>
 
-                  <div className="form-group">
-                    <label className="input-label">Senha *</label>
+                  <div className={styles.formGroup}>
+                    <label className={styles.inputLabel}>Senha *</label>
                     <input
-                      className="modern-input"
+                      className={styles.modernInput}
                       type="password"
                       name="senha"
                       value={form.senha}
@@ -312,10 +276,10 @@ export default function EditarFuncionarioPage() {
                     />
                   </div>
 
-                  <div className="form-group">
-                    <label className="input-label">Nível de Acesso *</label>
+                  <div className={styles.formGroup}>
+                    <label className={styles.inputLabel}>Nível de Acesso *</label>
                     <select
-                      className="modern-input"
+                      className={styles.modernInput}
                       name="nivelAcesso"
                       value={form.nivelAcesso}
                       onChange={handleChange}
@@ -332,46 +296,46 @@ export default function EditarFuncionarioPage() {
                     </select>
                   </div>
 
-                  <div className="form-group">
-                    <label className="input-label">Permissões Especiais</label>
-                    <div className="checkbox-group">
-                      <label className="checkbox-label">
+                  <div className={styles.formGroup}>
+                    <label className={styles.inputLabel}>Permissões Especiais</label>
+                    <div className={styles.checkboxGroup}>
+                      <label className={styles.checkboxLabel}>
                         <input
                           type="checkbox"
                           name="acessoRelatorios"
                           checked={form.acessoRelatorios}
                           onChange={handleChange}
                         />
-                        <span className="checkbox-text">
+                        <span className={styles.checkboxText}>
                           Acesso a relatórios
                         </span>
                       </label>
-                      <label className="checkbox-label">
+                      <label className={styles.checkboxLabel}>
                         <input
                           type="checkbox"
                           name="acessoEstoque"
                           checked={form.acessoEstoque}
                           onChange={handleChange}
                         />
-                        <span className="checkbox-text">Gerenciar estoque</span>
+                        <span className={styles.checkboxText}>Gerenciar estoque</span>
                       </label>
-                      <label className="checkbox-label">
+                      <label className={styles.checkboxLabel}>
                         <input
                           type="checkbox"
                           name="acessoFinanceiro"
                           checked={form.acessoFinanceiro}
                           onChange={handleChange}
                         />
-                        <span className="checkbox-text">Acesso financeiro</span>
+                        <span className={styles.checkboxText}>Acesso financeiro</span>
                       </label>
-                      <label className="checkbox-label">
+                      <label className={styles.checkboxLabel}>
                         <input
                           type="checkbox"
                           name="acessoConfiguracoes"
                           checked={form.acessoConfiguracoes}
                           onChange={handleChange}
                         />
-                        <span className="checkbox-text">
+                        <span className={styles.checkboxText}>
                           Configurações do sistema
                         </span>
                       </label>
@@ -380,18 +344,17 @@ export default function EditarFuncionarioPage() {
                 </div>
               </div>
 
-              <div className="form-actions">
+              <div className={styles.formActions}>
                 <button
                   type="button"
-                  className="cancel-button"
+                  className={styles.cancelButton}
                   onClick={() =>
                     router.push("/farmacias/cadastro/funcionario/lista")
                   }
                 >
                   Cancelar
                 </button>
-                <button type="submit" className="submit-button">
-                  {/* <span className="button-icon">💾</span> */}
+                <button type="submit" className={styles.submitButton}>
                   Atualizar Funcionário
                 </button>
               </div>
@@ -399,613 +362,6 @@ export default function EditarFuncionarioPage() {
           </div>
         </main>
       </div>
-
-      <style jsx>{`
-        /* Layout Principal */
-        .dashboard {
-          min-height: 100vh;
-          background-color: #f8fafc;
-          display: flex;
-          flex-direction: column;
-        }
-
-        /* Header */
-        .header {
-          background: white;
-          padding: 16px 30px;
-          display: flex;
-          justify-content: space-between;
-          align-items: center;
-          box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-          position: sticky;
-          top: 0;
-          z-index: 100;
-        }
-
-        .header-left {
-          display: flex;
-          align-items: center;
-          gap: 16px;
-        }
-
-        .menu-toggle {
-          background: none;
-          border: none;
-          font-size: 20px;
-          cursor: pointer;
-          padding: 8px;
-          border-radius: 6px;
-          transition: background 0.3s ease;
-          display: none;
-        }
-
-        .menu-toggle:hover {
-          background: #f1f5f9;
-        }
-
-        .title {
-          font-size: 24px;
-          font-weight: 600;
-          color: #1e293b;
-          margin: 0;
-        }
-
-        .header-actions {
-          display: flex;
-          align-items: center;
-          gap: 16px;
-        }
-
-        .search-box {
-          position: relative;
-          display: flex;
-          align-items: center;
-        }
-
-        .search-input {
-          padding: 10px 40px 10px 12px;
-          border: 2px solid #e2e8f0;
-          border-radius: 8px;
-          font-size: 14px;
-          width: 250px;
-          transition: border-color 0.3s ease;
-        }
-
-        .search-input:focus {
-          outline: none;
-          border-color: #3498db;
-        }
-
-        .search-icon {
-          position: absolute;
-          right: 12px;
-          color: #64748b;
-        }
-
-        .user-menu {
-          display: flex;
-          align-items: center;
-        }
-
-        .user-avatar {
-          width: 40px;
-          height: 40px;
-          border-radius: 50%;
-          background: #3498db;
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          color: white;
-          font-weight: 600;
-          font-size: 18px;
-        }
-
-        /* Wrapper de Conteúdo */
-        .content-wrapper {
-          display: flex;
-          flex: 1;
-          position: relative;
-        }
-
-        /* Sidebar Não Fixa */
-        .sidebar {
-          width: 280px;
-          background: #191970;
-          color: #CDC1C5;
-          display: flex;
-          flex-direction: column;
-          transition: transform 0.3s ease;
-          box-shadow: 2px 0 10px rgba(0, 0, 0, 0.1);
-          z-index: 90;
-        }
-
-        .sidebar-header {
-          padding: 20px;
-          display: flex;
-          justify-content: space-between;
-          align-items: center;
-          border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-        }
-
-        .logo {
-          display: flex;
-          align-items: center;
-          gap: 12px;
-        }
-
-        .logo-icon {
-          font-size: 24px;
-        }
-
-        .logo-text {
-          font-size: 20px;
-          font-weight: bold;
-        }
-
-        .sidebar-close {
-          display: none;
-          background: none;
-          border: none;
-          color: white;
-          cursor: pointer;
-          font-size: 24px;
-          padding: 0;
-          width: 30px;
-          height: 30px;
-          border-radius: 4px;
-          transition: background 0.3s ease;
-        }
-
-        .sidebar-close:hover {
-          background: rgba(255, 255, 255, 0.1);
-        }
-
-        .nav {
-          flex: 1;
-          padding: 20px 0;
-        }
-
-        .nav-section {
-          margin-bottom: 30px;
-        }
-
-        .nav-label {
-          padding: 0 20px 10px;
-          font-size: 12px;
-          text-transform: uppercase;
-          color: #696969;
-          font-weight: 600;
-          letter-spacing: 0.5px;
-        }
-
-        .nav-link {
-          display: flex;
-          align-items: center;
-          padding: 12px 20px;
-          color: #CDC1C5;
-          text-decoration: none;
-          transition: all 0.3s ease;
-          gap: 12px;
-          position: relative;
-          border: none;
-          background: none;
-          width: 100%;
-          text-align: left;
-          font-family: inherit;
-        }
-
-        .nav-link:hover {
-          background: rgba(255, 255, 255, 0.1);
-          color: white;
-        }
-
-        .nav-link.active {
-          background: rgba(52, 152, 219, 0.2);
-          color: #DCDCDC;
-          border-left: 4px solid #3498db;
-        }
-
-        .nav-icon {
-          font-size: 18px;
-          width: 24px;
-          text-align: center;
-        }
-
-        .nav-text {
-          font-size: 14px;
-          font-weight: 500;
-          flex: 1;
-        }
-
-        .user-panel {
-          padding: 20px;
-          border-top: 1px solid rgba(255, 255, 255, 0.1);
-          display: flex;
-          align-items: center;
-          gap: 12px;
-        }
-
-        .user-avatar {
-          width: 40px;
-          height: 40px;
-          border-radius: 50%;
-          background: rgba(255, 255, 255, 0.1);
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          font-size: 18px;
-        }
-
-        .user-info {
-          flex: 1;
-        }
-
-        .user-name {
-          font-size: 14px;
-          font-weight: 600;
-          margin: 0;
-        }
-
-        .user-role {
-          font-size: 12px;
-          color: #95a5a6;
-          margin: 0;
-        }
-
-        /* Conteúdo Principal */
-        .main-content {
-          flex: 1;
-          padding: 0;
-          min-height: calc(100vh - 80px);
-          overflow-y: auto;
-          background: #f8fafc;
-        }
-
-        /* Formulário */
-        .form-container {
-          max-width: 1000px;
-          margin: 0 auto;
-          padding: 30px;
-        }
-
-        .form-header {
-          text-align: center;
-          margin-bottom: 40px;
-        }
-
-        .form-header h2 {
-          font-size: 28px;
-          font-weight: 700;
-          color: #1e293b;
-          margin: 0 0 8px 0;
-        }
-
-        .form-header p {
-          font-size: 16px;
-          color: #64748b;
-          margin: 0;
-        }
-
-        .form {
-          background: white;
-          border-radius: 16px;
-          padding: 40px;
-          box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
-        }
-
-        .form-grid {
-          display: grid;
-          grid-template-columns: 1fr 1fr;
-          gap: 40px;
-          margin-bottom: 40px;
-        }
-
-        // .form-section {
-        //   border-left: 4px solid #3498db;
-        //   padding-left: 20px;
-        // }
-
-        .section-title {
-          font-size: 18px;
-          font-weight: 600;
-          color: #1e293b;
-          margin: 0 0 24px 0;
-          display: flex;
-          align-items: center;
-          gap: 8px;
-        }
-
-        .section-icon {
-          font-size: 20px;
-        }
-
-        .form-group {
-          margin-bottom: 20px;
-        }
-
-        .form-row {
-          display: grid;
-          grid-template-columns: 1fr 1fr;
-          gap: 16px;
-        }
-
-        .input-label {
-          display: block;
-          font-size: 14px;
-          font-weight: 600;
-          color: #374151;
-          margin-bottom: 8px;
-        }
-
-        .input-label::after {
-          content: "*";
-          color: #ef4444;
-          margin-left: 4px;
-        }
-
-        .modern-input {
-          width: 100%;
-          padding: 12px 16px;
-          border: 2px solid #e5e7eb;
-          border-radius: 8px;
-          font-size: 14px;
-          transition: all 0.3s ease;
-          background: white;
-        }
-
-        .modern-input:focus {
-          outline: none;
-          border-color: #458B00;
-          box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.1);
-        }
-
-        .modern-input::placeholder {
-          color: #9ca3af;
-        }
-
-        select.modern-input {
-          appearance: none;
-          background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%236b7280' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='m6 8 4 4 4-4'/%3e%3c/svg%3e");
-          background-position: right 12px center;
-          background-repeat: no-repeat;
-          background-size: 16px;
-          padding-right: 40px;
-        }
-
-        /* Checkbox Group */
-        .checkbox-group {
-          display: grid;
-          grid-template-columns: 1fr 1fr;
-          gap: 12px;
-          margin-top: 8px;
-        }
-
-        .checkbox-label {
-          display: flex;
-          align-items: center;
-          gap: 8px;
-          cursor: pointer;
-          padding: 8px;
-          border-radius: 6px;
-          transition: background-color 0.2s ease;
-        }
-
-        .checkbox-label:hover {
-          background-color: #f8f9fa;
-        }
-
-        .checkbox-text {
-          font-size: 14px;
-          color: #374151;
-        }
-
-        .checkbox-label input[type="checkbox"] {
-          width: 18px;
-          height: 18px;
-          accent-color: #458B00;
-        }
-
-        /* Ações do Formulário */
-        .form-actions {
-          display: flex;
-          justify-content: flex-end;
-          gap: 16px;
-          padding-top: 32px;
-          border-top: 1px solid #e5e7eb;
-        }
-
-        .cancel-button {
-          padding: 12px 24px;
-          border: 2px solid #d1d5db;
-          border-radius: 8px;
-          background: white;
-          color: #374151;
-          font-weight: 600;
-          cursor: pointer;
-          transition: all 0.3s ease;
-        }
-
-        .cancel-button:hover {
-          background: #f9fafb;
-          border-color: #9ca3af;
-        }
-
-        .submit-button {
-          padding: 12px 24px;
-          border: none;
-          border-radius: 8px;
-          background: #458B00;
-          color: white;
-          font-weight: 600;
-          cursor: pointer;
-          display: flex;
-          align-items: center;
-          gap: 8px;
-          transition: all 0.3s ease;
-        }
-
-        .submit-button:hover {
-          transform: translateY(-1px);
-          box-shadow: 0 4px 12px #2F4F4F;
-        }
-
-        .button-icon {
-          font-size: 16px;
-        }
-
-        /* Overlay para mobile */
-        .overlay {
-          display: none;
-          position: fixed;
-          top: 0;
-          left: 0;
-          right: 0;
-          bottom: 0;
-          background: rgba(0, 0, 0, 0.5);
-          z-index: 80;
-        }
-
-        /* Loading */
-        .loading-container {
-          display: flex;
-          flex-direction: column;
-          justify-content: center;
-          align-items: center;
-          height: 100vh;
-          gap: 16px;
-          background: #f8fafc;
-        }
-
-        .loading-spinner {
-          width: 40px;
-          height: 40px;
-          border: 4px solid #e2e8f0;
-          border-top: 4px solid #3498db;
-          border-radius: 50%;
-          animation: spin 1s linear infinite;
-        }
-
-        @keyframes spin {
-          0% {
-            transform: rotate(0deg);
-          }
-          100% {
-            transform: rotate(360deg);
-          }
-        }
-
-        /* Responsividade */
-        @media (max-width: 1024px) {
-          .form-grid {
-            grid-template-columns: 1fr;
-            gap: 30px;
-          }
-
-          .search-input {
-            width: 200px;
-          }
-
-          .checkbox-group {
-            grid-template-columns: 1fr;
-          }
-        }
-
-        @media (max-width: 768px) {
-          .menu-toggle {
-            display: block;
-          }
-
-          .sidebar {
-            position: fixed;
-            top: 0;
-            left: 0;
-            bottom: 0;
-            transform: translateX(-100%);
-            z-index: 90;
-          }
-
-          .sidebar-open {
-            transform: translateX(0);
-          }
-
-          .sidebar-close {
-            display: block;
-          }
-
-          .overlay {
-            display: block;
-          }
-
-          .header {
-            padding: 16px 20px;
-          }
-
-          .header-actions {
-            flex-wrap: wrap;
-            gap: 12px;
-          }
-
-          .search-input {
-            width: 180px;
-          }
-
-          .form-container {
-            padding: 20px;
-          }
-
-          .form {
-            padding: 24px;
-          }
-
-          .form-row {
-            grid-template-columns: 1fr;
-            gap: 0;
-          }
-
-          .form-actions {
-            flex-direction: column;
-          }
-
-          .cancel-button,
-          .submit-button {
-            width: 100%;
-            justify-content: center;
-          }
-        }
-
-        @media (max-width: 480px) {
-          .header {
-            flex-direction: column;
-            gap: 16px;
-            align-items: flex-start;
-          }
-
-          .header-actions {
-            width: 100%;
-            justify-content: space-between;
-          }
-
-          .search-box {
-            width: 100%;
-          }
-
-          .search-input {
-            width: 100%;
-          }
-
-          .form-container {
-            padding: 16px;
-          }
-
-          .form {
-            padding: 20px;
-          }
-
-          .form-header h2 {
-            font-size: 24px;
-          }
-        }
-      `}</style>
     </div>
   );
 }

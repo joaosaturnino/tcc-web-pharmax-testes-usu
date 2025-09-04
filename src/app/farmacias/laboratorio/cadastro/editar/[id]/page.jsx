@@ -93,10 +93,8 @@ export default function EditarLaboratorioPage() {
             className="menu-toggle"
             onClick={() => setSidebarOpen(!sidebarOpen)}
           >
-            {/* ☰ */}
           </button>
           <h1 className="title"> Editar Laboratório</h1>
-          {/* <h1 className="title">🏭 Editar Laboratório</h1> */}
         </div>
       </header>
 
@@ -105,14 +103,12 @@ export default function EditarLaboratorioPage() {
         <aside className={`sidebar ${sidebarOpen ? "sidebar-open" : ""}`}>
           <div className="sidebar-header">
             <div className="logo">
-              {/* <span className="logo-icon">💊</span> */}
               <span className="logo-text">PharmaX</span>
             </div>
             <button
               className="sidebar-close"
               onClick={() => setSidebarOpen(false)}
             >
-              {/* × */}
             </button>
           </div>
 
@@ -120,11 +116,9 @@ export default function EditarLaboratorioPage() {
             <div className="nav-section">
               <p className="nav-label">Principal</p>
               <a href="/farmacias/favoritos" className="nav-link">
-                {/* <span className="nav-icon">⭐</span> */}
                 <span className="nav-text">Favoritos</span>
               </a>
               <a href="/farmacias/produtos/medicamentos" className="nav-link">
-                {/* <span className="nav-icon">💊</span> */}
                 <span className="nav-text">Medicamentos</span>
               </a>
             </div>
@@ -135,44 +129,18 @@ export default function EditarLaboratorioPage() {
                 href="/farmacias/cadastro/funcionario/lista"
                 className="nav-link"
               >
-                {/* <span className="nav-icon">👩‍⚕️</span> */}
                 <span className="nav-text">Funcionários</span>
               </a>
               <a
                 href="/farmacias/laboratorio/lista"
                 className="nav-link active"
               >
-                {/* <span className="nav-icon">🏭</span> */}
                 <span className="nav-text">Laboratórios</span>
               </a>
             </div>
-
-            {/* <div className="nav-section">
-              <p className="nav-label">Sistema</p>
-              <a href="/config" className="nav-link">
-                <span className="nav-icon">⚙️</span>
-                <span className="nav-text">Configurações</span>
-              </a>
-              <a href="/farmacias/perfil" className="nav-link">
-                <span className="nav-icon">👤</span>
-                <span className="nav-text">Meu Perfil</span>
-              </a>
-              <button className="nav-link">
-                <span className="nav-icon">🚪</span>
-                <span className="nav-text">Sair</span>
-              </button>
-            </div> */}
           </nav>
 
-          {/* <div className="user-panel">
-            <div className="user-avatar">
-              <span>👤</span>
-            </div>
-            <div className="user-info">
-              <p className="user-name">Administrador</p>
-              <p className="user-role">Supervisor</p>
-            </div>
-          </div> */}
+          
         </aside>
 
         {/* Overlay para mobile */}
@@ -193,7 +161,6 @@ export default function EditarLaboratorioPage() {
                 {/* Informações do Laboratório */}
                 <div className="form-section">
                   <h3 className="section-title">
-                    {/* <span className="section-icon">🏭</span> */}
                     Informações do Laboratório
                   </h3>
 
@@ -266,7 +233,6 @@ export default function EditarLaboratorioPage() {
                 {/* Endereço e Logo */}
                 <div className="form-section">
                   <h3 className="section-title">
-                    {/* <span className="section-icon">📍</span> */}
                     Localização e Identidade Visual
                   </h3>
 
@@ -295,7 +261,6 @@ export default function EditarLaboratorioPage() {
                         accept="image/*"
                       />
                       <label htmlFor="logo-upload" className="file-label">
-                        {/* <span className="file-icon">📁</span> */}
                         {form.logo ? "Alterar arquivo" : "Selecionar arquivo"}
                       </label>
                       {form.logo && (
@@ -329,16 +294,7 @@ export default function EditarLaboratorioPage() {
                 >
                   Cancelar
                 </button>
-                {/* <button
-                  type="button"
-                  className="delete-button"
-                  onClick={handleDelete}
-                >
-                  <span className="button-icon">🗑️</span>
-                  Excluir Laboratório
-                </button> */}
                 <button type="submit" className="submit-button">
-                  {/* <span className="button-icon">💾</span> */}
                   Atualizar Laboratório
                 </button>
               </div>

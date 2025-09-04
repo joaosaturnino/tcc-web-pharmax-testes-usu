@@ -83,10 +83,8 @@ export default function ListaLaboratorios() {
             className={styles.menuToggle}
             onClick={() => setSidebarOpen(!sidebarOpen)}
           >
-            {/* ☰ */}
           </button>
           <h1 className={styles.title}> Laboratórios</h1>
-          {/* <h1 className={styles.title}>🏭 Laboratórios</h1> */}
         </div>
         <div className={styles.headerActions}>
           <Link
@@ -108,51 +106,34 @@ export default function ListaLaboratorios() {
         >
           <div className={styles.sidebarHeader}>
             <div className={styles.logo}>
-              {/* <span className={styles.logoIcon}>💊</span> */}
               <span className={styles.logoText}>PharmaX</span>
             </div>
             <button
               className={styles.sidebarClose}
               onClick={() => setSidebarOpen(false)}
             >
-              ×
             </button>
           </div>
-
           <nav className={styles.nav}>
             <div className={styles.navSection}>
-              <p className={styles.navLabel}>Principal</p>
-              
               <a
                 href="/funcionario/produtos/medicamentos"
                 className={styles.navLink}
               >
-                {/* <span className={styles.navIcon}>💊</span> */}
                 <span className={styles.navText}>Medicamentos</span>
               </a>
             </div>
 
             <div className={styles.navSection}>
-              <p className={styles.navLabel}>Gestão</p>
-              
               <a
                 href="/funcionario/laboratorio/lista"
                 className={`${styles.navLink} ${styles.active}`}
               >
-                {/* <span className={styles.navIcon}>🏭</span> */}
                 <span className={styles.navText}>Laboratórios</span>
-                <span className={styles.notificationBadge}>
-                  {laboratorios.length}
-                </span>
               </a>
             </div>
-
-            
           </nav>
-
-        
         </aside>
-
         {/* Overlay para mobile */}
         {sidebarOpen && (
           <div
@@ -160,7 +141,6 @@ export default function ListaLaboratorios() {
             onClick={() => setSidebarOpen(false)}
           />
         )}
-
         {/* Conteúdo Principal */}
         <main className={styles.mainContent}>
           <div className={styles.formContainer}>
@@ -169,9 +149,7 @@ export default function ListaLaboratorios() {
                 <h2>Laboratórios Cadastrados</h2>
                 <p>Gerencie os laboratórios parceiros</p>
               </div>
-              
             </div>
-
             <div className={styles.tableContainer}>
               <table className={styles.laboratoriosTable}>
                 <thead>
@@ -247,7 +225,6 @@ export default function ListaLaboratorios() {
                 </tbody>
               </table>
             </div>
-
             <div className={styles.listaFooter}>
               <div className={styles.totalRegistros}>
                 Total: {laboratoriosFiltrados.length} laboratório(s)

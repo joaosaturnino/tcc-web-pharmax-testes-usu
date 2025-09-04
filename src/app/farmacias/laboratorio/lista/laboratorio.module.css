@@ -234,7 +234,7 @@
 }
 
 .notificationBadge {
-  background: #3498db;
+  background: #cd0000;
   color: white;
   border-radius: 20px;
   padding: 4px 8px;
@@ -422,7 +422,7 @@
 
 .statusBadge.inativo {
   background-color: #fee2e2;
-  color: #991b1b;
+  color: #cd0000;
 }
 
 .acoes {

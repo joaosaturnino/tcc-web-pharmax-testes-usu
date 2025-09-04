@@ -246,7 +246,7 @@
 }
 
 .notificationBadge {
-  background: #e74c3c;
+  background: #cd0000;
   color: white;
   font-size: 11px;
   padding: 2px 6px;
@@ -482,7 +482,7 @@
 
 .outStock {
   background: #fee2e2;
-  color: #dc2626;
+  color: #cd0000;
 }
 
 .pending {

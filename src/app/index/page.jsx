@@ -300,7 +300,7 @@ export default function Login() {
           <p className={styles.linkCadastro}>
             Não tem uma conta?{" "}
             <span
-              onClick={() => !isLoading && router.push("/cadastro")}
+              onClick={() => !isLoading && router.push("/farmacias/cadastro")}
               className={styles.link}
             >
               Cadastre-se

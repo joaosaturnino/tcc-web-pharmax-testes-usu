@@ -4,6 +4,8 @@ import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import styles from "./favoritos.module.css";
 
+import AuthGuard from "../../componentes/AuthGuard";
+
 export default function FavoritosFarmaciaPage() {
   const [favoritos, setFavoritos] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -74,18 +76,14 @@ export default function FavoritosFarmaciaPage() {
       ]);
       setLoading(false);
     }, 800);
+
+    
   }, []);
 
   // Função para fazer logout
   const handleLogout = async () => {
     try {
-      // Aqui você implementaria a lógica real de logout
-      // Por exemplo, limpar tokens, cookies, etc.
-
-      // Simulação de uma requisição de logout
-      // await fetch('/api/auth/logout', { method: 'POST' });
-
-      // Limpar dados de autenticação do localStorage/sessionStorage (se aplicável)
+      
       localStorage.removeItem("authToken");
       sessionStorage.removeItem("userData");
 
@@ -110,6 +108,7 @@ export default function FavoritosFarmaciaPage() {
   }
 
   return (
+    <AuthGuard requiredRole="admin">
     <div className={styles.dashboard}>
       {/* Header com botão para toggle da sidebar */}
       <header className={styles.header}>
@@ -118,7 +117,6 @@ export default function FavoritosFarmaciaPage() {
             className={styles.menuToggle}
             onClick={() => setSidebarOpen(!sidebarOpen)}
           >
-            {/* ☰ */}
           </button>
           <h1 className={styles.title}>Medicamentos Favoritados</h1>
         </div>
@@ -133,14 +131,12 @@ export default function FavoritosFarmaciaPage() {
         >
           <div className={styles.sidebarHeader}>
             <div className={styles.logo}>
-              {/* <span className={styles.logoIcon}>💊</span> */}
               <span className={styles.logoText}>PharmaX</span>
             </div>
             <button
               className={styles.sidebarClose}
               onClick={() => setSidebarOpen(false)}
             >
-              ×
             </button>
           </div>
 
@@ -151,17 +147,12 @@ export default function FavoritosFarmaciaPage() {
                 href="/farmacias/favoritos"
                 className={`${styles.navLink} ${styles.active}`}
               >
-                {/* <span className={styles.navIcon}>⭐</span> */}
                 <span className={styles.navText}>Favoritos</span>
-                <span className={styles.notificationBadge}>
-                  {favoritos.length}
-                </span>
               </a>
               <a
                 href="/farmacias/produtos/medicamentos"
                 className={styles.navLink}
               >
-                {/* <span className={styles.navIcon}>💊</span> */}
                 <span className={styles.navText}>Medicamentos</span>
               </a>
             </div>
@@ -172,33 +163,11 @@ export default function FavoritosFarmaciaPage() {
                 href="/farmacias/cadastro/funcionario/lista"
                 className={styles.navLink}
               >
-                {/* <span className={styles.navIcon}>👩‍⚕️</span> */}
                 <span className={styles.navText}>Funcionários</span>
               </a>
               <a href="/farmacias/laboratorio/lista" className={styles.navLink}>
-                {/* <span className={styles.navIcon}>🏭</span> */}
                 <span className={styles.navText}>Laboratórios</span>
               </a>
-            </div>
-
-            <div className={styles.navSection}>
-              {/* <p className={styles.navLabel}>Sistema</p> */}
-              {/* <a href="../../configuracoes" className={styles.navLink}>
-                <span className={styles.navIcon}>⚙️</span>
-                <span className={styles.navText}>Configurações</span>
-              </a> */}
-              {/* <a
-                href="./perfil"
-                className={styles.navLink}
-              >
-                <span className={styles.navIcon}>👤</span>
-                <span className={styles.navText}>Meu Perfil</span>
-              </a> */}
-              {/* Botão Sair com funcionalidade implementada */}
-              {/* <button className={styles.navLink} onClick={handleLogout}>
-                <span className={styles.navIcon}>🚪</span>
-                <span className={styles.navText}>Sair</span>
-              </button> */}
             </div>
           </nav>
 
@@ -207,7 +176,6 @@ export default function FavoritosFarmaciaPage() {
                 href="./perfil"
                 className={styles.navLink}
               >
-                {/* <span className={styles.navIcon}>👤</span> */}
                 <span className={styles.navText}>Meu Perfil</span>
               </a>
           </div>
@@ -223,39 +191,6 @@ export default function FavoritosFarmaciaPage() {
 
         {/* Conteúdo Principal */}
         <main className={styles.mainContent}>
-          <div className={styles.statsGrid}>
-            {/* <div className={styles.statCard}>
-              <div className={styles.statIcon}>⭐</div>
-              <div className={styles.statContent}>
-                <h3>{favoritos.length}</h3>
-                <p>Total de Favoritos</p>
-              </div>
-            </div> */}
-            {/* <div className={styles.statCard}>
-              <div className={styles.statIcon}>💊</div>
-              <div className={styles.statContent}>
-                <h3>
-                  {favoritos.reduce((acc, user) => acc + user.meds.length, 0)}
-                </h3>
-                <p>Medicamentos</p>
-              </div>
-            </div> */}
-            {/* <div className={styles.statCard}>
-              <div className={styles.statIcon}>✅</div>
-              <div className={styles.statContent}>
-                <h3>
-                  {favoritos.reduce(
-                    (acc, user) =>
-                      acc +
-                      user.meds.filter((m) => m.status === "em_estoque").length,
-                    0
-                  )}
-                </h3>
-                <p>Disponíveis</p>
-              </div>
-            </div> */}
-          </div>
-
           <div className={styles.grid}>
             {favoritos.map((user) => (
               <div className={styles.card} key={user.userId}>
@@ -315,7 +250,6 @@ export default function FavoritosFarmaciaPage() {
 
           {favoritos.length === 0 && !loading && (
             <div className={styles.emptyState}>
-              {/* <div className={styles.emptyIcon}>⭐</div> */}
               <h3>Nenhum favorito encontrado</h3>
               <p>Os medicamentos favoritados pelos clientes aparecerão aqui.</p>
             </div>
@@ -323,5 +257,6 @@ export default function FavoritosFarmaciaPage() {
         </main>
       </div>
     </div>
+    </AuthGuard>
   );
 }

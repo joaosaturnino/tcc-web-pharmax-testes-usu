@@ -96,7 +96,6 @@ export default function EditarLaboratorioPage() {
             className={styles.menuToggle}
             onClick={() => setSidebarOpen(!sidebarOpen)}
           >
-            ☰
           </button>
           <h1 className={styles.title}> Editar Laboratório</h1>
         </div>
@@ -113,7 +112,6 @@ export default function EditarLaboratorioPage() {
               className={styles.sidebarClose}
               onClick={() => setSidebarOpen(false)}
             >
-              ×
             </button>
           </div>
 
@@ -157,7 +155,7 @@ export default function EditarLaboratorioPage() {
                   <h3 className={styles.sectionTitle}>Informações do Laboratório</h3>
 
                   <div className={styles.formGroup}>
-                    <label className={styles.inputLabel}>Nome do Laboratório *</label>
+                    <label className={styles.inputLabel}>Nome do Laboratório </label>
                     <input
                       className={styles.modernInput}
                       type="text"
@@ -171,7 +169,7 @@ export default function EditarLaboratorioPage() {
 
                   <div className={styles.formRow}>
                     <div className={styles.formGroup}>
-                      <label className={styles.inputLabel}>CNPJ *</label>
+                      <label className={styles.inputLabel}>CNPJ</label>
                       <input
                         className={styles.modernInput}
                         type="text"
@@ -197,7 +195,7 @@ export default function EditarLaboratorioPage() {
                   </div>
 
                   <div className={styles.formGroup}>
-                    <label className={styles.inputLabel}>E-mail *</label>
+                    <label className={styles.inputLabel}>E-mail</label>
                     <input
                       className={styles.modernInput}
                       type="email"
@@ -229,7 +227,7 @@ export default function EditarLaboratorioPage() {
                   </h3>
 
                   <div className={styles.formGroup}>
-                    <label className={styles.inputLabel}>Endereço Completo *</label>
+                    <label className={styles.inputLabel}>Endereço Completo</label>
                     <input
                       className={styles.modernInput}
                       type="text"

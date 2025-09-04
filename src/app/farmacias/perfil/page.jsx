@@ -226,7 +226,6 @@ export default function PerfilUsuarioPage() {
         >
           <div className={styles.sidebarHeader}>
             <div className={styles.logo}>
-              {/* <span className={styles.logoIcon}>💊</span> */}
               <span className={styles.logoText}>PharmaX</span>
             </div>
           </div>
@@ -235,14 +234,12 @@ export default function PerfilUsuarioPage() {
             <div className={styles.navSection}>
               <p className={styles.navLabel}>Principal</p>
               <a href="/farmacias/favoritos" className={styles.navLink}>
-                {/* <span className={styles.navIcon}>⭐</span> */}
                 <span className={styles.navText}>Favoritos</span>
               </a>
               <a
                 href="/farmacias/produtos/medicamentos"
                 className={styles.navLink}
               >
-                {/* <span className={styles.navIcon}>💊</span> */}
                 <span className={styles.navText}>Medicamentos</span>
               </a>
             </div>
@@ -253,38 +250,19 @@ export default function PerfilUsuarioPage() {
                 href="/farmacias/cadastro/funcionario/lista"
                 className={styles.navLink}
               >
-                {/* <span className={styles.navIcon}>👩‍⚕️</span> */}
                 <span className={styles.navText}>Funcionários</span>
               </a>
               <a href="/farmacias/laboratorio/lista" className={styles.navLink}>
-                {/* <span className={styles.navIcon}>🏭</span> */}
                 <span className={styles.navText}>Laboratórios</span>
               </a>
             </div>
 
             <div className={styles.navSection}>
-              {/* <p className={styles.navLabel}>Sistema</p> */}
-              {/* <a href="../../configuracoes" className={styles.navLink}>
-                <span className={styles.navIcon}>⚙️</span>
-                <span className={styles.navText}>Configurações</span>
-              </a> */}
-              {/* <a
-                href="/farmacias/perfil"
-                className={styles.navLink}
-              >
-                <span className={styles.navIcon}>👤</span>
-                <span className={styles.navText}>Meu Perfil</span>
-              </a> */}
-              {/* <button className={styles.navLink} onClick={handleLogout}>
-                <span className={styles.navIcon}>🚪</span>
-                <span className={styles.navText}>Sair</span>
-              </button> */}
             </div>
           </nav>
 
           <div className={styles.userPanel}>
             <button className={styles.navLink} onClick={handleLogout}>
-                {/* <span className={styles.navIcon}>🚪</span> */}
                 <span className={styles.navText}>Sair</span>
               </button>
           </div>
@@ -550,7 +528,6 @@ export default function PerfilUsuarioPage() {
             </div>
 
             <div className={styles.sectionHeader}>
-              {/* <h3>Segurança</h3> */}
               <button
                 className={styles.editBtn}
                 onClick={() => setShowPasswordModal(true)}
@@ -558,34 +535,6 @@ export default function PerfilUsuarioPage() {
                 Alterar Senha
               </button>
             </div>
-
-            {/* <div className={styles.securitySection}>
-              <div className={styles.securityItem}>
-                <span className={styles.securityIcon}>🔒</span>
-                <div>
-                  <h4>Autenticação de Dois Fatores</h4>
-                  <p>Proteja sua conta com uma camada adicional de segurança</p>
-                </div>
-                <label className={styles.switch}>
-                  <input type="checkbox" />
-                  <span className={styles.slider}></span>
-                </label>
-              </div>
-
-              <div className={styles.securityItem}>
-                <span className={styles.securityIcon}>📧</span>
-                <div>
-                  <h4>Notificações por Email</h4>
-                  <p>
-                    Receba alertas sobre atividades importantes na sua conta
-                  </p>
-                </div>
-                <label className={styles.switch}>
-                  <input type="checkbox" defaultChecked />
-                  <span className={styles.slider}></span>
-                </label>
-              </div>
-            </div> */}
           </div>
         </main>
       </div>
@@ -600,14 +549,12 @@ export default function PerfilUsuarioPage() {
                 className={styles.modalClose}
                 onClick={closePasswordModal}
               >
-                ×
               </button>
             </div>
 
             <form onSubmit={handlePasswordSubmit} className={styles.modalForm}>
               {passwordSuccess ? (
                 <div className={styles.successMessage}>
-                  {/* <span className={styles.successIcon}>✅</span> */}
                   <p>Senha alterada com sucesso!</p>
                 </div>
               ) : (

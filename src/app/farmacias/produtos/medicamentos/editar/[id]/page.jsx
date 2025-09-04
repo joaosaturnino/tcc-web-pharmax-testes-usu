@@ -86,9 +86,7 @@ export default function EditarMedicamento() {
             className={styles.menuToggle}
             onClick={() => setSidebarOpen(!sidebarOpen)}
           >
-            {/* ☰ */}
           </button>
-          {/* <h1 className={styles.title}>💊 Editar Medicamento</h1> */}
           <h1 className={styles.title}> Editar Medicamento</h1>
         </div>
       </header>
@@ -98,14 +96,12 @@ export default function EditarMedicamento() {
         <aside className={`${styles.sidebar} ${sidebarOpen ? styles.sidebarOpen : ""}`}>
           <div className={styles.sidebarHeader}>
             <div className={styles.logo}>
-              {/* <span className={styles.logoIcon}>💊</span> */}
               <span className={styles.logoText}>PharmaX</span>
             </div>
             <button
               className={styles.sidebarClose}
               onClick={() => setSidebarOpen(false)}
             >
-              ×
             </button>
           </div>
 
@@ -113,14 +109,12 @@ export default function EditarMedicamento() {
             <div className={styles.navSection}>
               <p className={styles.navLabel}>Principal</p>
               <a href="/farmacias/favoritos" className={styles.navLink}>
-                {/* <span className={styles.navIcon}>⭐</span> */}
                 <span className={styles.navText}>Favoritos</span>
               </a>
               <a
                 href="/farmacias/produtos/medicamentos"
                 className={`${styles.navLink} ${styles.active}`}
               >
-                {/* <span className={styles.navIcon}>💊</span> */}
                 <span className={styles.navText}>Medicamentos</span>
               </a>
             </div>
@@ -131,11 +125,9 @@ export default function EditarMedicamento() {
                 href="/farmacias/cadastro/funcionario/lista"
                 className={styles.navLink}
               >
-                {/* <span className={styles.navIcon}>👩‍⚕️</span> */}
                 <span className={styles.navText}>Funcionários</span>
               </a>
               <a href="/farmacias/laboratorio/lista" className={styles.navLink}>
-                {/* <span className={styles.navIcon}>🏭</span> */}
                 <span className={styles.navText}>Laboratórios</span>
               </a>
             </div>
@@ -160,12 +152,11 @@ export default function EditarMedicamento() {
                 {/* Informações Básicas */}
                 <div className={styles.formSection}>
                   <h3 className={styles.sectionTitle}>
-                    {/* <span className={styles.sectionIcon}>📋</span> */}
                     Informações Básicas
                   </h3>
 
                   <div className={styles.formGroup}>
-                    <label className={styles.inputLabel}>Nome do Medicamento *</label>
+                    <label className={styles.inputLabel}>Nome do Medicamento</label>
                     <input
                       className={styles.modernInput}
                       type="text"
@@ -179,7 +170,7 @@ export default function EditarMedicamento() {
 
                   <div className={styles.formRow}>
                     <div className={styles.formGroup}>
-                      <label className={styles.inputLabel}>Dosagem *</label>
+                      <label className={styles.inputLabel}>Dosagem</label>
                       <input
                         className={styles.modernInput}
                         type="text"
@@ -192,7 +183,7 @@ export default function EditarMedicamento() {
                     </div>
 
                     <div className={styles.formGroup}>
-                      <label className={styles.inputLabel}>Quantidade *</label>
+                      <label className={styles.inputLabel}>Quantidade</label>
                       <input
                         className={styles.modernInput}
                         type="number"
@@ -207,7 +198,7 @@ export default function EditarMedicamento() {
                   </div>
 
                   <div className={styles.formGroup}>
-                    <label className={styles.inputLabel}>Preço (R$) *</label>
+                    <label className={styles.inputLabel}>Preço (R$)</label>
                     <input
                       className={styles.modernInput}
                       type="number"
@@ -225,12 +216,11 @@ export default function EditarMedicamento() {
                 {/* Informações Técnicas */}
                 <div className={styles.formSection}>
                   <h3 className={styles.sectionTitle}>
-                    {/* <span className={styles.sectionIcon}>🔬</span> */}
                     Informações Técnicas
                   </h3>
 
                   <div className={styles.formGroup}>
-                    <label className={styles.inputLabel}>Tipo de Produto *</label>
+                    <label className={styles.inputLabel}>Tipo de Produto</label>
                     <select
                       className={styles.modernInput}
                       name="tipo"
@@ -250,7 +240,7 @@ export default function EditarMedicamento() {
                   </div>
 
                   <div className={styles.formGroup}>
-                    <label className={styles.inputLabel}>Forma Farmacêutica *</label>
+                    <label className={styles.inputLabel}>Forma Farmacêutica</label>
                     <select
                       className={styles.modernInput}
                       name="forma"
@@ -292,7 +282,7 @@ export default function EditarMedicamento() {
                   </div>
 
                   <div className={styles.formGroup}>
-                    <label className={styles.inputLabel}>Laboratório *</label>
+                    <label className={styles.inputLabel}>Laboratório</label>
                     <select
                       className={styles.modernInput}
                       name="laboratorio"
@@ -339,11 +329,10 @@ export default function EditarMedicamento() {
               {/* Descrição */}
               <div className={styles.formSection}>
                 <h3 className={styles.sectionTitle}>
-                  {/* <span className={styles.sectionIcon}>📝</span> */}
                   Descrição
                 </h3>
                 <div className={styles.formGroup}>
-                  <label className={styles.inputLabel}>Descrição *</label>
+                  <label className={styles.inputLabel}>Descrição</label>
                   <textarea
                     className={styles.modernTextarea}
                     name="descricao"
@@ -365,7 +354,6 @@ export default function EditarMedicamento() {
                   Cancelar
                 </button>
                 <button type="submit" className={styles.submitButton}>
-                  {/* <span className={styles.buttonIcon}>💾</span> */}
                   Atualizar Medicamento
                 </button>
               </div>

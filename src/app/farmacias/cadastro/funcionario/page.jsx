@@ -39,10 +39,8 @@ export default function CadastroFuncionarioPage() {
             className={styles.menuToggle}
             onClick={() => setSidebarOpen(!sidebarOpen)}
           >
-           
           </button>
           <h1 className={styles.title}> Cadastro de Funcionário</h1>
-          {/* <h1 className={styles.title}>👩‍⚕️ Cadastro de Funcionário</h1> */}
         </div>
       </header>
 
@@ -55,14 +53,12 @@ export default function CadastroFuncionarioPage() {
         >
           <div className={styles.sidebarHeader}>
             <div className={styles.logo}>
-              {/* <span className={styles.logoIcon}>💊</span> */}
               <span className={styles.logoText}>PharmaX</span>
             </div>
             <button
               className={styles.sidebarClose}
               onClick={() => setSidebarOpen(false)}
             >
-              {/* × */}
             </button>
           </div>
 
@@ -70,14 +66,12 @@ export default function CadastroFuncionarioPage() {
             <div className={styles.navSection}>
               <p className={styles.navLabel}>Principal</p>
               <a href="/farmacias/favoritos" className={styles.navLink}>
-                {/* <span className={styles.navIcon}>⭐</span> */}
                 <span className={styles.navText}>Favoritos</span>
               </a>
               <a
                 href="/farmacias/produtos/medicamentos"
                 className={styles.navLink}
               >
-                {/* <span className={styles.navIcon}>💊</span> */}
                 <span className={styles.navText}>Medicamentos</span>
               </a>
             </div>
@@ -88,41 +82,13 @@ export default function CadastroFuncionarioPage() {
                 href="/farmacias/cadastro/funcionario/lista"
                 className={`${styles.navLink} ${styles.active}`}
               >
-                {/* <span className={styles.navIcon}>👩‍⚕️</span> */}
                 <span className={styles.navText}>Funcionários</span>
               </a>
               <a href="/farmacias/laboratorio/lista" className={styles.navLink}>
-                {/* <span className={styles.navIcon}>🏭</span> */}
                 <span className={styles.navText}>Laboratórios</span>
               </a>
             </div>
-
-            {/* <div className={styles.navSection}>
-              <p className={styles.navLabel}>Sistema</p>
-              <a href="../../../configuracoes" className={styles.navLink}>
-                <span className={styles.navIcon}>⚙️</span>
-                <span className={styles.navText}>Configurações</span>
-              </a>
-              <a href="/farmacias/perfil" className={`${styles.navLink} ${styles.active}`}>
-                <span className={styles.navIcon}>👤</span>
-                <span className={styles.navText}>Meu Perfil</span>
-              </a>
-              <button className={styles.navLink}>
-                <span className={styles.navIcon}>🚪</span>
-                <span className={styles.navText}>Sair</span>
-              </button>
-            </div> */}
           </nav>
-
-          {/* <div className={styles.userPanel}>
-            <div className={styles.userAvatar}>
-              <span>👤</span>
-            </div>
-            <div className={styles.userInfo}>
-              <p className={styles.userName}>Administrador</p>
-              <p className={styles.userRole}>Supervisor</p>
-            </div>
-          </div> */}
         </aside>
 
         {/* Overlay para mobile */}
@@ -146,12 +112,11 @@ export default function CadastroFuncionarioPage() {
                 {/* Informações Pessoais */}
                 <div className={styles.formSection}>
                   <h3 className={styles.sectionTitle}>
-                    {/* <span className={styles.sectionIcon}>👤</span> */}
                     Informações Pessoais
                   </h3>
 
                   <div className={styles.formGroup}>
-                    <label className={styles.inputLabel}>Nome Completo *</label>
+                    <label className={styles.inputLabel}>Nome Completo </label>
                     <input
                       className={styles.modernInput}
                       type="text"
@@ -165,7 +130,7 @@ export default function CadastroFuncionarioPage() {
 
                   <div className={styles.formRow}>
                     <div className={styles.formGroup}>
-                      <label className={styles.inputLabel}>CPF *</label>
+                      <label className={styles.inputLabel}>CPF</label>
                       <input
                         className={styles.modernInput}
                         type="text"
@@ -192,7 +157,7 @@ export default function CadastroFuncionarioPage() {
                   </div>
 
                   <div className={styles.formGroup}>
-                    <label className={styles.inputLabel}>E-mail *</label>
+                    <label className={styles.inputLabel}>E-mail</label>
                     <input
                       className={styles.modernInput}
                       type="email"
@@ -232,13 +197,12 @@ export default function CadastroFuncionarioPage() {
                 {/* Informações de Acesso */}
                 <div className={styles.formSection}>
                   <h3 className={styles.sectionTitle}>
-                    {/* <span className={styles.sectionIcon}>🔐</span> */}
                     Acesso ao Sistema
                   </h3>
 
                   <div className={styles.formGroup}>
                     <label className={styles.inputLabel}>
-                      Nome de Usuário *
+                      Nome de Usuário
                     </label>
                     <input
                       className={styles.modernInput}
@@ -252,7 +216,7 @@ export default function CadastroFuncionarioPage() {
                   </div>
 
                   <div className={styles.formGroup}>
-                    <label className={styles.inputLabel}>Senha *</label>
+                    <label className={styles.inputLabel}>Senha</label>
                     <input
                       className={styles.modernInput}
                       type="password"
@@ -266,7 +230,7 @@ export default function CadastroFuncionarioPage() {
 
                   <div className={styles.formGroup}>
                     <label className={styles.inputLabel}>
-                      Nível de Acesso *
+                      Nível de Acesso
                     </label>
                     <select
                       className={styles.modernInput}
@@ -329,7 +293,6 @@ export default function CadastroFuncionarioPage() {
                   Cancelar
                 </button>
                 <button type="submit" className={styles.submitButton}>
-                  {/* <span className={styles.buttonIcon}>💾</span> */}
                   Cadastrar Funcionário
                 </button>
               </div>
