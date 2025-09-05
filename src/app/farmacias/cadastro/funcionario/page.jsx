@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import styles from "./funcionario.module.css";
+// import "../../../../styles/globals";
 
 export default function CadastroFuncionarioPage() {
   const router = useRouter();

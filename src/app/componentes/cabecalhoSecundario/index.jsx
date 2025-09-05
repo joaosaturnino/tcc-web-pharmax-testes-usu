@@ -32,7 +32,7 @@ function Cabecalho() {
             href="/index"
             className={rota === "/index" ? styles.active : ""}
           >
-            Empresa
+            Login
           </Link>
         </nav>
       </div>

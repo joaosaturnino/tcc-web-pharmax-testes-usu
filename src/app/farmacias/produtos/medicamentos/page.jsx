@@ -24,6 +24,7 @@ const medicamentosIniciais = [
     laboratorio: "EMS",
     preco: 12.5,
     imagem: "",
+    codigoBarras: "7891234567890"
   },
   {
     id: 2,
@@ -36,12 +37,25 @@ const medicamentosIniciais = [
     laboratorio: "Neo Química",
     preco: 8.9,
     imagem: "",
+    codigoBarras: "7890987654321"
   },
 ];
+
+// Simulação de banco de dados
+const bancoDeDados = {
+  medicamentos: medicamentosIniciais,
+  buscarPorCodigoBarras: function(codigo) {
+    return this.medicamentos.find(med => med.codigoBarras === codigo);
+  }
+};
 
 function ListagemMedicamentos() {
   const [medicamentos, setMedicamentos] = useState(medicamentosIniciais);
   const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [modalAberto, setModalAberto] = useState(false);
+  const [codigoBarras, setCodigoBarras] = useState("");
+  const [medicamentoExistente, setMedicamentoExistente] = useState(null);
+  const [erro, setErro] = useState("");
   const router = useRouter();
 
   const handleExcluir = (id) => {
@@ -52,6 +66,43 @@ function ListagemMedicamentos() {
 
   const handleEditar = (id) => {
     router.push(`/farmacias/produtos/medicamentos/editar/${id}`);
+  };
+
+  const abrirModal = () => {
+    setModalAberto(true);
+    setCodigoBarras("");
+    setMedicamentoExistente(null);
+    setErro("");
+  };
+
+  const fecharModal = () => {
+    setModalAberto(false);
+    setCodigoBarras("");
+    setMedicamentoExistente(null);
+    setErro("");
+  };
+
+  const verificarCodigoBarras = () => {
+    // Validação básica
+    if (!codigoBarras.trim()) {
+      setErro("Por favor, digite um código de barras válido.");
+      return;
+    }
+
+    // Simulação de busca no banco de dados
+    const medicamento = bancoDeDados.buscarPorCodigoBarras(codigoBarras);
+    
+    if (medicamento) {
+      setMedicamentoExistente(medicamento);
+      setErro("");
+    } else {
+      // Se não encontrado, redireciona para cadastro
+      router.push(`/farmacias/produtos/medicamentos/cadastro?codigoBarras=${codigoBarras}`);
+    }
+  };
+
+  const continuarCadastro = () => {
+    router.push(`/farmacias/produtos/medicamentos/precadastro?codigoBarras=${codigoBarras}`);
   };
 
   return (
@@ -67,12 +118,12 @@ function ListagemMedicamentos() {
           <h1 className={styles.titulo}> Painel de Medicamentos</h1>
         </div>
         <div className={styles.headerActions}>
-          <Link
-            href="/farmacias/produtos/medicamentos/cadastro"
+          <button
+            onClick={abrirModal}
             className={styles.botaoPrincipal}
           >
             ➕ Novo Medicamento
-          </Link>
+          </button>
         </div>
       </header>
 
@@ -147,12 +198,12 @@ function ListagemMedicamentos() {
               <div className={styles.emptyState}>
                 <h3>Nenhum medicamento cadastrado</h3>
                 <p>Comece cadastrando seu primeiro medicamento.</p>
-                <Link
-                  href="/medicamentos/cadastro"
+                <button
+                  onClick={abrirModal}
                   className={styles.botaoPrincipal}
                 >
                   ➕ Novo Medicamento
-                </Link>
+                </button>
               </div>
             ) : (
               <div className={styles.tableWrapper}>
@@ -234,6 +285,70 @@ function ListagemMedicamentos() {
           </div>
         </main>
       </div>
+
+      {/* Modal de Código de Barras */}
+      {modalAberto && (
+        <div className={styles.modalOverlay}>
+          <div className={styles.modal}>
+            <div className={styles.modalHeader}>
+              <h2>Cadastrar Novo Medicamento</h2>
+              <button className={styles.modalClose} onClick={fecharModal}>
+                &times;
+              </button>
+            </div>
+            <div className={styles.modalBody}>
+              {!medicamentoExistente ? (
+                <>
+                  <p>Digite o código de barras do medicamento:</p>
+                  <input
+                    type="text"
+                    value={codigoBarras}
+                    onChange={(e) => setCodigoBarras(e.target.value)}
+                    className={styles.inputCodigo}
+                    placeholder="Código de barras"
+                    autoFocus
+                  />
+                  {erro && <p className={styles.erro}>{erro}</p>}
+                </>
+              ) : (
+                <>
+                  <p className={styles.aviso}>
+                    Este medicamento já está cadastrado:
+                  </p>
+                  <div className={styles.medicamentoInfo}>
+                    <img
+                      src={medicamentoExistente.imagem || imagemPadrao}
+                      alt={medicamentoExistente.nome}
+                      className={styles.imgThumbModal}
+                    />
+                    <div>
+                      <h3>{medicamentoExistente.nome}</h3>
+                      <p>{medicamentoExistente.dosagem} - {medicamentoExistente.laboratorio}</p>
+                    </div>
+                  </div>
+                  <p className={styles.pergunta}>
+                    Deseja continuar com o cadastro?
+                  </p>
+                </>
+              )}
+            </div>
+            <div className={styles.modalFooter}>
+              <button
+                className={`${styles.botao} ${styles.botaoSecundario}`}
+                onClick={fecharModal}
+              >
+                Cancelar
+              </button>
+              <button
+                className={`${styles.botao} ${styles.botaoPrincipal}`}
+                onClick={medicamentoExistente ? continuarCadastro : verificarCodigoBarras}
+              >
+                {medicamentoExistente ? "Continuar" : "Verificar"}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

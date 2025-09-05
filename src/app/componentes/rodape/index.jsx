@@ -67,8 +67,8 @@ export default function Rodape() {
           <div className={styles.redesSociais}>
             <a href="#" aria-label="Facebook" className={styles.socialLink}>
               <svg
-                width="18"
-                height="18"
+                width="28"
+                height="28"
                 viewBox="0 0 24 24"
                 fill="currentColor"
               >
@@ -77,8 +77,8 @@ export default function Rodape() {
             </a>
             <a href="#" aria-label="Instagram" className={styles.socialLink}>
               <svg
-                width="18"
-                height="18"
+                width="28"
+                height="28"
                 viewBox="0 0 24 24"
                 fill="currentColor"
               >
@@ -92,11 +92,11 @@ export default function Rodape() {
       <div className={styles.rodapeInferior}>
         <div className={styles.rodapeInferiorConteudo}>
           <p>&copy; 2025 PharmaX - Todos os direitos reservados</p>
-          <div className={styles.legalLinks}>
+          {/* <div className={styles.legalLinks}>
             <a href="#">Política de Privacidade</a>
             <span className={styles.separador}>|</span>
             <a href="#">Termos de Uso</a>
-          </div>
+          </div> */}
         </div>
       </div>
     </footer>

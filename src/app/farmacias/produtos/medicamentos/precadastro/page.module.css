@@ -720,3 +720,51 @@
   background-color: #e5e7eb;
 }
 
+
+/* Estilos para o aviso de medicamento existente */
+.avisoExistente {
+  background-color: #fffbeb;
+  border: 1px solid #fcd34d;
+  border-radius: 6px;
+  padding: 1rem;
+  margin-bottom: 1.5rem;
+  color: #92400e;
+}
+
+/* Estilos para campos desabilitados */
+.modernInput:read-only,
+.modernInput:disabled,
+.modernTextarea:read-only {
+  background-color: #f5f5f5 !important;
+  cursor: not-allowed !important;
+}
+
+/* Ajustes para melhor visualização dos campos */
+.formGroup {
+  position: relative;
+}
+
+.formGroup label {
+  display: block;
+  margin-bottom: 0.5rem;
+  font-weight: 500;
+  color: #374151;
+}
+
+/* Estilos responsivos */
+@media (max-width: 768px) {
+  .formGrid {
+    grid-template-columns: 1fr;
+  }
+  
+  .formActions {
+    flex-direction: column;
+  }
+  
+  .formActions button {
+    width: 100%;
+  }
+}
+
+
+

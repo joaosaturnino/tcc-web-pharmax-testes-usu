@@ -1,19 +1,187 @@
+/* Layout Principal */
+.dashboard {
+  min-height: 100vh;
+  background-color: #f8fafc;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Header */
+.header {
+  background: white;
+  padding: 16px 30px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  position: sticky;
+  top: 0;
+  z-index: 100;
+}
+
+.headerLeft {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.menuToggle {
+  background: none;
+  border: none;
+  font-size: 20px;
+  cursor: pointer;
+  padding: 8px;
+  border-radius: 6px;
+  transition: background 0.3s ease;
+  display: none;
+}
+
+.menuToggle:hover {
+  background: #f1f5f9;
+}
+
+.title {
+  font-size: 24px;
+  font-weight: 600;
+  color: #1e293b;
+  margin: 0;
+}
+
+/* Wrapper de Conteúdo */
+.contentWrapper {
+  display: flex;
+  flex: 1;
+  position: relative;
+}
+
+/* Sidebar Não Fixa */
+.sidebar {
+  width: 280px;
+  background: #191970;
+  color: #CDC1C5;
+  display: flex;
+  flex-direction: column;
+  transition: transform 0.3s ease;
+  box-shadow: 2px 0 10px rgba(0, 0, 0, 0.1);
+  z-index: 90;
+}
+
+.sidebarHeader {
+  padding: 20px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.logo {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.logoText {
+  font-size: 20px;
+  font-weight: bold;
+}
+
+.sidebarClose {
+  display: none;
+  background: none;
+  border: none;
+  color: white;
+  cursor: pointer;
+  font-size: 24px;
+  padding: 0;
+  width: 30px;
+  height: 30px;
+  border-radius: 4px;
+  transition: background 0.3s ease;
+}
+
+.sidebarClose:hover {
+  background: rgba(255, 255, 255, 0.1);
+}
+
+.nav {
+  flex: 1;
+  padding: 20px 0;
+}
+
+.navSection {
+  margin-bottom: 30px;
+}
+
+.navLabel {
+  padding: 0 20px 10px;
+  font-size: 12px;
+  text-transform: uppercase;
+  color: #696969;
+  font-weight: 600;
+  letter-spacing: 0.5px;
+}
+
+.navLink {
+  display: flex;
+  align-items: center;
+  padding: 12px 20px;
+  color: #CDC1C5;
+  text-decoration: none;
+  transition: all 0.3s ease;
+  gap: 12px;
+  position: relative;
+  border: none;
+  background: none;
+  width: 100%;
+  text-align: left;
+  font-family: inherit;
+}
+
+.navLink:hover {
+  background: rgba(255, 255, 255, 0.1);
+  color: white;
+}
+
+.navLink.active {
+  background: rgba(52, 152, 219, 0.2);
+  color: #DCDCDC;
+  border-left: 4px solid #3498db;
+}
+
+.navText {
+  font-size: 14px;
+  font-weight: 500;
+  flex: 1;
+}
+
+.userPanel {
+  padding: 20px;
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+/* Conteúdo Principal */
+.mainContent {
+  flex: 1;
+  padding: 0;
+  min-height: calc(100vh - 80px);
+  overflow-y: auto;
+  background: #f8fafc;
+}
+
 .container {
   max-width: 1200px;
   margin: 0 auto;
   padding: 2rem;
   font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
   color: #333;
-  background: linear-gradient(135deg, #f5f7fa 0%, #e4e8f0 100%);
-  min-height: 100vh;
 }
 
-.header {
+.pageHeader {
   text-align: center;
   margin-bottom: 3rem;
 }
 
-.title {
+.pageTitle {
   font-size: 2.5rem;
   font-weight: 700;
   background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
@@ -22,7 +190,7 @@
   margin-bottom: 0.5rem;
 }
 
-.subtitle {
+.pageSubtitle {
   font-size: 1.1rem;
   color: #6c757d;
   margin-top: 0;
@@ -150,13 +318,56 @@
   line-height: 1.5;
 }
 
+/* Overlay para mobile */
+.overlay {
+  display: none;
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.5);
+  z-index: 80;
+}
+
 /* Responsividade */
-@media (max-width: 768px) {
+@media (max-width: 1024px) {
   .container {
     padding: 1.5rem;
   }
-  
-  .title {
+}
+
+@media (max-width: 768px) {
+  .menuToggle {
+    display: block;
+  }
+
+  .sidebar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    transform: translateX(-100%);
+    z-index: 90;
+  }
+
+  .sidebarOpen {
+    transform: translateX(0);
+  }
+
+  .sidebarClose {
+    display: block;
+  }
+
+  .overlay {
+    display: block;
+  }
+
+  .header {
+    padding: 16px 20px;
+  }
+
+  .pageTitle {
     font-size: 2rem;
   }
   
@@ -176,5 +387,17 @@
   
   .featuresGrid {
     grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 480px) {
+  .header {
+    flex-direction: column;
+    gap: 16px;
+    align-items: flex-start;
+  }
+
+  .container {
+    padding: 1rem;
   }
 }

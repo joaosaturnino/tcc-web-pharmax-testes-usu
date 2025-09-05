@@ -3,6 +3,7 @@
   color: #fff;
   padding: 2rem 0 0;
   margin-top: auto;
+  text-align: center; /* Centralização geral */
 }
 
 .conteudoRodape {
@@ -12,20 +13,31 @@
   max-width: 1000px;
   margin: 0 auto;
   padding: 0 1.5rem;
+  justify-items: center; /* Centraliza os itens do grid */
+}
+
+.secaoRodape {
+  display: flex;
+  flex-direction: column;
+  align-items: center; /* Centraliza horizontalmente */
+  text-align: center; /* Centraliza o texto */
+  width: 100%;
 }
 
 .secaoRodape h4 {
-  font-size: 1.1rem;
+  font-size: 2rem;
   margin-bottom: 1rem;
   position: relative;
   padding-bottom: 0.5rem;
   font-weight: 600;
+  width: 100%;
 }
 
 .secaoRodape h4::after {
   content: "";
   position: absolute;
-  left: 0;
+  left: 50%; /* Centraliza a linha decorativa */
+  transform: translateX(-50%); /* Ajusta a centralização */
   bottom: 0;
   width: 30px;
   height: 2px;
@@ -34,7 +46,7 @@
 }
 
 .logo h3 {
-  font-size: 1.4rem;
+  font-size: 2.6rem;
   font-weight: 700;
   margin-bottom: 0.25rem;
   background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
@@ -44,7 +56,7 @@
 
 .logoSubtitle {
   color: #a0aec0;
-  font-size: 0.8rem;
+  font-size: 1.5rem;
   margin-bottom: 1rem;
 }
 
@@ -52,12 +64,14 @@
   color: #cbd5e0;
   line-height: 1.5;
   margin-bottom: 1rem;
-  font-size: 0.85rem;
+  font-size: 1.4rem;
+  max-width: 250px; /* Limita a largura para melhor leitura */
 }
 
 .redesSociais {
   display: flex;
   gap: 0.75rem;
+  justify-content: center; /* Centraliza os ícones sociais */
 }
 
 .socialLink {
@@ -82,6 +96,7 @@
   display: flex;
   flex-direction: column;
   gap: 0.5rem;
+  align-items: center; /* Centraliza os links */
 }
 
 .link {
@@ -91,7 +106,8 @@
   text-decoration: none;
   padding: 0.4rem 0;
   transition: all 0.3s ease;
-  font-size: 0.9rem;
+  font-size: 1.7rem;
+  justify-content: center; /* Centraliza o texto do link */
 }
 
 .link:hover {
@@ -103,6 +119,7 @@
   display: flex;
   flex-direction: column;
   gap: 0.75rem;
+  align-items: center; /* Centraliza as informações de contato */
 }
 
 .contatoItem {
@@ -111,13 +128,14 @@
   gap: 0.5rem;
   color: #cbd5e0;
   font-size: 0.9rem;
+  justify-content: center; /* Centraliza os itens de contato */
 }
 
 .contatoItem a {
   color: #cbd5e0;
   text-decoration: none;
   transition: color 0.3s ease;
-  font-size: 0.9rem;
+  font-size: 1.7rem;
 }
 
 .contatoItem a:hover {
@@ -136,26 +154,30 @@
 
 .rodapeInferiorConteudo {
   display: flex;
-  justify-content: space-between;
+  justify-content: center; /* Centraliza o conteúdo inferior */
   align-items: center;
+  flex-direction: column; /* Coloca os elementos em coluna */
+  gap: 1rem; /* Espaço entre os elementos */
   max-width: 1000px;
   margin: 0 auto;
   padding: 0 1.5rem;
-  font-size: 0.8rem;
+  font-size: 1.5rem;
   color: #a0aec0;
+  text-align: center;
 }
 
 .legalLinks {
   display: flex;
   align-items: center;
   gap: 0.5rem;
+  justify-content: center; /* Centraliza os links legais */
 }
 
 .legalLinks a {
   color: #a0aec0;
   text-decoration: none;
   transition: color 0.3s ease;
-  font-size: 0.8rem;
+  font-size: 1.5rem;
 }
 
 .legalLinks a:hover {
@@ -205,5 +227,9 @@
   .legalLinks {
     flex-wrap: wrap;
     justify-content: center;
+  }
+  
+  .secaoRodape {
+    padding: 0 0.5rem; /* Adiciona um pouco de padding nas laterais */
   }
 }

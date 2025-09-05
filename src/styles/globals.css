@@ -5,7 +5,9 @@ html {
 
 body {
   font-size: 1.6rem;
-  font-family: "Geist", "Geist Fallback";
+  font-family: "Montserrat";
+  font-optical-sizing: auto;
+  font-style: normal;
   min-width: 32rem;
   min-height: 100vh;
   max-width: 144rem;
@@ -68,6 +70,14 @@ a {
   align-items: center;
 }
 
+
+.montserrat {
+  font-family: "Montserrat", sans-serif;
+  font-optical-sizing: auto;
+  font-weight: weight;
+  font-style: normal;
+}
+
 .containerNotFound {
   display: flex;
   flex-direction: column;
@@ -87,3 +97,4 @@ a {
     font-size: 25%;
   }
 }
+

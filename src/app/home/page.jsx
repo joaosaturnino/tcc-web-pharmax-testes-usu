@@ -28,7 +28,7 @@ export default function PaginaInicial() {
       <Slider imagens={imagens} />
 
       <section className={style.produtos}>
-        <h3>Medicamentos em Destaque</h3>
+        <h3>Destaques</h3>
         <div className={style.gradeProdutos}>
           <div className={style.cartaoProduto}>
             <div className={style.containerImagemProduto}>
