@@ -648,3 +648,100 @@
     align-self: flex-start;
   }
 }
+
+/* Adicione estas regras ao seu arquivo favoritos.module.css */
+
+/* Informações de paginação */
+.paginationInfo {
+  padding: 0 30px 15px;
+  color: #64748b;
+  font-size: 14px;
+}
+
+/* Controles de paginação */
+.paginationControls {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 10px;
+  padding: 30px;
+  margin-top: 20px;
+}
+
+.paginationBtn {
+  padding: 10px 16px;
+  border: 1px solid #e2e8f0;
+  background: white;
+  color: #64748b;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.paginationBtn:hover:not(.disabled) {
+  background: #f8fafc;
+  border-color: #3498db;
+  color: #3498db;
+}
+
+.paginationBtn.disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.paginationNumbers {
+  display: flex;
+  gap: 5px;
+}
+
+.paginationNumber {
+  width: 40px;
+  height: 40px;
+  border: 1px solid #e2e8f0;
+  background: white;
+  color: #64748b;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.paginationNumber:hover {
+  background: #f8fafc;
+  border-color: #3498db;
+  color: #3498db;
+}
+
+.paginationNumber.active {
+  background: #3498db;
+  border-color: #3498db;
+  color: white;
+}
+
+/* Responsividade para paginação */
+@media (max-width: 768px) {
+  .paginationControls {
+    flex-direction: column;
+    gap: 15px;
+  }
+  
+  .paginationNumbers {
+    order: -1;
+  }
+  
+  .paginationInfo {
+    padding: 0 20px 15px;
+    text-align: center;
+  }
+}
+
+@media (max-width: 480px) {
+  .paginationNumbers {
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+  
+  .paginationNumber {
+    width: 35px;
+    height: 35px;
+  }
+}
