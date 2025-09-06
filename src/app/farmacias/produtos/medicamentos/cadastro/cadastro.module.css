@@ -488,3 +488,32 @@ select.modernInput {
     font-size: 24px;
   }
 }
+
+/* Container para o input de código de barras com botão */
+.barcodeInputContainer {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+/* Botão para gerar código de barras */
+.generateBarcodeButton {
+  position: absolute;
+  right: 8px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 16px;
+  padding: 4px;
+  border-radius: 4px;
+  background-color: #f0f0f0;
+}
+
+.generateBarcodeButton:hover {
+  background-color: #e0e0e0;
+}
+
+/* Ajuste no input para acomodar o botão */
+.barcodeInputContainer .modernInput {
+  padding-right: 40px;
+}

@@ -19,6 +19,7 @@ export default function CadastroMedicamentoPage() {
     preco: "",
     laboratorio: "",
     imagem: "",
+    codigoBarras: "", // Novo campo adicionado
   });
 
   const handleChange = (e) => {
@@ -160,25 +161,42 @@ export default function CadastroMedicamentoPage() {
                         value={form.quantidade}
                         onChange={handleChange}
                         min="1"
-                        placeholder="Quantidade em estoque"
+                        placeholder="Quantidade"
                         required
                       />
                     </div>
                   </div>
 
-                  <div className={styles.formGroup}>
-                    <label className={styles.inputLabel}>Preço (R$)</label>
-                    <input
-                      className={styles.modernInput}
-                      type="number"
-                      name="preco"
-                      value={form.preco}
-                      onChange={handleChange}
-                      min="0"
-                      step="0.01"
-                      placeholder="0,00"
-                      required
-                    />
+                  <div className={styles.formRow}>
+                    <div className={styles.formGroup}>
+                      <label className={styles.inputLabel}>Preço (R$)</label>
+                      <input
+                        className={styles.modernInput}
+                        type="number"
+                        name="preco"
+                        value={form.preco}
+                        onChange={handleChange}
+                        min="0"
+                        step="0.01"
+                        placeholder="0,00"
+                        required
+                      />
+                    </div>
+
+                    <div className={styles.formGroup}>
+                      <label className={styles.inputLabel}>Código de Barras</label>
+                      <div className={styles.barcodeInputContainer}>
+                        <input
+                          className={styles.modernInput}
+                          type="text"
+                          name="codigoBarras"
+                          value={form.codigoBarras}
+                          onChange={handleChange}
+                          placeholder="Digite o código de barras"
+                          required
+                        />
+                      </div>
+                    </div>
                   </div>
                 </div>
 

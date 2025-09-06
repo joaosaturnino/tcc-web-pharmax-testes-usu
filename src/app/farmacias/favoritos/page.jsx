@@ -271,12 +271,12 @@ export default function FavoritosFarmaciaPage() {
           {/* Conteúdo Principal */}
           <main className={styles.mainContent}>
             {/* Informações de paginação */}
-            <div className={styles.paginationInfo}>
+            {/* <div className={styles.paginationInfo}>
               <p>
                 Exibindo {Math.min(itemsPerPage, currentItems.length)} de {medicamentos.length} medicamentos
                 {totalPages > 1 && ` (Página ${currentPage} de ${totalPages})`}
               </p>
-            </div>
+            </div> */}
 
             {/* Grid de Medicamentos */}
             <div className={styles.grid}>
@@ -297,13 +297,13 @@ export default function FavoritosFarmaciaPage() {
                           </span>
                         </div>
                       </div>
-                      <button
+                      {/* <button
                         className={styles.contactBtn}
                         onClick={() => console.log("Detalhes do medicamento")}
                         title="Ver detalhes"
                       >
                         🔍 Detalhes
-                      </button>
+                      </button> */}
                     </div>
 
                     <div className={styles.medList}>
