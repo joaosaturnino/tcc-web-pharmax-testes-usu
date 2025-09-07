@@ -55,6 +55,7 @@ function ListagemMedicamentos() {
   const [modalAberto, setModalAberto] = useState(false);
   const [codigoBarras, setCodigoBarras] = useState("");
   const [medicamentoExistente, setMedicamentoExistente] = useState(null);
+  const [produtoNaoEncontrado, setProdutoNaoEncontrado] = useState(false);
   const [erro, setErro] = useState("");
   const router = useRouter();
 
@@ -72,6 +73,7 @@ function ListagemMedicamentos() {
     setModalAberto(true);
     setCodigoBarras("");
     setMedicamentoExistente(null);
+    setProdutoNaoEncontrado(false);
     setErro("");
   };
 
@@ -79,6 +81,7 @@ function ListagemMedicamentos() {
     setModalAberto(false);
     setCodigoBarras("");
     setMedicamentoExistente(null);
+    setProdutoNaoEncontrado(false);
     setErro("");
   };
 
@@ -94,15 +97,22 @@ function ListagemMedicamentos() {
     
     if (medicamento) {
       setMedicamentoExistente(medicamento);
+      setProdutoNaoEncontrado(false);
       setErro("");
     } else {
-      // Se não encontrado, redireciona para cadastro
-      router.push(`/farmacias/produtos/medicamentos/cadastro?codigoBarras=${codigoBarras}`);
+      // Se não encontrado, mostra mensagem de produto não encontrado
+      setProdutoNaoEncontrado(true);
+      setMedicamentoExistente(null);
+      setErro("");
     }
   };
 
   const continuarCadastro = () => {
     router.push(`/farmacias/produtos/medicamentos/precadastro?codigoBarras=${codigoBarras}`);
+  };
+
+  const redirecionarParaCadastro = () => {
+    router.push(`/farmacias/produtos/medicamentos/cadastro?codigoBarras=${codigoBarras}`);
   };
 
   return (
@@ -297,7 +307,7 @@ function ListagemMedicamentos() {
               </button>
             </div>
             <div className={styles.modalBody}>
-              {!medicamentoExistente ? (
+              {!medicamentoExistente && !produtoNaoEncontrado ? (
                 <>
                   <p>Digite o código de barras do medicamento:</p>
                   <input
@@ -310,7 +320,7 @@ function ListagemMedicamentos() {
                   />
                   {erro && <p className={styles.erro}>{erro}</p>}
                 </>
-              ) : (
+              ) : medicamentoExistente ? (
                 <>
                   <p className={styles.aviso}>
                     Este medicamento já está cadastrado:
@@ -330,6 +340,13 @@ function ListagemMedicamentos() {
                     Deseja continuar com o cadastro?
                   </p>
                 </>
+              ) : (
+                <>
+                  <p className={styles.aviso}>
+                    Produto não encontrado em nossa base de dados.
+                  </p>
+                  <p>Deseja cadastrar este novo medicamento?</p>
+                </>
               )}
             </div>
             <div className={styles.modalFooter}>
@@ -341,9 +358,9 @@ function ListagemMedicamentos() {
               </button>
               <button
                 className={`${styles.botao} ${styles.botaoPrincipal}`}
-                onClick={medicamentoExistente ? continuarCadastro : verificarCodigoBarras}
+                onClick={medicamentoExistente ? continuarCadastro : produtoNaoEncontrado ? redirecionarParaCadastro : verificarCodigoBarras}
               >
-                {medicamentoExistente ? "Continuar" : "Verificar"}
+                {medicamentoExistente ? "Continuar" : produtoNaoEncontrado ? "Cadastrar" : "Verificar"}
               </button>
             </div>
           </div>

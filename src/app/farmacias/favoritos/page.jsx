@@ -174,6 +174,11 @@ export default function FavoritosFarmaciaPage() {
     }
   };
 
+  // Função para navegar para a tela de perfil
+  const navigateToProfile = () => {
+    router.push("/farmacias/perfil");
+  };
+
   // Cálculos de paginação
   const indexOfLastItem = currentPage * itemsPerPage;
   const indexOfFirstItem = indexOfLastItem - itemsPerPage;
@@ -204,8 +209,18 @@ export default function FavoritosFarmaciaPage() {
               className={styles.menuToggle}
               onClick={() => setSidebarOpen(!sidebarOpen)}
             >
+              ☰
             </button>
             <h1 className={styles.title}>Medicamentos Mais Favoritados</h1>
+          </div>
+          <div className={styles.headerActions}>
+            <button
+              onClick={navigateToProfile}
+              className={styles.actionBtn}
+              title="Acessar perfil"
+            >
+              👤 Perfil
+            </button>
           </div>
         </header>
 
@@ -224,6 +239,7 @@ export default function FavoritosFarmaciaPage() {
                 className={styles.sidebarClose}
                 onClick={() => setSidebarOpen(false)}
               >
+                ✕
               </button>
             </div>
 
@@ -256,6 +272,23 @@ export default function FavoritosFarmaciaPage() {
                   <span className={styles.navText}>Laboratórios</span>
                 </a>
               </div>
+
+              <div className={styles.navSection}>
+                <p className={styles.navLabel}>Conta</p>
+                <a
+                  href="/farmacias/perfil"
+                  className={styles.navLink}
+                >
+                  <span className={styles.navText}>Meu Perfil</span>
+                </a>
+                <button
+                  onClick={handleLogout}
+                  className={styles.navLink}
+                  style={{ background: 'none', border: 'none', width: '100%', textAlign: 'left' }}
+                >
+                  <span className={styles.navText}>Sair</span>
+                </button>
+              </div>
             </nav>
 
           </aside>
@@ -270,14 +303,6 @@ export default function FavoritosFarmaciaPage() {
 
           {/* Conteúdo Principal */}
           <main className={styles.mainContent}>
-            {/* Informações de paginação */}
-            {/* <div className={styles.paginationInfo}>
-              <p>
-                Exibindo {Math.min(itemsPerPage, currentItems.length)} de {medicamentos.length} medicamentos
-                {totalPages > 1 && ` (Página ${currentPage} de ${totalPages})`}
-              </p>
-            </div> */}
-
             {/* Grid de Medicamentos */}
             <div className={styles.grid}>
               {currentItems
@@ -297,13 +322,6 @@ export default function FavoritosFarmaciaPage() {
                           </span>
                         </div>
                       </div>
-                      {/* <button
-                        className={styles.contactBtn}
-                        onClick={() => console.log("Detalhes do medicamento")}
-                        title="Ver detalhes"
-                      >
-                        🔍 Detalhes
-                      </button> */}
                     </div>
 
                     <div className={styles.medList}>

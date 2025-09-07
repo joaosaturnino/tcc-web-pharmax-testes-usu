@@ -24,6 +24,7 @@ const medicamentosIniciais = [
     laboratorio: "EMS",
     preco: 12.5,
     imagem: "",
+    codigoBarras: "7891234567890"
   },
   {
     id: 2,
@@ -36,14 +37,26 @@ const medicamentosIniciais = [
     laboratorio: "Neo Química",
     preco: 8.9,
     imagem: "",
+    codigoBarras: "7890987654321"
   },
-
-  
 ];
+
+// Simulação de banco de dados
+const bancoDeDados = {
+  medicamentos: medicamentosIniciais,
+  buscarPorCodigoBarras: function(codigo) {
+    return this.medicamentos.find(med => med.codigoBarras === codigo);
+  }
+};
 
 function ListagemMedicamentos() {
   const [medicamentos, setMedicamentos] = useState(medicamentosIniciais);
   const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [modalAberto, setModalAberto] = useState(false);
+  const [codigoBarras, setCodigoBarras] = useState("");
+  const [medicamentoExistente, setMedicamentoExistente] = useState(null);
+  const [produtoNaoEncontrado, setProdutoNaoEncontrado] = useState(false);
+  const [erro, setErro] = useState("");
   const router = useRouter();
 
   const handleExcluir = (id) => {
@@ -53,26 +66,53 @@ function ListagemMedicamentos() {
   };
 
   const handleEditar = (id) => {
-    router.push(`/funcionario/produtos/medicamentos/editar/${id}`);
+    router.push(`/farmacias/produtos/medicamentos/editar/${id}`);
   };
 
-  const handleLogout = async () => {
-    try {
-      localStorage.removeItem("authToken");
-      sessionStorage.removeItem("userData");
-      router.push("../../home");
-    } catch (error) {
-      console.error("Erro ao fazer logout:", error);
-      router.push("../../home");
+  const abrirModal = () => {
+    setModalAberto(true);
+    setCodigoBarras("");
+    setMedicamentoExistente(null);
+    setProdutoNaoEncontrado(false);
+    setErro("");
+  };
+
+  const fecharModal = () => {
+    setModalAberto(false);
+    setCodigoBarras("");
+    setMedicamentoExistente(null);
+    setProdutoNaoEncontrado(false);
+    setErro("");
+  };
+
+  const verificarCodigoBarras = () => {
+    // Validação básica
+    if (!codigoBarras.trim()) {
+      setErro("Por favor, digite um código de barras válido.");
+      return;
+    }
+
+    // Simulação de busca no banco de dados
+    const medicamento = bancoDeDados.buscarPorCodigoBarras(codigoBarras);
+    
+    if (medicamento) {
+      setMedicamentoExistente(medicamento);
+      setProdutoNaoEncontrado(false);
+      setErro("");
+    } else {
+      // Se não encontrado, mostra mensagem de produto não encontrado
+      setProdutoNaoEncontrado(true);
+      setMedicamentoExistente(null);
+      setErro("");
     }
   };
 
-  const handleInputChange = (e) => {
-    const { name, value } = e.target;
-    setFormData((prev) => ({
-      ...prev,
-      [name]: value,
-    }));
+  const continuarCadastro = () => {
+    router.push(`/farmacias/produtos/medicamentos/precadastro?codigoBarras=${codigoBarras}`);
+  };
+
+  const redirecionarParaCadastro = () => {
+    router.push(`/farmacias/produtos/medicamentos/cadastro?codigoBarras=${codigoBarras}`);
   };
 
   return (
@@ -88,12 +128,12 @@ function ListagemMedicamentos() {
           <h1 className={styles.titulo}> Painel de Medicamentos</h1>
         </div>
         <div className={styles.headerActions}>
-          <Link
-            href="/funcionario/produtos/medicamentos/cadastro"
+          <button
+            onClick={abrirModal}
             className={styles.botaoPrincipal}
           >
             ➕ Novo Medicamento
-          </Link>
+          </button>
         </div>
       </header>
 
@@ -118,7 +158,7 @@ function ListagemMedicamentos() {
           <nav className={styles.nav}>
             <div className={styles.navSection}>
               <a
-                href="/funcionario/produtos/medicamentos"
+                href="/farmacias/produtos/medicamentos"
                 className={`${styles.navLink} ${styles.active}`}
               >
                 <span className={styles.navText}>Medicamentos</span>
@@ -126,17 +166,11 @@ function ListagemMedicamentos() {
             </div>
 
             <div className={styles.navSection}>
-              <a href="/funcionario/laboratorio/lista" className={styles.navLink}>
+              <a href="/farmacias/laboratorio/lista" className={styles.navLink}>
                 <span className={styles.navText}>Laboratórios</span>
               </a>
             </div>
           </nav>
-
-          <div className={styles.userPanel}>
-            <button className={styles.navLink} onClick={handleLogout}>
-                <span className={styles.navText}>Sair</span>
-              </button>
-          </div>
         </aside>
 
         {/* Overlay para mobile */}
@@ -163,12 +197,12 @@ function ListagemMedicamentos() {
               <div className={styles.emptyState}>
                 <h3>Nenhum medicamento cadastrado</h3>
                 <p>Comece cadastrando seu primeiro medicamento.</p>
-                <Link
-                  href="/medicamentos/cadastro"
+                <button
+                  onClick={abrirModal}
                   className={styles.botaoPrincipal}
                 >
                   ➕ Novo Medicamento
-                </Link>
+                </button>
               </div>
             ) : (
               <div className={styles.tableWrapper}>
@@ -250,6 +284,77 @@ function ListagemMedicamentos() {
           </div>
         </main>
       </div>
+
+      {/* Modal de Código de Barras */}
+      {modalAberto && (
+        <div className={styles.modalOverlay}>
+          <div className={styles.modal}>
+            <div className={styles.modalHeader}>
+              <h2>Cadastrar Novo Medicamento</h2>
+              <button className={styles.modalClose} onClick={fecharModal}>
+                &times;
+              </button>
+            </div>
+            <div className={styles.modalBody}>
+              {!medicamentoExistente && !produtoNaoEncontrado ? (
+                <>
+                  <p>Digite o código de barras do medicamento:</p>
+                  <input
+                    type="text"
+                    value={codigoBarras}
+                    onChange={(e) => setCodigoBarras(e.target.value)}
+                    className={styles.inputCodigo}
+                    placeholder="Código de barras"
+                    autoFocus
+                  />
+                  {erro && <p className={styles.erro}>{erro}</p>}
+                </>
+              ) : medicamentoExistente ? (
+                <>
+                  <p className={styles.aviso}>
+                    Este medicamento já está cadastrado:
+                  </p>
+                  <div className={styles.medicamentoInfo}>
+                    <img
+                      src={medicamentoExistente.imagem || imagemPadrao}
+                      alt={medicamentoExistente.nome}
+                      className={styles.imgThumbModal}
+                    />
+                    <div>
+                      <h3>{medicamentoExistente.nome}</h3>
+                      <p>{medicamentoExistente.dosagem} - {medicamentoExistente.laboratorio}</p>
+                    </div>
+                  </div>
+                  <p className={styles.pergunta}>
+                    Deseja continuar com o cadastro?
+                  </p>
+                </>
+              ) : (
+                <>
+                  <p className={styles.aviso}>
+                    Produto não encontrado em nossa base de dados.
+                  </p>
+                  <p>Deseja cadastrar este novo medicamento?</p>
+                </>
+              )}
+            </div>
+            <div className={styles.modalFooter}>
+              <button
+                className={`${styles.botao} ${styles.botaoSecundario}`}
+                onClick={fecharModal}
+              >
+                Cancelar
+              </button>
+              <button
+                className={`${styles.botao} ${styles.botaoPrincipal}`}
+                onClick={medicamentoExistente ? continuarCadastro : produtoNaoEncontrado ? redirecionarParaCadastro : verificarCodigoBarras}
+              >
+                {medicamentoExistente ? "Continuar" : produtoNaoEncontrado ? "Cadastrar" : "Verificar"}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
