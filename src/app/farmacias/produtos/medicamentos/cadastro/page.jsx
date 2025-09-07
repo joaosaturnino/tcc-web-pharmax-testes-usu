@@ -19,7 +19,7 @@ export default function CadastroMedicamentoPage() {
     preco: "",
     laboratorio: "",
     imagem: "",
-    codigoBarras: "", // Novo campo adicionado
+    codigoBarras: "",
   });
 
   const handleChange = (e) => {
@@ -36,12 +36,9 @@ export default function CadastroMedicamentoPage() {
     
     // Simulando processamento
     setTimeout(() => {
-      // Aqui você pode adicionar a lógica para enviar os dados para o backend
       console.log("Dados enviados:", form);
       alert("Medicamento cadastrado com sucesso!");
       setLoading(false);
-      
-      // Redireciona para a página de listagem de medicamentos após o cadastro
       router.push("/farmacias/produtos/medicamentos");
     }, 1500);
   };
@@ -55,13 +52,14 @@ export default function CadastroMedicamentoPage() {
             className={styles.menuToggle}
             onClick={() => setSidebarOpen(!sidebarOpen)}
           >
+            ☰
           </button>
           <h1 className={styles.title}> Cadastro de Medicamento</h1>
         </div>
       </header>
 
       <div className={styles.contentWrapper}>
-        {/* Sidebar Não Fixa */}
+        {/* Sidebar Não Fixa - CORRIGIDO */}
         <aside className={`${styles.sidebar} ${sidebarOpen ? styles.sidebarOpen : ""}`}>
           <div className={styles.sidebarHeader}>
             <div className={styles.logo}>
@@ -71,7 +69,7 @@ export default function CadastroMedicamentoPage() {
               className={styles.sidebarClose}
               onClick={() => setSidebarOpen(false)}
             >
-              ×
+              ✕ {/* Ícone melhorado */}
             </button>
           </div>
 
@@ -104,9 +102,12 @@ export default function CadastroMedicamentoPage() {
           </nav>
         </aside>
 
-        {/* Overlay para mobile */}
+        {/* Overlay para mobile - CORRIGIDO */}
         {sidebarOpen && (
-          <div className={styles.overlay} onClick={() => setSidebarOpen(false)} />
+          <div 
+            className={styles.overlay} 
+            onClick={() => setSidebarOpen(false)} 
+          />
         )}
 
         {/* Conteúdo Principal */}
@@ -316,7 +317,6 @@ export default function CadastroMedicamentoPage() {
               {/* Descrição */}
               <div className={styles.formSection}>
                 <h3 className={styles.sectionTitle}>
-                  <span className={styles.sectionIcon}></span>
                   Descrição
                 </h3>
                 <div className={styles.formGroup}>

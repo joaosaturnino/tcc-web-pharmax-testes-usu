@@ -86,6 +86,7 @@ export default function EditarMedicamento() {
             className={styles.menuToggle}
             onClick={() => setSidebarOpen(!sidebarOpen)}
           >
+            ☰
           </button>
           <h1 className={styles.title}> Editar Medicamento</h1>
         </div>
@@ -93,7 +94,11 @@ export default function EditarMedicamento() {
 
       <div className={styles.contentWrapper}>
         {/* Sidebar Não Fixa */}
-        <aside className={`${styles.sidebar} ${sidebarOpen ? styles.sidebarOpen : ""}`}>
+        <aside
+          className={`${styles.sidebar} ${
+            sidebarOpen ? styles.sidebarOpen : ""
+          }`}
+        >
           <div className={styles.sidebarHeader}>
             <div className={styles.logo}>
               <span className={styles.logoText}>PharmaX</span>
@@ -102,6 +107,7 @@ export default function EditarMedicamento() {
               className={styles.sidebarClose}
               onClick={() => setSidebarOpen(false)}
             >
+              X
             </button>
           </div>
 
@@ -136,7 +142,10 @@ export default function EditarMedicamento() {
 
         {/* Overlay para mobile */}
         {sidebarOpen && (
-          <div className={styles.overlay} onClick={() => setSidebarOpen(false)} />
+          <div
+            className={styles.overlay}
+            onClick={() => setSidebarOpen(false)}
+          />
         )}
 
         {/* Conteúdo Principal */}
@@ -151,12 +160,12 @@ export default function EditarMedicamento() {
               <div className={styles.formGrid}>
                 {/* Informações Básicas */}
                 <div className={styles.formSection}>
-                  <h3 className={styles.sectionTitle}>
-                    Informações Básicas
-                  </h3>
+                  <h3 className={styles.sectionTitle}>Informações Básicas</h3>
 
                   <div className={styles.formGroup}>
-                    <label className={styles.inputLabel}>Nome do Medicamento</label>
+                    <label className={styles.inputLabel}>
+                      Nome do Medicamento
+                    </label>
                     <input
                       className={styles.modernInput}
                       type="text"
@@ -215,9 +224,7 @@ export default function EditarMedicamento() {
 
                 {/* Informações Técnicas */}
                 <div className={styles.formSection}>
-                  <h3 className={styles.sectionTitle}>
-                    Informações Técnicas
-                  </h3>
+                  <h3 className={styles.sectionTitle}>Informações Técnicas</h3>
 
                   <div className={styles.formGroup}>
                     <label className={styles.inputLabel}>Tipo de Produto</label>
@@ -240,7 +247,9 @@ export default function EditarMedicamento() {
                   </div>
 
                   <div className={styles.formGroup}>
-                    <label className={styles.inputLabel}>Forma Farmacêutica</label>
+                    <label className={styles.inputLabel}>
+                      Forma Farmacêutica
+                    </label>
                     <select
                       className={styles.modernInput}
                       name="forma"
@@ -253,14 +262,20 @@ export default function EditarMedicamento() {
                       <option value="Cápsula">Cápsula</option>
                       <option value="Pastilhas">Pastilhas</option>
                       <option value="Drágeas">Drágeas</option>
-                      <option value="Pós para Reconstituição">Pós para Reconstituição</option>
+                      <option value="Pós para Reconstituição">
+                        Pós para Reconstituição
+                      </option>
                       <option value="Gotas">Gotas</option>
                       <option value="Xarope">Xarope</option>
                       <option value="Solução Oral">Solução Oral</option>
                       <option value="Suspensão">Suspensão</option>
-                      <option value="Comprimidos Sublinguais">Comprimidos Sublinguais</option>
+                      <option value="Comprimidos Sublinguais">
+                        Comprimidos Sublinguais
+                      </option>
                       <option value="Soluções">Soluções</option>
-                      <option value="Suspensões Injetáveis">Suspensões Injetáveis</option>
+                      <option value="Suspensões Injetáveis">
+                        Suspensões Injetáveis
+                      </option>
                       <option value="Soluções Tópicas">Soluções Tópicas</option>
                       <option value="Pomadas">Pomadas</option>
                       <option value="Cremes">Cremes</option>
@@ -270,11 +285,19 @@ export default function EditarMedicamento() {
                       <option value="Spray">Spray</option>
                       <option value="Gotas Nasais">Gotas Nasais</option>
                       <option value="Colírios">Colírios</option>
-                      <option value="Pomadas Oftálmicas">Pomadas Oftálmicas</option>
-                      <option value="Gotas Auriculares ou Otológicas">Gotas Auriculares ou Otológicas</option>
-                      <option value="Pomadas Auriculares">Pomadas Auriculares</option>
+                      <option value="Pomadas Oftálmicas">
+                        Pomadas Oftálmicas
+                      </option>
+                      <option value="Gotas Auriculares ou Otológicas">
+                        Gotas Auriculares ou Otológicas
+                      </option>
+                      <option value="Pomadas Auriculares">
+                        Pomadas Auriculares
+                      </option>
                       <option value="Aerosol">Aerosol</option>
-                      <option value="Comprimidos Vaginais">Comprimidos Vaginais</option>
+                      <option value="Comprimidos Vaginais">
+                        Comprimidos Vaginais
+                      </option>
                       <option value="Óvulos">Óvulos</option>
                       <option value="Supositórios">Supositórios</option>
                       <option value="Enemas">Enemas</option>
@@ -308,7 +331,9 @@ export default function EditarMedicamento() {
                       <option value="Hipera CH">Hipera CH</option>
                       <option value="Sandoz">Sandoz</option>
                       <option value="Med Química">Med Química</option>
-                      <option value="Mantecorp Farmasa">Mantecorp Farmasa</option>
+                      <option value="Mantecorp Farmasa">
+                        Mantecorp Farmasa
+                      </option>
                     </select>
                   </div>
 
@@ -327,10 +352,9 @@ export default function EditarMedicamento() {
               </div>
 
               {/* Descrição */}
+
               <div className={styles.formSection}>
-                <h3 className={styles.sectionTitle}>
-                  Descrição
-                </h3>
+                <h3 className={styles.sectionTitle}>Descrição</h3>
                 <div className={styles.formGroup}>
                   <label className={styles.inputLabel}>Descrição</label>
                   <textarea
@@ -349,7 +373,9 @@ export default function EditarMedicamento() {
                 <button
                   type="button"
                   className={styles.cancelButton}
-                  onClick={() => router.push("/farmacias/produtos/medicamentos")}
+                  onClick={() =>
+                    router.push("/farmacias/produtos/medicamentos")
+                  }
                 >
                   Cancelar
                 </button>

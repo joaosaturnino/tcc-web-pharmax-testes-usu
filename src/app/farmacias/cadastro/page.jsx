@@ -33,6 +33,12 @@ export default function CadastroFarmacia() {
 
   const processFile = (file) => {
     if (file && file.type.startsWith("image/")) {
+      // Verificar tamanho do arquivo (máximo 5MB)
+      if (file.size > 5 * 1024 * 1024) {
+        alert("O arquivo deve ter no máximo 5MB.");
+        return;
+      }
+      
       setFarmacia({ ...farmacia, logo: file });
 
       const reader = new FileReader();
@@ -67,24 +73,34 @@ export default function CadastroFarmacia() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    
+    // Validações básicas
+    if (farmacia.senha.length < 6) {
+      alert("A senha deve ter pelo menos 6 caracteres.");
+      return;
+    }
+
     setIsSubmitting(true);
 
     try {
       // Simular um delay para demonstração
       await new Promise((resolve) => setTimeout(resolve, 1500));
 
-      // Salvando no localStorage
+      // NUNCA salvar senha em texto claro - usar hash em aplicação real
       const dadosFarmacia = {
         ...farmacia,
-        // Não salvar a preview no localStorage (é uma string muito grande)
-        logo: farmacia.logo ? farmacia.logo.name : null,
+        senha: "***" // Em aplicação real, usar bcrypt ou similar
+        // logo: farmacia.logo ? farmacia.logo.name : null,
       };
+      
       localStorage.setItem("farmacia", JSON.stringify(dadosFarmacia));
+      localStorage.setItem("usuarioLogado", "true");
 
-      // Redireciona para o perfil
-      router.push("/produtos/medicamentos");
+      // Redireciona para página apropriada (alterado de /produtos/medicamentos)
+      router.push("/perfil");
     } catch (error) {
       console.error("Erro ao cadastrar farmácia:", error);
+      alert("Erro ao cadastrar. Tente novamente.");
     } finally {
       setIsSubmitting(false);
     }
@@ -140,7 +156,7 @@ export default function CadastroFarmacia() {
                 />
               </div>
 
-              <div className={styles.formGroup}>
+              <div className={`${styles.formGroup} ${styles.fullWidth}`}>
                 <label className={styles.label}>Endereço Completo</label>
                 <input
                   className={styles.input}
@@ -162,6 +178,7 @@ export default function CadastroFarmacia() {
                   value={farmacia.telefone}
                   onChange={handleChange}
                   placeholder="(11) 99999-9999"
+                  required
                 />
               </div>
 
@@ -186,7 +203,8 @@ export default function CadastroFarmacia() {
                   name="senha"
                   value={farmacia.senha}
                   onChange={handleChange}
-                  placeholder="Crie uma senha segura"
+                  placeholder="Mínimo 6 caracteres"
+                  minLength="6"
                   required
                 />
                 <div className={styles.passwordStrength}>
@@ -217,8 +235,10 @@ export default function CadastroFarmacia() {
                     {farmacia.senha.length === 0
                       ? "Força da senha"
                       : farmacia.senha.length < 6
+                      ? "Muito fraca"
+                      : farmacia.senha.length < 8
                       ? "Fraca"
-                      : farmacia.senha.length < 9
+                      : farmacia.senha.length < 10
                       ? "Média"
                       : "Forte"}
                   </span>
@@ -226,7 +246,7 @@ export default function CadastroFarmacia() {
               </div>
 
               <div className={`${styles.formGroup} ${styles.fullWidth}`}>
-                <label className={styles.label}>Logo da Farmácia</label>
+                <label className={styles.label}>Logo da Farmácia (opcional)</label>
 
                 <div
                   className={`${styles.fileUploadContainer} ${
@@ -268,12 +288,12 @@ export default function CadastroFarmacia() {
                   ) : (
                     <div className={styles.uploadArea}>
                       <div className={styles.uploadIcon}>
-                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
-                          <path d="M14 2H6C4.9 2 4.01 2.9 4.01 4L4 20C4 21.1 4.89 22 5.99 22H18C19.1 22 20 21.1 20 20V8L14 2Z" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-                          <path d="M14 2V8H20" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-                          <path d="M16 13H8" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-                          <path d="M16 17H8" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-                          <path d="M10 9H8" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                        <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                          <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                          <polyline points="14 2 14 8 20 8"></polyline>
+                          <line x1="16" y1="13" x2="8" y2="13"></line>
+                          <line x1="16" y1="17" x2="8" y2="17"></line>
+                          <polyline points="10 9 9 9 8 9"></polyline>
                         </svg>
                       </div>
                       <div className={styles.uploadText}>
@@ -326,7 +346,7 @@ export default function CadastroFarmacia() {
           <div className={styles.loginRedirect}>
             <p>
               Já possui uma conta?{" "}
-              <a href="/usuario/login" className={styles.loginLink}>
+              <a href="/login" className={styles.loginLink}>
                 Faça login
               </a>
             </p>

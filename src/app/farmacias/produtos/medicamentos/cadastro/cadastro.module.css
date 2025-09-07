@@ -54,7 +54,7 @@
   position: relative;
 }
 
-/* Sidebar Não Fixa */
+/* Sidebar Não Fixa - CORRIGIDO */
 .sidebar {
   width: 280px;
   background: #191970;
@@ -64,6 +64,16 @@
   transition: transform 0.3s ease;
   box-shadow: 2px 0 10px rgba(0, 0, 0, 0.1);
   z-index: 90;
+  position: fixed;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  transform: translateX(-100%);
+  height: 100vh;
+}
+
+.sidebarOpen {
+  transform: translateX(0);
 }
 
 .sidebarHeader {
@@ -159,13 +169,15 @@
   flex: 1;
 }
 
-/* Conteúdo Principal */
+/* Conteúdo Principal - CORRIGIDO */
 .mainContent {
   flex: 1;
   padding: 0;
   min-height: calc(100vh - 80px);
   overflow-y: auto;
   background: #f8fafc;
+  margin-left: 0;
+  transition: margin-left 0.3s ease;
 }
 
 /* Formulário */
@@ -207,10 +219,9 @@
   margin-bottom: 40px;
 }
 
-/* .formSection {
-  border-left: 4px solid #191970;
-  padding-left: 20px;
-} */
+.formSection {
+  margin-bottom: 30px;
+}
 
 .sectionTitle {
   font-size: 18px;
@@ -366,7 +377,7 @@ select.modernInput {
   animation: spin 1s linear infinite;
 }
 
-/* Overlay para mobile */
+/* Overlay para mobile - CORRIGIDO */
 .overlay {
   display: none;
   position: fixed;
@@ -407,7 +418,36 @@ select.modernInput {
   }
 }
 
-/* Responsividade */
+/* Container para o input de código de barras com botão */
+.barcodeInputContainer {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+/* Botão para gerar código de barras */
+.generateBarcodeButton {
+  position: absolute;
+  right: 8px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 16px;
+  padding: 4px;
+  border-radius: 4px;
+  background-color: #f0f0f0;
+}
+
+.generateBarcodeButton:hover {
+  background-color: #e0e0e0;
+}
+
+/* Ajuste no input para acomodar o botão */
+.barcodeInputContainer .modernInput {
+  padding-right: 40px;
+}
+
+/* Responsividade - CORRIGIDO */
 @media (max-width: 1024px) {
   .formGrid {
     grid-template-columns: 1fr;
@@ -489,31 +529,27 @@ select.modernInput {
   }
 }
 
-/* Container para o input de código de barras com botão */
-.barcodeInputContainer {
-  position: relative;
-  display: flex;
-  align-items: center;
-}
-
-/* Botão para gerar código de barras */
-.generateBarcodeButton {
-  position: absolute;
-  right: 8px;
-  background: none;
-  border: none;
-  cursor: pointer;
-  font-size: 16px;
-  padding: 4px;
-  border-radius: 4px;
-  background-color: #f0f0f0;
-}
-
-.generateBarcodeButton:hover {
-  background-color: #e0e0e0;
-}
-
-/* Ajuste no input para acomodar o botão */
-.barcodeInputContainer .modernInput {
-  padding-right: 40px;
+/* Estilos para desktop - CORRIGIDO */
+@media (min-width: 769px) {
+  .sidebar {
+    position: relative;
+    transform: translateX(0);
+    height: auto;
+  }
+  
+  .sidebarClose {
+    display: none;
+  }
+  
+  .menuToggle {
+    display: none;
+  }
+  
+  .overlay {
+    display: none !important;
+  }
+  
+  .mainContent {
+    margin-left: 0;
+  }
 }

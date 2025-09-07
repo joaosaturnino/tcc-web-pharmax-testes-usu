@@ -2,7 +2,7 @@
 import Link from "next/link";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import styles from "../../../../app/farmacias/produtos/medicamentos/cadastro.module.css";
+import styles from "./cadastro.module.css"; // CORREÇÃO: caminho relativo
 
 const imagemPadrao =
   "https://www.institutoaron.com.br/static/img/large/c28a030a59bae1283321c340cdc846df.webp";
@@ -124,6 +124,7 @@ function ListagemMedicamentos() {
             className={styles.menuToggle}
             onClick={() => setSidebarOpen(!sidebarOpen)}
           >
+            ☰
           </button>
           <h1 className={styles.titulo}> Painel de Medicamentos</h1>
         </div>
@@ -152,6 +153,7 @@ function ListagemMedicamentos() {
               className={styles.sidebarClose}
               onClick={() => setSidebarOpen(false)}
             >
+              ✕ {/* CORREÇÃO: ícone melhor */}
             </button>
           </div>
 
@@ -184,7 +186,7 @@ function ListagemMedicamentos() {
           </nav>
         </aside>
 
-        {/* Overlay para mobile */}
+        {/* Overlay para mobile - CORREÇÃO: condicional correto */}
         {sidebarOpen && (
           <div
             className={styles.overlay}
@@ -239,6 +241,9 @@ function ListagemMedicamentos() {
                             src={med.imagem || imagemPadrao}
                             alt={med.nome}
                             className={styles.imgThumb}
+                            onError={(e) => {
+                              e.target.src = imagemPadrao;
+                            }}
                           />
                         </td>
                         <td>
@@ -330,6 +335,9 @@ function ListagemMedicamentos() {
                       src={medicamentoExistente.imagem || imagemPadrao}
                       alt={medicamentoExistente.nome}
                       className={styles.imgThumbModal}
+                      onError={(e) => {
+                        e.target.src = imagemPadrao;
+                      }}
                     />
                     <div>
                       <h3>{medicamentoExistente.nome}</h3>

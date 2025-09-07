@@ -125,7 +125,7 @@ export default function ListaFuncionariosPage() {
             className={styles.menuToggle}
             onClick={() => setSidebarOpen(!sidebarOpen)}
           >
-            {/* ☰ */}
+            ☰
           </button>
           {/* <h1 className={styles.title}>👥 Lista de Funcionários</h1> */}
           <h1 className={styles.title}> Lista de Funcionários</h1>

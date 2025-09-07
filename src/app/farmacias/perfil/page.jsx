@@ -213,7 +213,9 @@ export default function PerfilUsuarioPage() {
           <button
             className={styles.menuToggle}
             onClick={() => setSidebarOpen(!sidebarOpen)}
-          ></button>
+          >
+            ☰ {/* Ícone adicionado */}
+          </button>
           <h1 className={styles.title}>Meu Perfil</h1>
         </div>
       </header>
@@ -228,6 +230,12 @@ export default function PerfilUsuarioPage() {
             <div className={styles.logo}>
               <span className={styles.logoText}>PharmaX</span>
             </div>
+            <button
+              className={styles.sidebarClose}
+              onClick={() => setSidebarOpen(false)}
+            >
+              ✕ {/* Ícone adicionado */}
+            </button>
           </div>
 
           <nav className={styles.nav}>
@@ -549,6 +557,7 @@ export default function PerfilUsuarioPage() {
                 className={styles.modalClose}
                 onClick={closePasswordModal}
               >
+                ✕ {/* Ícone adicionado */}
               </button>
             </div>
 

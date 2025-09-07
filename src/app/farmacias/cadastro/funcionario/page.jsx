@@ -1,34 +1,119 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
-import styles from "./funcionario.module.css";
-// import "../../../../styles/globals";
+import styles from "./funcionario.module.css"; // Nome corrigido para coincidir
 
-export default function CadastroFuncionarioPage() {
+export default function ListaFuncionariosPage() {
   const router = useRouter();
   const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [funcionarios, setFuncionarios] = useState([]);
+  const [filtro, setFiltro] = useState("");
 
-  const [form, setForm] = useState({
-    nome: "",
-    email: "",
-    telefone: "",
-    cpf: "",
-    dataNascimento: "",
-    endereco: "",
-    usuario: "",
-    senha: "",
-    nivelAcesso: "",
-  });
+  // Dados de exemplo
+  useEffect(() => {
+    const dadosExemplo = [
+      {
+        id: 1,
+        nome: "Maria Silva",
+        email: "maria.silva@pharmax.com",
+        telefone: "(11) 99999-9999",
+        cpf: "123.456.789-00",
+        dataNascimento: "1990-05-15",
+        endereco: "Rua das Flores, 123 - São Paulo/SP",
+        usuario: "maria.silva",
+        nivelAcesso: "Administrador",
+        dataCadastro: "2023-01-15",
+      },
+      {
+        id: 2,
+        nome: "João Santos",
+        email: "joao.santos@pharmax.com",
+        telefone: "(11) 98888-8888",
+        cpf: "987.654.321-00",
+        dataNascimento: "1985-10-22",
+        endereco: "Av. Paulista, 1000 - São Paulo/SP",
+        usuario: "joao.santos",
+        nivelAcesso: "Gerente",
+        dataCadastro: "2023-02-20",
+      },
+      {
+        id: 3,
+        nome: "Ana Costa",
+        email: "ana.costa@pharmax.com",
+        telefone: "(11) 97777-7777",
+        cpf: "456.789.123-00",
+        dataNascimento: "1992-03-30",
+        endereco: "Rua Augusta, 500 - São Paulo/SP",
+        usuario: "ana.costa",
+        nivelAcesso: "Funcionário",
+        dataCadastro: "2023-03-10",
+      },
+      {
+        id: 4,
+        nome: "Pedro Oliveira",
+        email: "pedro.oliveira@pharmax.com",
+        telefone: "(11) 96666-6666",
+        cpf: "789.123.456-00",
+        dataNascimento: "1988-12-05",
+        endereco: "Rua Consolação, 789 - São Paulo/SP",
+        usuario: "pedro.oliveira",
+        nivelAcesso: "Supervisor",
+        dataCadastro: "2023-04-15",
+      },
+      {
+        id: 5,
+        nome: "Carla Rodrigues",
+        email: "carla.rodrigues@pharmax.com",
+        telefone: "(11) 95555-5555",
+        cpf: "321.654.987-00",
+        dataNascimento: "1995-07-20",
+        endereco: "Alameda Santos, 456 - São Paulo/SP",
+        usuario: "carla.rodrigues",
+        nivelAcesso: "Visitante",
+        dataCadastro: "2023-05-22",
+      },
+    ];
+    setFuncionarios(dadosExemplo);
+  }, []);
 
-  const handleChange = (e) => {
-    setForm({ ...form, [e.target.name]: e.target.value });
+  const handleEditar = (id) => {
+    router.push(`/farmacias/cadastro/funcionario/editar/${id}`);
   };
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    console.log("Dados enviados:", form);
-    router.push("/farmacias/cadastro/funcionario/lista");
+  const handleNovoFuncionario = () => {
+    router.push("/farmacias/cadastro/funcionario");
+  };
+
+  const handleExcluir = (id) => {
+    if (confirm("Tem certeza que deseja excluir este funcionário?")) {
+      setFuncionarios(funcionarios.filter((func) => func.id !== id));
+    }
+  };
+
+  const funcionariosFiltrados = funcionarios.filter(
+    (funcionario) =>
+      funcionario.nome.toLowerCase().includes(filtro.toLowerCase()) ||
+      funcionario.email.toLowerCase().includes(filtro.toLowerCase()) ||
+      funcionario.nivelAcesso.toLowerCase().includes(filtro.toLowerCase())
+  );
+
+  // Função para gerar cor baseada no nome
+  const getAvatarColor = (nome) => {
+    const colors = [
+      "#3498db",
+      "#2ecc71",
+      "#e74c3c",
+      "#f39c12",
+      "#9b59b6",
+      "#1abc9c",
+      "#d35400",
+      "#c0392b",
+      "#16a085",
+      "#27ae60",
+    ];
+    const index = nome.charCodeAt(0) % colors.length;
+    return colors[index];
   };
 
   return (
@@ -40,18 +125,15 @@ export default function CadastroFuncionarioPage() {
             className={styles.menuToggle}
             onClick={() => setSidebarOpen(!sidebarOpen)}
           >
+            ☰
           </button>
-          <h1 className={styles.title}> Cadastro de Funcionário</h1>
+          <h1 className={styles.title}>Lista de Funcionários</h1>
         </div>
       </header>
 
       <div className={styles.contentWrapper}>
         {/* Sidebar Não Fixa */}
-        <aside
-          className={`${styles.sidebar} ${
-            sidebarOpen ? styles.sidebarOpen : ""
-          }`}
-        >
+        <aside className={`${styles.sidebar} ${sidebarOpen ? styles.sidebarOpen : ""}`}>
           <div className={styles.sidebarHeader}>
             <div className={styles.logo}>
               <span className={styles.logoText}>PharmaX</span>
@@ -60,6 +142,7 @@ export default function CadastroFuncionarioPage() {
               className={styles.sidebarClose}
               onClick={() => setSidebarOpen(false)}
             >
+              ×
             </button>
           </div>
 
@@ -69,10 +152,7 @@ export default function CadastroFuncionarioPage() {
               <a href="/farmacias/favoritos" className={styles.navLink}>
                 <span className={styles.navText}>Favoritos</span>
               </a>
-              <a
-                href="/farmacias/produtos/medicamentos"
-                className={styles.navLink}
-              >
+              <a href="/farmacias/produtos/medicamentos" className={styles.navLink}>
                 <span className={styles.navText}>Medicamentos</span>
               </a>
             </div>
@@ -94,210 +174,114 @@ export default function CadastroFuncionarioPage() {
 
         {/* Overlay para mobile */}
         {sidebarOpen && (
-          <div
-            className={styles.overlay}
-            onClick={() => setSidebarOpen(false)}
-          />
+          <div className={styles.overlay} onClick={() => setSidebarOpen(false)} />
         )}
 
         {/* Conteúdo Principal */}
         <main className={styles.mainContent}>
           <div className={styles.formContainer}>
-            <div className={styles.formHeader}>
-              <h2>Novo Funcionário</h2>
-              <p>Preencha os dados do novo colaborador</p>
+            <div className={styles.listaHeader}>
+              <div>
+                <h2>Funcionários Cadastrados</h2>
+                <p>Gerencie os funcionários do sistema</p>
+              </div>
+              <button
+                className={styles.submitButton}
+                onClick={handleNovoFuncionario}
+              >
+                <span className={styles.buttonIcon}>+</span>
+                Novo Funcionário
+              </button>
             </div>
 
-            <form onSubmit={handleSubmit} className={styles.form}>
-              <div className={styles.formGrid}>
-                {/* Informações Pessoais */}
-                <div className={styles.formSection}>
-                  <h3 className={styles.sectionTitle}>
-                    Informações Pessoais
-                  </h3>
+            <div className={styles.tableContainer}>
+              <table className={styles.funcionariosTable}>
+                <thead>
+                  <tr>
+                    <th>Nome</th>
+                    <th>E-mail</th>
+                    <th>Telefone</th>
+                    <th>Nível de Acesso</th>
+                    <th>Data de Cadastro</th>
+                    <th>Ações</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {funcionariosFiltrados.length > 0 ? (
+                    funcionariosFiltrados.map((funcionario) => (
+                      <tr key={funcionario.id}>
+                        <td>
+                          <div className={styles.funcionarioInfo}>
+                            <div
+                              className={styles.funcionarioAvatar}
+                              style={{
+                                backgroundColor: getAvatarColor(funcionario.nome),
+                              }}
+                            >
+                              {funcionario.nome.charAt(0)}
+                            </div>
+                            <div>
+                              <div className={styles.funcionarioNome}>
+                                {funcionario.nome}
+                              </div>
+                              <div className={styles.funcionarioUsuario}>
+                                @{funcionario.usuario}
+                              </div>
+                            </div>
+                          </div>
+                        </td>
+                        <td>{funcionario.email}</td>
+                        <td>{funcionario.telefone}</td>
+                        <td>
+                          <span
+                            className={`${styles.nivelBadge} ${
+                              styles[funcionario.nivelAcesso.toLowerCase()]
+                            }`}
+                          >
+                            {funcionario.nivelAcesso}
+                          </span>
+                        </td>
+                        <td>
+                          {new Date(funcionario.dataCadastro).toLocaleDateString("pt-BR")}
+                        </td>
+                        <td>
+                          <div className={styles.acoes}>
+                            <button
+                              className={styles.editarButton}
+                              onClick={() => handleEditar(funcionario.id)}
+                              title="Editar funcionário"
+                            >
+                              ✏️
+                            </button>
+                            <button
+                              className={styles.excluirButton}
+                              onClick={() => handleExcluir(funcionario.id)}
+                              title="Excluir funcionário"
+                            >
+                              🗑️
+                            </button>
+                          </div>
+                        </td>
+                      </tr>
+                    ))
+                  ) : (
+                    <tr>
+                      <td colSpan="6" className={styles.semRegistros}>
+                        {filtro
+                          ? "Nenhum funcionário encontrado com o filtro aplicado"
+                          : "Nenhum funcionário cadastrado"}
+                      </td>
+                    </tr>
+                  )}
+                </tbody>
+              </table>
+            </div>
 
-                  <div className={styles.formGroup}>
-                    <label className={styles.inputLabel}>Nome Completo </label>
-                    <input
-                      className={styles.modernInput}
-                      type="text"
-                      name="nome"
-                      value={form.nome}
-                      onChange={handleChange}
-                      placeholder="Digite o nome completo"
-                      required
-                    />
-                  </div>
-
-                  <div className={styles.formRow}>
-                    <div className={styles.formGroup}>
-                      <label className={styles.inputLabel}>CPF</label>
-                      <input
-                        className={styles.modernInput}
-                        type="text"
-                        name="cpf"
-                        value={form.cpf}
-                        onChange={handleChange}
-                        placeholder="000.000.000-00"
-                        required
-                      />
-                    </div>
-
-                    <div className={styles.formGroup}>
-                      <label className={styles.inputLabel}>
-                        Data de Nascimento
-                      </label>
-                      <input
-                        className={styles.modernInput}
-                        type="date"
-                        name="dataNascimento"
-                        value={form.dataNascimento}
-                        onChange={handleChange}
-                      />
-                    </div>
-                  </div>
-
-                  <div className={styles.formGroup}>
-                    <label className={styles.inputLabel}>E-mail</label>
-                    <input
-                      className={styles.modernInput}
-                      type="email"
-                      name="email"
-                      value={form.email}
-                      onChange={handleChange}
-                      placeholder="funcionario@empresa.com"
-                      required
-                    />
-                  </div>
-
-                  <div className={styles.formGroup}>
-                    <label className={styles.inputLabel}>Telefone</label>
-                    <input
-                      className={styles.modernInput}
-                      type="tel"
-                      name="telefone"
-                      value={form.telefone}
-                      onChange={handleChange}
-                      placeholder="(00) 00000-0000"
-                    />
-                  </div>
-
-                  <div className={styles.formGroup}>
-                    <label className={styles.inputLabel}>Endereço</label>
-                    <input
-                      className={styles.modernInput}
-                      type="text"
-                      name="endereco"
-                      value={form.endereco}
-                      onChange={handleChange}
-                      placeholder="Endereço completo"
-                    />
-                  </div>
-                </div>
-
-                {/* Informações de Acesso */}
-                <div className={styles.formSection}>
-                  <h3 className={styles.sectionTitle}>
-                    Acesso ao Sistema
-                  </h3>
-
-                  <div className={styles.formGroup}>
-                    <label className={styles.inputLabel}>
-                      Nome de Usuário
-                    </label>
-                    <input
-                      className={styles.modernInput}
-                      type="text"
-                      name="usuario"
-                      value={form.usuario}
-                      onChange={handleChange}
-                      placeholder="Digite o nome de usuário"
-                      required
-                    />
-                  </div>
-
-                  <div className={styles.formGroup}>
-                    <label className={styles.inputLabel}>Senha</label>
-                    <input
-                      className={styles.modernInput}
-                      type="password"
-                      name="senha"
-                      value={form.senha}
-                      onChange={handleChange}
-                      placeholder="Digite a senha"
-                      required
-                    />
-                  </div>
-
-                  <div className={styles.formGroup}>
-                    <label className={styles.inputLabel}>
-                      Nível de Acesso
-                    </label>
-                    <select
-                      className={styles.modernInput}
-                      name="nivelAcesso"
-                      value={form.nivelAcesso}
-                      onChange={handleChange}
-                      required
-                    >
-                      <option value="">Selecione o nível de acesso</option>
-                      <option value="Administrador">Administrador</option>
-                      <option value="Gerente">Gerente</option>
-                      <option value="Supervisor">Supervisor</option>
-                      <option value="Funcionário">Funcionário</option>
-                      <option value="Visitante">
-                        Visitante (Somente leitura)
-                      </option>
-                    </select>
-                  </div>
-
-                  <div className={styles.formGroup}>
-                    <label className={styles.inputLabel}>
-                      Permissões Especiais
-                    </label>
-                    <div className={styles.checkboxGroup}>
-                      <label className={styles.checkboxLabel}>
-                        <input type="checkbox" name="acessoRelatorios" />
-                        <span className={styles.checkboxText}>
-                          Acesso a relatórios
-                        </span>
-                      </label>
-                      <label className={styles.checkboxLabel}>
-                        <input type="checkbox" name="acessoEstoque" />
-                        <span className={styles.checkboxText}>
-                          Gerenciar estoque
-                        </span>
-                      </label>
-                      <label className={styles.checkboxLabel}>
-                        <input type="checkbox" name="acessoFinanceiro" />
-                        <span className={styles.checkboxText}>
-                          Acesso financeiro
-                        </span>
-                      </label>
-                      <label className={styles.checkboxLabel}>
-                        <input type="checkbox" name="acessoConfiguracoes" />
-                        <span className={styles.checkboxText}>
-                          Configurações do sistema
-                        </span>
-                      </label>
-                    </div>
-                  </div>
-                </div>
+            <div className={styles.listaFooter}>
+              <div className={styles.totalRegistros}>
+                Total: {funcionariosFiltrados.length} funcionário(s)
               </div>
-
-              <div className={styles.formActions}>
-                <button
-                  type="button"
-                  className={styles.cancelButton}
-                  onClick={() => router.back()}
-                >
-                  Cancelar
-                </button>
-                <button type="submit" className={styles.submitButton}>
-                  Cadastrar Funcionário
-                </button>
-              </div>
-            </form>
+            </div>
           </div>
         </main>
       </div>

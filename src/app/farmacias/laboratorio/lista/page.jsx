@@ -83,10 +83,23 @@ export default function ListaLaboratorios() {
             className={styles.menuToggle}
             onClick={() => setSidebarOpen(!sidebarOpen)}
           >
+            ☰
           </button>
           <h1 className={styles.title}> Laboratórios</h1>
         </div>
         <div className={styles.headerActions}>
+          {/* Barra de pesquisa adicionada */}
+          {/* <div className={styles.searchBox}>
+            <input
+              type="text"
+              placeholder="Pesquisar laboratórios..."
+              className={styles.searchInput}
+              value={filtro}
+              onChange={(e) => setFiltro(e.target.value)}
+            />
+            <span className={styles.searchIcon}>🔍</span>
+          </div> */}
+          
           <Link
             href="/farmacias/laboratorio/cadastro"
             className={styles.submitButton}
@@ -112,6 +125,7 @@ export default function ListaLaboratorios() {
               className={styles.sidebarClose}
               onClick={() => setSidebarOpen(false)}
             >
+              ✕ {/* Ícone adicionado */}
             </button>
           </div>
 

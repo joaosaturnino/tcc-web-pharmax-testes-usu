@@ -54,7 +54,7 @@
   position: relative;
 }
 
-/* Sidebar NÃO FIXA - Corrigido */
+/* Sidebar Não Fixa */
 .sidebar {
   width: 280px;
   background: #191970;
@@ -64,7 +64,6 @@
   transition: transform 0.3s ease;
   box-shadow: 2px 0 10px rgba(0, 0, 0, 0.1);
   z-index: 90;
-  /* REMOVIDO: position: fixed, top, left, bottom, height */
 }
 
 .sidebarHeader {
@@ -108,7 +107,6 @@
 .nav {
   flex: 1;
   padding: 20px 0;
-  overflow-y: auto;
 }
 
 .navSection {
@@ -145,20 +143,25 @@
   color: white;
 }
 
+.navLink.active {
+  background: rgba(52, 152, 219, 0.2);
+  color: #DCDCDC;
+  border-left: 4px solid #3498db;
+}
+
 .navText {
   font-size: 14px;
   font-weight: 500;
   flex: 1;
 }
 
-/* Conteúdo Principal - REMOVIDO margin-left */
+/* Conteúdo Principal */
 .mainContent {
   flex: 1;
   padding: 0;
   min-height: calc(100vh - 80px);
   overflow-y: auto;
   background: #f8fafc;
-  /* REMOVIDO: margin-left: 280px; */
 }
 
 /* Formulário */
@@ -200,12 +203,9 @@
   margin-bottom: 40px;
 }
 
-/* ADICIONADO: Classe formSection que estava faltando */
 .formSection {
-  background: #f8fafc;
-  padding: 24px;
-  border-radius: 12px;
-  border: 1px solid #e5e7eb;
+  
+  padding-left: 20px;
 }
 
 .sectionTitle {
@@ -220,12 +220,6 @@
 
 .formGroup {
   margin-bottom: 20px;
-}
-
-.formRow {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 16px;
 }
 
 .inputLabel {
@@ -255,53 +249,66 @@
 .modernInput:focus {
   outline: none;
   border-color: #458B00;
-  box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.1);
+  box-shadow: 0 0 0 3px rgba(79, 172, 254, 0.1);
 }
 
 .modernInput::placeholder {
   color: #9ca3af;
 }
 
-select.modernInput {
-  appearance: none;
-  background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%236b7280' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='m6 8 4 4 4-4'/%3e%3c/svg%3e");
-  background-position: right 12px center;
-  background-repeat: no-repeat;
-  background-size: 16px;
-  padding-right: 40px;
+/* Upload de Arquivo */
+.fileUploadGroup {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
 }
 
-/* Checkbox Group */
-.checkboxGroup {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 12px;
-  margin-top: 8px;
+.fileInput {
+  display: none;
 }
 
-.checkboxLabel {
+.fileLabel {
+  padding: 12px 16px;
+  border: 2px dashed #e5e7eb;
+  border-radius: 8px;
+  text-align: center;
+  cursor: pointer;
+  transition: all 0.3s ease;
   display: flex;
   align-items: center;
+  justify-content: center;
   gap: 8px;
-  cursor: pointer;
-  padding: 8px;
-  border-radius: 6px;
-  transition: background-color 0.2s ease;
+  background: #f8f9fa;
 }
 
-.checkboxLabel:hover {
-  background-color: #f8f9fa;
+.fileLabel:hover {
+  border-color: #458B00;
+  background: #F5FFFA;
 }
 
-.checkboxText {
-  font-size: 14px;
-  color: #374151;
+.fileName {
+  font-size: 12px;
+  color: #6c757d;
+  text-align: center;
 }
 
-.checkboxLabel input[type="checkbox"] {
-  width: 18px;
-  height: 18px;
-  accent-color: #458B00;
+/* Preview de Imagem */
+.imagePreview {
+  border: 2px dashed #e5e7eb;
+  border-radius: 8px;
+  padding: 20px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 150px;
+  background: #f8f9fa;
+}
+
+.previewImage {
+  max-width: 200px;
+  max-height: 120px;
+  object-fit: contain;
+  border-radius: 4px;
 }
 
 /* Ações do Formulário */
@@ -345,7 +352,7 @@ select.modernInput {
 
 .submitButton:hover {
   transform: translateY(-1px);
-  box-shadow: 0 4px 12px #2F4F4F;
+  box-shadow: 0 4px 12px rgba(69, 139, 0, 0.3);
 }
 
 /* Overlay para mobile */
@@ -360,44 +367,11 @@ select.modernInput {
   z-index: 80;
 }
 
-/* Loading */
-.loadingContainer {
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  height: 100vh;
-  gap: 16px;
-  background: #f8fafc;
-}
-
-.loadingSpinner {
-  width: 40px;
-  height: 40px;
-  border: 4px solid #e2e8f0;
-  border-top: 4px solid #3498db;
-  border-radius: 50%;
-  animation: spin 1s linear infinite;
-}
-
-@keyframes spin {
-  0% {
-    transform: rotate(0deg);
-  }
-  100% {
-    transform: rotate(360deg);
-  }
-}
-
 /* Responsividade */
 @media (max-width: 1024px) {
   .formGrid {
     grid-template-columns: 1fr;
     gap: 30px;
-  }
-
-  .checkboxGroup {
-    grid-template-columns: 1fr;
   }
 }
 
@@ -439,11 +413,6 @@ select.modernInput {
     padding: 24px;
   }
 
-  .formRow {
-    grid-template-columns: 1fr;
-    gap: 0;
-  }
-
   .formActions {
     flex-direction: column;
   }
@@ -472,9 +441,5 @@ select.modernInput {
 
   .formHeader h2 {
     font-size: 24px;
-  }
-
-  .formSection {
-    padding: 16px;
   }
 }
