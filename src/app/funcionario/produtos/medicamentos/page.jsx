@@ -66,7 +66,7 @@ function ListagemMedicamentos() {
   };
 
   const handleEditar = (id) => {
-    router.push(`/farmacias/produtos/medicamentos/editar/${id}`);
+    router.push(`/funcionario/produtos/medicamentos/editar/${id}`);
   };
 
   const abrirModal = () => {
@@ -108,11 +108,11 @@ function ListagemMedicamentos() {
   };
 
   const continuarCadastro = () => {
-    router.push(`/farmacias/produtos/medicamentos/precadastro?codigoBarras=${codigoBarras}`);
+    router.push(`/funcionario/produtos/medicamentos/precadastro?codigoBarras=${codigoBarras}`);
   };
 
   const redirecionarParaCadastro = () => {
-    router.push(`/farmacias/produtos/medicamentos/cadastro?codigoBarras=${codigoBarras}`);
+    router.push(`/funcionario/produtos/medicamentos/cadastro?codigoBarras=${codigoBarras}`);
   };
 
   return (
@@ -158,7 +158,7 @@ function ListagemMedicamentos() {
           <nav className={styles.nav}>
             <div className={styles.navSection}>
               <a
-                href="/farmacias/produtos/medicamentos"
+                href="/funcionario/produtos/medicamentos"
                 className={`${styles.navLink} ${styles.active}`}
               >
                 <span className={styles.navText}>Medicamentos</span>
@@ -166,7 +166,7 @@ function ListagemMedicamentos() {
             </div>
 
             <div className={styles.navSection}>
-              <a href="/farmacias/laboratorio/lista" className={styles.navLink}>
+              <a href="/funcionario/laboratorio/lista" className={styles.navLink}>
                 <span className={styles.navText}>Laboratórios</span>
               </a>
             </div>

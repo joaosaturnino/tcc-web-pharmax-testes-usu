@@ -40,7 +40,7 @@
   background: #f1f5f9;
 }
 
-.titulo {
+.title {
   font-size: 24px;
   font-weight: 600;
   color: #1e293b;
@@ -96,7 +96,7 @@
 
 .botaoPrincipal:hover {
   transform: translateY(-1px);
-  box-shadow: 0 4px 12px rgba(52, 152, 219, 0.3);
+  box-shadow: 0 4px 12px rgba(69, 139, 0, 0.3);
 }
 
 .userMenu {
@@ -157,6 +157,7 @@
 .logoText {
   font-size: 20px;
   font-weight: bold;
+  color: white;
 }
 
 .sidebarClose {
@@ -209,6 +210,7 @@
   width: 100%;
   text-align: left;
   font-family: inherit;
+  cursor: pointer;
 }
 
 .navLink:hover {
@@ -252,7 +254,7 @@
   gap: 12px;
 }
 
-.userAvatar {
+.userPanel .userAvatar {
   width: 40px;
   height: 40px;
   border-radius: 50%;
@@ -271,6 +273,7 @@
   font-size: 14px;
   font-weight: 600;
   margin: 0;
+  color: white;
 }
 
 .userRole {
@@ -287,172 +290,176 @@
   overflow-y: auto;
 }
 
-/* Statistics */
-.statsGrid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-  gap: 20px;
+/* Form Container */
+.formContainer {
   padding: 30px;
+  max-width: 1000px;
+  margin: 0 auto;
 }
 
-.statCard {
-  background: white;
-  padding: 24px;
-  border-radius: 12px;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
-  display: flex;
-  align-items: center;
-  gap: 16px;
-  transition: transform 0.3s ease;
+.avisoExistente {
+  background-color: #fffbeb;
+  border: 1px solid #fcd34d;
+  border-radius: 6px;
+  padding: 1rem;
+  margin-bottom: 1.5rem;
+  color: #92400e;
 }
 
-.statCard:hover {
-  transform: translateY(-2px);
+.formHeader {
+  margin-bottom: 2rem;
 }
 
-.statIcon {
-  width: 60px;
-  height: 60px;
-  border-radius: 12px;
-  background: linear-gradient(135deg, #3498db 0%, #2980b9 100%);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 24px;
-}
-
-.statContent h3 {
-  font-size: 28px;
-  font-weight: 700;
+.formHeader h2 {
+  font-size: 1.8rem;
   color: #1e293b;
-  margin: 0 0 4px 0;
+  margin: 0 0 0.5rem 0;
 }
 
-.statContent p {
-  font-size: 14px;
+.formHeader p {
   color: #64748b;
   margin: 0;
 }
 
-/* Tabela */
-.tableContainer {
-  padding: 0 30px 30px;
-}
-
-.tableWrapper {
+.form {
   background: white;
   border-radius: 12px;
-  overflow: hidden;
+  padding: 2rem;
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
 }
 
-.tabela {
-  width: 100%;
-  border-collapse: collapse;
+.formGrid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 2rem;
+  margin-bottom: 2rem;
 }
 
-.tabela th {
-  background: #f8fafc;
-  padding: 16px;
-  text-align: left;
-  font-weight: 600;
-  color: #475569;
-  border-bottom: 2px solid #e2e8f0;
-}
-
-.tabela td {
-  padding: 16px;
-  border-bottom: 1px solid #f1f5f9;
-}
-
-.tableRow:hover {
-  background: #f8fafc;
-}
-
-.imgThumb {
-  width: 50px;
-  height: 50px;
-  object-fit: cover;
-  border-radius: 8px;
+.formSection {
   border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  padding: 1.5rem;
 }
 
-.medName {
-  font-weight: 600;
+.sectionTitle {
+  font-size: 1.2rem;
   color: #1e293b;
+  margin: 0 0 1.5rem 0;
+  padding-bottom: 0.5rem;
+  border-bottom: 2px solid #f1f5f9;
 }
 
-.medDosage,
-.medQuantity,
-.medType,
-.medForm,
-.medLab {
-  font-size: 14px;
-  color: #64748b;
+.formRow {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
 }
 
-.money {
+.formGroup {
+  margin-bottom: 1.5rem;
+}
+
+.inputLabel {
+  display: block;
+  margin-bottom: 0.5rem;
   font-weight: 600;
-  color: #059669;
-  text-align: right;
+  color: #374151;
+  font-size: 0.9rem;
 }
 
-.actionButtons {
+.modernInput,
+.modernTextarea {
+  width: 100%;
+  padding: 0.75rem;
+  border: 1px solid #d1d5db;
+  border-radius: 6px;
+  font-size: 1rem;
+  transition: border-color 0.3s ease, box-shadow 0.3s ease;
+  box-sizing: border-box;
+}
+
+.modernInput:focus,
+.modernTextarea:focus {
+  outline: none;
+  border-color: #3498db;
+  box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.2);
+}
+
+.modernTextarea {
+  resize: vertical;
+  min-height: 100px;
+}
+
+/* Campos desabilitados */
+.modernInput:read-only,
+.modernInput:disabled,
+.modernTextarea:read-only,
+.modernSelect:disabled {
+  background-color: #f5f5f5 !important;
+  cursor: not-allowed !important;
+  color: #666;
+}
+
+/* Form Actions */
+.formActions {
   display: flex;
-  gap: 8px;
+  justify-content: flex-end;
+  gap: 1rem;
+  margin-top: 2rem;
+  padding-top: 1.5rem;
+  border-top: 1px solid #e2e8f0;
 }
 
-.botao {
-  padding: 8px 12px;
-  border: none;
+.cancelButton {
+  padding: 0.75rem 1.5rem;
+  border: 1px solid #d1d5db;
+  background: white;
+  color: #374151;
   border-radius: 6px;
   cursor: pointer;
-  font-size: 14px;
+  font-weight: 500;
   transition: all 0.3s ease;
 }
 
-.botaoEditar {
-  background: #fef3c7;
-  color: #d97706;
+.cancelButton:hover {
+  background: #f9fafb;
 }
 
-.botaoEditar:hover {
-  background: #fde68a;
+.submitButton {
+  padding: 0.75rem 1.5rem;
+  border: none;
+  background: #458b00;
+  color: white;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: 500;
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
 }
 
-.botaoExcluir {
-  background: #fee2e2;
-  color: #dc2626;
+.submitButton:hover {
+  background: #3a7500;
 }
 
-.botaoExcluir:hover {
-  background: #fecaca;
+.submitButton:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
 }
 
-/* Empty State */
-.emptyState {
-  text-align: center;
-  padding: 60px 30px;
-  background: white;
-  border-radius: 16px;
-  margin: 30px;
+.loadingSpinnerSmall {
+  width: 16px;
+  height: 16px;
+  border: 2px solid transparent;
+  border-top: 2px solid white;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
 }
 
-.emptyIcon {
-  font-size: 64px;
-  margin-bottom: 20px;
-  opacity: 0.5;
-}
-
-.emptyState h3 {
-  font-size: 20px;
-  color: #64748b;
-  margin: 0 0 8px 0;
-}
-
-.emptyState p {
-  color: #94a3b8;
-  margin: 0 0 20px 0;
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
 }
 
 /* Overlay para mobile */
@@ -469,12 +476,9 @@
 
 /* Responsividade */
 @media (max-width: 1024px) {
-  .statsGrid {
-    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-  }
-
-  .searchInput {
-    width: 200px;
+  .formGrid {
+    grid-template-columns: 1fr;
+    gap: 1.5rem;
   }
 }
 
@@ -517,32 +521,27 @@
     width: 180px;
   }
 
-  .statsGrid {
-    grid-template-columns: 1fr;
+  .formContainer {
     padding: 20px;
   }
 
-  .tableContainer {
-    padding: 0 20px 20px;
+  .form {
+    padding: 1.5rem;
   }
 
-  .tabela {
-    display: block;
-    overflow-x: auto;
+  .formRow {
+    grid-template-columns: 1fr;
+    gap: 0;
   }
 
-  .tabela th,
-  .tabela td {
-    padding: 12px 8px;
-    font-size: 14px;
-  }
-
-  .actionButtons {
+  .formActions {
     flex-direction: column;
   }
 
-  .botao {
-    padding: 6px 10px;
+  .cancelButton,
+  .submitButton {
+    width: 100%;
+    text-align: center;
   }
 }
 
@@ -571,25 +570,18 @@
     font-size: 14px;
   }
 
-  .statsGrid {
-    gap: 12px;
+  .formContainer {
+    padding: 15px;
   }
 
-  .statCard {
-    padding: 16px;
+  .form {
+    padding: 1rem;
   }
 
-  .statIcon {
-    width: 50px;
-    height: 50px;
-    font-size: 20px;
-  }
-
-  .statContent h3 {
-    font-size: 24px;
+  .formSection {
+    padding: 1rem;
   }
 }
-
 
 /* Estilos para o modal */
 .modalOverlay {
@@ -600,13 +592,13 @@
   bottom: 0;
   background-color: rgba(0, 0, 0, 0.5);
   display: flex;
-  align-items: center;
   justify-content: center;
+  align-items: center;
   z-index: 1000;
 }
 
 .modal {
-  background: white;
+  background-color: white;
   border-radius: 8px;
   width: 90%;
   max-width: 500px;
@@ -615,17 +607,16 @@
 }
 
 .modalHeader {
-  padding: 1.5rem;
-  border-bottom: 1px solid #e5e7eb;
   display: flex;
   justify-content: space-between;
   align-items: center;
+  padding: 1.5rem;
+  border-bottom: 1px solid #e5e7eb;
 }
 
 .modalHeader h2 {
   margin: 0;
   font-size: 1.5rem;
-  font-weight: 600;
   color: #1f2937;
 }
 
@@ -645,25 +636,19 @@
   padding: 1.5rem;
 }
 
-.modalBody p {
-  margin-top: 0;
-  margin-bottom: 1rem;
-  color: #4b5563;
-}
-
 .inputCodigo {
   width: 100%;
   padding: 0.75rem;
   border: 1px solid #d1d5db;
-  border-radius: 6px;
+  border-radius: 4px;
   font-size: 1rem;
-  margin-bottom: 1rem;
+  margin-top: 0.5rem;
 }
 
 .inputCodigo:focus {
   outline: none;
   border-color: #3b82f6;
-  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.2);
 }
 
 .erro {
@@ -673,79 +658,77 @@
 }
 
 .aviso {
+  color: #6366f1;
   font-weight: 500;
-  color: #1f2937;
+  margin-bottom: 1rem;
 }
 
-.laboratorioInfo {
+.medicamentoInfo {
   display: flex;
   align-items: center;
   gap: 1rem;
-  margin: 1.5rem 0;
+  margin-bottom: 1.5rem;
   padding: 1rem;
   background-color: #f9fafb;
-  border-radius: 8px;
+  border-radius: 6px;
 }
 
-.labAvatarModal {
-  width: 48px;
-  height: 48px;
-  border-radius: 50%;
-  background-color: #3b82f6;
-  color: white;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-weight: bold;
-  font-size: 1.25rem;
+.imgThumbModal {
+  width: 50px;
+  height: 50px;
+  object-fit: contain;
+  border-radius: 4px;
 }
 
-.laboratorioInfo h3 {
+.medicamentoInfo h3 {
   margin: 0 0 0.25rem 0;
   font-size: 1.125rem;
 }
 
-.laboratorioInfo p {
+.medicamentoInfo p {
   margin: 0;
   color: #6b7280;
 }
 
 .pergunta {
   font-weight: 500;
-  margin: 1.5rem 0 1rem 0;
+  margin-bottom: 1rem;
 }
 
 .modalFooter {
-  padding: 1.5rem;
-  border-top: 1px solid #e5e7eb;
   display: flex;
   justify-content: flex-end;
   gap: 0.75rem;
-}
-
-.botao {
-  padding: 0.625rem 1.25rem;
-  border-radius: 6px;
-  font-weight: 500;
-  cursor: pointer;
-  transition: all 0.2s;
-  border: none;
-}
-
-.botaoPrincipal {
-  background-color: #3b82f6;
-  color: white;
-}
-
-.botaoPrincipal:hover {
-  background-color: #2563eb;
+  padding: 1.5rem;
+  border-top: 1px solid #e5e7eb;
 }
 
 .botaoSecundario {
+  padding: 0.75rem 1.5rem;
   background-color: #f3f4f6;
-  color: #4b5563;
+  color: #374151;
+  border: 1px solid #d1d5db;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: 500;
+  transition: all 0.3s ease;
 }
 
 .botaoSecundario:hover {
   background-color: #e5e7eb;
+}
+
+.botaoPrincipalModal {
+  padding: 0.75rem 1.5rem;
+  background-color: #458b00;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: 500;
+  transition: all 0.3s ease;
+}
+
+.botaoPrincipalModal:hover {
+  background-color: #3a7500;
 }
