@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
-import styles from "./index.module.css"; // Nome corrigido para coincidir com o arquivo
+import styles from "./index.module.css";
 
 export default function EditarFuncionarioPage() {
   const router = useRouter();
@@ -100,14 +100,14 @@ export default function EditarFuncionarioPage() {
             className={styles.menuToggle}
             onClick={() => setSidebarOpen(!sidebarOpen)}
           >
-            ☰
+             ☰
           </button>
-          <h1 className={styles.title}>Editar Funcionário</h1>
+          <h1 className={styles.title}> Editar Funcionário</h1>
         </div>
       </header>
 
       <div className={styles.contentWrapper}>
-        {/* Sidebar FIXA - Corrigida */}
+        {/* Sidebar Não Fixa */}
         <aside className={`${styles.sidebar} ${sidebarOpen ? styles.sidebarOpen : ""}`}>
           
           <div className={styles.sidebarHeader}>
@@ -120,17 +120,17 @@ export default function EditarFuncionarioPage() {
               className={styles.sidebarClose}
               onClick={() => setSidebarOpen(false)}
             >
-              ×
+              x
             </button>
           </div>
 
           <nav className={styles.nav}>
             <div className={styles.navSection}>
               <p className={styles.navLabel}>Principal</p>
-              <a href="/dashboard" className={styles.navLink}>
-                <span className={styles.navText}>Dashboard</span>
+              <a href="/farmacias/favoritos" className={styles.navLink}>
+                <span className={styles.navText}>Favoritos</span>
               </a>
-              <a href="/produtos/medicamentos" className={styles.navLink}>
+              <a href="/farmacias/produtos/medicamentos" className={styles.navLink}>
                 <span className={styles.navText}>Medicamentos</span>
               </a>
             </div>
@@ -138,12 +138,12 @@ export default function EditarFuncionarioPage() {
             <div className={styles.navSection}>
               <p className={styles.navLabel}>Gestão</p>
               <a
-                href="/funcionarios/lista"
+                href="/farmacias/cadastro/funcionario/lista"
                 className={styles.navLink}
               >
                 <span className={styles.navText}>Funcionários</span>
               </a>
-              <a href="/laboratorios/lista" className={styles.navLink}>
+              <a href="/farmacias/laboratorio/lista" className={styles.navLink}>
                 <span className={styles.navText}>Laboratórios</span>
               </a>
             </div>
@@ -353,7 +353,7 @@ export default function EditarFuncionarioPage() {
                   type="button"
                   className={styles.cancelButton}
                   onClick={() =>
-                    router.push("/funcionarios/lista")
+                    router.push("/farmacias/cadastro/funcionario/lista")
                   }
                 >
                   Cancelar
