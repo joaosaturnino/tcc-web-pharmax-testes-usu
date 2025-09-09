@@ -29,8 +29,8 @@ function Cabecalho() {
         </div>
         <nav className={styles.menuGrande}>
           <Link
-            href="/index"
-            className={rota === "/index" ? styles.active : ""}
+            href="/login"
+            className={rota === "/login" ? styles.active : ""}
           >
             Login
           </Link>
