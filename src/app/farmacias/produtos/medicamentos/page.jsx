@@ -2,7 +2,7 @@
 import Link from "next/link";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import styles from "./cadastro.module.css"; // CORREÇÃO: caminho relativo
+import styles from "./cadastro.module.css";
 
 const imagemPadrao =
   "https://www.institutoaron.com.br/static/img/large/c28a030a59bae1283321c340cdc846df.webp";
@@ -153,7 +153,7 @@ function ListagemMedicamentos() {
               className={styles.sidebarClose}
               onClick={() => setSidebarOpen(false)}
             >
-              ✕ {/* CORREÇÃO: ícone melhor */}
+              ✕
             </button>
           </div>
 
@@ -186,7 +186,7 @@ function ListagemMedicamentos() {
           </nav>
         </aside>
 
-        {/* Overlay para mobile - CORREÇÃO: condicional correto */}
+        {/* Overlay para mobile */}
         {sidebarOpen && (
           <div
             className={styles.overlay}
@@ -230,6 +230,7 @@ function ListagemMedicamentos() {
                       <th>Tipo</th>
                       <th>Forma</th>
                       <th>Laboratório</th>
+                      <th>Código de Barras</th>
                       <th>Ações</th>
                     </tr>
                   </thead>
@@ -271,6 +272,11 @@ function ListagemMedicamentos() {
                         <td>
                           <span className={styles.medLab}>
                             {med.laboratorio}
+                          </span>
+                        </td>
+                        <td>
+                          <span className={styles.medCodigo}>
+                            {med.codigoBarras}
                           </span>
                         </td>
                         <td>
@@ -342,6 +348,9 @@ function ListagemMedicamentos() {
                     <div>
                       <h3>{medicamentoExistente.nome}</h3>
                       <p>{medicamentoExistente.dosagem} - {medicamentoExistente.laboratorio}</p>
+                      <p className={styles.medCodigoModal}>
+                        Código: {medicamentoExistente.codigoBarras}
+                      </p>
                     </div>
                   </div>
                   <p className={styles.pergunta}>

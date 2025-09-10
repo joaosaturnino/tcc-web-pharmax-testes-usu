@@ -408,9 +408,15 @@
 .medQuantity,
 .medType,
 .medForm,
-.medLab {
+.medLab,
+.medCodigo {
   font-size: 14px;
   color: #64748b;
+}
+
+.medCodigo {
+  font-family: monospace;
+  font-size: 12px;
 }
 
 .money {
@@ -600,6 +606,12 @@
 .medicamentoInfo p {
   margin: 0;
   color: #6b7280;
+}
+
+.medCodigoModal {
+  font-family: monospace;
+  font-size: 12px;
+  margin-top: 0.5rem !important;
 }
 
 .pergunta {
