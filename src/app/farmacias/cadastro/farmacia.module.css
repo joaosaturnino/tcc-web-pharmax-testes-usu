@@ -428,3 +428,55 @@
     font-size: 14px;
   }
 }
+
+/* Estilos para validação */
+.formControl {
+  position: relative;
+}
+
+.success .input,
+.success .fileUploadContainer {
+  border-color: #4caf50;
+}
+
+.error .input,
+.error .fileUploadContainer {
+  border-color: #f44336;
+}
+
+.sucesso, .erro {
+  position: absolute;
+  right: 12px;
+  top: 38px;
+  font-size: 20px;
+  pointer-events: none;
+}
+
+.sucesso {
+  color: #4caf50;
+  display: none;
+}
+
+.erro {
+  color: #f44336;
+  display: none;
+}
+
+.success .sucesso {
+  display: block;
+}
+
+.error .erro {
+  display: block;
+}
+
+.small {
+  color: #f44336;
+  font-size: 12px;
+  margin-top: 4px;
+  display: block;
+}
+
+.divInput {
+  position: relative;
+}

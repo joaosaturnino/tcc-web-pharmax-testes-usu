@@ -3,6 +3,9 @@ import { useState, useEffect } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import styles from "./page.module.css";
 
+// Ícones para validação
+import { MdCheckCircle, MdError } from "react-icons/md";
+
 const imagemPadrao = "https://www.institutoaron.com.br/static/img/large/c28a030a59bae1283321c340cdc846df.webp";
 
 // Simulação de banco de dados (deve ser o mesmo da listagem)
@@ -61,6 +64,18 @@ export default function CadastroMedicamentoPage() {
     codigoBarras: codigoBarras || ""
   });
 
+  // Estados para validação
+  const valDefault = styles.formControl;
+  const valSucesso = `${styles.formControl} ${styles.success}`;
+  const valErro = `${styles.formControl} ${styles.error}`;
+
+  const [valida, setValida] = useState({
+    preco: {
+      validado: valDefault,
+      mensagem: []
+    }
+  });
+
   // Buscar medicamento existente quando o componente é montado
   useEffect(() => {
     if (codigoBarras) {
@@ -94,8 +109,45 @@ export default function CadastroMedicamentoPage() {
     }
   };
 
+  // Função de validação para preço
+  function validaPreco() {
+    let objTemp = {
+      validado: valSucesso,
+      mensagem: []
+    };
+
+    if (form.preco === '') {
+      objTemp.validado = valErro;
+      objTemp.mensagem.push('O preço é obrigatório');
+    } else if (parseFloat(form.preco) <= 0) {
+      objTemp.validado = valErro;
+      objTemp.mensagem.push('O preço deve ser maior que zero');
+    } else if (parseFloat(form.preco) > 10000) {
+      objTemp.validado = valErro;
+      objTemp.mensagem.push('O preço não pode ser superior a R$ 10.000,00');
+    }
+
+    setValida(prev => ({
+      ...prev,
+      preco: objTemp
+    }));
+
+    return objTemp.mensagem.length === 0 ? 1 : 0;
+  }
+
   const handleSubmit = async (e) => {
     e.preventDefault();
+    
+    // Se for um medicamento existente, valida apenas o preço
+    let itensValidados = 0;
+    if (medicamentoExistente) {
+      itensValidados += validaPreco();
+      
+      if (itensValidados !== 1) {
+        return; // Não prossegue se houver erros de validação
+      }
+    }
+    
     setLoading(true);
     
     // Simulando processamento
@@ -251,21 +303,32 @@ export default function CadastroMedicamentoPage() {
                     </div>
                   </div>
 
-                  <div className={styles.formGroup}>
+                  <div className={valida.preco.validado}>
                     <label className={styles.inputLabel}>Preço (R$)</label>
-                    <input
-                      className={styles.modernInput}
-                      type="number"
-                      name="preco"
-                      value={form.preco}
-                      onChange={handleChange}
-                      min="0"
-                      step="0.01"
-                      placeholder="0,00"
-                      required
-                      style={medicamentoExistente ? {} : {backgroundColor: "#f5f5f5", cursor: "not-allowed"}}
-                      readOnly={!medicamentoExistente}
-                    />
+                    <div className={styles.divInput}>
+                      <input
+                        className={styles.modernInput}
+                        type="number"
+                        name="preco"
+                        value={form.preco}
+                        onChange={handleChange}
+                        min="0"
+                        step="0.01"
+                        placeholder="0,00"
+                        required
+                        style={medicamentoExistente ? {} : {backgroundColor: "#f5f5f5", cursor: "not-allowed"}}
+                        readOnly={!medicamentoExistente}
+                      />
+                      {medicamentoExistente && (
+                        <>
+                          <MdCheckCircle className={styles.sucesso} />
+                          <MdError className={styles.erro} />
+                        </>
+                      )}
+                    </div>
+                    {valida.preco.mensagem.map(mens => 
+                      <small key={mens} className={styles.small}>{mens}</small>
+                    )}
                   </div>
                 </div>
 

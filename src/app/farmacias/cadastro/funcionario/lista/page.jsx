@@ -4,13 +4,17 @@ import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import styles from "./page.module.css";
 
+// Ícones para validação
+import { MdCheckCircle, MdError, MdEdit, MdDelete } from "react-icons/md";
+
 export default function ListaFuncionariosPage() {
   const router = useRouter();
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [funcionarios, setFuncionarios] = useState([]);
   const [filtro, setFiltro] = useState("");
+  const [loading, setLoading] = useState(false);
 
-  // Dados de exemplo (em uma aplicação real, viriam de uma API)
+  // Dados de exemplo
   useEffect(() => {
     const dadosExemplo = [
       {
@@ -85,9 +89,38 @@ export default function ListaFuncionariosPage() {
     router.push("/farmacias/cadastro/funcionario");
   };
 
-  const handleExcluir = (id) => {
-    if (confirm("Tem certeza que deseja excluir este funcionário?")) {
-      setFuncionarios(funcionarios.filter((func) => func.id !== id));
+  const validarExclusao = (funcionario) => {
+    // Não permitir exclusão de administradores
+    if (funcionario.nivelAcesso === "Administrador") {
+      alert("Não é possível excluir um usuário com nível de acesso Administrador.");
+      return false;
+    }
+    
+    // Verificar se é o próprio usuário logado
+    // (em uma aplicação real, você teria essa informação)
+    const usuarioLogadoId = 1; // Exemplo
+    if (funcionario.id === usuarioLogadoId) {
+      alert("Você não pode excluir sua própria conta.");
+      return false;
+    }
+    
+    return true;
+  };
+
+  const handleExcluir = (funcionario) => {
+    if (!validarExclusao(funcionario)) {
+      return;
+    }
+    
+    if (confirm(`Tem certeza que deseja excluir o funcionário ${funcionario.nome}? Esta ação não pode ser desfeita.`)) {
+      setLoading(true);
+      
+      // Simular processamento
+      setTimeout(() => {
+        setFuncionarios(funcionarios.filter((func) => func.id !== funcionario.id));
+        setLoading(false);
+        alert("Funcionário excluído com sucesso!");
+      }, 1000);
     }
   };
 
@@ -95,7 +128,9 @@ export default function ListaFuncionariosPage() {
     (funcionario) =>
       funcionario.nome.toLowerCase().includes(filtro.toLowerCase()) ||
       funcionario.email.toLowerCase().includes(filtro.toLowerCase()) ||
-      funcionario.nivelAcesso.toLowerCase().includes(filtro.toLowerCase())
+      funcionario.nivelAcesso.toLowerCase().includes(filtro.toLowerCase()) ||
+      funcionario.usuario.toLowerCase().includes(filtro.toLowerCase()) ||
+      funcionario.telefone.includes(filtro)
   );
 
   // Função para gerar cor baseada no nome
@@ -127,36 +162,15 @@ export default function ListaFuncionariosPage() {
           >
             ☰
           </button>
-          {/* <h1 className={styles.title}>👥 Lista de Funcionários</h1> */}
-          <h1 className={styles.title}> Lista de Funcionários</h1>
+          <h1 className={styles.title}>Lista de Funcionários</h1>
         </div>
-        {/* <div className={styles.headerActions}>
-          <div className={styles.searchBox}>
-            <input 
-              type="text" 
-              placeholder="Buscar funcionários..." 
-              className={styles.searchInput}
-              value={filtro}
-              onChange={(e) => setFiltro(e.target.value)}
-            />
-            <span className={styles.searchIcon}>🔍</span>
-          </div>
-          <div className={styles.userMenu}>
-            <span className={styles.userAvatar}>👤</span>
-          </div>
-        </div> */}
       </header>
 
       <div className={styles.contentWrapper}>
         {/* Sidebar Não Fixa */}
-        <aside
-          className={`${styles.sidebar} ${
-            sidebarOpen ? styles.sidebarOpen : ""
-          }`}
-        >
+        <aside className={`${styles.sidebar} ${sidebarOpen ? styles.sidebarOpen : ""}`}>
           <div className={styles.sidebarHeader}>
             <div className={styles.logo}>
-              {/* <span className={styles.logoIcon}>💊</span> */}
               <span className={styles.logoText}>PharmaX</span>
             </div>
             <button
@@ -171,14 +185,9 @@ export default function ListaFuncionariosPage() {
             <div className={styles.navSection}>
               <p className={styles.navLabel}>Principal</p>
               <a href="/farmacias/favoritos" className={styles.navLink}>
-                {/* <span className={styles.navIcon}>⭐</span> */}
                 <span className={styles.navText}>Favoritos</span>
               </a>
-              <a
-                href="/farmacias/produtos/medicamentos"
-                className={styles.navLink}
-              >
-                {/* <span className={styles.navIcon}>💊</span> */}
+              <a href="/farmacias/produtos/medicamentos" className={styles.navLink}>
                 <span className={styles.navText}>Medicamentos</span>
               </a>
             </div>
@@ -189,49 +198,18 @@ export default function ListaFuncionariosPage() {
                 href="/farmacias/cadastro/funcionario/lista"
                 className={`${styles.navLink} ${styles.active}`}
               >
-                {/* <span className={styles.navIcon}>👩‍⚕️</span> */}
                 <span className={styles.navText}>Funcionários</span>
               </a>
               <a href="/farmacias/laboratorio/lista" className={styles.navLink}>
-                {/* <span className={styles.navIcon}>🏭</span> */}
                 <span className={styles.navText}>Laboratórios</span>
               </a>
             </div>
-
-            {/* <div className={styles.navSection}>
-              <p className={styles.navLabel}>Sistema</p>
-              <a href="../../../configuracoes" className={styles.navLink}>
-                <span className={styles.navIcon}>⚙️</span>
-                <span className={styles.navText}>Configurações</span>
-              </a>
-              <a href="/farmacias/perfil" className={`${styles.navLink} ${styles.active}`}>
-                <span className={styles.navIcon}>👤</span>
-                <span className={styles.navText}>Meu Perfil</span>
-              </a>
-              <button className={styles.navLink}>
-                <span className={styles.navIcon}>🚪</span>
-                <span className={styles.navText}>Sair</span>
-              </button>
-            </div> */}
           </nav>
-
-          {/* <div className={styles.userPanel}>
-            <div className={styles.userAvatar}>
-              <span>👤</span>
-            </div>
-            <div className={styles.userInfo}>
-              <p className={styles.userName}>Administrador</p>
-              <p className={styles.userRole}>Supervisor</p>
-            </div>
-          </div> */}
         </aside>
 
         {/* Overlay para mobile */}
         {sidebarOpen && (
-          <div
-            className={styles.overlay}
-            onClick={() => setSidebarOpen(false)}
-          />
+          <div className={styles.overlay} onClick={() => setSidebarOpen(false)} />
         )}
 
         {/* Conteúdo Principal */}
@@ -245,10 +223,34 @@ export default function ListaFuncionariosPage() {
               <button
                 className={styles.submitButton}
                 onClick={handleNovoFuncionario}
+                disabled={loading}
               >
-                <span className={styles.buttonIcon}>➕</span>
+                <span className={styles.buttonIcon}>+</span>
                 Novo Funcionário
               </button>
+            </div>
+
+            {/* Filtro de busca */}
+            <div className={styles.filtroContainer}>
+              <div className={styles.filtroGroup}>
+                <input
+                  type="text"
+                  placeholder="Buscar por nome, e-mail, usuário ou nível de acesso..."
+                  value={filtro}
+                  onChange={(e) => setFiltro(e.target.value)}
+                  className={styles.filtroInput}
+                  disabled={loading}
+                />
+                {filtro && (
+                  <button
+                    className={styles.limparFiltro}
+                    onClick={() => setFiltro("")}
+                    disabled={loading}
+                  >
+                    ×
+                  </button>
+                )}
+              </div>
             </div>
 
             <div className={styles.tableContainer}>
@@ -272,9 +274,7 @@ export default function ListaFuncionariosPage() {
                             <div
                               className={styles.funcionarioAvatar}
                               style={{
-                                backgroundColor: getAvatarColor(
-                                  funcionario.nome
-                                ),
+                                backgroundColor: getAvatarColor(funcionario.nome),
                               }}
                             >
                               {funcionario.nome.charAt(0)}
@@ -301,9 +301,7 @@ export default function ListaFuncionariosPage() {
                           </span>
                         </td>
                         <td>
-                          {new Date(
-                            funcionario.dataCadastro
-                          ).toLocaleDateString("pt-BR")}
+                          {new Date(funcionario.dataCadastro).toLocaleDateString("pt-BR")}
                         </td>
                         <td>
                           <div className={styles.acoes}>
@@ -311,15 +309,23 @@ export default function ListaFuncionariosPage() {
                               className={styles.editarButton}
                               onClick={() => handleEditar(funcionario.id)}
                               title="Editar funcionário"
+                              disabled={loading}
                             >
-                              ✏️
+                              <MdEdit size={16} />
                             </button>
                             <button
-                              className={styles.excluirButton}
-                              onClick={() => handleExcluir(funcionario.id)}
-                              title="Excluir funcionário"
+                              className={`${styles.excluirButton} ${
+                                funcionario.nivelAcesso === "Administrador" ? styles.disabledButton : ""
+                              }`}
+                              onClick={() => handleExcluir(funcionario)}
+                              title={
+                                funcionario.nivelAcesso === "Administrador" 
+                                  ? "Não é possível excluir administradores" 
+                                  : "Excluir funcionário"
+                              }
+                              disabled={loading || funcionario.nivelAcesso === "Administrador"}
                             >
-                              🗑️
+                              <MdDelete size={16} />
                             </button>
                           </div>
                         </td>
@@ -341,8 +347,16 @@ export default function ListaFuncionariosPage() {
             <div className={styles.listaFooter}>
               <div className={styles.totalRegistros}>
                 Total: {funcionariosFiltrados.length} funcionário(s)
+                {filtro && ` (filtrado de ${funcionarios.length})`}
               </div>
             </div>
+
+            {loading && (
+              <div className={styles.loadingOverlay}>
+                <div className={styles.loadingSpinner}></div>
+                <p>Processando...</p>
+              </div>
+            )}
           </div>
         </main>
       </div>

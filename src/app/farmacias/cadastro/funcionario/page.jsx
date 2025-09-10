@@ -1,119 +1,361 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { useRouter } from "next/navigation";
-import styles from "./funcionario.module.css"; // Nome corrigido para coincidir
+import styles from "./funcionario.module.css";
 
-export default function ListaFuncionariosPage() {
+// Ícones para validação
+import { MdCheckCircle, MdError } from "react-icons/md";
+
+export default function CadastroFuncionarioPage() {
   const router = useRouter();
   const [sidebarOpen, setSidebarOpen] = useState(false);
-  const [funcionarios, setFuncionarios] = useState([]);
-  const [filtro, setFiltro] = useState("");
+  const [loading, setLoading] = useState(false);
 
-  // Dados de exemplo
-  useEffect(() => {
-    const dadosExemplo = [
-      {
-        id: 1,
-        nome: "Maria Silva",
-        email: "maria.silva@pharmax.com",
-        telefone: "(11) 99999-9999",
-        cpf: "123.456.789-00",
-        dataNascimento: "1990-05-15",
-        endereco: "Rua das Flores, 123 - São Paulo/SP",
-        usuario: "maria.silva",
-        nivelAcesso: "Administrador",
-        dataCadastro: "2023-01-15",
-      },
-      {
-        id: 2,
-        nome: "João Santos",
-        email: "joao.santos@pharmax.com",
-        telefone: "(11) 98888-8888",
-        cpf: "987.654.321-00",
-        dataNascimento: "1985-10-22",
-        endereco: "Av. Paulista, 1000 - São Paulo/SP",
-        usuario: "joao.santos",
-        nivelAcesso: "Gerente",
-        dataCadastro: "2023-02-20",
-      },
-      {
-        id: 3,
-        nome: "Ana Costa",
-        email: "ana.costa@pharmax.com",
-        telefone: "(11) 97777-7777",
-        cpf: "456.789.123-00",
-        dataNascimento: "1992-03-30",
-        endereco: "Rua Augusta, 500 - São Paulo/SP",
-        usuario: "ana.costa",
-        nivelAcesso: "Funcionário",
-        dataCadastro: "2023-03-10",
-      },
-      {
-        id: 4,
-        nome: "Pedro Oliveira",
-        email: "pedro.oliveira@pharmax.com",
-        telefone: "(11) 96666-6666",
-        cpf: "789.123.456-00",
-        dataNascimento: "1988-12-05",
-        endereco: "Rua Consolação, 789 - São Paulo/SP",
-        usuario: "pedro.oliveira",
-        nivelAcesso: "Supervisor",
-        dataCadastro: "2023-04-15",
-      },
-      {
-        id: 5,
-        nome: "Carla Rodrigues",
-        email: "carla.rodrigues@pharmax.com",
-        telefone: "(11) 95555-5555",
-        cpf: "321.654.987-00",
-        dataNascimento: "1995-07-20",
-        endereco: "Alameda Santos, 456 - São Paulo/SP",
-        usuario: "carla.rodrigues",
-        nivelAcesso: "Visitante",
-        dataCadastro: "2023-05-22",
-      },
-    ];
-    setFuncionarios(dadosExemplo);
-  }, []);
+  const [form, setForm] = useState({
+    nome: "",
+    email: "",
+    telefone: "",
+    cpf: "",
+    dataNascimento: "",
+    endereco: "",
+    usuario: "",
+    senha: "",
+    confirmarSenha: "",
+    nivelAcesso: "Funcionário",
+  });
 
-  const handleEditar = (id) => {
-    router.push(`/farmacias/cadastro/funcionario/editar/${id}`);
-  };
+  // Estados para validação
+  const valDefault = styles.formControl;
+  const valSucesso = `${styles.formControl} ${styles.success}`;
+  const valErro = `${styles.formControl} ${styles.error}`;
 
-  const handleNovoFuncionario = () => {
-    router.push("/farmacias/cadastro/funcionario");
-  };
-
-  const handleExcluir = (id) => {
-    if (confirm("Tem certeza que deseja excluir este funcionário?")) {
-      setFuncionarios(funcionarios.filter((func) => func.id !== id));
+  const [valida, setValida] = useState({
+    nome: {
+      validado: valDefault,
+      mensagem: []
+    },
+    email: {
+      validado: valDefault,
+      mensagem: []
+    },
+    telefone: {
+      validado: valDefault,
+      mensagem: []
+    },
+    cpf: {
+      validado: valDefault,
+      mensagem: []
+    },
+    dataNascimento: {
+      validado: valDefault,
+      mensagem: []
+    },
+    endereco: {
+      validado: valDefault,
+      mensagem: []
+    },
+    usuario: {
+      validado: valDefault,
+      mensagem: []
+    },
+    senha: {
+      validado: valDefault,
+      mensagem: []
+    },
+    confirmarSenha: {
+      validado: valDefault,
+      mensagem: []
+    },
+    nivelAcesso: {
+      validado: valDefault,
+      mensagem: []
     }
+  });
+
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setForm({
+      ...form,
+      [name]: value,
+    });
   };
 
-  const funcionariosFiltrados = funcionarios.filter(
-    (funcionario) =>
-      funcionario.nome.toLowerCase().includes(filtro.toLowerCase()) ||
-      funcionario.email.toLowerCase().includes(filtro.toLowerCase()) ||
-      funcionario.nivelAcesso.toLowerCase().includes(filtro.toLowerCase())
-  );
+  // Funções de validação
+  function validaNome() {
+    let objTemp = {
+      validado: valSucesso,
+      mensagem: []
+    };
 
-  // Função para gerar cor baseada no nome
-  const getAvatarColor = (nome) => {
-    const colors = [
-      "#3498db",
-      "#2ecc71",
-      "#e74c3c",
-      "#f39c12",
-      "#9b59b6",
-      "#1abc9c",
-      "#d35400",
-      "#c0392b",
-      "#16a085",
-      "#27ae60",
-    ];
-    const index = nome.charCodeAt(0) % colors.length;
-    return colors[index];
+    if (form.nome === '') {
+      objTemp.validado = valErro;
+      objTemp.mensagem.push('O nome do funcionário é obrigatório');
+    } else if (form.nome.length < 3) {
+      objTemp.validado = valErro;
+      objTemp.mensagem.push('O nome deve ter pelo menos 3 caracteres');
+    }
+
+    setValida(prev => ({
+      ...prev,
+      nome: objTemp
+    }));
+
+    return objTemp.mensagem.length === 0 ? 1 : 0;
+  }
+
+  function checkEmail(email) {
+    return /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/.test(
+      email
+    );
+  }
+
+  function validaEmail() {
+    let objTemp = {
+      validado: valSucesso,
+      mensagem: []
+    };
+
+    if (form.email === "") {
+      objTemp.validado = valErro;
+      objTemp.mensagem.push('O e-mail é obrigatório');
+    } else if (!checkEmail(form.email)) {
+      objTemp.validado = valErro;
+      objTemp.mensagem.push('Insira um e-mail válido');
+    }
+
+    setValida(prev => ({
+      ...prev,
+      email: objTemp
+    }));
+
+    return objTemp.mensagem.length === 0 ? 1 : 0;
+  }
+
+  function validaTelefone() {
+    let objTemp = {
+      validado: valSucesso,
+      mensagem: []
+    };
+
+    // Remove caracteres não numéricos
+    const telefone = form.telefone.replace(/\D/g, '');
+    
+    if (form.telefone === '') {
+      objTemp.validado = valErro;
+      objTemp.mensagem.push('O telefone é obrigatório');
+    } else if (telefone.length < 10 || telefone.length > 11) {
+      objTemp.validado = valErro;
+      objTemp.mensagem.push('Telefone inválido');
+    }
+
+    setValida(prev => ({
+      ...prev,
+      telefone: objTemp
+    }));
+
+    return objTemp.mensagem.length === 0 ? 1 : 0;
+  }
+
+  function validaCPF() {
+    let objTemp = {
+      validado: valSucesso,
+      mensagem: []
+    };
+
+    // Remove caracteres não numéricos
+    const cpf = form.cpf.replace(/\D/g, '');
+    
+    if (cpf === '') {
+      objTemp.validado = valErro;
+      objTemp.mensagem.push('O CPF é obrigatório');
+    } else if (cpf.length !== 11) {
+      objTemp.validado = valErro;
+      objTemp.mensagem.push('O CPF deve ter 11 dígitos');
+    } else if (/^(\d)\1{10}$/.test(cpf)) {
+      objTemp.validado = valErro;
+      objTemp.mensagem.push('CPF inválido');
+    }
+
+    setValida(prev => ({
+      ...prev,
+      cpf: objTemp
+    }));
+
+    return objTemp.mensagem.length === 0 ? 1 : 0;
+  }
+
+  function validaDataNascimento() {
+    let objTemp = {
+      validado: valSucesso,
+      mensagem: []
+    };
+
+    if (form.dataNascimento === '') {
+      objTemp.validado = valErro;
+      objTemp.mensagem.push('A data de nascimento é obrigatória');
+    } else {
+      const dataNascimento = new Date(form.dataNascimento);
+      const hoje = new Date();
+      const idade = hoje.getFullYear() - dataNascimento.getFullYear();
+      
+      if (idade < 18) {
+        objTemp.validado = valErro;
+        objTemp.mensagem.push('O funcionário deve ter pelo menos 18 anos');
+      } else if (idade > 100) {
+        objTemp.validado = valErro;
+        objTemp.mensagem.push('Data de nascimento inválida');
+      }
+    }
+
+    setValida(prev => ({
+      ...prev,
+      dataNascimento: objTemp
+    }));
+
+    return objTemp.mensagem.length === 0 ? 1 : 0;
+  }
+
+  function validaEndereco() {
+    let objTemp = {
+      validado: valSucesso,
+      mensagem: []
+    };
+
+    if (form.endereco === '') {
+      objTemp.validado = valErro;
+      objTemp.mensagem.push('O endereço é obrigatório');
+    } else if (form.endereco.length < 10) {
+      objTemp.validado = valErro;
+      objTemp.mensagem.push('Insira um endereço completo');
+    }
+
+    setValida(prev => ({
+      ...prev,
+      endereco: objTemp
+    }));
+
+    return objTemp.mensagem.length === 0 ? 1 : 0;
+  }
+
+  function validaUsuario() {
+    let objTemp = {
+      validado: valSucesso,
+      mensagem: []
+    };
+
+    if (form.usuario === '') {
+      objTemp.validado = valErro;
+      objTemp.mensagem.push('O nome de usuário é obrigatório');
+    } else if (form.usuario.length < 3) {
+      objTemp.validado = valErro;
+      objTemp.mensagem.push('O usuário deve ter pelo menos 3 caracteres');
+    } else if (!/^[a-zA-Z0-9_]+$/.test(form.usuario)) {
+      objTemp.validado = valErro;
+      objTemp.mensagem.push('O usuário deve conter apenas letras, números e underscore');
+    }
+
+    setValida(prev => ({
+      ...prev,
+      usuario: objTemp
+    }));
+
+    return objTemp.mensagem.length === 0 ? 1 : 0;
+  }
+
+  function validaSenha() {
+    let objTemp = {
+      validado: valSucesso,
+      mensagem: []
+    };
+
+    if (form.senha === '') {
+      objTemp.validado = valErro;
+      objTemp.mensagem.push('A senha é obrigatória');
+    } else if (form.senha.length < 6) {
+      objTemp.validado = valErro;
+      objTemp.mensagem.push('A senha deve ter pelo menos 6 caracteres');
+    }
+
+    setValida(prev => ({
+      ...prev,
+      senha: objTemp
+    }));
+
+    return objTemp.mensagem.length === 0 ? 1 : 0;
+  }
+
+  function validaConfirmarSenha() {
+    let objTemp = {
+      validado: valSucesso,
+      mensagem: []
+    };
+
+    if (form.confirmarSenha === '') {
+      objTemp.validado = valErro;
+      objTemp.mensagem.push('A confirmação de senha é obrigatória');
+    } else if (form.confirmarSenha !== form.senha) {
+      objTemp.validado = valErro;
+      objTemp.mensagem.push('As senhas não coincidem');
+    }
+
+    setValida(prev => ({
+      ...prev,
+      confirmarSenha: objTemp
+    }));
+
+    return objTemp.mensagem.length === 0 ? 1 : 0;
+  }
+
+  function validaNivelAcesso() {
+    let objTemp = {
+      validado: valSucesso,
+      mensagem: []
+    };
+
+    if (form.nivelAcesso === '') {
+      objTemp.validado = valErro;
+      objTemp.mensagem.push('Selecione o nível de acesso');
+    }
+
+    setValida(prev => ({
+      ...prev,
+      nivelAcesso: objTemp
+    }));
+
+    return objTemp.mensagem.length === 0 ? 1 : 0;
+  }
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    
+    let itensValidados = 0;
+    itensValidados += validaNome();
+    itensValidados += validaEmail();
+    itensValidados += validaTelefone();
+    itensValidados += validaCPF();
+    itensValidados += validaDataNascimento();
+    itensValidados += validaEndereco();
+    itensValidados += validaUsuario();
+    itensValidados += validaSenha();
+    itensValidados += validaConfirmarSenha();
+    itensValidados += validaNivelAcesso();
+
+    if (itensValidados !== 10) {
+      return; // Não prossegue se houver erros de validação
+    }
+
+    setLoading(true);
+    
+    // Simulando processamento
+    setTimeout(() => {
+      console.log("Dados enviados:", form);
+      alert("Funcionário cadastrado com sucesso!");
+      setLoading(false);
+      
+      // Redireciona para a página de listagem de funcionários após o cadastro
+      router.push("/farmacias/cadastro/funcionario/lista");
+    }, 1500);
   };
 
   return (
@@ -127,7 +369,7 @@ export default function ListaFuncionariosPage() {
           >
             ☰
           </button>
-          <h1 className={styles.title}>Lista de Funcionários</h1>
+          <h1 className={styles.title}>Cadastro de Funcionário</h1>
         </div>
       </header>
 
@@ -180,108 +422,257 @@ export default function ListaFuncionariosPage() {
         {/* Conteúdo Principal */}
         <main className={styles.mainContent}>
           <div className={styles.formContainer}>
-            <div className={styles.listaHeader}>
-              <div>
-                <h2>Funcionários Cadastrados</h2>
-                <p>Gerencie os funcionários do sistema</p>
-              </div>
-              <button
-                className={styles.submitButton}
-                onClick={handleNovoFuncionario}
-              >
-                <span className={styles.buttonIcon}>+</span>
-                Novo Funcionário
-              </button>
+            <div className={styles.formHeader}>
+              <h2>Novo Funcionário</h2>
+              <p>Preencha os dados do novo funcionário</p>
             </div>
 
-            <div className={styles.tableContainer}>
-              <table className={styles.funcionariosTable}>
-                <thead>
-                  <tr>
-                    <th>Nome</th>
-                    <th>E-mail</th>
-                    <th>Telefone</th>
-                    <th>Nível de Acesso</th>
-                    <th>Data de Cadastro</th>
-                    <th>Ações</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {funcionariosFiltrados.length > 0 ? (
-                    funcionariosFiltrados.map((funcionario) => (
-                      <tr key={funcionario.id}>
-                        <td>
-                          <div className={styles.funcionarioInfo}>
-                            <div
-                              className={styles.funcionarioAvatar}
-                              style={{
-                                backgroundColor: getAvatarColor(funcionario.nome),
-                              }}
-                            >
-                              {funcionario.nome.charAt(0)}
-                            </div>
-                            <div>
-                              <div className={styles.funcionarioNome}>
-                                {funcionario.nome}
-                              </div>
-                              <div className={styles.funcionarioUsuario}>
-                                @{funcionario.usuario}
-                              </div>
-                            </div>
-                          </div>
-                        </td>
-                        <td>{funcionario.email}</td>
-                        <td>{funcionario.telefone}</td>
-                        <td>
-                          <span
-                            className={`${styles.nivelBadge} ${
-                              styles[funcionario.nivelAcesso.toLowerCase()]
-                            }`}
-                          >
-                            {funcionario.nivelAcesso}
-                          </span>
-                        </td>
-                        <td>
-                          {new Date(funcionario.dataCadastro).toLocaleDateString("pt-BR")}
-                        </td>
-                        <td>
-                          <div className={styles.acoes}>
-                            <button
-                              className={styles.editarButton}
-                              onClick={() => handleEditar(funcionario.id)}
-                              title="Editar funcionário"
-                            >
-                              ✏️
-                            </button>
-                            <button
-                              className={styles.excluirButton}
-                              onClick={() => handleExcluir(funcionario.id)}
-                              title="Excluir funcionário"
-                            >
-                              🗑️
-                            </button>
-                          </div>
-                        </td>
-                      </tr>
-                    ))
+            <form onSubmit={handleSubmit} className={styles.form}>
+              <div className={styles.formGrid}>
+                {/* Informações Pessoais */}
+                <div className={styles.formSection}>
+                  <h3 className={styles.sectionTitle}>
+                    Informações Pessoais
+                  </h3>
+
+                  <div className={valida.nome.validado}>
+                    <label className={styles.inputLabel}>Nome Completo *</label>
+                    <div className={styles.divInput}>
+                      <input
+                        className={styles.modernInput}
+                        type="text"
+                        name="nome"
+                        value={form.nome}
+                        onChange={handleChange}
+                        placeholder="Digite o nome completo"
+                        required
+                      />
+                      <MdCheckCircle className={styles.sucesso} />
+                      <MdError className={styles.erro} />
+                    </div>
+                    {valida.nome.mensagem.map(mens => 
+                      <small key={mens} className={styles.small}>{mens}</small>
+                    )}
+                  </div>
+
+                  <div className={valida.email.validado}>
+                    <label className={styles.inputLabel}>E-mail *</label>
+                    <div className={styles.divInput}>
+                      <input
+                        className={styles.modernInput}
+                        type="email"
+                        name="email"
+                        value={form.email}
+                        onChange={handleChange}
+                        placeholder="exemplo@pharmax.com"
+                        required
+                      />
+                      <MdCheckCircle className={styles.sucesso} />
+                      <MdError className={styles.erro} />
+                    </div>
+                    {valida.email.mensagem.map(mens => 
+                      <small key={mens} className={styles.small}>{mens}</small>
+                    )}
+                  </div>
+
+                  <div className={valida.telefone.validado}>
+                    <label className={styles.inputLabel}>Telefone *</label>
+                    <div className={styles.divInput}>
+                      <input
+                        className={styles.modernInput}
+                        type="tel"
+                        name="telefone"
+                        value={form.telefone}
+                        onChange={handleChange}
+                        placeholder="(11) 99999-9999"
+                        required
+                      />
+                      <MdCheckCircle className={styles.sucesso} />
+                      <MdError className={styles.erro} />
+                    </div>
+                    {valida.telefone.mensagem.map(mens => 
+                      <small key={mens} className={styles.small}>{mens}</small>
+                    )}
+                  </div>
+
+                  <div className={valida.cpf.validado}>
+                    <label className={styles.inputLabel}>CPF *</label>
+                    <div className={styles.divInput}>
+                      <input
+                        className={styles.modernInput}
+                        type="text"
+                        name="cpf"
+                        value={form.cpf}
+                        onChange={handleChange}
+                        placeholder="000.000.000-00"
+                        required
+                      />
+                      <MdCheckCircle className={styles.sucesso} />
+                      <MdError className={styles.erro} />
+                    </div>
+                    {valida.cpf.mensagem.map(mens => 
+                      <small key={mens} className={styles.small}>{mens}</small>
+                    )}
+                  </div>
+
+                  <div className={valida.dataNascimento.validado}>
+                    <label className={styles.inputLabel}>Data de Nascimento *</label>
+                    <div className={styles.divInput}>
+                      <input
+                        className={styles.modernInput}
+                        type="date"
+                        name="dataNascimento"
+                        value={form.dataNascimento}
+                        onChange={handleChange}
+                        required
+                      />
+                      <MdCheckCircle className={styles.sucesso} />
+                      <MdError className={styles.erro} />
+                    </div>
+                    {valida.dataNascimento.mensagem.map(mens => 
+                      <small key={mens} className={styles.small}>{mens}</small>
+                    )}
+                  </div>
+
+                  <div className={valida.endereco.validado}>
+                    <label className={styles.inputLabel}>Endereço Completo *</label>
+                    <div className={styles.divInput}>
+                      <input
+                        className={styles.modernInput}
+                        type="text"
+                        name="endereco"
+                        value={form.endereco}
+                        onChange={handleChange}
+                        placeholder="Rua, número, bairro, cidade - Estado"
+                        required
+                      />
+                      <MdCheckCircle className={styles.sucesso} />
+                      <MdError className={styles.erro} />
+                    </div>
+                    {valida.endereco.mensagem.map(mens => 
+                      <small key={mens} className={styles.small}>{mens}</small>
+                    )}
+                  </div>
+                </div>
+
+                {/* Informações de Acesso */}
+                <div className={styles.formSection}>
+                  <h3 className={styles.sectionTitle}>
+                    Informações de Acesso
+                  </h3>
+
+                  <div className={valida.usuario.validado}>
+                    <label className={styles.inputLabel}>Nome de Usuário *</label>
+                    <div className={styles.divInput}>
+                      <input
+                        className={styles.modernInput}
+                        type="text"
+                        name="usuario"
+                        value={form.usuario}
+                        onChange={handleChange}
+                        placeholder="Digite o nome de usuário"
+                        required
+                      />
+                      <MdCheckCircle className={styles.sucesso} />
+                      <MdError className={styles.erro} />
+                    </div>
+                    {valida.usuario.mensagem.map(mens => 
+                      <small key={mens} className={styles.small}>{mens}</small>
+                    )}
+                  </div>
+
+                  <div className={valida.senha.validado}>
+                    <label className={styles.inputLabel}>Senha *</label>
+                    <div className={styles.divInput}>
+                      <input
+                        className={styles.modernInput}
+                        type="password"
+                        name="senha"
+                        value={form.senha}
+                        onChange={handleChange}
+                        placeholder="Mínimo 6 caracteres"
+                        required
+                      />
+                      <MdCheckCircle className={styles.sucesso} />
+                      <MdError className={styles.erro} />
+                    </div>
+                    {valida.senha.mensagem.map(mens => 
+                      <small key={mens} className={styles.small}>{mens}</small>
+                    )}
+                  </div>
+
+                  <div className={valida.confirmarSenha.validado}>
+                    <label className={styles.inputLabel}>Confirmar Senha *</label>
+                    <div className={styles.divInput}>
+                      <input
+                        className={styles.modernInput}
+                        type="password"
+                        name="confirmarSenha"
+                        value={form.confirmarSenha}
+                        onChange={handleChange}
+                        placeholder="Digite a senha novamente"
+                        required
+                      />
+                      <MdCheckCircle className={styles.sucesso} />
+                      <MdError className={styles.erro} />
+                    </div>
+                    {valida.confirmarSenha.mensagem.map(mens => 
+                      <small key={mens} className={styles.small}>{mens}</small>
+                    )}
+                  </div>
+
+                  <div className={valida.nivelAcesso.validado}>
+                    <label className={styles.inputLabel}>Nível de Acesso *</label>
+                    <div className={styles.divInput}>
+                      <select
+                        className={styles.modernInput}
+                        name="nivelAcesso"
+                        value={form.nivelAcesso}
+                        onChange={handleChange}
+                        required
+                      >
+                        <option value="Funcionário">Funcionário</option>
+                        <option value="Supervisor">Supervisor</option>
+                        <option value="Gerente">Gerente</option>
+                        <option value="Administrador">Administrador</option>
+                      </select>
+                      <MdCheckCircle className={styles.sucesso} />
+                      <MdError className={styles.erro} />
+                    </div>
+                    {valida.nivelAcesso.mensagem.map(mens => 
+                      <small key={mens} className={styles.small}>{mens}</small>
+                    )}
+                  </div>
+                </div>
+              </div>
+
+              <div className={styles.formActions}>
+                <button
+                  type="button"
+                  className={styles.cancelButton}
+                  onClick={() => router.push("/farmacias/cadastro/funcionario/lista")}
+                  disabled={loading}
+                >
+                  Cancelar
+                </button>
+                <button 
+                  type="submit" 
+                  className={styles.submitButton}
+                  disabled={loading}
+                >
+                  {loading ? (
+                    <>
+                      <span className={styles.loadingSpinnerSmall}></span>
+                      Cadastrando...
+                    </>
                   ) : (
-                    <tr>
-                      <td colSpan="6" className={styles.semRegistros}>
-                        {filtro
-                          ? "Nenhum funcionário encontrado com o filtro aplicado"
-                          : "Nenhum funcionário cadastrado"}
-                      </td>
-                    </tr>
+                    <>
+                      Cadastrar Funcionário
+                    </>
                   )}
-                </tbody>
-              </table>
-            </div>
-
-            <div className={styles.listaFooter}>
-              <div className={styles.totalRegistros}>
-                Total: {funcionariosFiltrados.length} funcionário(s)
+                </button>
               </div>
-            </div>
+            </form>
           </div>
         </main>
       </div>

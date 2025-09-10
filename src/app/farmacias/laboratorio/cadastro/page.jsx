@@ -4,6 +4,9 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import styles from "./laboratorio.module.css";
 
+// Ícones para validação
+import { MdCheckCircle, MdError } from "react-icons/md";
+
 export default function CadastroLaboratorioPage() {
   const router = useRouter();
   const [sidebarOpen, setSidebarOpen] = useState(false);
@@ -19,6 +22,38 @@ export default function CadastroLaboratorioPage() {
 
   const [preview, setPreview] = useState(null);
 
+  // Estados para validação
+  const valDefault = styles.formControl;
+  const valSucesso = `${styles.formControl} ${styles.success}`;
+  const valErro = `${styles.formControl} ${styles.error}`;
+
+  const [valida, setValida] = useState({
+    nome: {
+      validado: valDefault,
+      mensagem: []
+    },
+    cnpj: {
+      validado: valDefault,
+      mensagem: []
+    },
+    endereco: {
+      validado: valDefault,
+      mensagem: []
+    },
+    telefone: {
+      validado: valDefault,
+      mensagem: []
+    },
+    email: {
+      validado: valDefault,
+      mensagem: []
+    },
+    logo: {
+      validado: valDefault,
+      mensagem: []
+    }
+  });
+
   const handleChange = (e) => {
     const { name, value, type, files } = e.target;
     if (type === "file" && files.length > 0) {
@@ -27,7 +62,36 @@ export default function CadastroLaboratorioPage() {
         ...form,
         [name]: file,
       });
-      setPreview(URL.createObjectURL(file));
+      
+      // Validar arquivo
+      if (file.type.startsWith("image/")) {
+        if (file.size > 5 * 1024 * 1024) {
+          setValida(prev => ({
+            ...prev,
+            logo: {
+              validado: valErro,
+              mensagem: ["O arquivo deve ter no máximo 5MB."]
+            }
+          }));
+        } else {
+          setValida(prev => ({
+            ...prev,
+            logo: {
+              validado: valSucesso,
+              mensagem: []
+            }
+          }));
+          setPreview(URL.createObjectURL(file));
+        }
+      } else {
+        setValida(prev => ({
+          ...prev,
+          logo: {
+            validado: valErro,
+            mensagem: ["Por favor, selecione apenas arquivos de imagem."]
+          }
+        }));
+      }
     } else {
       setForm({
         ...form,
@@ -36,8 +100,204 @@ export default function CadastroLaboratorioPage() {
     }
   };
 
+  // Funções de validação
+  function validaNome() {
+    let objTemp = {
+      validado: valSucesso,
+      mensagem: []
+    };
+
+    if (form.nome === '') {
+      objTemp.validado = valErro;
+      objTemp.mensagem.push('O nome do laboratório é obrigatório');
+    } else if (form.nome.length < 3) {
+      objTemp.validado = valErro;
+      objTemp.mensagem.push('O nome deve ter pelo menos 3 caracteres');
+    }
+
+    setValida(prev => ({
+      ...prev,
+      nome: objTemp
+    }));
+
+    return objTemp.mensagem.length === 0 ? 1 : 0;
+  }
+
+  function validaCNPJ() {
+    let objTemp = {
+      validado: valSucesso,
+      mensagem: []
+    };
+
+    // Remove caracteres não numéricos
+    const cnpj = form.cnpj.replace(/\D/g, '');
+    
+    if (cnpj === '') {
+      objTemp.validado = valErro;
+      objTemp.mensagem.push('O CNPJ é obrigatório');
+    } else if (cnpj.length !== 14) {
+      objTemp.validado = valErro;
+      objTemp.mensagem.push('O CNPJ deve ter 14 dígitos');
+    } else if (!validaDigitosCNPJ(cnpj)) {
+      objTemp.validado = valErro;
+      objTemp.mensagem.push('CNPJ inválido');
+    }
+
+    setValida(prev => ({
+      ...prev,
+      cnpj: objTemp
+    }));
+
+    return objTemp.mensagem.length === 0 ? 1 : 0;
+  }
+
+  function validaDigitosCNPJ(cnpj) {
+    // Valida os dígitos verificadores do CNPJ
+    if (/^(\d)\1{13}$/.test(cnpj)) return false; // CNPJ com todos os dígitos iguais
+
+    let tamanho = cnpj.length - 2;
+    let numeros = cnpj.substring(0, tamanho);
+    let digitos = cnpj.substring(tamanho);
+    let soma = 0;
+    let pos = tamanho - 7;
+
+    for (let i = tamanho; i >= 1; i--) {
+      soma += numeros.charAt(tamanho - i) * pos--;
+      if (pos < 2) pos = 9;
+    }
+
+    let resultado = soma % 11 < 2 ? 0 : 11 - soma % 11;
+    if (resultado !== parseInt(digitos.charAt(0))) return false;
+
+    tamanho = tamanho + 1;
+    numeros = cnpj.substring(0, tamanho);
+    soma = 0;
+    pos = tamanho - 7;
+
+    for (let i = tamanho; i >= 1; i--) {
+      soma += numeros.charAt(tamanho - i) * pos--;
+      if (pos < 2) pos = 9;
+    }
+
+    resultado = soma % 11 < 2 ? 0 : 11 - soma % 11;
+    if (resultado !== parseInt(digitos.charAt(1))) return false;
+
+    return true;
+  }
+
+  function validaEndereco() {
+    let objTemp = {
+      validado: valSucesso,
+      mensagem: []
+    };
+
+    if (form.endereco === '') {
+      objTemp.validado = valErro;
+      objTemp.mensagem.push('O endereço é obrigatório');
+    } else if (form.endereco.length < 10) {
+      objTemp.validado = valErro;
+      objTemp.mensagem.push('Insira um endereço completo');
+    }
+
+    setValida(prev => ({
+      ...prev,
+      endereco: objTemp
+    }));
+
+    return objTemp.mensagem.length === 0 ? 1 : 0;
+  }
+
+  function validaTelefone() {
+    let objTemp = {
+      validado: valSucesso,
+      mensagem: []
+    };
+
+    // Remove caracteres não numéricos
+    const telefone = form.telefone.replace(/\D/g, '');
+    
+    // Telefone é opcional, mas se preenchido, deve ser válido
+    if (telefone && (telefone.length < 10 || telefone.length > 11)) {
+      objTemp.validado = valErro;
+      objTemp.mensagem.push('Telefone inválido');
+    }
+
+    setValida(prev => ({
+      ...prev,
+      telefone: objTemp
+    }));
+
+    return objTemp.mensagem.length === 0 ? 1 : 0;
+  }
+
+  function checkEmail(email) {
+    return /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/.test(
+      email
+    );
+  }
+
+  function validaEmail() {
+    let objTemp = {
+      validado: valSucesso,
+      mensagem: []
+    };
+
+    if (form.email === "") {
+      objTemp.validado = valErro;
+      objTemp.mensagem.push('O e-mail é obrigatório');
+    } else if (!checkEmail(form.email)) {
+      objTemp.validado = valErro;
+      objTemp.mensagem.push('Insira um e-mail válido');
+    }
+
+    setValida(prev => ({
+      ...prev,
+      email: objTemp
+    }));
+
+    return objTemp.mensagem.length === 0 ? 1 : 0;
+  }
+
+  function validaLogo() {
+    let objTemp = {
+      validado: valSucesso,
+      mensagem: []
+    };
+
+    // A logo é opcional, então não há validação obrigatória
+    // Mas se houver um arquivo, validamos seu tipo e tamanho
+    if (form.logo) {
+      if (!form.logo.type.startsWith("image/")) {
+        objTemp.validado = valErro;
+        objTemp.mensagem.push('Por favor, selecione apenas arquivos de imagem');
+      } else if (form.logo.size > 5 * 1024 * 1024) {
+        objTemp.validado = valErro;
+        objTemp.mensagem.push('O arquivo deve ter no máximo 5MB');
+      }
+    }
+
+    setValida(prev => ({
+      ...prev,
+      logo: objTemp
+    }));
+
+    return objTemp.mensagem.length === 0 ? 1 : 0;
+  }
+
   const handleSubmit = (e) => {
     e.preventDefault();
+
+    let itensValidados = 0;
+    itensValidados += validaNome();
+    itensValidados += validaCNPJ();
+    itensValidados += validaEndereco();
+    itensValidados += validaTelefone();
+    itensValidados += validaEmail();
+    itensValidados += validaLogo();
+
+    if (itensValidados !== 6) {
+      return; // Não prossegue se houver erros de validação
+    }
 
     // Salvar no localStorage
     const dados = { ...form, logo: preview };
@@ -127,55 +387,83 @@ export default function CadastroLaboratorioPage() {
                     Informações do Laboratório
                   </h3>
 
-                  <div className={styles.formGroup}>
+                  <div className={valida.nome.validado}>
                     <label className={styles.inputLabel}>Nome do Laboratório *</label>
-                    <input
-                      className={styles.modernInput}
-                      type="text"
-                      name="nome"
-                      value={form.nome}
-                      onChange={handleChange}
-                      placeholder="Digite o nome do laboratório"
-                      required
-                    />
+                    <div className={styles.divInput}>
+                      <input
+                        className={styles.modernInput}
+                        type="text"
+                        name="nome"
+                        value={form.nome}
+                        onChange={handleChange}
+                        placeholder="Digite o nome do laboratório"
+                        required
+                      />
+                      <MdCheckCircle className={styles.sucesso} />
+                      <MdError className={styles.erro} />
+                    </div>
+                    {valida.nome.mensagem.map(mens => 
+                      <small key={mens} className={styles.small}>{mens}</small>
+                    )}
                   </div>
 
-                  <div className={styles.formGroup}>
+                  <div className={valida.cnpj.validado}>
                     <label className={styles.inputLabel}>CNPJ *</label>
-                    <input
-                      className={styles.modernInput}
-                      type="text"
-                      name="cnpj"
-                      value={form.cnpj}
-                      onChange={handleChange}
-                      placeholder="00.000.000/0000-00"
-                      required
-                    />
+                    <div className={styles.divInput}>
+                      <input
+                        className={styles.modernInput}
+                        type="text"
+                        name="cnpj"
+                        value={form.cnpj}
+                        onChange={handleChange}
+                        placeholder="00.000.000/0000-00"
+                        required
+                      />
+                      <MdCheckCircle className={styles.sucesso} />
+                      <MdError className={styles.erro} />
+                    </div>
+                    {valida.cnpj.mensagem.map(mens => 
+                      <small key={mens} className={styles.small}>{mens}</small>
+                    )}
                   </div>
 
-                  <div className={styles.formGroup}>
+                  <div className={valida.email.validado}>
                     <label className={styles.inputLabel}>E-mail *</label>
-                    <input
-                      className={styles.modernInput}
-                      type="email"
-                      name="email"
-                      value={form.email}
-                      onChange={handleChange}
-                      placeholder="contato@laboratorio.com"
-                      required
-                    />
+                    <div className={styles.divInput}>
+                      <input
+                        className={styles.modernInput}
+                        type="email"
+                        name="email"
+                        value={form.email}
+                        onChange={handleChange}
+                        placeholder="contato@laboratorio.com"
+                        required
+                      />
+                      <MdCheckCircle className={styles.sucesso} />
+                      <MdError className={styles.erro} />
+                    </div>
+                    {valida.email.mensagem.map(mens => 
+                      <small key={mens} className={styles.small}>{mens}</small>
+                    )}
                   </div>
 
-                  <div className={styles.formGroup}>
+                  <div className={valida.telefone.validado}>
                     <label className={styles.inputLabel}>Telefone</label>
-                    <input
-                      className={styles.modernInput}
-                      type="tel"
-                      name="telefone"
-                      value={form.telefone}
-                      onChange={handleChange}
-                      placeholder="(00) 00000-0000"
-                    />
+                    <div className={styles.divInput}>
+                      <input
+                        className={styles.modernInput}
+                        type="tel"
+                        name="telefone"
+                        value={form.telefone}
+                        onChange={handleChange}
+                        placeholder="(00) 00000-0000"
+                      />
+                      <MdCheckCircle className={styles.sucesso} />
+                      <MdError className={styles.erro} />
+                    </div>
+                    {valida.telefone.mensagem.map(mens => 
+                      <small key={mens} className={styles.small}>{mens}</small>
+                    )}
                   </div>
                 </div>
 
@@ -185,20 +473,27 @@ export default function CadastroLaboratorioPage() {
                     Localização e Identidade Visual
                   </h3>
 
-                  <div className={styles.formGroup}>
+                  <div className={valida.endereco.validado}>
                     <label className={styles.inputLabel}>Endereço Completo *</label>
-                    <input
-                      className={styles.modernInput}
-                      type="text"
-                      name="endereco"
-                      value={form.endereco}
-                      onChange={handleChange}
-                      placeholder="Endereço completo"
-                      required
-                    />
+                    <div className={styles.divInput}>
+                      <input
+                        className={styles.modernInput}
+                        type="text"
+                        name="endereco"
+                        value={form.endereco}
+                        onChange={handleChange}
+                        placeholder="Endereço completo"
+                        required
+                      />
+                      <MdCheckCircle className={styles.sucesso} />
+                      <MdError className={styles.erro} />
+                    </div>
+                    {valida.endereco.mensagem.map(mens => 
+                      <small key={mens} className={styles.small}>{mens}</small>
+                    )}
                   </div>
 
-                  <div className={styles.formGroup}>
+                  <div className={valida.logo.validado}>
                     <label className={styles.inputLabel}>Logo do Laboratório</label>
                     <div className={styles.fileUploadGroup}>
                       <input
@@ -219,6 +514,9 @@ export default function CadastroLaboratorioPage() {
                         </span>
                       )}
                     </div>
+                    {valida.logo.mensagem.map(mens => 
+                      <small key={mens} className={styles.small}>{mens}</small>
+                    )}
                   </div>
 
                   {preview && (

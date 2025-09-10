@@ -553,3 +553,63 @@ select.modernInput {
     margin-left: 0;
   }
 }
+
+/* Estilos para validação */
+.formControl {
+  position: relative;
+}
+
+.success .modernInput,
+.success .modernTextarea,
+.success select.modernInput {
+  border-color: #4caf50;
+}
+
+.error .modernInput,
+.error .modernTextarea,
+.error select.modernInput {
+  border-color: #f44336;
+}
+
+.sucesso, .erro {
+  position: absolute;
+  right: 12px;
+  top: 38px;
+  font-size: 20px;
+  pointer-events: none;
+}
+
+.sucesso {
+  color: #4caf50;
+  display: none;
+}
+
+.erro {
+  color: #f44336;
+  display: none;
+}
+
+.success .sucesso {
+  display: block;
+}
+
+.error .erro {
+  display: block;
+}
+
+.small {
+  color: #f44336;
+  font-size: 12px;
+  margin-top: 4px;
+  display: block;
+}
+
+.divInput {
+  position: relative;
+}
+
+/* Ajuste para textarea */
+.modernTextarea + .sucesso,
+.modernTextarea + .erro {
+  top: 10px;
+}
