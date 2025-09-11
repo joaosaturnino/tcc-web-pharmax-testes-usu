@@ -60,71 +60,91 @@
 }
 
 .searchInput {
-  padding: 10px 40px 10px 12px;
-  border: 2px solid #e2e8f0;
+  padding: 10px 40px 10px 16px;
+  border: 1px solid #e2e8f0;
   border-radius: 8px;
   font-size: 14px;
-  width: 250px;
+  width: 280px;
   transition: border-color 0.3s ease;
 }
 
 .searchInput:focus {
   outline: none;
-  border-color: #3498db;
+  border-color: #3b82f6;
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
 }
 
-.searchIcon {
+.limparPesquisa {
   position: absolute;
   right: 12px;
-  color: #64748b;
-}
-
-.botaoPrincipal {
-  padding: 10px 16px;
+  background: none;
   border: none;
-  border-radius: 8px;
-  background: #458b00;
-  color: white;
-  font-weight: 500;
+  font-size: 18px;
   cursor: pointer;
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  transition: all 0.3s ease;
-  text-decoration: none;
-}
-
-.botaoPrincipal:hover {
-  transform: translateY(-1px);
-  box-shadow: 0 4px 12px rgba(52, 152, 219, 0.3);
-}
-
-.userMenu {
-  display: flex;
-  align-items: center;
-}
-
-.userAvatar {
-  width: 40px;
-  height: 40px;
-  border-radius: 50%;
-  background: #3498db;
+  color: #64748b;
+  padding: 0;
+  width: 20px;
+  height: 20px;
   display: flex;
   align-items: center;
   justify-content: center;
-  color: white;
-  font-weight: 600;
-  font-size: 18px;
+  border-radius: 50%;
 }
 
-/* Wrapper de Conteúdo */
+.limparPesquisa:hover {
+  background: #f1f5f9;
+  color: #475569;
+}
+
+.viewToggle {
+  display: flex;
+  background: #f1f5f9;
+  border-radius: 8px;
+  padding: 4px;
+
+}
+
+.viewButton {
+  background: none;
+  border: none;
+  padding: 8px 12px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 16px;
+  transition: background 0.3s ease;
+}
+
+.viewButton.active {
+  background: white;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.botaoPrincipal {
+  background: #458B00;
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: 500;
+  transition: background 0.3s ease;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.botaoPrincipal:hover {
+  background: #006400;
+}
+
+/* Wrapper do Conteúdo */
 .contentWrapper {
   display: flex;
   flex: 1;
   position: relative;
 }
 
-/* Sidebar Não Fixa - CORRIGIDO */
+/* Sidebar */
 .sidebar {
   width: 280px;
   background: #191970;
@@ -134,17 +154,8 @@
   transition: transform 0.3s ease;
   box-shadow: 2px 0 10px rgba(0, 0, 0, 0.1);
   z-index: 90;
-  position: fixed;
-  top: 0;
-  bottom: 0;
-  left: 0;
-  transform: translateX(-100%);
-  height: 100vh;
 }
 
-.sidebarOpen {
-  transform: translateX(0);
-}
 
 .sidebarHeader {
   padding: 20px;
@@ -153,24 +164,19 @@
   align-items: center;
   border-bottom: 1px solid rgba(255, 255, 255, 0.1);
 }
-
 .logo {
   display: flex;
   align-items: center;
   gap: 12px;
 }
 
-.logoIcon {
-  font-size: 24px;
-}
-
 .logoText {
   font-size: 20px;
-  font-weight: bold;
+  font-weight: 700;
 }
 
 .sidebarClose {
-  display: block;
+  display: none;
   background: none;
   border: none;
   color: white;
@@ -244,14 +250,9 @@
   flex: 1;
 }
 
-.notificationBadge {
-  background: #e74c3c;
-  color: white;
-  font-size: 11px;
-  padding: 2px 6px;
-  border-radius: 10px;
-  min-width: 18px;
-  text-align: center;
+.sidebarFooter {
+  padding: 20px;
+  border-top: 1px solid #e2e8f0;
 }
 
 .userPanel {
@@ -266,11 +267,12 @@
   width: 40px;
   height: 40px;
   border-radius: 50%;
-  background: rgba(255, 255, 255, 0.1);
+  background: #3b82f6;
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 18px;
+  color: white;
+  font-weight: 600;
 }
 
 .userInfo {
@@ -280,86 +282,93 @@
 .userName {
   font-size: 14px;
   font-weight: 600;
-  margin: 0;
+  color: #1e293b;
 }
 
 .userRole {
   font-size: 12px;
-  color: #95a5a6;
-  margin: 0;
+  color: #64748b;
 }
 
-/* Conteúdo Principal - CORRIGIDO */
+/* Overlay para mobile */
+.overlay {
+  display: none;
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.5);
+  z-index: 5;
+}
+
+/* Conteúdo Principal */
 .mainContent {
   flex: 1;
-  padding: 0;
-  min-height: calc(100vh - 80px);
-  overflow-y: auto;
-  margin-left: 0;
-  transition: margin-left 0.3s ease;
-}
-
-/* Statistics */
-.statsGrid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-  gap: 20px;
-  padding: 30px;
-}
-
-.statCard {
-  background: white;
   padding: 24px;
+  overflow-y: auto;
+}
+
+/* Controles */
+.controles {
+  background: white;
+  padding: 20px;
   border-radius: 12px;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+  margin-bottom: 24px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.filtros {
   display: flex;
+  gap: 20px;
+  flex-wrap: wrap;
   align-items: center;
-  gap: 16px;
-  transition: transform 0.3s ease;
 }
 
-.statCard:hover {
-  transform: translateY(-2px);
-}
-
-.statIcon {
-  width: 60px;
-  height: 60px;
-  border-radius: 12px;
-  background: linear-gradient(135deg, #3498db 0%, #2980b9 100%);
+.filtroGroup {
   display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 24px;
+  flex-direction: column;
+  gap: 8px;
 }
 
-.statContent {
-  flex: 1;
+.filtroGroup label {
+  font-size: 12px;
+  font-weight: 600;
+  color: #64748b;
 }
 
-.statContent h3 {
-  font-size: 28px;
-  font-weight: 700;
-  color: #1e293b;
-  margin: 0 0 4px 0;
+.selectFiltro {
+  padding: 8px 12px;
+  border: 1px solid #e2e8f0;
+  border-radius: 6px;
+  font-size: 14px;
+  background: white;
+  min-width: 120px;
 }
 
-.statContent p {
+.selectFiltro:focus {
+  outline: none;
+  border-color: #3b82f6;
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+}
+
+.infoResultados {
+  margin-top: 16px;
   font-size: 14px;
   color: #64748b;
-  margin: 0;
+  font-weight: 500;
 }
 
 /* Tabela */
 .tableContainer {
-  padding: 0 30px 30px;
-}
-
-.tableWrapper {
   background: white;
   border-radius: 12px;
   overflow: hidden;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.tableWrapper {
+  overflow-x: auto;
 }
 
 .tabela {
@@ -372,59 +381,131 @@
   padding: 16px;
   text-align: left;
   font-weight: 600;
-  color: #475569;
-  border-bottom: 2px solid #e2e8f0;
+  color: #64748b;
+  font-size: 14px;
+  border-bottom: 1px solid #e2e8f0;
 }
 
 .tabela td {
   padding: 16px;
-  border-bottom: 1px solid #f1f5f9;
+  border-bottom: 1px solid #e2e8f0;
+  font-size: 14px;
 }
 
 .tableRow:hover {
   background: #f8fafc;
 }
 
-.imgThumb {
-  width: 50px;
-  height: 50px;
-  object-fit: cover;
-  border-radius: 8px;
-  border: 1px solid #e2e8f0;
-  background-color: #f1f5f9;
+.rowInativo {
+  opacity: 0.7;
+  background: #fafafa;
+}
+
+.rowInativo:hover {
+  background: #f5f5f5;
+}
+
+/* Informações do Medicamento */
+.medInfo {
+  cursor: pointer;
+}
+
+.medInfoTop {
   display: flex;
   align-items: center;
-  justify-content: center;
-  color: #64748b;
-  font-size: 12px;
+  gap: 12px;
+}
+
+.imgThumb {
+  width: 40px;
+  height: 40px;
+  border-radius: 8px;
+  object-fit: cover;
+  background: #f1f5f9;
 }
 
 .medName {
+  display: block;
   font-weight: 600;
   color: #1e293b;
 }
 
-.medDosage,
-.medQuantity,
-.medType,
-.medForm,
-.medLab,
-.medCodigo {
-  font-size: 14px;
+.medLab {
+  display: block;
+  font-size: 12px;
   color: #64748b;
+  margin-top: 2px;
 }
 
 .medCodigo {
-  font-family: monospace;
-  font-size: 12px;
+  display: block;
+  font-size: 11px;
+  color: #94a3b8;
+  margin-top: 2px;
+}
+
+.medDosage {
+  color: #64748b;
+  font-weight: 500;
+}
+
+.medQuantity {
+  font-weight: 600;
+  color: #16a34a;
+}
+
+.estoqueBaixo {
+  color: #dc2626;
+}
+
+.alertaEstoque {
+  margin-left: 4px;
 }
 
 .money {
   font-weight: 600;
   color: #059669;
-  text-align: right;
 }
 
+.medCategory {
+  background: #f1f5f9;
+  padding: 4px 8px;
+  border-radius: 16px;
+  font-size: 12px;
+  color: #475569;
+  font-weight: 500;
+}
+
+/* Status */
+.statusBadge {
+  padding: 6px 12px;
+  border-radius: 20px;
+  border: none;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.statusAtivo {
+  background: #dcfce7;
+  color: #16a34a;
+}
+
+.statusAtivo:hover {
+  background: #bbf7d0;
+}
+
+.statusInativo {
+  background: #fee2e2;
+  color: #dc2626;
+}
+
+.statusInativo:hover {
+  background: #fecaca;
+}
+
+/* Botões de Ação */
 .actionButtons {
   display: flex;
   gap: 8px;
@@ -437,11 +518,23 @@
   cursor: pointer;
   font-size: 14px;
   transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.botaoDetalhes {
+  background: #e0f2fe;
+  color: #0369a1;
+}
+
+.botaoDetalhes:hover {
+  background: #bae6fd;
 }
 
 .botaoEditar {
   background: #fef3c7;
-  color: #d97706;
+  color: #92400e;
 }
 
 .botaoEditar:hover {
@@ -457,607 +550,83 @@
   background: #fecaca;
 }
 
-/* Empty State */
-.emptyState {
-  text-align: center;
-  padding: 60px 30px;
-  background: white;
-  border-radius: 16px;
-  margin: 30px;
-}
-
-.emptyIcon {
-  font-size: 64px;
-  margin-bottom: 20px;
-  opacity: 0.5;
-}
-
-.emptyState h3 {
-  font-size: 20px;
-  color: #64748b;
-  margin: 0 0 8px 0;
-}
-
-.emptyState p {
-  color: #94a3b8;
-  margin: 0 0 20px 0;
-}
-
-/* Overlay para mobile - CORRIGIDO */
-.overlay {
-  display: none;
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background: rgba(0, 0, 0, 0.5);
-  z-index: 80;
-}
-
-/* Estilos para o modal */
-.modalOverlay {
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background-color: rgba(0, 0, 0, 0.5);
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  z-index: 1000;
-}
-
-.modal {
-  background-color: white;
-  border-radius: 8px;
-  width: 90%;
-  max-width: 500px;
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
-  overflow: hidden;
-}
-
-.modalHeader {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 1.5rem;
-  border-bottom: 1px solid #e5e7eb;
-}
-
-.modalHeader h2 {
-  margin: 0;
-  font-size: 1.5rem;
-  color: #1f2937;
-}
-
-.modalClose {
-  background: none;
-  border: none;
-  font-size: 1.5rem;
-  cursor: pointer;
-  color: #6b7280;
-}
-
-.modalClose:hover {
-  color: #374151;
-}
-
-.modalBody {
-  padding: 1.5rem;
-}
-
-.inputCodigo {
-  width: 100%;
-  padding: 0.75rem;
-  border: 1px solid #d1d5db;
-  border-radius: 4px;
-  font-size: 1rem;
-  margin-top: 0.5rem;
-}
-
-.inputCodigo:focus {
-  outline: none;
-  border-color: #3b82f6;
-  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.2);
-}
-
-.erro {
-  color: #ef4444;
-  margin-top: 0.5rem;
-  font-size: 0.875rem;
-}
-
-.aviso {
-  color: #6366f1;
-  font-weight: 500;
-  margin-bottom: 1rem;
-}
-
-.medicamentoInfo {
-  display: flex;
-  align-items: center;
-  gap: 1rem;
-  margin-bottom: 1.5rem;
-  padding: 1rem;
-  background-color: #f9fafb;
-  border-radius: 6px;
-}
-
-.imgThumbModal {
-  width: 50px;
-  height: 50px;
-  object-fit: contain;
-  border-radius: 4px;
-  background-color: #f1f5f9;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: #64748b;
-  font-size: 12px;
-}
-
-.medicamentoInfo h3 {
-  margin: 0 0 0.25rem 0;
-  font-size: 1.125rem;
-}
-
-.medicamentoInfo p {
-  margin: 0;
-  color: #6b7280;
-}
-
-.medCodigoModal {
-  font-family: monospace;
-  font-size: 12px;
-  margin-top: 0.5rem !important;
-}
-
-.pergunta {
-  font-weight: 500;
-  margin-bottom: 1rem;
-}
-
-.modalFooter {
-  display: flex;
-  justify-content: flex-end;
-  gap: 0.75rem;
-  padding: 1.5rem;
-  border-top: 1px solid #e5e7eb;
-}
-
+/* Botão Secundário */
 .botaoSecundario {
-  background-color: #f3f4f6;
-  color: #374151;
-  border: 1px solid #d1d5db;
-  padding: 0.5rem 1rem;
-  border-radius: 4px;
+  background: #f1f5f9;
+  color: #475569;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 8px;
   cursor: pointer;
-  transition: all 0.3s ease;
+  font-weight: 500;
+  transition: background 0.3s ease;
 }
 
 .botaoSecundario:hover {
-  background-color: #e5e7eb;
+  background: #e2e8f0;
 }
 
-/* Responsividade - CORRIGIDO */
-@media (max-width: 1024px) {
-  .statsGrid {
-    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-  }
-
-  .searchInput {
-    width: 200px;
-  }
-}
-
-@media (max-width: 768px) {
-  .menuToggle {
-    display: block;
-  }
-
-  .sidebar {
-    position: fixed;
-    top: 0;
-    left: 0;
-    bottom: 0;
-    transform: translateX(-100%);
-    z-index: 90;
-  }
-
-  .sidebarOpen {
-    transform: translateX(0);
-  }
-
-  .overlay {
-    display: block;
-  }
-
-  .header {
-    padding: 16px 20px;
-  }
-
-  .headerActions {
-    flex-wrap: wrap;
-    gap: 12px;
-  }
-
-  .searchInput {
-    width: 180px;
-  }
-
-  .statsGrid {
-    grid-template-columns: 1fr;
-    padding: 20px;
-  }
-
-  .tableContainer {
-    padding: 0 20px 20px;
-  }
-
-  .tabela {
-    display: block;
-    overflow-x: auto;
-  }
-
-  .tabela th,
-  .tabela td {
-    padding: 12px 8px;
-    font-size: 14px;
-  }
-
-  .actionButtons {
-    flex-direction: column;
-  }
-
-  .botao {
-    padding: 6px 10px;
-  }
-}
-
-@media (max-width: 480px) {
-  .header {
-    flex-direction: column;
-    gap: 16px;
-    align-items: flex-start;
-  }
-
-  .headerActions {
-    width: 100%;
-    justify-content: space-between;
-  }
-
-  .searchBox {
-    width: 100%;
-  }
-
-  .searchInput {
-    width: 100%;
-  }
-
-  .botaoPrincipal {
-    padding: 8px 12px;
-    font-size: 14px;
-  }
-
-  .statsGrid {
-    gap: 12px;
-  }
-
-  .statCard {
-    padding: 16px;
-  }
-
-  .statIcon {
-    width: 50px;
-    height: 50px;
-    font-size: 20px;
-  }
-
-  .statContent h3 {
-    font-size: 24px;
-  }
-}
-
-/* Estilos para desktop - CORRIGIDO */
-@media (min-width: 769px) {
-  .sidebar {
-    position: relative;
-    transform: translateX(0);
-    height: auto;
-  }
-  
-  .sidebarClose {
-    display: none;
-  }
-  
-  .menuToggle {
-    display: none;
-  }
-  
-  .overlay {
-    display: none !important;
-  }
-  
-  .mainContent {
-    margin-left: 0;
-  }
-}
-
-/* Estatísticas */
-.statsGrid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-  gap: 1rem;
-  margin-bottom: 2rem;
-}
-
-.statCard {
-  background: white;
-  border-radius: 8px;
-  padding: 1.5rem;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+/* Paginação */
+.paginacao {
   display: flex;
-  justify-content: space-between;
-  align-items: center;
-}
-
-.statCardTotal {
-  border-left: 4px solid #3498db;
-}
-
-.statCardAtivos {
-  border-left: 4px solid #2ecc71;
-}
-
-.statCardInativos {
-  border-left: 4px solid #95a5a6;
-}
-
-.statCardAlerta {
-  border-left: 4px solid #e74c3c;
-}
-
-.statContent h3 {
-  font-size: 1.75rem;
-  font-weight: bold;
-  margin: 0 0 0.25rem 0;
-  color: #2c3e50;
-}
-
-.statContent p {
-  margin: 0;
-  color: #7f8c8d;
-  font-size: 0.9rem;
-}
-
-.statIcon {
-  font-size: 2rem;
-}
-
-/* Controles */
-.controles {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 1.5rem;
-  flex-wrap: wrap;
-  gap: 1rem;
-}
-
-.filtros {
-  display: flex;
-  gap: 1rem;
-  flex-wrap: wrap;
-}
-
-.filtroGroup {
-  display: flex;
-  flex-direction: column;
-  gap: 0.5rem;
-}
-
-.filtroGroup label {
-  font-size: 0.9rem;
-  font-weight: 500;
-  color: #2c3e50;
-}
-
-.selectFiltro {
-  padding: 0.5rem;
-  border: 1px solid #ddd;
-  border-radius: 4px;
-  background: white;
-}
-
-.infoResultados {
-  color: #7f8c8d;
-  font-size: 0.9rem;
-}
-
-/* Estados da tabela */
-.carregando {
-  text-align: center;
-  padding: 3rem;
-  color: #7f8c8d;
-}
-
-.loadingSpinner {
-  width: 40px;
-  height: 40px;
-  border: 4px solid #f3f3f3;
-  border-top: 4px solid #3498db;
-  border-radius: 50%;
-  animation: spin 1s linear infinite;
-  margin: 0 auto 1rem;
-}
-
-@keyframes spin {
-  0% { transform: rotate(0deg); }
-  100% { transform: rotate(360deg); }
-}
-
-.rowInativo {
-  opacity: 0.7;
-  background-color: #f9f9f9;
-}
-
-.medInfo {
-  display: flex;
-  flex-direction: column;
-}
-
-.medCodigo {
-  font-size: 0.75rem;
-  color: #7f8c8d;
-  margin-top: 0.25rem;
-}
-
-.estoqueBaixo {
-  color: #e74c3c;
-  font-weight: bold;
-  display: flex;
-  align-items: center;
-  gap: 0.25rem;
-}
-
-.alertaEstoque {
-  font-size: 0.8rem;
-}
-
-.statusBadge {
-  padding: 0.35rem 0.75rem;
-  border-radius: 20px;
-  border: none;
-  font-size: 0.75rem;
-  font-weight: 500;
-  cursor: pointer;
-  transition: all 0.3s ease;
-}
-
-.statusAtivo {
-  background-color: #d4edda;
-  color: #155724;
-}
-
-.statusAtivo:hover {
-  background-color: #c3e6cb;
-}
-
-.statusInativo {
-  background-color: #f8d7da;
-  color: #721c24;
-}
-
-.statusInativo:hover {
-  background-color: #f1b0b7;
-}
-
-/* Search box no header */
-.searchBox {
-  position: relative;
-  display: flex;
-  align-items: center;
-}
-
-.searchInput {
-  padding: 10px 40px 10px 12px;
-  border: 2px solid #e2e8f0;
-  border-radius: 8px;
-  font-size: 14px;
-  width: 250px;
-  transition: border-color 0.3s ease;
-}
-
-.searchInput:focus {
-  outline: none;
-  border-color: #3498db;
-}
-
-.searchIcon {
-  position: absolute;
-  right: 12px;
-  color: #64748b;
-}
-
-/* Botões de visualização */
-.viewToggle {
-  display: flex;
-  border: 1px solid #e2e8f0;
-  border-radius: 6px;
-  overflow: hidden;
-}
-
-.viewButton {
-  padding: 8px 12px;
-  background: white;
-  border: none;
-  cursor: pointer;
-  transition: all 0.3s ease;
-}
-
-.viewButton:hover {
-  background: #f1f5f9;
-}
-
-.viewButton.active {
-  background: #3498db;
-  color: white;
-}
-
-/* Limpar pesquisa */
-.limparPesquisa {
-  position: absolute;
-  right: 40px;
-  top: 50%;
-  transform: translateY(-50%);
-  background: none;
-  border: none;
-  font-size: 18px;
-  cursor: pointer;
-  color: #999;
-  padding: 0;
-  width: 24px;
-  height: 24px;
-  display: flex;
-  align-items: center;
   justify-content: center;
+  align-items: center;
+  gap: 8px;
+  padding: 20px;
+  border-top: 1px solid #e2e8f0;
 }
 
-.limparPesquisa:hover {
-  color: #e74c3c;
+.botaoPagina {
+  padding: 8px 12px;
+  border: 1px solid #e2e8f0;
+  background: white;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 14px;
+  transition: all 0.3s ease;
 }
 
-/* Input group */
-.inputGroup {
-  display: flex;
-  gap: 10px;
+.botaoPagina:hover:not(:disabled) {
+  background: #f8fafc;
+  border-color: #cbd5e1;
 }
 
-.inputGroup .inputCodigo {
-  flex: 1;
+.botaoPagina:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
 }
 
-/* Visualização em grade */
+.paginaAtual {
+  background: #3b82f6;
+  color: white;
+  border-color: #3b82f6;
+}
+
+.paginaAtual:hover {
+  background: #2563eb;
+  border-color: #2563eb;
+}
+
+/* Grid de Visualização */
 .gridContainer {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
   gap: 20px;
-  margin-bottom: 20px;
+  padding: 20px;
 }
 
 .medCard {
   background: white;
-  border-radius: 8px;
+  border-radius: 12px;
   overflow: hidden;
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
   transition: transform 0.3s ease, box-shadow 0.3s ease;
+  border: 1px solid #e2e8f0;
 }
 
 .medCard:hover {
-  transform: translateY(-5px);
-  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.15);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
 }
 
 .cardInativo {
@@ -1066,41 +635,45 @@
 
 .cardHeader {
   position: relative;
+  height: 160px;
+  overflow: hidden;
 }
 
 .cardImage {
   width: 100%;
-  height: 180px;
+  height: 100%;
   object-fit: cover;
+  background: #f1f5f9;
 }
 
 .cardStatus {
   position: absolute;
-  top: 10px;
-  right: 10px;
+  top: 12px;
+  right: 12px;
 }
 
 .cardBody {
-  padding: 15px;
+  padding: 16px;
   cursor: pointer;
 }
 
 .cardTitle {
-  margin: 0 0 5px 0;
-  font-size: 1.1rem;
-  color: #2c3e50;
+  font-size: 16px;
+  font-weight: 600;
+  color: #1e293b;
+  margin: 0 0 4px 0;
 }
 
 .cardLab {
-  margin: 0 0 10px 0;
-  color: #7f8c8d;
-  font-size: 0.9rem;
+  font-size: 14px;
+  color: #64748b;
+  margin: 0 0 8px 0;
 }
 
 .cardDosage {
-  margin: 0 0 15px 0;
-  color: #3498db;
-  font-weight: 500;
+  font-size: 13px;
+  color: #94a3b8;
+  margin: 0 0 16px 0;
 }
 
 .cardDetails {
@@ -1116,214 +689,419 @@
 }
 
 .detailLabel {
-  font-size: 0.85rem;
-  color: #7f8c8d;
-}
-
-.detailValue {
-  font-size: 0.9rem;
+  font-size: 12px;
+  color: #64748b;
   font-weight: 500;
 }
 
+.detailValue {
+  font-size: 13px;
+  font-weight: 600;
+  color: #1e293b;
+}
+
 .cardActions {
-  padding: 15px;
+  padding: 16px;
+  border-top: 1px solid #e2e8f0;
   display: flex;
-  gap: 10px;
-  border-top: 1px solid #e1e5e9;
+  gap: 8px;
 }
 
 .cardActions .botao {
   flex: 1;
-  padding: 8px 12px;
-  font-size: 0.85rem;
+  padding: 8px;
+  font-size: 13px;
 }
 
-/* Paginação */
-.paginacao {
+/* Estados de Carregamento e Vazio */
+.carregando {
   display: flex;
-  justify-content: center;
+  flex-direction: column;
   align-items: center;
-  gap: 5px;
-  margin-top: 20px;
-  padding: 15px 0;
+  justify-content: center;
+  padding: 60px 20px;
+  color: #64748b;
 }
 
-.botaoPagina {
-  padding: 8px 12px;
-  border: 1px solid #e1e5e9;
+.loadingSpinner {
+  width: 40px;
+  height: 40px;
+  border: 3px solid #e2e8f0;
+  border-top: 3px solid #3b82f6;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+  margin-bottom: 16px;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+.emptyState {
+  text-align: center;
+  padding: 60px 20px;
+  color: #64748b;
+}
+
+.emptyState h3 {
+  font-size: 18px;
+  font-weight: 600;
+  color: #475569;
+  margin: 0 0 8px 0;
+}
+
+.emptyState p {
+  margin: 0 0 24px 0;
+}
+
+/* Modal */
+.modalOverlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  padding: 20px;
+}
+
+.modal {
   background: white;
-  border-radius: 4px;
+  border-radius: 12px;
+  width: 100%;
+  max-width: 500px;
+  max-height: 90vh;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+}
+
+.modalHeader {
+  padding: 20px;
+  border-bottom: 1px solid #e2e8f0;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.modalHeader h2 {
+  margin: 0;
+  font-size: 18px;
+  font-weight: 600;
+  color: #1e293b;
+}
+
+.modalClose {
+  background: none;
+  border: none;
+  font-size: 24px;
   cursor: pointer;
-  transition: all 0.3s ease;
+  padding: 0;
+  width: 30px;
+  height: 30px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 4px;
+  color: #64748b;
 }
 
-.botaoPagina:hover:not(:disabled) {
+.modalClose:hover {
   background: #f1f5f9;
+  color: #475569;
 }
 
-.botaoPagina:disabled {
-  opacity: 0.5;
-  cursor: not-allowed;
+.modalBody {
+  padding: 20px;
+  overflow-y: auto;
+  flex: 1;
 }
 
-.paginaAtual {
-  background: #3498db;
-  color: white;
-  border-color: #3498db;
+.modalFooter {
+  padding: 20px;
+  border-top: 1px solid #e2e8f0;
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
 }
 
-/* Detalhes do medicamento */
+/* Modal de Código de Barras */
+.inputGroup {
+  display: flex;
+  gap: 12px;
+  margin: 16px 0;
+}
+
+.inputCodigo {
+  flex: 1;
+  padding: 10px 12px;
+  border: 1px solid #e2e8f0;
+  border-radius: 6px;
+  font-size: 14px;
+}
+
+.inputCodigo:focus {
+  outline: none;
+  border-color: #3b82f6;
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+}
+
+.aviso {
+  color: #dc2626;
+  font-weight: 500;
+  margin: 0 0 16px 0;
+}
+
+.medicamentoInfo {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 16px;
+  background: #f8fafc;
+  border-radius: 8px;
+  margin: 16px 0;
+}
+
+.imgThumbModal {
+  width: 50px;
+  height: 50px;
+  border-radius: 8px;
+  object-fit: cover;
+  background: #e2e8f0;
+}
+
+.medicamentoInfo h3 {
+  margin: 0 0 4px 0;
+  font-size: 16px;
+  font-weight: 600;
+  color: #1e293b;
+}
+
+.medicamentoInfo p {
+  margin: 0;
+  font-size: 14px;
+  color: #64748b;
+}
+
+.medCodigoModal {
+  font-size: 12px !important;
+  color: #94a3b8 !important;
+  margin-top: 4px !important;
+}
+
+.pergunta {
+  margin: 16px 0;
+  font-weight: 500;
+  color: #475569;
+}
+
+.erro {
+  color: #dc2626;
+  font-size: 14px;
+  margin: 8px 0 0 0;
+}
+
+/* Modal de Detalhes */
 .detalhesMedicamento {
   display: flex;
+  flex-direction: column;
   gap: 20px;
 }
 
 .detalhesImagem {
-  flex: 0 0 200px;
+  text-align: center;
 }
 
 .imgDetalhes {
-  width: 100%;
-  border-radius: 8px;
-}
-
-.detalhesInfo {
-  flex: 1;
+  width: 200px;
+  height: 200px;
+  object-fit: contain;
+  background: #f8fafc;
+  border-radius: 12px;
+  padding: 16px;
 }
 
 .detalhesInfo h3 {
-  margin: 0 0 5px 0;
-  color: #2c3e50;
+  margin: 0 0 4px 0;
+  font-size: 20px;
+  font-weight: 600;
+  color: #1e293b;
 }
 
 .detalhesLab {
-  margin: 0 0 15px 0;
-  color: #7f8c8d;
-  font-size: 0.95rem;
+  margin: 0 0 16px 0;
+  font-size: 14px;
+  color: #64748b;
 }
 
 .detalhesGrid {
   display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: 10px;
-  margin-bottom: 15px;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 12px;
+  margin-bottom: 16px;
 }
 
 .detalhesItem {
   display: flex;
   flex-direction: column;
-  gap: 5px;
+  gap: 4px;
 }
 
 .detalhesItemFull {
   grid-column: 1 / -1;
-  display: flex;
-  flex-direction: column;
-  gap: 5px;
 }
 
 .detalhesLabel {
-  font-size: 0.85rem;
-  color: #7f8c8d;
-  font-weight: 500;
+  font-size: 12px;
+  font-weight: 600;
+  color: #64748b;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
 }
 
 .detalhesValue {
-  font-size: 0.9rem;
+  font-size: 14px;
+  font-weight: 500;
+  color: #1e293b;
 }
 
 .detalhesDescricao {
   margin: 0;
-  font-size: 0.9rem;
+  font-size: 14px;
+  color: #475569;
   line-height: 1.5;
 }
 
-/* Sidebar footer */
-.sidebarFooter {
-  margin-top: auto;
-  padding: 20px;
-  border-top: 1px solid rgba(255, 255, 255, 0.1);
+/* Responsividade */
+@media (max-width: 1024px) {
+  .sidebar {
+    position: fixed;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    transform: translateX(-100%);
+  }
+  
+  .sidebarOpen {
+    transform: translateX(0);
+  }
+  
+  .menuToggle {
+    display: block;
+  }
+  
+  .sidebarClose {
+    display: block;
+  }
+  
+  .overlay {
+    display: block;
+  }
+  
+  .headerActions {
+    flex-wrap: wrap;
+    gap: 12px;
+  }
+  
+  .searchInput {
+    width: 200px;
+  }
 }
 
-.userPanel {
-  display: flex;
-  align-items: center;
-  gap: 12px;
+@media (max-width: 768px) {
+  .header {
+    padding: 12px 20px;
+    flex-direction: column;
+    align-items: stretch;
+    gap: 12px;
+  }
+  
+  .headerLeft {
+    justify-content: space-between;
+  }
+  
+  .headerActions {
+    justify-content: space-between;
+  }
+  
+  .searchInput {
+    width: 100%;
+  }
+  
+  .mainContent {
+    padding: 16px;
+  }
+  
+  .filtros {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 12px;
+  }
+  
+  .filtroGroup {
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+  }
+  
+  .selectFiltro {
+    min-width: 140px;
+  }
+  
+  .gridContainer {
+    grid-template-columns: 1fr;
+  }
+  
+  .modal {
+    margin: 0;
+    border-radius: 0;
+    max-height: 100vh;
+  }
+  
+  .actionButtons {
+    flex-direction: column;
+  }
+  
+  .paginacao {
+    flex-wrap: wrap;
+    gap: 4px;
+  }
+  
+  .botaoPagina {
+    padding: 6px 10px;
+    font-size: 12px;
+  }
 }
 
-.userAvatar {
-  width: 40px;
-  height: 40px;
-  border-radius: 50%;
-  background: #3498db;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: white;
-  font-weight: 600;
-}
-
-.userInfo {
-  flex: 1;
-}
-
-.userName {
-  font-size: 14px;
-  font-weight: 600;
-  margin: 0;
-  color: white;
-}
-
-.userRole {
-  font-size: 12px;
-  color: rgba(255, 255, 255, 0.7);
-  margin: 0;
-}
-
-/* Categorias */
-.medCategory {
-  padding: 4px 8px;
-  background: #f1f5f9;
-  border-radius: 4px;
-  font-size: 0.8rem;
-  color: #4a5568;
-}
-
-/* Validade */
-.medValidity {
-  display: flex;
-  align-items: center;
-  gap: 4px;
-}
-
-.validadeProxima {
-  color: #e67e22;
-  font-weight: 500;
-}
-
-.validadeVencida {
-  color: #e74c3c;
-  font-weight: 500;
-}
-
-/* Botão de detalhes */
-.botaoDetalhes {
-  background-color: #95a5a6;
-  color: white;
-}
-
-.botaoDetalhes:hover:not(:disabled) {
-  background-color: #7f8c8d;
-}
-
-/* Info medicamento */
-.medInfoTop {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-}
-
-/* Estatísticas de validade */
-.statCardValidade {
-  border-left: 4px solid #f39c12;
+@media (max-width: 480px) {
+  .modalOverlay {
+    padding: 10px;
+  }
+  
+  .inputGroup {
+    flex-direction: column;
+  }
+  
+  .modalFooter {
+    flex-direction: column;
+  }
+  
+  .modalFooter .botao {
+    width: 100%;
+  }
+  
+  .detalhesGrid {
+    grid-template-columns: 1fr;
+  }
+  
+  .imgDetalhes {
+    width: 150px;
+    height: 150px;
+  }
 }

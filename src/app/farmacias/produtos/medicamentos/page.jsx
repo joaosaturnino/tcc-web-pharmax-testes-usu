@@ -28,8 +28,7 @@ const medicamentosIniciais = [
     codigoBarras: "7891234567890",
     status: "ativo",
     categoria: "Analgésico",
-    dataValidade: "2024-12-31",
-    lote: "LOTE12345"
+    lote: "LOTE12345",
   },
   {
     id: 2,
@@ -45,8 +44,7 @@ const medicamentosIniciais = [
     codigoBarras: "7890987654321",
     status: "ativo",
     categoria: "Analgésico",
-    dataValidade: "2024-10-15",
-    lote: "LOTE67890"
+    lote: "LOTE67890",
   },
   {
     id: 3,
@@ -62,8 +60,7 @@ const medicamentosIniciais = [
     codigoBarras: "7896543210987",
     status: "inativo",
     categoria: "Gastrointestinal",
-    dataValidade: "2025-03-20",
-    lote: "LOTE54321"
+    lote: "LOTE54321",
   },
   {
     id: 4,
@@ -79,8 +76,7 @@ const medicamentosIniciais = [
     codigoBarras: "7895678901234",
     status: "ativo",
     categoria: "Antibiótico",
-    dataValidade: "2024-08-10",
-    lote: "LOTE98765"
+    lote: "LOTE98765",
   },
   {
     id: 5,
@@ -96,17 +92,16 @@ const medicamentosIniciais = [
     codigoBarras: "7894321098765",
     status: "ativo",
     categoria: "Cardiovascular",
-    dataValidade: "2025-01-30",
-    lote: "LOTE13579"
+    lote: "LOTE13579",
   },
 ];
 
 // Simulação de banco de dados
 const bancoDeDados = {
   medicamentos: medicamentosIniciais,
-  buscarPorCodigoBarras: function(codigo) {
-    return this.medicamentos.find(med => med.codigoBarras === codigo);
-  }
+  buscarPorCodigoBarras: function (codigo) {
+    return this.medicamentos.find((med) => med.codigoBarras === codigo);
+  },
 };
 
 function ListagemMedicamentos() {
@@ -131,41 +126,42 @@ function ListagemMedicamentos() {
 
   // Extrair categorias únicas
   const categorias = useMemo(() => {
-    const cats = [...new Set(medicamentos.map(m => m.categoria))];
+    const cats = [...new Set(medicamentos.map((m) => m.categoria))];
     return ["todos", ...cats];
   }, [medicamentos]);
 
   // Filtros e ordenação
   const medicamentosFiltrados = useMemo(() => {
     setCarregando(true);
-    
+
     let resultado = [...medicamentos];
-    
+
     // Filtro por pesquisa
     if (termoPesquisa) {
       const termo = termoPesquisa.toLowerCase();
-      resultado = resultado.filter(med => 
-        med.nome.toLowerCase().includes(termo) ||
-        med.laboratorio.toLowerCase().includes(termo) ||
-        med.codigoBarras.includes(termo) ||
-        med.tipo.toLowerCase().includes(termo) ||
-        med.categoria.toLowerCase().includes(termo)
+      resultado = resultado.filter(
+        (med) =>
+          med.nome.toLowerCase().includes(termo) ||
+          med.laboratorio.toLowerCase().includes(termo) ||
+          med.codigoBarras.includes(termo) ||
+          med.tipo.toLowerCase().includes(termo) ||
+          med.categoria.toLowerCase().includes(termo)
       );
     }
-    
+
     // Filtro por status
     if (filtroStatus !== "todos") {
-      resultado = resultado.filter(med => med.status === filtroStatus);
+      resultado = resultado.filter((med) => med.status === filtroStatus);
     }
-    
+
     // Filtro por categoria
     if (filtroCategoria !== "todos") {
-      resultado = resultado.filter(med => med.categoria === filtroCategoria);
+      resultado = resultado.filter((med) => med.categoria === filtroCategoria);
     }
-    
+
     // Ordenação
     resultado.sort((a, b) => {
-      switch(ordenacao) {
+      switch (ordenacao) {
         case "nome":
           return a.nome.localeCompare(b.nome);
         case "quantidade":
@@ -174,16 +170,14 @@ function ListagemMedicamentos() {
           return b.preco - a.preco;
         case "laboratorio":
           return a.laboratorio.localeCompare(b.laboratorio);
-        case "validade":
-          return new Date(a.dataValidade) - new Date(b.dataValidade);
         default:
           return 0;
       }
     });
-    
+
     // Simular carregamento
     setTimeout(() => setCarregando(false), 200);
-    
+
     return resultado;
   }, [medicamentos, termoPesquisa, filtroStatus, filtroCategoria, ordenacao]);
 
@@ -191,7 +185,10 @@ function ListagemMedicamentos() {
   const totalPaginas = Math.ceil(medicamentosFiltrados.length / itensPorPagina);
   const indiceInicial = (paginaAtual - 1) * itensPorPagina;
   const indiceFinal = indiceInicial + itensPorPagina;
-  const medicamentosPaginados = medicamentosFiltrados.slice(indiceInicial, indiceFinal);
+  const medicamentosPaginados = medicamentosFiltrados.slice(
+    indiceInicial,
+    indiceFinal
+  );
 
   const handleExcluir = (id) => {
     if (window.confirm("Tem certeza que deseja excluir este medicamento?")) {
@@ -200,9 +197,13 @@ function ListagemMedicamentos() {
   };
 
   const toggleStatus = (id) => {
-    setMedicamentos(medicamentos.map(med => 
-      med.id === id ? {...med, status: med.status === "ativo" ? "inativo" : "ativo"} : med
-    ));
+    setMedicamentos(
+      medicamentos.map((med) =>
+        med.id === id
+          ? { ...med, status: med.status === "ativo" ? "inativo" : "ativo" }
+          : med
+      )
+    );
   };
 
   const handleEditar = (id) => {
@@ -242,7 +243,7 @@ function ListagemMedicamentos() {
     }
 
     const medicamento = bancoDeDados.buscarPorCodigoBarras(codigoBarras);
-    
+
     if (medicamento) {
       setMedicamentoExistente(medicamento);
       setProdutoNaoEncontrado(false);
@@ -255,47 +256,20 @@ function ListagemMedicamentos() {
   };
 
   const continuarCadastro = () => {
-    router.push(`/farmacias/produtos/medicamentos/precadastro?codigoBarras=${codigoBarras}`);
+    router.push(
+      `/farmacias/produtos/medicamentos/precadastro?codigoBarras=${codigoBarras}`
+    );
   };
 
   const redirecionarParaCadastro = () => {
-    router.push(`/farmacias/produtos/medicamentos/cadastro?codigoBarras=${codigoBarras}`);
+    router.push(
+      `/farmacias/produtos/medicamentos/cadastro?codigoBarras=${codigoBarras}`
+    );
   };
 
   const handleItensPorPaginaChange = (e) => {
     setItensPorPagina(Number(e.target.value));
     setPaginaAtual(1); // Reset para a primeira página
-  };
-
-  // Estatísticas
-  const totalMedicamentos = medicamentos.length;
-  const medicamentosAtivos = medicamentos.filter(m => m.status === "ativo").length;
-  const medicamentosInativos = medicamentos.filter(m => m.status === "inativo").length;
-  const medicamentosEstoqueBaixo = medicamentos.filter(m => m.quantidade <= 5 && m.status === "ativo").length;
-  const medicamentosProximaValidade = medicamentos.filter(m => {
-    if (!m.dataValidade) return false;
-    const hoje = new Date();
-    const validade = new Date(m.dataValidade);
-    const diffTime = Math.abs(validade - hoje);
-    const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24)); 
-    return diffDays <= 90 && m.status === "ativo";
-  }).length;
-
-  // Verificar validade
-  const verificarValidadeProxima = (dataValidade) => {
-    if (!dataValidade) return false;
-    const hoje = new Date();
-    const validade = new Date(dataValidade);
-    const diffTime = Math.abs(validade - hoje);
-    const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24)); 
-    return diffDays <= 90;
-  };
-
-  const verificarValidadeVencida = (dataValidade) => {
-    if (!dataValidade) return false;
-    const hoje = new Date();
-    const validade = new Date(dataValidade);
-    return validade < hoje;
   };
 
   return (
@@ -313,43 +287,24 @@ function ListagemMedicamentos() {
         </div>
         <div className={styles.headerActions}>
           <div className={styles.searchBox}>
-            <input 
-              type="text" 
-              className={styles.searchInput} 
-              placeholder="Pesquisar medicamentos..." 
+            <input
+              type="text"
+              className={styles.searchInput}
+              placeholder="Pesquisar medicamentos..."
               value={termoPesquisa}
               onChange={(e) => setTermoPesquisa(e.target.value)}
             />
-            <span className={styles.searchIcon}>🔍</span>
             {termoPesquisa && (
-              <button 
+              <button
                 className={styles.limparPesquisa}
-                onClick={() => setTermoPesquisa('')}
+                onClick={() => setTermoPesquisa("")}
               >
                 ×
               </button>
             )}
           </div>
-          <div className={styles.viewToggle}>
-            <button
-              className={`${styles.viewButton} ${visualizacao === 'tabela' ? styles.active : ''}`}
-              onClick={() => setVisualizacao('tabela')}
-              title="Visualização em tabela"
-            >
-              ≡
-            </button>
-            <button
-              className={`${styles.viewButton} ${visualizacao === 'grade' ? styles.active : ''}`}
-              onClick={() => setVisualizacao('grade')}
-              title="Visualização em grade"
-            >
-              ◼︎
-            </button>
-          </div>
-          <button
-            onClick={abrirModal}
-            className={styles.botaoPrincipal}
-          >
+
+          <button onClick={abrirModal} className={styles.botaoPrincipal}>
             ➕ Novo Medicamento
           </button>
         </div>
@@ -386,9 +341,7 @@ function ListagemMedicamentos() {
               >
                 <span className={styles.navText}>Medicamentos</span>
               </a>
-              <a href="/farmacias/estoque" className={styles.navLink}>
-                <span className={styles.navText}>Controle de Estoque</span>
-              </a>
+              
             </div>
 
             <div className={styles.navSection}>
@@ -402,34 +355,22 @@ function ListagemMedicamentos() {
               <a href="/farmacias/laboratorio/lista" className={styles.navLink}>
                 <span className={styles.navText}>Laboratórios</span>
               </a>
-              <a href="/farmacias/fornecedores" className={styles.navLink}>
-                <span className={styles.navText}>Fornecedores</span>
-              </a>
+              
             </div>
 
             <div className={styles.navSection}>
               <p className={styles.navLabel}>Relatórios</p>
-              <a href="/farmacias/relatorios/vendas" className={styles.navLink}>
-                <span className={styles.navText}>Vendas</span>
+              <a href="/farmacias/relatorios" className={styles.navLink}>
+                <span className={styles.navText}>Favoritos</span>
               </a>
-              <a href="/farmacias/relatorios/estoque" className={styles.navLink}>
+              <a
+                href="/farmacias/relatorios/estoque"
+                className={styles.navLink}
+              >
                 <span className={styles.navText}>Estoque</span>
-              </a>
-              <a href="/farmacias/relatorios/validade" className={styles.navLink}>
-                <span className={styles.navText}>Validade</span>
               </a>
             </div>
           </nav>
-
-          <div className={styles.sidebarFooter}>
-            <div className={styles.userPanel}>
-              <div className={styles.userAvatar}>AD</div>
-              <div className={styles.userInfo}>
-                <div className={styles.userName}>Administrador</div>
-                <div className={styles.userRole}>admin@pharmax.com</div>
-              </div>
-            </div>
-          </div>
         </aside>
 
         {/* Overlay para mobile */}
@@ -442,48 +383,34 @@ function ListagemMedicamentos() {
 
         {/* Conteúdo Principal */}
         <main className={styles.mainContent}>
-          {/* Estatísticas */}
-          <div className={styles.statsGrid}>
-            <div className={`${styles.statCard} ${styles.statCardTotal}`}>
-              <div className={styles.statContent}>
-                <h3>{totalMedicamentos}</h3>
-                <p>Total de Medicamentos</p>
-              </div>
-              <div className={styles.statIcon}>💊</div>
-            </div>
-            
-            <div className={`${styles.statCard} ${styles.statCardAtivos}`}>
-              <div className={styles.statContent}>
-                <h3>{medicamentosAtivos}</h3>
-                <p>Medicamentos Ativos</p>
-              </div>
-              <div className={styles.statIcon}>✅</div>
-            </div>
-            
-            <div className={`${styles.statCard} ${styles.statCardAlerta}`}>
-              <div className={styles.statContent}>
-                <h3>{medicamentosEstoqueBaixo}</h3>
-                <p>Estoque Baixo</p>
-              </div>
-              <div className={styles.statIcon}>⚠️</div>
-            </div>
-            
-            <div className={`${styles.statCard} ${styles.statCardValidade}`}>
-              <div className={styles.statContent}>
-                <h3>{medicamentosProximaValidade}</h3>
-                <p>Validade Próxima</p>
-              </div>
-              <div className={styles.statIcon}>📅</div>
-            </div>
-          </div>
-
           {/* Filtros e Controles */}
           <div className={styles.controles}>
             <div className={styles.filtros}>
+              <div className={styles.viewToggle}>
+                <button
+                  className={`${styles.viewButton} ${
+                    visualizacao === "tabela" ? styles.active : ""
+                  }`}
+                  onClick={() => setVisualizacao("tabela")}
+                  title="Visualização em tabela"
+                >
+                  ≡
+                </button>
+                <button
+                  className={`${styles.viewButton} ${
+                    visualizacao === "grade" ? styles.active : ""
+                  }`}
+                  onClick={() => setVisualizacao("grade")}
+                  title="Visualização em grade"
+                >
+                  ◼︎
+                </button>
+              </div>
+
               <div className={styles.filtroGroup}>
                 <label>Status:</label>
-                <select 
-                  value={filtroStatus} 
+                <select
+                  value={filtroStatus}
                   onChange={(e) => setFiltroStatus(e.target.value)}
                   className={styles.selectFiltro}
                 >
@@ -492,26 +419,26 @@ function ListagemMedicamentos() {
                   <option value="inativo">Inativos</option>
                 </select>
               </div>
-              
+
               <div className={styles.filtroGroup}>
                 <label>Categoria:</label>
-                <select 
-                  value={filtroCategoria} 
+                <select
+                  value={filtroCategoria}
                   onChange={(e) => setFiltroCategoria(e.target.value)}
                   className={styles.selectFiltro}
                 >
-                  {categorias.map(cat => (
+                  {categorias.map((cat) => (
                     <option key={cat} value={cat}>
                       {cat === "todos" ? "Todas" : cat}
                     </option>
                   ))}
                 </select>
               </div>
-              
+
               <div className={styles.filtroGroup}>
                 <label>Ordenar por:</label>
-                <select 
-                  value={ordenacao} 
+                <select
+                  value={ordenacao}
                   onChange={(e) => setOrdenacao(e.target.value)}
                   className={styles.selectFiltro}
                 >
@@ -519,14 +446,13 @@ function ListagemMedicamentos() {
                   <option value="quantidade">Quantidade</option>
                   <option value="preco">Preço</option>
                   <option value="laboratorio">Laboratório</option>
-                  <option value="validade">Validade</option>
                 </select>
               </div>
 
               <div className={styles.filtroGroup}>
                 <label>Itens por página:</label>
-                <select 
-                  value={itensPorPagina} 
+                <select
+                  value={itensPorPagina}
                   onChange={handleItensPorPaginaChange}
                   className={styles.selectFiltro}
                 >
@@ -537,9 +463,10 @@ function ListagemMedicamentos() {
                 </select>
               </div>
             </div>
-            
+
             <div className={styles.infoResultados}>
-              Exibindo {medicamentosPaginados.length} de {medicamentosFiltrados.length} medicamentos
+              Exibindo {medicamentosPaginados.length} de{" "}
+              {medicamentosFiltrados.length} medicamentos
             </div>
           </div>
 
@@ -553,11 +480,12 @@ function ListagemMedicamentos() {
             ) : medicamentosFiltrados.length === 0 ? (
               <div className={styles.emptyState}>
                 <h3>Nenhum medicamento encontrado</h3>
-                <p>{termoPesquisa ? `Não encontramos resultados para "${termoPesquisa}"` : "Comece cadastrando seu primeiro medicamento."}</p>
-                <button
-                  onClick={abrirModal}
-                  className={styles.botaoPrincipal}
-                >
+                <p>
+                  {termoPesquisa
+                    ? `Não encontramos resultados para "${termoPesquisa}"`
+                    : "Comece cadastrando seu primeiro medicamento."}
+                </p>
+                <button onClick={abrirModal} className={styles.botaoPrincipal}>
                   ➕ Novo Medicamento
                 </button>
               </div>
@@ -572,16 +500,24 @@ function ListagemMedicamentos() {
                         <th>Quantidade</th>
                         <th>Preço</th>
                         <th>Categoria</th>
-                        <th>Validade</th>
                         <th>Status</th>
                         <th>Ações</th>
                       </tr>
                     </thead>
                     <tbody>
                       {medicamentosPaginados.map((med) => (
-                        <tr key={med.id} className={`${styles.tableRow} ${med.status === "inativo" ? styles.rowInativo : ""}`}>
+                        <tr
+                          key={med.id}
+                          className={`${styles.tableRow} ${
+                            med.status === "inativo" ? styles.rowInativo : ""
+                          }`}
+                        >
                           <td>
-                            <div className={styles.medInfo} onClick={() => abrirDetalhes(med)} style={{cursor: 'pointer'}}>
+                            <div
+                              className={styles.medInfo}
+                              onClick={() => abrirDetalhes(med)}
+                              style={{ cursor: "pointer" }}
+                            >
                               <div className={styles.medInfoTop}>
                                 <img
                                   src={med.imagem || imagemPadrao}
@@ -592,9 +528,15 @@ function ListagemMedicamentos() {
                                   }}
                                 />
                                 <div>
-                                  <span className={styles.medName}>{med.nome}</span>
-                                  <span className={styles.medLab}>{med.laboratorio}</span>
-                                  <span className={styles.medCodigo}>{med.codigoBarras}</span>
+                                  <span className={styles.medName}>
+                                    {med.nome}
+                                  </span>
+                                  <span className={styles.medLab}>
+                                    {med.laboratorio}
+                                  </span>
+                                  <span className={styles.medCodigo}>
+                                    {med.codigoBarras}
+                                  </span>
                                 </div>
                               </div>
                             </div>
@@ -605,32 +547,38 @@ function ListagemMedicamentos() {
                             </span>
                           </td>
                           <td>
-                            <span className={`${styles.medQuantity} ${med.quantidade <= 5 ? styles.estoqueBaixo : ""}`}>
+                            <span
+                              className={`${styles.medQuantity} ${
+                                med.quantidade <= 5 ? styles.estoqueBaixo : ""
+                              }`}
+                            >
                               {med.quantidade}
-                              {med.quantidade <= 5 && <span className={styles.alertaEstoque} title="Estoque baixo">⚠️</span>}
+                              {med.quantidade <= 5 && (
+                                <span
+                                  className={styles.alertaEstoque}
+                                  title="Estoque baixo"
+                                >
+                                  ⚠️
+                                </span>
+                              )}
                             </span>
                           </td>
                           <td className={styles.money}>
                             {currency.format(Number(med.preco ?? 0))}
                           </td>
                           <td>
-                            <span className={styles.medCategory}>{med.categoria}</span>
-                          </td>
-                          <td>
-                            <span className={`${styles.medValidity} ${
-                              verificarValidadeVencida(med.dataValidade) ? styles.validadeVencida : 
-                              verificarValidadeProxima(med.dataValidade) ? styles.validadeProxima : ""
-                            }`}>
-                              {med.dataValidade ? new Date(med.dataValidade).toLocaleDateString('pt-BR') : 'N/A'}
-                              {verificarValidadeVencida(med.dataValidade) && <span title="Vencido"> ⚠️</span>}
-                              {verificarValidadeProxima(med.dataValidade) && !verificarValidadeVencida(med.dataValidade) && 
-                                <span title="Validade próxima"> ⏳</span>}
+                            <span className={styles.medCategory}>
+                              {med.categoria}
                             </span>
                           </td>
                           <td>
-                            <button 
+                            <button
                               onClick={() => toggleStatus(med.id)}
-                              className={`${styles.statusBadge} ${med.status === "ativo" ? styles.statusAtivo : styles.statusInativo}`}
+                              className={`${styles.statusBadge} ${
+                                med.status === "ativo"
+                                  ? styles.statusAtivo
+                                  : styles.statusInativo
+                              }`}
                             >
                               {med.status === "ativo" ? "Ativo" : "Inativo"}
                             </button>
@@ -642,22 +590,22 @@ function ListagemMedicamentos() {
                                 onClick={() => abrirDetalhes(med)}
                                 title="Ver detalhes"
                               >
-                                👁️
+                                Informes
                               </button>
-                              <button
+                              {/* <button
                                 className={`${styles.botao} ${styles.botaoEditar}`}
                                 onClick={() => handleEditar(med.id)}
                                 title="Editar medicamento"
                               >
                                 ✏️
-                              </button>
-                              <button
+                              </button> */}
+                              {/* <button
                                 className={`${styles.botao} ${styles.botaoExcluir}`}
                                 onClick={() => handleExcluir(med.id)}
                                 title="Excluir medicamento"
                               >
                                 🗑️
-                              </button>
+                              </button> */}
                             </div>
                           </td>
                         </tr>
@@ -669,39 +617,48 @@ function ListagemMedicamentos() {
                 {/* Paginação */}
                 {totalPaginas > 1 && (
                   <div className={styles.paginacao}>
-                    <button 
-                      onClick={() => setPaginaAtual(p => Math.max(1, p - 1))}
+                    <button
+                      onClick={() => setPaginaAtual((p) => Math.max(1, p - 1))}
                       disabled={paginaAtual === 1}
                       className={styles.botaoPagina}
                     >
                       &laquo; Anterior
                     </button>
-                    
-                    {Array.from({ length: Math.min(5, totalPaginas) }, (_, i) => {
-                      let paginaNum;
-                      if (totalPaginas <= 5) {
-                        paginaNum = i + 1;
-                      } else if (paginaAtual <= 3) {
-                        paginaNum = i + 1;
-                      } else if (paginaAtual >= totalPaginas - 2) {
-                        paginaNum = totalPaginas - 4 + i;
-                      } else {
-                        paginaNum = paginaAtual - 2 + i;
+
+                    {Array.from(
+                      { length: Math.min(5, totalPaginas) },
+                      (_, i) => {
+                        let paginaNum;
+                        if (totalPaginas <= 5) {
+                          paginaNum = i + 1;
+                        } else if (paginaAtual <= 3) {
+                          paginaNum = i + 1;
+                        } else if (paginaAtual >= totalPaginas - 2) {
+                          paginaNum = totalPaginas - 4 + i;
+                        } else {
+                          paginaNum = paginaAtual - 2 + i;
+                        }
+
+                        return (
+                          <button
+                            key={paginaNum}
+                            onClick={() => setPaginaAtual(paginaNum)}
+                            className={`${styles.botaoPagina} ${
+                              paginaAtual === paginaNum
+                                ? styles.paginaAtual
+                                : ""
+                            }`}
+                          >
+                            {paginaNum}
+                          </button>
+                        );
                       }
-                      
-                      return (
-                        <button
-                          key={paginaNum}
-                          onClick={() => setPaginaAtual(paginaNum)}
-                          className={`${styles.botaoPagina} ${paginaAtual === paginaNum ? styles.paginaAtual : ''}`}
-                        >
-                          {paginaNum}
-                        </button>
-                      );
-                    })}
-                    
-                    <button 
-                      onClick={() => setPaginaAtual(p => Math.min(totalPaginas, p + 1))}
+                    )}
+
+                    <button
+                      onClick={() =>
+                        setPaginaAtual((p) => Math.min(totalPaginas, p + 1))
+                      }
                       disabled={paginaAtual === totalPaginas}
                       className={styles.botaoPagina}
                     >
@@ -714,7 +671,12 @@ function ListagemMedicamentos() {
               // Visualização em Grade
               <div className={styles.gridContainer}>
                 {medicamentosPaginados.map((med) => (
-                  <div key={med.id} className={`${styles.medCard} ${med.status === "inativo" ? styles.cardInativo : ""}`}>
+                  <div
+                    key={med.id}
+                    className={`${styles.medCard} ${
+                      med.status === "inativo" ? styles.cardInativo : ""
+                    }`}
+                  >
                     <div className={styles.cardHeader}>
                       <img
                         src={med.imagem || imagemPadrao}
@@ -725,43 +687,57 @@ function ListagemMedicamentos() {
                         }}
                       />
                       <div className={styles.cardStatus}>
-                        <button 
+                        <button
                           onClick={() => toggleStatus(med.id)}
-                          className={`${styles.statusBadge} ${med.status === "ativo" ? styles.statusAtivo : styles.statusInativo}`}
+                          className={`${styles.statusBadge} ${
+                            med.status === "ativo"
+                              ? styles.statusAtivo
+                              : styles.statusInativo
+                          }`}
                         >
                           {med.status === "ativo" ? "Ativo" : "Inativo"}
                         </button>
                       </div>
                     </div>
-                    
-                    <div className={styles.cardBody} onClick={() => abrirDetalhes(med)}>
+
+                    <div
+                      className={styles.cardBody}
+                      onClick={() => abrirDetalhes(med)}
+                    >
                       <h3 className={styles.cardTitle}>{med.nome}</h3>
                       <p className={styles.cardLab}>{med.laboratorio}</p>
-                      <p className={styles.cardDosage}>{med.dosagem} • {med.forma}</p>
-                      
+                      <p className={styles.cardDosage}>
+                        {med.dosagem} • {med.forma}
+                      </p>
+
                       <div className={styles.cardDetails}>
                         <div className={styles.cardDetail}>
-                          <span className={styles.detailLabel}>Quantidade:</span>
-                          <span className={`${styles.detailValue} ${med.quantidade <= 5 ? styles.estoqueBaixo : ""}`}>
+                          <span className={styles.detailLabel}>
+                            Quantidade:
+                          </span>
+                          <span
+                            className={`${styles.detailValue} ${
+                              med.quantidade <= 5 ? styles.estoqueBaixo : ""
+                            }`}
+                          >
                             {med.quantidade}
                           </span>
                         </div>
                         <div className={styles.cardDetail}>
                           <span className={styles.detailLabel}>Preço:</span>
-                          <span className={styles.detailValue}>{currency.format(Number(med.preco ?? 0))}</span>
+                          <span className={styles.detailValue}>
+                            {currency.format(Number(med.preco ?? 0))}
+                          </span>
                         </div>
                         <div className={styles.cardDetail}>
-                          <span className={styles.detailLabel}>Validade:</span>
-                          <span className={`${styles.detailValue} ${
-                            verificarValidadeVencida(med.dataValidade) ? styles.validadeVencida : 
-                            verificarValidadeProxima(med.dataValidade) ? styles.validadeProxima : ""
-                          }`}>
-                            {med.dataValidade ? new Date(med.dataValidade).toLocaleDateString('pt-BR') : 'N/A'}
+                          <span className={styles.detailLabel}>Categoria:</span>
+                          <span className={styles.detailValue}>
+                            {med.categoria}
                           </span>
                         </div>
                       </div>
                     </div>
-                    
+
                     <div className={styles.cardActions}>
                       <button
                         className={`${styles.botao} ${styles.botaoDetalhes}`}
@@ -808,9 +784,11 @@ function ListagemMedicamentos() {
                       className={styles.inputCodigo}
                       placeholder="Código de barras"
                       autoFocus
-                      onKeyPress={(e) => e.key === 'Enter' && verificarCodigoBarras()}
+                      onKeyPress={(e) =>
+                        e.key === "Enter" && verificarCodigoBarras()
+                      }
                     />
-                    <button 
+                    <button
                       className={styles.botaoSecundario}
                       onClick={verificarCodigoBarras}
                     >
@@ -835,7 +813,10 @@ function ListagemMedicamentos() {
                     />
                     <div>
                       <h3>{medicamentoExistente.nome}</h3>
-                      <p>{medicamentoExistente.dosagem} - {medicamentoExistente.laboratorio}</p>
+                      <p>
+                        {medicamentoExistente.dosagem} -{" "}
+                        {medicamentoExistente.laboratorio}
+                      </p>
                       <p className={styles.medCodigoModal}>
                         Código: {medicamentoExistente.codigoBarras}
                       </p>
@@ -863,9 +844,19 @@ function ListagemMedicamentos() {
               </button>
               <button
                 className={`${styles.botao} ${styles.botaoPrincipal}`}
-                onClick={medicamentoExistente ? continuarCadastro : produtoNaoEncontrado ? redirecionarParaCadastro : verificarCodigoBarras}
+                onClick={
+                  medicamentoExistente
+                    ? continuarCadastro
+                    : produtoNaoEncontrado
+                    ? redirecionarParaCadastro
+                    : verificarCodigoBarras
+                }
               >
-                {medicamentoExistente ? "Continuar" : produtoNaoEncontrado ? "Cadastrar" : "Verificar"}
+                {medicamentoExistente
+                  ? "Continuar"
+                  : produtoNaoEncontrado
+                  ? "Cadastrar"
+                  : "Verificar"}
               </button>
             </div>
           </div>
@@ -878,7 +869,10 @@ function ListagemMedicamentos() {
           <div className={styles.modal}>
             <div className={styles.modalHeader}>
               <h2>Detalhes do Medicamento</h2>
-              <button className={styles.modalClose} onClick={fecharModalDetalhes}>
+              <button
+                className={styles.modalClose}
+                onClick={fecharModalDetalhes}
+              >
                 &times;
               </button>
             </div>
@@ -894,90 +888,120 @@ function ListagemMedicamentos() {
                     }}
                   />
                 </div>
-                
+
                 <div className={styles.detalhesInfo}>
                   <h3>{medicamentoSelecionado.nome}</h3>
-                  <p className={styles.detalhesLab}>{medicamentoSelecionado.laboratorio}</p>
-                  
+                  <p className={styles.detalhesLab}>
+                    {medicamentoSelecionado.laboratorio}
+                  </p>
+
                   <div className={styles.detalhesGrid}>
                     <div className={styles.detalhesItem}>
                       <span className={styles.detalhesLabel}>Dosagem:</span>
-                      <span className={styles.detalhesValue}>{medicamentoSelecionado.dosagem}</span>
+                      <span className={styles.detalhesValue}>
+                        {medicamentoSelecionado.dosagem}
+                      </span>
                     </div>
                     <div className={styles.detalhesItem}>
-                      <span className={styles.detalhesLabel}>Forma Farmacêutica:</span>
-                      <span className={styles.detalhesValue}>{medicamentoSelecionado.forma}</span>
+                      <span className={styles.detalhesLabel}>
+                        Forma Farmacêutica:
+                      </span>
+                      <span className={styles.detalhesValue}>
+                        {medicamentoSelecionado.forma}
+                      </span>
                     </div>
                     <div className={styles.detalhesItem}>
                       <span className={styles.detalhesLabel}>Tipo:</span>
-                      <span className={styles.detalhesValue}>{medicamentoSelecionado.tipo}</span>
+                      <span className={styles.detalhesValue}>
+                        {medicamentoSelecionado.tipo}
+                      </span>
                     </div>
                     <div className={styles.detalhesItem}>
                       <span className={styles.detalhesLabel}>Categoria:</span>
-                      <span className={styles.detalhesValue}>{medicamentoSelecionado.categoria}</span>
+                      <span className={styles.detalhesValue}>
+                        {medicamentoSelecionado.categoria}
+                      </span>
                     </div>
                     <div className={styles.detalhesItem}>
-                      <span className={styles.detalhesLabel}>Quantidade em Estoque:</span>
-                      <span className={`${styles.detalhesValue} ${medicamentoSelecionado.quantidade <= 5 ? styles.estoqueBaixo : ""}`}>
+                      <span className={styles.detalhesLabel}>
+                        Quantidade em Estoque:
+                      </span>
+                      <span
+                        className={`${styles.detalhesValue} ${
+                          medicamentoSelecionado.quantidade <= 5
+                            ? styles.estoqueBaixo
+                            : ""
+                        }`}
+                      >
                         {medicamentoSelecionado.quantidade} unidades
                       </span>
                     </div>
                     <div className={styles.detalhesItem}>
                       <span className={styles.detalhesLabel}>Preço:</span>
-                      <span className={styles.detalhesValue}>{currency.format(Number(medicamentoSelecionado.preco ?? 0))}</span>
+                      <span className={styles.detalhesValue}>
+                        {currency.format(
+                          Number(medicamentoSelecionado.preco ?? 0)
+                        )}
+                      </span>
                     </div>
                     <div className={styles.detalhesItem}>
-                      <span className={styles.detalhesLabel}>Código de Barras:</span>
-                      <span className={styles.detalhesValue}>{medicamentoSelecionado.codigoBarras}</span>
+                      <span className={styles.detalhesLabel}>
+                        Código de Barras:
+                      </span>
+                      <span className={styles.detalhesValue}>
+                        {medicamentoSelecionado.codigoBarras}
+                      </span>
                     </div>
                     <div className={styles.detalhesItem}>
                       <span className={styles.detalhesLabel}>Lote:</span>
-                      <span className={styles.detalhesValue}>{medicamentoSelecionado.lote || 'N/A'}</span>
-                    </div>
-                    <div className={styles.detalhesItem}>
-                      <span className={styles.detalhesLabel}>Data de Validade:</span>
-                      <span className={`${styles.detalhesValue} ${
-                        verificarValidadeVencida(medicamentoSelecionado.dataValidade) ? styles.validadeVencida : 
-                        verificarValidadeProxima(medicamentoSelecionado.dataValidade) ? styles.validadeProxima : ""
-                      }`}>
-                        {medicamentoSelecionado.dataValidade ? new Date(medicamentoSelecionado.dataValidade).toLocaleDateString('pt-BR') : 'N/A'}
-                        {verificarValidadeVencida(medicamentoSelecionado.dataValidade) && <span> (Vencido)</span>}
-                        {verificarValidadeProxima(medicamentoSelecionado.dataValidade) && !verificarValidadeVencida(medicamentoSelecionado.dataValidade) && 
-                          <span> (Próximo do vencimento)</span>}
+                      <span className={styles.detalhesValue}>
+                        {medicamentoSelecionado.lote || "N/A"}
                       </span>
                     </div>
                     <div className={styles.detalhesItem}>
                       <span className={styles.detalhesLabel}>Status:</span>
                       <span className={styles.detalhesValue}>
-                        <button 
+                        <button
                           onClick={() => {
                             toggleStatus(medicamentoSelecionado.id);
                             setMedicamentoSelecionado({
                               ...medicamentoSelecionado,
-                              status: medicamentoSelecionado.status === "ativo" ? "inativo" : "ativo"
+                              status:
+                                medicamentoSelecionado.status === "ativo"
+                                  ? "inativo"
+                                  : "ativo",
                             });
                           }}
-                          className={`${styles.statusBadge} ${medicamentoSelecionado.status === "ativo" ? styles.statusAtivo : styles.statusInativo}`}
+                          className={`${styles.statusBadge} ${
+                            medicamentoSelecionado.status === "ativo"
+                              ? styles.statusAtivo
+                              : styles.statusInativo
+                          }`}
                         >
-                          {medicamentoSelecionado.status === "ativo" ? "Ativo" : "Inativo"}
+                          {medicamentoSelecionado.status === "ativo"
+                            ? "Ativo"
+                            : "Inativo"}
                         </button>
                       </span>
                     </div>
                   </div>
-                  
+
                   <div className={styles.detalhesItemFull}>
                     <span className={styles.detalhesLabel}>Descrição:</span>
-                    <p className={styles.detalhesDescricao}>{medicamentoSelecionado.descricao}</p>
+                    <p className={styles.detalhesDescricao}>
+                      {medicamentoSelecionado.descricao}
+                    </p>
                   </div>
                 </div>
               </div>
             </div>
             <div className={styles.modalFooter}>
               <button
-                className={`${styles.botao} ${styles.botaoSecundario}`}
-                onClick={fecharModalDetalhes}
+                className={`${styles.botao} ${styles.botaoExcluir}`}
+                onClick={() => handleExcluir(med.id)}
+                title="Excluir medicamento"
               >
-                Fechar
+                🗑️
               </button>
               <button
                 className={`${styles.botao} ${styles.botaoPrincipal}`}
