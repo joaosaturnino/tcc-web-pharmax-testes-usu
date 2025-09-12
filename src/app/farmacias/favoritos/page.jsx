@@ -111,13 +111,13 @@ export default function FavoritosFarmaciaPage() {
             <h1 className={styles.title}>Medicamentos Mais Favoritados</h1>
           </div>
           <div className={styles.headerActions}>
-            <button
+            {/* <button
               onClick={navigateToProfile}
               className={styles.actionBtn}
               title="Acessar perfil"
             >
               👤 Perfil
-            </button>
+            </button> */}
           </div>
         </header>
 
@@ -163,6 +163,30 @@ export default function FavoritosFarmaciaPage() {
                 </a>
                 <a href="/farmacias/laboratorio/lista" className={styles.navLink}>
                   <span className={styles.navText}>Laboratórios</span>
+                </a>
+
+                
+              </div>
+
+              <div className={styles.navSection}>
+                <p className={styles.navLabel}>Relatórios</p>
+                <a
+                  href="/farmacias/relatorios/favoritos"
+                  className={styles.navLink}
+                >
+                  <span className={styles.navText}>Medicamentos Favoritos</span>
+                </a>
+                <a
+                  href="/farmacias/relatorios/funcionarios"
+                  className={styles.navLink}
+                >
+                  <span className={styles.navText}>Relatório de Funcionarios</span>
+                </a>
+                <a
+                  href="/farmacias/relatorios/laboratorios"
+                  className={styles.navLink}
+                >
+                  <span className={styles.navText}>Relatório de Laboratorios</span>
                 </a>
               </div>
 
