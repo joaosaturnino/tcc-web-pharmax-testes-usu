@@ -1,11 +1,9 @@
 "use client";
 
 import { useEffect, useState, useRef } from "react";
-import { useRouter } from "next/navigation";
 import styles from "./page.module.css";
-import AuthGuard from "../../../component/AuthGuard";
 
-export default function FavoritosFarmaciaPage() {
+export default function RelatorioFavoritosPage() {
   const [medicamentos, setMedicamentos] = useState([]);
   const [loading, setLoading] = useState(true);
   const [sidebarOpen, setSidebarOpen] = useState(false);
@@ -22,12 +20,10 @@ export default function FavoritosFarmaciaPage() {
   const [sortBy, setSortBy] = useState("favoritacoes");
   const [sortOrder, setSortOrder] = useState("desc");
   const reportRef = useRef(null);
-  const router = useRouter();
 
   useEffect(() => {
-    // Mock para desenvolvimento (substituir pelo fetch real)
     setTimeout(() => {
-      const mockMedicamentos = [
+      setMedicamentos([
         {
           id: "m1",
           nome: "Paracetamol 500mg",
@@ -117,46 +113,11 @@ export default function FavoritosFarmaciaPage() {
           favoritacoes: 11,
           status: "em_estoque",
           ultimaAtualizacao: "2025-08-12T09:15:00Z",
-        },
-        {
-          id: "m11",
-          nome: "Clonazepam 2mg",
-          dosagem: "2mg",
-          fabricante: "MedFarma Ltda",
-          favoritacoes: 9,
-          status: "pendente",
-          ultimaAtualizacao: "2025-08-11T13:40:00Z",
-        },
-        {
-          id: "m12",
-          nome: "Hidroclorotiazida 25mg",
-          dosagem: "25mg",
-          fabricante: "MedLab Brasil",
-          favoritacoes: 7,
-          status: "em_estoque",
-          ultimaAtualizacao: "2025-08-10T16:25:00Z",
-        },
-      ];
-
-      setMedicamentos(mockMedicamentos);
+        }
+      ]);
       setLoading(false);
     }, 800);
   }, []);
-
-  const handleLogout = async () => {
-    try {
-      localStorage.removeItem("authToken");
-      sessionStorage.removeItem("userData");
-      router.push("/login");
-    } catch (error) {
-      console.error("Erro ao fazer logout:", error);
-      router.push("/home");
-    }
-  };
-
-  const navigateToProfile = () => {
-    router.push("/farmacias/perfil");
-  };
 
   // Filtrar e ordenar medicamentos
   const filteredMedicamentos = medicamentos.filter((med) => {
@@ -173,13 +134,15 @@ export default function FavoritosFarmaciaPage() {
 
   const sortedMedicamentos = [...filteredMedicamentos].sort((a, b) => {
     let valueA, valueB;
-
     if (sortBy === "nome") {
       valueA = a.nome.toLowerCase();
       valueB = b.nome.toLowerCase();
     } else if (sortBy === "fabricante") {
       valueA = a.fabricante.toLowerCase();
       valueB = b.fabricante.toLowerCase();
+    } else if (sortBy === "favoritacoes") {
+      valueA = a.favoritacoes;
+      valueB = b.favoritacoes;
     } else if (sortBy === "data") {
       valueA = new Date(a.ultimaAtualizacao);
       valueB = new Date(b.ultimaAtualizacao);
@@ -187,7 +150,6 @@ export default function FavoritosFarmaciaPage() {
       valueA = a[sortBy];
       valueB = b[sortBy];
     }
-
     if (typeof valueA === "string") {
       return sortOrder === "asc"
         ? valueA.localeCompare(valueB)
@@ -197,13 +159,10 @@ export default function FavoritosFarmaciaPage() {
     }
   });
 
-  // Cálculos de paginação
+  // Paginação
   const indexOfLastItem = currentPage * itemsPerPage;
   const indexOfFirstItem = indexOfLastItem - itemsPerPage;
-  const currentItems = sortedMedicamentos.slice(
-    indexOfFirstItem,
-    indexOfLastItem
-  );
+  const currentItems = sortedMedicamentos.slice(indexOfFirstItem, indexOfLastItem);
   const totalPages = Math.ceil(sortedMedicamentos.length / itemsPerPage);
 
   const paginate = (pageNumber) => setCurrentPage(pageNumber);
@@ -216,49 +175,6 @@ export default function FavoritosFarmaciaPage() {
     }, 500);
   };
 
-  const exportToCSV = () => {
-    const headers = [
-      "Nome",
-      "Dosagem",
-      "Fabricante",
-      "Favoritações",
-      "Status",
-      "Última Atualização",
-    ];
-    const csvData = [
-      headers.join(","),
-      ...sortedMedicamentos.map((med) =>
-        [
-          `"${med.nome}"`,
-          `"${med.dosagem}"`,
-          `"${med.fabricante}"`,
-          med.favoritacoes,
-          `"${
-            med.status === "em_estoque"
-              ? "Disponível"
-              : med.status === "indisponivel"
-              ? "Indisponível"
-              : "Pendente"
-          }"`,
-          `"${new Date(med.ultimaAtualizacao).toLocaleDateString("pt-BR")}"`,
-        ].join(",")
-      ),
-    ].join("\n");
-
-    const blob = new Blob([csvData], { type: "text/csv;charset=utf-8;" });
-    const url = URL.createObjectURL(blob);
-    const link = document.createElement("a");
-    link.setAttribute("href", url);
-    link.setAttribute(
-      "download",
-      `relatorio_favoritos_${new Date().toISOString().split("T")[0]}.csv`
-    );
-    link.style.visibility = "hidden";
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
-  };
-
   const handleSort = (column) => {
     if (sortBy === column) {
       setSortOrder(sortOrder === "asc" ? "desc" : "asc");
@@ -269,273 +185,200 @@ export default function FavoritosFarmaciaPage() {
   };
 
   const getSortIcon = (column) => {
-    if (sortBy !== column) return "↕️";
+    if (sortBy !== column) return "⇅";
     return sortOrder === "asc" ? "↑" : "↓";
   };
 
   if (loading) {
     return (
-      <div className={styles.dashboard}>
-        <div className={styles.loaderContainer}>
-          <div className={styles.spinner}></div>
-          <p>Carregando medicamentos favoritos...</p>
-        </div>
+      <div className={styles.loaderContainer}>
+        <div className={styles.spinner}></div>
+        <span>Carregando...</span>
       </div>
     );
   }
 
   return (
-    <AuthGuard requiredRole="admin">
-      <div className={styles.dashboard}>
-        {/* Header */}
-        <header className={styles.header}>
-          <div className={styles.headerLeft}>
+    <div className={styles.dashboard}>
+      <header className={styles.header}>
+        <div className={styles.headerLeft}>
+          <button
+            className={styles.menuToggle}
+            onClick={() => setSidebarOpen(!sidebarOpen)}
+          >
+            ☰
+          </button>
+          <h1 className={styles.title}>Relatório de Favoritos</h1>
+        </div>
+        <div className={styles.headerActions}>
+          <button
+            className={styles.reportButton}
+            onClick={generateReport}
+            title="Gerar relatório para impressão"
+          >
+            Gerar Relatório
+          </button>
+        </div>
+      </header>
+      <div className={styles.contentWrapper}>
+        <aside
+          className={`${styles.sidebar} ${
+            sidebarOpen ? styles.sidebarOpen : ""
+          }`}
+        >
+          <div className={styles.sidebarHeader}>
+            <div className={styles.logo}>
+              <span className={styles.logoText}>PharmaX</span>
+            </div>
             <button
-              className={styles.menuToggle}
-              onClick={() => setSidebarOpen(!sidebarOpen)}
+              className={styles.sidebarClose}
+              onClick={() => setSidebarOpen(false)}
             >
-              ☰
-            </button>
-            <h1 className={styles.title}>Medicamentos Mais Favoritados</h1>
-          </div>
-
-          <div className={styles.headerActions}>
-            <button
-              className={styles.reportButton}
-              onClick={generateReport}
-              title="Gerar relatório para impressão"
-            >
-              Gerar Relatório
+              ×
             </button>
           </div>
-        </header>
-
-        <div className={styles.contentWrapper}>
-          {/* Sidebar Não Fixa */}
-          <aside
-            className={`${styles.sidebar} ${
-              sidebarOpen ? styles.sidebarOpen : ""
+          <nav className={styles.nav}>
+            <div className={styles.navSection}>
+              <p className={styles.navLabel}>Principal</p>
+              <a href="/farmacias/favoritos" className={styles.navLink}>
+                <span className={styles.navText}>Favoritos</span>
+              </a>
+              <a href="/farmacias/produtos/medicamentos" className={styles.navLink}>
+                <span className={styles.navText}>Medicamentos</span>
+              </a>
+            </div>
+            <div className={styles.navSection}>
+              <p className={styles.navLabel}>Gestão</p>
+              <a href="/farmacias/cadastro/funcionario/lista" className={styles.navLink}>
+                <span className={styles.navText}>Funcionários</span>
+              </a>
+              <a href="/farmacias/laboratorio/lista" className={styles.navLink}>
+                <span className={styles.navText}>Laboratórios</span>
+              </a>
+            </div>
+            <div className={styles.navSection}>
+              <p className={styles.navLabel}>Relatórios</p>
+              <a href="/farmacias/relatorios/favoritos" className={`${styles.navLink} ${styles.active}`}>
+                <span className={styles.navText}>Relatório de Favoritos</span>
+              </a>
+              <a href="/farmacias/relatorios/funcionarios" className={styles.navLink}>
+                <span className={styles.navText}>Relatório de Funcionários</span>
+              </a>
+              <a href="/farmacias/relatorios/laboratorios" className={styles.navLink}>
+                <span className={styles.navText}>Relatório de Laboratórios</span>
+              </a>
+            </div>
+          </nav>
+        </aside>
+        {sidebarOpen && (
+          <div
+            className={styles.overlay}
+            onClick={() => setSidebarOpen(false)}
+          />
+        )}
+        <main className={styles.mainContent}>
+          <div className={styles.reportHeader}>
+            <div className={styles.reportLogo}></div>
+            <div className={styles.reportTitle}>
+              <h1>Relatório de Medicamentos Favoritos</h1>
+              <p>
+                Período:{" "}
+                {new Date(dateRange.start).toLocaleDateString("pt-BR")} a{" "}
+                {new Date(dateRange.end).toLocaleDateString("pt-BR")}
+              </p>
+              <p>
+                Data do relatório: {new Date().toLocaleDateString("pt-BR")}
+              </p>
+            </div>
+          </div>
+          <div className={styles.reportInfo}>
+            <p>
+              Mostrando {filteredMedicamentos.length} de {medicamentos.length} medicamentos
+            </p>
+            <p>
+              Período: {new Date(dateRange.start).toLocaleDateString("pt-BR")}{" "}
+              a {new Date(dateRange.end).toLocaleDateString("pt-BR")}
+            </p>
+          </div>
+          <div className={styles.controls}>
+            <div className={styles.filters}>
+              <div className={styles.filterGroup}>
+                <label>Período:</label>
+                <input
+                  type="date"
+                  value={dateRange.start}
+                  onChange={(e) =>
+                    setDateRange({ ...dateRange, start: e.target.value })
+                  }
+                />
+                <span>até</span>
+                <input
+                  type="date"
+                  value={dateRange.end}
+                  onChange={(e) =>
+                    setDateRange({ ...dateRange, end: e.target.value })
+                  }
+                />
+              </div>
+              <div className={styles.filterGroup}>
+                <label>Status:</label>
+                <select
+                  value={statusFilter}
+                  onChange={(e) => setStatusFilter(e.target.value)}
+                >
+                  <option value="todos">Todos</option>
+                  <option value="em_estoque">Disponível</option>
+                  <option value="indisponivel">Indisponível</option>
+                  <option value="pendente">Pendente</option>
+                </select>
+              </div>
+            </div>
+          </div>
+          <div
+            ref={reportRef}
+            className={`${styles.reportContainer} ${
+              reportGenerated ? styles.reportMode : ""
             }`}
           >
-            <div className={styles.sidebarHeader}>
-              <div className={styles.logo}>
-                <span className={styles.logoText}>PharmaX</span>
-              </div>
-              <button
-                className={styles.sidebarClose}
-                onClick={() => setSidebarOpen(false)}
-              >
-                ×
-              </button>
-            </div>
-
-            <nav className={styles.nav}>
-              <div className={styles.navSection}>
-                <p className={styles.navLabel}>Principal</p>
-                <a
-                  href="/farmacias/favoritos"
-                  className={styles.navLink}
-                >
-                  <span className={styles.navText}>Favoritos</span>
-                </a>
-                <a
-                  href="/farmacias/produtos/medicamentos"
-                  className={styles.navLink}
-                >
-                  <span className={styles.navText}>Medicamentos</span>
-                </a>
-              </div>
-
-              <div className={styles.navSection}>
-                <p className={styles.navLabel}>Gestão</p>
-                <a
-                  href="/farmacias/cadastro/funcionario/lista"
-                  className={styles.navLink}
-                >
-                  <span className={styles.navText}>Funcionários</span>
-                </a>
-                <a
-                  href="/farmacias/laboratorio/lista"
-                  className={styles.navLink}
-                >
-                  <span className={styles.navText}>Laboratórios</span>
-                </a>
-              </div>
-
-              <div className={styles.navSection}>
-                <p className={styles.navLabel}>Relatórios</p>
-                <a
-                  href="/farmacias/relatorios/favoritos"
-                  className={styles.navLink}
-                >
-                  <span className={styles.navText}>Relatório de Favoritos</span>
-                </a>
-                <a
-                  href="/farmacias/relatorios/funcionarios"
-                  className={styles.navLink}
-                >
-                  <span className={styles.navText}>Relatório de Funcionários</span>
-                </a>
-                <a
-                  href="/farmacias/relatorios/laboratorios"
-                  className={styles.navLink}
-                >
-                  <span className={styles.navText}>Relatório de Laboratórios</span>
-                </a>
-              </div>
-
-              {/* <div className={styles.navSection}>
-                <p className={styles.navLabel}>Conta</p>
-                <a href="/farmacias/perfil" className={styles.navLink}>
-                  <span className={styles.navText}>Meu Perfil</span>
-                </a>
-                <button
-                  onClick={handleLogout}
-                  className={styles.navLink}
-                  style={{
-                    background: "none",
-                    border: "none",
-                    width: "100%",
-                    textAlign: "left",
-                  }}
-                >
-                  <span className={styles.navText}>Sair</span>
-                </button>
-              </div> */}
-            </nav>
-          </aside>
-
-          {/* Overlay para mobile */}
-          {sidebarOpen && (
-            <div
-              className={styles.overlay}
-              onClick={() => setSidebarOpen(false)}
-            />
-          )}
-
-          
-
-          {/* Conteúdo Principal */}
-          <main className={styles.mainContent}>
-
-            {/* Cabeçalho do relatório */}
-              <div className={styles.reportHeader}>
-                <div className={styles.reportLogo}>
-                 
-                </div>
-                <div className={styles.reportTitle}>
-                  <h1>Relatório de Medicamentos Mais Favoritados</h1>
-                  <p>
-                    Período:{" "}
-                    {new Date(dateRange.start).toLocaleDateString("pt-BR")} a{" "}
-                    {new Date(dateRange.end).toLocaleDateString("pt-BR")}
-                  </p>
-                  <p>
-                    Data do relatório: {new Date().toLocaleDateString("pt-BR")}
-                  </p>
-                </div>
-              </div>
-            {/* Informações do relatório - MOVIDA PARA CIMA */}
-            <div className={styles.reportInfo}>
-              <p>
-                Mostrando {filteredMedicamentos.length} de {medicamentos.length}{" "}
-                medicamentos
-              </p>
-              <p>
-                Período: {new Date(dateRange.start).toLocaleDateString("pt-BR")}{" "}
-                a {new Date(dateRange.end).toLocaleDateString("pt-BR")}
-              </p>
-            </div>
-
-            {/* Filtros e controles - MOVIDA PARA BAIXO */}
-            <div className={styles.controls}>
-              <div className={styles.filters}>
-                <div className={styles.filterGroup}>
-                  <label>Período:</label>
-                  <input
-                    type="date"
-                    value={dateRange.start}
-                    onChange={(e) =>
-                      setDateRange({ ...dateRange, start: e.target.value })
-                    }
-                  />
-                  <span>até</span>
-                  <input
-                    type="date"
-                    value={dateRange.end}
-                    onChange={(e) =>
-                      setDateRange({ ...dateRange, end: e.target.value })
-                    }
-                  />
-                </div>
-
-                <div className={styles.filterGroup}>
-                  <label>Status:</label>
-                  <select
-                    value={statusFilter}
-                    onChange={(e) => setStatusFilter(e.target.value)}
+            <table className={styles.reportTable}>
+              <thead>
+                <tr>
+                  <th
+                    className={styles.sortableHeader}
+                    onClick={() => handleSort("nome")}
                   >
-                    <option value="todos">Todos</option>
-                    <option value="em_estoque">Disponível</option>
-                    <option value="indisponivel">Indisponível</option>
-                    <option value="pendente">Pendente</option>
-                  </select>
-                </div>
-              </div>
-              
-              
-            </div>
-
-            {/* Área do relatório para impressão */}
-            <div
-              ref={reportRef}
-              className={`${styles.reportContainer} ${
-                reportGenerated ? styles.reportMode : ""
-              }`}
-            >
-              
-
-              {/* Tabela de Medicamentos */}
-              <table className={styles.reportTable}>
-                <thead>
-                  <tr>
-                    <th
-                      className={styles.sortableHeader}
-                      onClick={() => handleSort("nome")}
-                    >
-                      Nome {getSortIcon("nome")}
-                    </th>
-                    <th>Dosagem</th>
-                    <th
-                      className={styles.sortableHeader}
-                      onClick={() => handleSort("fabricante")}
-                    >
-                      Fabricante {getSortIcon("fabricante")}
-                    </th>
-                    <th
-                      className={styles.sortableHeader}
-                      onClick={() => handleSort("favoritacoes")}
-                    >
-                      Favoritações {getSortIcon("favoritacoes")}
-                    </th>
-                    <th>Status</th>
-                    <th
-                      className={styles.sortableHeader}
-                      onClick={() => handleSort("data")}
-                    >
-                      Última Atualização {getSortIcon("data")}
-                    </th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {currentItems.map((med, index) => (
+                    Nome {getSortIcon("nome")}
+                  </th>
+                  <th>Dosagem</th>
+                  <th
+                    className={styles.sortableHeader}
+                    onClick={() => handleSort("fabricante")}
+                  >
+                    Fabricante {getSortIcon("fabricante")}
+                  </th>
+                  <th
+                    className={styles.sortableHeader}
+                    onClick={() => handleSort("favoritacoes")}
+                  >
+                    Favoritações {getSortIcon("favoritacoes")}
+                  </th>
+                  <th>Status</th>
+                  <th
+                    className={styles.sortableHeader}
+                    onClick={() => handleSort("data")}
+                  >
+                    Última Atualização {getSortIcon("data")}
+                  </th>
+                </tr>
+              </thead>
+              <tbody>
+                {currentItems.length > 0 ? (
+                  currentItems.map((med) => (
                     <tr key={med.id}>
                       <td className={styles.medName}>{med.nome}</td>
                       <td>{med.dosagem}</td>
                       <td>{med.fabricante}</td>
-                      <td className={styles.favoritacoes}>
-                        {med.favoritacoes}
-                      </td>
+                      <td className={styles.favoritacoes}>{med.favoritacoes}</td>
                       <td>
                         <span
                           className={`${styles.statusBadge} ${
@@ -559,120 +402,112 @@ export default function FavoritosFarmaciaPage() {
                         )}
                       </td>
                     </tr>
-                  ))}
-                </tbody>
-              </table>
-
-              {/* Resumo do relatório */}
-              <div className={styles.reportSummary}>
-                <h2>Resumo do Relatório</h2>
-                <div className={styles.summaryGrid}>
-                  <div className={styles.summaryItem}>
-                    <span className={styles.summaryLabel}>
-                      Total de Medicamentos
-                    </span>
-                    <span className={styles.summaryValue}>
-                      {filteredMedicamentos.length}
-                    </span>
-                  </div>
-                  <div className={styles.summaryItem}>
-                    <span className={styles.summaryLabel}>
-                      Total de Favoritações
-                    </span>
-                    <span className={styles.summaryValue}>
-                      {filteredMedicamentos.reduce(
-                        (sum, med) => sum + med.favoritacoes,
-                        0
-                      )}
-                    </span>
-                  </div>
-                  <div className={styles.summaryItem}>
-                    <span className={styles.summaryLabel}>
-                      Média de Favoritações
-                    </span>
-                    <span className={styles.summaryValue}>
-                      {filteredMedicamentos.length > 0
-                        ? Math.round(
-                            filteredMedicamentos.reduce(
-                              (sum, med) => sum + med.favoritacoes,
-                              0
-                            ) / filteredMedicamentos.length
-                          )
-                        : 0}
-                    </span>
-                  </div>
-                  <div className={styles.summaryItem}>
-                    <span className={styles.summaryLabel}>
-                      Medicamento Mais Favoritado
-                    </span>
-                    <span className={styles.summaryValue}>
-                      {filteredMedicamentos.length > 0
-                        ? filteredMedicamentos.sort(
-                            (a, b) => b.favoritacoes - a.favoritacoes
-                          )[0].nome
-                        : "N/A"}
-                    </span>
-                  </div>
+                  ))
+                ) : (
+                  <tr>
+                    <td colSpan="6" className={styles.emptyState}>
+                      <h3>Nenhum medicamento encontrado</h3>
+                      <p>Nenhum medicamento corresponde aos filtros selecionados.</p>
+                    </td>
+                  </tr>
+                )}
+              </tbody>
+            </table>
+            <div className={styles.reportSummary}>
+              <h2>Resumo do Relatório</h2>
+              <div className={styles.summaryGrid}>
+                <div className={styles.summaryItem}>
+                  <span className={styles.summaryLabel}>
+                    Total de Medicamentos
+                  </span>
+                  <span className={styles.summaryValue}>
+                    {filteredMedicamentos.length}
+                  </span>
                 </div>
-              </div>
-
-              {/* Rodapé do relatório (só aparece na impressão) */}
-              <div className={styles.reportFooter}>
-                <p>Relatório gerado em: {new Date().toLocaleString("pt-BR")}</p>
-                <p>PharmaX - Sistema de Gestão Farmacêutica</p>
+                <div className={styles.summaryItem}>
+                  <span className={styles.summaryLabel}>
+                    Total de Favoritações
+                  </span>
+                  <span className={styles.summaryValue}>
+                    {filteredMedicamentos.reduce(
+                      (sum, med) => sum + med.favoritacoes,
+                      0
+                    )}
+                  </span>
+                </div>
+                <div className={styles.summaryItem}>
+                  <span className={styles.summaryLabel}>
+                    Média de Favoritações
+                  </span>
+                  <span className={styles.summaryValue}>
+                    {filteredMedicamentos.length > 0
+                      ? Math.round(
+                          filteredMedicamentos.reduce(
+                            (sum, med) => sum + med.favoritacoes,
+                            0
+                          ) / filteredMedicamentos.length
+                        )
+                      : 0}
+                  </span>
+                </div>
+                <div className={styles.summaryItem}>
+                  <span className={styles.summaryLabel}>
+                    Medicamento Mais Favoritado
+                  </span>
+                  <span className={styles.summaryValue}>
+                    {filteredMedicamentos.length > 0
+                      ? filteredMedicamentos.sort(
+                          (a, b) => b.favoritacoes - a.favoritacoes
+                        )[0].nome
+                      : "N/A"}
+                  </span>
+                </div>
               </div>
             </div>
-
-            {/* Controles de Paginação (não aparece no relatório) */}
-            {totalPages > 1 && !reportGenerated && (
-              <div className={styles.paginationControls}>
-                <button
-                  className={`${styles.paginationBtn} ${
-                    currentPage === 1 ? styles.disabled : ""
-                  }`}
-                  onClick={() => paginate(currentPage - 1)}
-                  disabled={currentPage === 1}
-                >
-                  ← Anterior
-                </button>
-
-                <div className={styles.paginationNumbers}>
-                  {Array.from({ length: totalPages }, (_, i) => i + 1).map(
-                    (number) => (
-                      <button
-                        key={number}
-                        className={`${styles.paginationNumber} ${
-                          currentPage === number ? styles.active : ""
-                        }`}
-                        onClick={() => paginate(number)}
-                      >
-                        {number}
-                      </button>
-                    )
-                  )}
-                </div>
-
-                <button
-                  className={`${styles.paginationBtn} ${
-                    currentPage === totalPages ? styles.disabled : ""
-                  }`}
-                  onClick={() => paginate(currentPage + 1)}
-                  disabled={currentPage === totalPages}
-                >
-                  Próxima →
-                </button>
+            <div className={styles.reportFooter}>
+              <p>Relatório gerado em: {new Date().toLocaleString("pt-BR")}</p>
+              <p>PharmaX - Sistema de Gestão Farmacêutica</p>
+            </div>
+          </div>
+          {totalPages > 1 && !reportGenerated && (
+            <div className={styles.paginationControls}>
+              <button
+                className={`${styles.paginationBtn} ${
+                  currentPage === 1 ? styles.disabled : ""
+                }`}
+                onClick={() => paginate(currentPage - 1)}
+                disabled={currentPage === 1}
+              >
+                ← Anterior
+              </button>
+              <div className={styles.paginationNumbers}>
+                {Array.from({ length: totalPages }, (_, i) => i + 1).map(
+                  (number) => (
+                    <button
+                      key={number}
+                      className={`${styles.paginationNumber} ${
+                        currentPage === number ? styles.active : ""
+                      }`}
+                      onClick={() => paginate(number)}
+                    >
+                      {number}
+                    </button>
+                  )
+                )}
               </div>
-            )}
-
-            {filteredMedicamentos.length === 0 && !loading && (
-              <div className={styles.emptyState}>
-                <h3>Nenhum medicamento encontrado</h3>
-                <p>Nenhum medicamento corresponde aos filtros selecionados.</p>
-              </div>
-            )}
-          </main>
-        </div>
+              <button
+                className={`${styles.paginationBtn} ${
+                  currentPage === totalPages ? styles.disabled : ""
+                }`}
+                onClick={() => paginate(currentPage + 1)}
+                disabled={currentPage === totalPages}
+              >
+                Próxima →
+              </button>
+            </div>
+          )}
+        </main>
       </div>
-    </AuthGuard>
+    </div>
   );
 }
