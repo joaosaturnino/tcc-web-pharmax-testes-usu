@@ -296,6 +296,13 @@ export default function RelatorioFuncionariosPage() {
 
           <div className={styles.headerActions}>
             <button
+              className={styles.csvButton}
+              onClick={exportToCSV}
+              title="Exportar para CSV"
+            >
+              Exportar CSV
+            </button>
+            <button
               className={styles.reportButton}
               onClick={generateReport}
               title="Gerar relatório para impressão"
@@ -363,25 +370,19 @@ export default function RelatorioFuncionariosPage() {
                   href="/farmacias/relatorios/favoritos"
                   className={styles.navLink}
                 >
-                  <span className={styles.navText}>Medicamentos Favoritos</span>
-                </a>
-                <a
-                  href="/farmacias/relatorios/vendas"
-                  className={styles.navLink}
-                >
-                  <span className={styles.navText}>Relatório de Vendas</span>
-                </a>
-                <a
-                  href="/farmacias/relatorios/estoque"
-                  className={styles.navLink}
-                >
-                  <span className={styles.navText}>Relatório de Estoque</span>
+                  <span className={styles.navText}>Relatório de Favoritos</span>
                 </a>
                 <a
                   href="/farmacias/relatorios/funcionarios"
                   className={`${styles.navLink} ${styles.active}`}
                 >
-                  <span className={styles.navText}>Relatório de Funcionários</span>
+                  <span className={styles.navText}>Relatório de Funcionarios</span>
+                </a>
+                <a
+                  href="/farmacias/relatorios/laboratorios"
+                  className={styles.navLink}
+                >
+                  <span className={styles.navText}>Relatório de Laboratórios</span>
                 </a>
               </div>
 
@@ -416,7 +417,6 @@ export default function RelatorioFuncionariosPage() {
 
           {/* Conteúdo Principal */}
           <main className={styles.mainContent}>
-
             {/* Cabeçalho do relatório */}
             <div className={styles.reportHeader}>
               <div className={styles.reportLogo}></div>
@@ -493,16 +493,6 @@ export default function RelatorioFuncionariosPage() {
                     <option value="inativo">Inativo</option>
                   </select>
                 </div>
-              </div>
-              
-              <div className={styles.exportButtons}>
-                <button
-                  className={styles.csvButton}
-                  onClick={exportToCSV}
-                  title="Exportar para CSV"
-                >
-                  Exportar CSV
-                </button>
               </div>
             </div>
 

@@ -384,7 +384,7 @@ export default function FavoritosFarmaciaPage() {
                 </a>
               </div>
 
-              <div className={styles.navSection}>
+              {/* <div className={styles.navSection}>
                 <p className={styles.navLabel}>Conta</p>
                 <a href="/farmacias/perfil" className={styles.navLink}>
                   <span className={styles.navText}>Meu Perfil</span>
@@ -401,7 +401,7 @@ export default function FavoritosFarmaciaPage() {
                 >
                   <span className={styles.navText}>Sair</span>
                 </button>
-              </div>
+              </div> */}
             </nav>
           </aside>
 

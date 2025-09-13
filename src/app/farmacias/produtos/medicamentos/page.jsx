@@ -357,19 +357,6 @@ function ListagemMedicamentos() {
               </a>
               
             </div>
-
-            <div className={styles.navSection}>
-              <p className={styles.navLabel}>Relatórios</p>
-              <a href="/farmacias/relatorios" className={styles.navLink}>
-                <span className={styles.navText}>Favoritos</span>
-              </a>
-              <a
-                href="/farmacias/relatorios/estoque"
-                className={styles.navLink}
-              >
-                <span className={styles.navText}>Estoque</span>
-              </a>
-            </div>
           </nav>
         </aside>
 
