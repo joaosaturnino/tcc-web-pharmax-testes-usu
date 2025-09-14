@@ -1,202 +1,3 @@
-/* Estilos para a lista de funcionários */
-.listaHeader {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 2rem;
-  flex-wrap: wrap;
-  gap: 1rem;
-}
-
-.listaHeader h2 {
-  font-size: 1.75rem;
-  font-weight: 600;
-  margin: 0;
-  color: #1e293b;
-}
-
-.listaHeader p {
-  color: #64748b;
-  margin: 0;
-}
-
-.tableContainer {
-  overflow-x: auto;
-  border-radius: 8px;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
-  background: white;
-}
-
-.funcionariosTable {
-  width: 100%;
-  border-collapse: collapse;
-}
-
-.funcionariosTable th {
-  background-color: #f8fafc;
-  padding: 1rem;
-  text-align: left;
-  font-weight: 600;
-  color: #374151;
-  border-bottom: 2px solid #e5e7eb;
-}
-
-.funcionariosTable td {
-  padding: 1rem;
-  border-bottom: 1px solid #e5e7eb;
-  vertical-align: middle;
-}
-
-.funcionarioInfo {
-  display: flex;
-  align-items: center;
-  gap: 0.75rem;
-}
-
-.funcionarioAvatar {
-  width: 40px;
-  height: 40px;
-  border-radius: 50%;
-  color: white;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-weight: 600;
-  font-size: 1rem;
-}
-
-.funcionarioNome {
-  font-weight: 500;
-  color: #1e293b;
-}
-
-.funcionarioUsuario {
-  font-size: 0.875rem;
-  color: #64748b;
-}
-
-.nivelBadge {
-  padding: 0.35rem 0.75rem;
-  border-radius: 20px;
-  font-size: 0.875rem;
-  font-weight: 500;
-  text-transform: capitalize;
-}
-
-.nivelBadge.administrador {
-  background-color: #dc3545;
-  color: white;
-}
-
-.nivelBadge.gerente {
-  background-color: #fd7e14;
-  color: white;
-}
-
-.nivelBadge.supervisor {
-  background-color: #20c997;
-  color: white;
-}
-
-.nivelBadge.funcionário {
-  background-color: #0d6efd;
-  color: white;
-}
-
-.nivelBadge.visitante {
-  background-color: #6c757d;
-  color: white;
-}
-
-.acoes {
-  display: flex;
-  gap: 0.5rem;
-}
-
-.editarButton,
-.excluirButton {
-  padding: 0.5rem;
-  border: none;
-  border-radius: 4px;
-  cursor: pointer;
-  font-size: 1rem;
-  transition: all 0.3s ease;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 32px;
-  height: 32px;
-}
-
-.editarButton {
-  background-color: #fff3cd;
-  color: #856404;
-}
-
-.editarButton:hover {
-  background-color: #ffeaa7;
-}
-
-.excluirButton {
-  background-color: #f8d7da;
-  color: #721c24;
-}
-
-.excluirButton:hover {
-  background-color: #f5c6cb;
-}
-
-.semRegistros {
-  text-align: center;
-  padding: 2rem;
-  color: #6c757d;
-  font-style: italic;
-}
-
-.listaFooter {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-top: 1.5rem;
-  padding-top: 1rem;
-  border-top: 1px solid #e5e7eb;
-}
-
-.totalRegistros {
-  color: #64748b;
-  font-size: 0.9rem;
-}
-
-/* Responsividade */
-@media (max-width: 768px) {
-  .listaHeader {
-    flex-direction: column;
-    align-items: flex-start;
-  }
-
-  .funcionariosTable {
-    min-width: 600px;
-  }
-
-  .acoes {
-    flex-direction: column;
-  }
-}
-
-@media (max-width: 480px) {
-  .funcionarioInfo {
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 0.5rem;
-  }
-
-  .funcionarioAvatar {
-    width: 32px;
-    height: 32px;
-    font-size: 0.875rem;
-  }
-}
-
 /* Layout Principal */
 .dashboard {
   min-height: 100vh;
@@ -246,56 +47,6 @@
   margin: 0;
 }
 
-.headerActions {
-  display: flex;
-  align-items: center;
-  gap: 16px;
-}
-
-.searchBox {
-  position: relative;
-  display: flex;
-  align-items: center;
-}
-
-.searchInput {
-  padding: 10px 40px 10px 12px;
-  border: 2px solid #e2e8f0;
-  border-radius: 8px;
-  font-size: 14px;
-  width: 250px;
-  transition: border-color 0.3s ease;
-}
-
-.searchInput:focus {
-  outline: none;
-  border-color: #3498db;
-}
-
-.searchIcon {
-  position: absolute;
-  right: 12px;
-  color: #64748b;
-}
-
-.userMenu {
-  display: flex;
-  align-items: center;
-}
-
-.userAvatar {
-  width: 40px;
-  height: 40px;
-  border-radius: 50%;
-  background: #3498db;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: white;
-  font-weight: 600;
-  font-size: 18px;
-}
-
 /* Wrapper de Conteúdo */
 .contentWrapper {
   display: flex;
@@ -303,16 +54,17 @@
   position: relative;
 }
 
-/* Sidebar Não Fixa */
+/* Sidebar - Estilo igual ao da tela de relatórios */
 .sidebar {
   width: 280px;
-  background: #191970; /*ESSE*/
+  background: #191970;
   color: #CDC1C5;
   display: flex;
   flex-direction: column;
   transition: transform 0.3s ease;
   box-shadow: 2px 0 10px rgba(0, 0, 0, 0.1);
   z-index: 90;
+  flex-shrink: 0;
 }
 
 .sidebarHeader {
@@ -320,291 +72,127 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
 }
 
 .logo {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-}
-
-.logoIcon {
-  font-size: 24px;
+  font-size: 22px;
+  font-weight: bold;
+  color: #fff;
 }
 
 .logoText {
-  font-size: 20px;
-  font-weight: bold;
+  font-size: 18px;
+  font-weight: 600;
+  color: #fff;
 }
 
 .sidebarClose {
-  display: none;
   background: none;
   border: none;
-  color: white;
+  font-size: 22px;
+  color: #fff;
   cursor: pointer;
-  font-size: 24px;
-  padding: 0;
-  width: 30px;
-  height: 30px;
-  border-radius: 4px;
-  transition: background 0.3s ease;
+  border-radius: 6px;
+  padding: 4px 8px;
+  transition: background 0.2s;
+  display: none;
 }
 
 .sidebarClose:hover {
-  background: rgba(255, 255, 255, 0.1);
+  background: #222266;
 }
 
 .nav {
   flex: 1;
-  padding: 20px 0;
+  padding: 0 10px 20px 10px;
 }
 
 .navSection {
-  margin-bottom: 30px;
+  margin-bottom: 18px;
 }
 
 .navLabel {
-  padding: 0 20px 10px;
-  font-size: 12px;
-  text-transform: uppercase;
-  color: #696969;
-  font-weight: 600;
-  letter-spacing: 0.5px;
+  font-size: 13px;
+  color: #b0b0b0;
+  margin-bottom: 6px;
+  margin-top: 10px;
 }
 
 .navLink {
   display: flex;
   align-items: center;
-  padding: 12px 20px;
+  padding: 8px 12px;
   color: #CDC1C5;
   text-decoration: none;
-  transition: all 0.3s ease;
-  gap: 12px;
-  position: relative;
-  border: none;
-  background: none;
-  width: 100%;
-  text-align: left;
-  font-family: inherit;
+  border-radius: 6px;
+  margin-bottom: 4px;
+  transition: background 0.2s;
+  font-size: 15px;
 }
 
 .navLink:hover {
-  background: rgba(255, 255, 255, 0.1);
-  color: white;
+  background: #222266;
+  color: #fff;
 }
 
 .navLink.active {
-  background: rgba(52, 152, 219, 0.2);
-  color: #DCDCDC;
-  border-left: 4px solid #3498db;
-}
-
-.navIcon {
-  font-size: 18px;
-  width: 24px;
-  text-align: center;
+  background: #458B00;
+  color: #fff;
 }
 
 .navText {
-  font-size: 14px;
-  font-weight: 500;
-  flex: 1;
-}
-
-.userPanel {
-  padding: 20px;
-  border-top: 1px solid rgba(255, 255, 255, 0.1);
-  display: flex;
-  align-items: center;
-  gap: 12px;
-}
-
-.userAvatar {
-  width: 40px;
-  height: 40px;
-  border-radius: 50%;
-  background: rgba(255, 255, 255, 0.1);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 18px;
-}
-
-.userInfo {
-  flex: 1;
-}
-
-.userName {
-  font-size: 14px;
-  font-weight: 600;
-  margin: 0;
-}
-
-.userRole {
-  font-size: 12px;
-  color: #95a5a6;
-  margin: 0;
+  margin-left: 6px;
 }
 
 /* Conteúdo Principal */
 .mainContent {
   flex: 1;
-  padding: 0;
-  min-height: calc(100vh - 80px);
-  overflow-y: auto;
+  padding: 32px 24px;
   background: #f8fafc;
+  min-height: 100vh;
 }
 
-/* Formulário */
+/* Container do Formulário */
 .formContainer {
-  max-width: 1000px;
-  margin: 0 auto;
-  padding: 30px;
+  background: white;
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+  padding: 24px;
+  margin-bottom: 24px;
+  position: relative;
 }
 
-.formHeader {
-  text-align: center;
-  margin-bottom: 40px;
+/* Cabeçalho da Lista */
+.listaHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 24px;
+  padding-bottom: 16px;
+  border-bottom: 1px solid #e5e7eb;
 }
 
-.formHeader h2 {
+.listaHeader h2 {
   font-size: 28px;
   font-weight: 700;
-  color: #1e293b;
-  margin: 0 0 8px 0;
+  margin: 0 0 4px 0;
+  color: #191970;
 }
 
-.formHeader p {
-  font-size: 16px;
-  color: #64748b;
+.listaHeader p {
   margin: 0;
+  color: #64748b;
+  font-size: 15px;
 }
 
-.form {
-  background: white;
-  border-radius: 16px;
-  padding: 40px;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
-}
-
-.formGrid {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 40px;
-  margin-bottom: 40px;
-}
-
-.formSection {
-  border-left: 4px solid #3498db;
-  padding-left: 20px;
-}
-
-.sectionTitle {
-  font-size: 18px;
-  font-weight: 600;
-  color: #1e293b;
-  margin: 0 0 24px 0;
-  display: flex;
-  align-items: center;
-  gap: 8px;
-}
-
-.sectionIcon {
-  font-size: 20px;
-}
-
-.formGroup {
-  margin-bottom: 20px;
-}
-
-.formRow {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 16px;
-}
-
-.inputLabel {
-  display: block;
-  font-size: 14px;
-  font-weight: 600;
-  color: #374151;
-  margin-bottom: 8px;
-}
-
-.inputLabel::after {
-  content: "";
-  display: inline-block;
-  width: 4px;
-  height: 4px;
-  background: #ef4444;
-  border-radius: 50%;
-  margin-left: 4px;
-  vertical-align: super;
-}
-
-.modernInput {
-  width: 100%;
-  padding: 12px 16px;
-  border: 2px solid #e5e7eb;
-  border-radius: 8px;
-  font-size: 14px;
-  transition: all 0.3s ease;
-  background: white;
-}
-
-.modernInput:focus {
-  outline: none;
-  border-color: #3498db;
-  box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.1);
-}
-
-.modernInput::placeholder {
-  color: #9ca3af;
-}
-
-select.modernInput {
-  appearance: none;
-  background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%236b7280' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='m6 8 4 4 4-4'/%3e%3c/svg%3e");
-  background-position: right 12px center;
-  background-repeat: no-repeat;
-  background-size: 16px;
-  padding-right: 40px;
-}
-
-/* Ações do Formulário */
-.formActions {
-  display: flex;
-  justify-content: flex-end;
-  gap: 16px;
-  padding-top: 32px;
-  border-top: 1px solid #e5e7eb;
-}
-
-.cancelButton {
-  padding: 12px 24px;
-  border: 2px solid #d1d5db;
-  border-radius: 8px;
-  background: white;
-  color: #374151;
-  font-weight: 600;
-  cursor: pointer;
-  transition: all 0.3s ease;
-}
-
-.cancelButton:hover {
-  background: #f9fafb;
-  border-color: #9ca3af;
-}
-
+/* Botões */
 .submitButton {
   padding: 12px 24px;
   border: none;
   border-radius: 8px;
   background: #458B00;
   color: white;
-  font-weight: 600;
+  font-weight: 500;
   cursor: pointer;
   display: flex;
   align-items: center;
@@ -612,468 +200,111 @@ select.modernInput {
   transition: all 0.3s ease;
 }
 
-.submitButton:hover {
+.submitButton:hover:not(:disabled) {
+  background: #2e7d32;
   transform: translateY(-1px);
-  box-shadow: 0 4px 12px #2F4F4F;
+  box-shadow: 0 4px 12px rgba(69, 139, 0, 0.3);
+}
+
+.submitButton:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
 }
 
 .buttonIcon {
-  font-size: 16px;
+  font-size: 18px;
+  font-weight: bold;
 }
 
-/* Overlay para mobile */
-.overlay {
-  display: none;
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background: rgba(0, 0, 0, 0.5);
-  z-index: 80;
-}
-
-/* Responsividade */
-@media (max-width: 1024px) {
-  .formGrid {
-    grid-template-columns: 1fr;
-    gap: 30px;
-  }
-
-  .searchInput {
-    width: 200px;
-  }
-}
-
-@media (max-width: 768px) {
-  .menuToggle {
-    display: block;
-  }
-
-  .sidebar {
-    position: fixed;
-    top: 0;
-    left: 0;
-    bottom: 0;
-    transform: translateX(-100%);
-    z-index: 90;
-  }
-
-  .sidebarOpen {
-    transform: translateX(0);
-  }
-
-  .sidebarClose {
-    display: block;
-  }
-
-  .overlay {
-    display: block;
-  }
-
-  .header {
-    padding: 16px 20px;
-  }
-
-  .headerActions {
-    flex-wrap: wrap;
-    gap: 12px;
-  }
-
-  .searchInput {
-    width: 180px;
-  }
-
-  .formContainer {
-    padding: 20px;
-  }
-
-  .form {
-    padding: 24px;
-  }
-
-  .formRow {
-    grid-template-columns: 1fr;
-    gap: 0;
-  }
-
-  .formActions {
-    flex-direction: column;
-  }
-
-  .cancelButton,
-  .submitButton {
-    width: 100%;
-    justify-content: center;
-  }
-}
-
-@media (max-width: 480px) {
-  .header {
-    flex-direction: column;
-    gap: 16px;
-    align-items: flex-start;
-  }
-
-  .headerActions {
-    width: 100%;
-    justify-content: space-between;
-  }
-
-  .searchBox {
-    width: 100%;
-  }
-
-  .searchInput {
-    width: 100%;
-  }
-
-  .formContainer {
-    padding: 16px;
-  }
-
-  .form {
-    padding: 20px;
-  }
-
-  .formHeader h2 {
-    font-size: 24px;
-  }
-}
-
-.formGroup {
-  margin-bottom: 1.25rem;
-}
-
-.inputLabel {
-  display: block;
-  margin-bottom: 0.5rem;
-  font-weight: 500;
-  color: #333;
-}
-
-.checkboxGroup {
-  display: flex;
-  flex-direction: column;
-  gap: 0.75rem;
-  margin-top: 0.5rem;
-}
-
-.checkboxLabel {
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-  cursor: pointer;
-}
-
-.checkboxText {
-  font-size: 0.95rem;
-  color: #495057;
-}
-
-.checkboxLabel input[type="checkbox"] {
-  width: 18px;
-  height: 18px;
-  accent-color: #3b82f6;
-}
-
-.formActions {
-  display: flex;
-  justify-content: flex-end;
-  gap: 1rem;
-  margin-top: 2rem;
-  padding-top: 1.5rem;
-  border-top: 1px solid #e9ecef;
-}
-
-.cancelButton {
-  padding: 0.75rem 1.5rem;
-  background-color: #f8f9fa;
-  color: #495057;
-  border: 1px solid #ddd;
-  border-radius: 6px;
-  font-weight: 500;
-  cursor: pointer;
-  transition: background-color 0.15s ease;
-}
-
-.cancelButton:hover {
-  background-color: #e9ecef;
-}
-
-.submitButton {
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-  padding: 0.75rem 1.5rem;
-  background-color: #458B00;
-  color: white;
-  border: none;
-  border-radius: 6px;
-  font-weight: 500;
-  cursor: pointer;
-  transition: background-color 0.15s ease;
-}
-
-.submitButton:hover {
-  background-color: #006400;
-}
-
-.buttonIcon {
-  font-size: 1.1rem;
-}
-
-/* Responsividade */
-@media (max-width: 1024px) {
-  .formGrid {
-    grid-template-columns: 1fr;
-    gap: 1.5rem;
-  }
-
-  .sidebar {
-    position: fixed;
-    top: 0;
-    left: 0;
-    bottom: 0;
-    z-index: 1000;
-    transform: translateX(-100%);
-  }
-
-  .sidebarOpen {
-    transform: translateX(0);
-  }
-
-  .sidebarClose {
-    display: block;
-  }
-
-  .overlay {
-    display: block;
-  }
-
-  .headerActions {
-    display: none;
-  }
-}
-
-@media (max-width: 768px) {
-  .mainContent {
-    padding: 1rem;
-  }
-
-  .formContainer {
-    padding: 1.5rem;
-  }
-
-  .formRow {
-    grid-template-columns: 1fr;
-    gap: 0;
-  }
-
-  .searchInput {
-    width: 180px;
-  }
-}
-@media (max-width: 480px) {
-  .header {
-    padding: 1rem;
-  }
-
-  .title {
-    font-size: 1.25rem;
-  }
-
-  .formActions {
-    flex-direction: column;
-  }
-
-  .cancelButton,
-  .submitButton {
-    width: 100%;
-    justify-content: center;
-  }
-}
-
-/* Adicione aos módulos CSS existentes */
-.userInfo {
-  display: flex;
-  align-items: center;
-  gap: 15px;
-  margin-right: 20px;
-}
-
-.logoutBtn {
-  background: none;
-  border: 1px solid #dc2626;
-  color: #dc2626;
-  padding: 8px 16px;
-  border-radius: 6px;
-  cursor: pointer;
-  transition: all 0.3s ease;
-  font-size: 14px;
-}
-
-.logoutBtn:hover {
-  background: #dc2626;
-  color: white;
-}
-
-.userHeader {
-  position: absolute;
-  top: 20px;
-  right: 20px;
-  display: flex;
-  align-items: center;
-  gap: 15px;
-  z-index: 1000;
-}
-
-/* Estilos para validação e melhorias */
+/* Filtro */
 .filtroContainer {
-  margin-bottom: 20px;
+  margin-bottom: 24px;
 }
 
 .filtroGroup {
   position: relative;
-  max-width: 500px;
+  display: flex;
+  align-items: center;
 }
 
 .filtroInput {
   width: 100%;
-  padding: 12px 40px 12px 16px;
-  border: 2px solid #e1e5e9;
+  padding: 12px 16px;
+  border: 2px solid #e5e7eb;
   border-radius: 8px;
   font-size: 14px;
-  transition: border-color 0.3s ease;
+  transition: all 0.3s ease;
 }
 
 .filtroInput:focus {
   outline: none;
-  border-color: #3498db;
+  border-color: #458B00;
+  box-shadow: 0 0 0 3px rgba(69, 139, 0, 0.1);
+}
+
+.filtroInput:disabled {
+  background-color: #f8fafc;
+  cursor: not-allowed;
 }
 
 .limparFiltro {
   position: absolute;
   right: 12px;
-  top: 50%;
-  transform: translateY(-50%);
   background: none;
   border: none;
-  font-size: 18px;
+  font-size: 20px;
+  color: #64748b;
   cursor: pointer;
-  color: #999;
   padding: 0;
   width: 24px;
   height: 24px;
   display: flex;
   align-items: center;
   justify-content: center;
+  border-radius: 4px;
+  transition: background 0.3s ease;
 }
 
-.limparFiltro:hover {
-  color: #e74c3c;
+.limparFiltro:hover:not(:disabled) {
+  background: #f1f5f9;
 }
 
 .limparFiltro:disabled {
-  opacity: 0.5;
   cursor: not-allowed;
 }
 
-/* Botões de ação melhorados */
-.acoes {
-  display: flex;
-  gap: 8px;
+/* Tabela */
+.tableContainer {
+  overflow-x: auto;
+  margin-bottom: 24px;
 }
 
-.editarButton, .excluirButton {
-  padding: 8px;
-  border: none;
-  border-radius: 6px;
-  cursor: pointer;
-  transition: all 0.3s ease;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.editarButton {
-  background-color: #3498db;
-  color: white;
-}
-
-.editarButton:hover:not(:disabled) {
-  background-color: #2980b9;
-}
-
-.excluirButton {
-  background-color: #e74c3c;
-  color: white;
-}
-
-.excluirButton:hover:not(:disabled) {
-  background-color: #c0392b;
-}
-
-.disabledButton {
-  opacity: 0.5;
-  cursor: not-allowed !important;
-}
-
-.editarButton:disabled, .excluirButton:disabled {
-  opacity: 0.5;
-  cursor: not-allowed;
-}
-
-/* Loading overlay */
-.loadingOverlay {
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background-color: rgba(255, 255, 255, 0.9);
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  z-index: 1000;
-}
-
-.loadingSpinner {
-  width: 40px;
-  height: 40px;
-  border: 4px solid #f3f3f3;
-  border-top: 4px solid #3498db;
-  border-radius: 50%;
-  animation: spin 1s linear infinite;
-  margin-bottom: 16px;
-}
-
-@keyframes spin {
-  0% { transform: rotate(0deg); }
-  100% { transform: rotate(360deg); }
-}
-
-/* Melhorias na tabela */
 .funcionariosTable {
   width: 100%;
   border-collapse: collapse;
 }
 
 .funcionariosTable th {
-  background-color: #f8f9fa;
+  background: #f1f5f9;
+  font-weight: 600;
+  color: #191970;
   padding: 16px;
   text-align: left;
-  font-weight: 600;
-  color: #2c3e50;
-  border-bottom: 2px solid #e1e5e9;
+  border-bottom: 1px solid #e5e7eb;
+  font-size: 14px;
 }
 
 .funcionariosTable td {
   padding: 16px;
-  border-bottom: 1px solid #e1e5e9;
+  border-bottom: 1px solid #e5e7eb;
+  vertical-align: middle;
 }
 
+.funcionariosTable tr:hover {
+  background: #e6f7e6;
+}
+
+/* Informações do Funcionário */
 .funcionarioInfo {
   display: flex;
   align-items: center;
@@ -1090,58 +321,260 @@ select.modernInput {
   color: white;
   font-weight: bold;
   font-size: 16px;
+  flex-shrink: 0;
 }
 
 .funcionarioNome {
-  font-weight: 600;
-  color: #2c3e50;
+  font-weight: 500;
+  color: #191970;
+  margin-bottom: 2px;
 }
 
 .funcionarioUsuario {
   font-size: 12px;
-  color: #7f8c8d;
+  color: #64748b;
 }
 
-/* Badges de nível de acesso */
+/* Badges de Nível de Acesso */
 .nivelBadge {
-  padding: 4px 12px;
-  border-radius: 20px;
+  padding: 6px 12px;
+  border-radius: 12px;
   font-size: 12px;
-  font-weight: 600;
+  font-weight: 500;
+  text-align: center;
+  display: inline-block;
 }
 
-.nivelBadge.administrador {
-  background-color: #e74c3c;
+.administrador {
+  background: #e6f7e6;
+  color: #458B00;
+}
+
+.gerente {
+  background: #e6f7e6;
+  color: #2e7d32;
+}
+
+.supervisor {
+  background: #e6f7e6;
+  color: #1976d2;
+}
+
+.funcionario {
+  background: #e6f7e6;
+  color: #191970;
+}
+
+.visitante {
+  background: #f1f5f9;
+  color: #555;
+}
+
+/* Botões de Ação */
+.acoes {
+  display: flex;
+  gap: 8px;
+}
+
+.editarButton,
+.excluirButton {
+  padding: 8px;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.editarButton {
+  background: #458B00;
   color: white;
 }
 
-.nivelBadge.gerente {
-  background-color: #f39c12;
+.editarButton:hover:not(:disabled) {
+  background: #2e7d32;
+  transform: translateY(-1px);
+}
+
+.excluirButton {
+  background: #d32f2f;
   color: white;
 }
 
-.nivelBadge.supervisor {
-  background-color: #3498db;
-  color: white;
+.excluirButton:hover:not(:disabled) {
+  background: #b71c1c;
+  transform: translateY(-1px);
 }
 
-.nivelBadge.funcionário {
-  background-color: #2ecc71;
-  color: white;
+.disabledButton {
+  opacity: 0.5;
+  cursor: not-allowed !important;
 }
 
-.nivelBadge.visitante {
-  background-color: #95a5a6;
-  color: white;
-}
-
-/* Estados de loading */
-.submitButton:disabled {
-  opacity: 0.6;
+.editarButton:disabled,
+.excluirButton:disabled {
+  opacity: 0.5;
   cursor: not-allowed;
+  transform: none;
 }
 
-.filtroInput:disabled {
-  background-color: #f8f9fa;
-  cursor: not-allowed;
+/* Estados da Tabela */
+.semRegistros {
+  text-align: center;
+  padding: 40px;
+  color: #64748b;
+  font-style: italic;
+}
+
+/* Rodapé da Lista */
+.listaFooter {
+  display: flex;
+  justify-content: flex-end;
+  padding-top: 16px;
+  border-top: 1px solid #e5e7eb;
+}
+
+.totalRegistros {
+  font-size: 14px;
+  color: #64748b;
+}
+
+/* Loading */
+.loadingOverlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(255, 255, 255, 0.9);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  border-radius: 12px;
+  z-index: 10;
+}
+
+.loadingSpinner {
+  width: 38px;
+  height: 38px;
+  border: 4px solid #e6f7e6;
+  border-top: 4px solid #458B00;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+  margin-bottom: 12px;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+.loadingOverlay p {
+  margin: 0;
+  color: #458B00;
+  font-weight: 500;
+}
+
+/* Overlay para mobile */
+.overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.15);
+  z-index: 80;
+  display: none;
+}
+
+/* Responsividade */
+@media (max-width: 1024px) {
+  .mainContent {
+    padding: 24px 8px;
+  }
+  .sidebar {
+    width: 220px;
+  }
+}
+
+@media (max-width: 768px) {
+  .sidebar {
+    position: fixed;
+    left: 0;
+    top: 0;
+    height: 100vh;
+    transform: translateX(-100%);
+    transition: transform 0.3s;
+    z-index: 100;
+  }
+  .sidebar.sidebarOpen {
+    transform: translateX(0);
+  }
+  .menuToggle {
+    display: block;
+  }
+  .sidebarClose {
+    display: block;
+  }
+  .overlay {
+    display: block;
+  }
+  .mainContent {
+    padding: 16px 2px;
+  }
+  .formContainer {
+    padding: 16px;
+  }
+  .listaHeader {
+    flex-direction: column;
+    gap: 16px;
+    align-items: flex-start;
+  }
+  .funcionariosTable {
+    display: block;
+    overflow-x: auto;
+  }
+  .funcionariosTable th,
+  .funcionariosTable td {
+    padding: 12px 8px;
+    font-size: 13px;
+  }
+  .funcionarioInfo {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 8px;
+  }
+  .acoes {
+    flex-direction: column;
+    gap: 4px;
+  }
+}
+
+@media (max-width: 480px) {
+  .header {
+    flex-direction: column;
+    gap: 16px;
+    align-items: flex-start;
+    padding: 16px 20px;
+  }
+  .formContainer {
+    padding: 12px;
+  }
+  .listaHeader h2 {
+    font-size: 24px;
+  }
+  .submitButton {
+    padding: 10px 16px;
+    font-size: 14px;
+  }
+  .filtroInput {
+    padding: 10px 12px;
+    font-size: 13px;
+  }
+  .funcionariosTable {
+    font-size: 12px;
+  }
+  .nivelBadge {
+    font-size: 11px;
+    padding: 4px 8px;
+  }
 }

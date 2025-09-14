@@ -54,7 +54,7 @@
   position: relative;
 }
 
-/* Sidebar Não Fixa - CORRIGIDO */
+/* Sidebar - Estilo igual ao da tela de relatórios */
 .sidebar {
   width: 280px;
   background: #191970;
@@ -64,16 +64,7 @@
   transition: transform 0.3s ease;
   box-shadow: 2px 0 10px rgba(0, 0, 0, 0.1);
   z-index: 90;
-  position: fixed;
-  top: 0;
-  bottom: 0;
-  left: 0;
-  transform: translateX(-100%);
-  height: 100vh;
-}
-
-.sidebarOpen {
-  transform: translateX(0);
+  flex-shrink: 0;
 }
 
 .sidebarHeader {
@@ -81,164 +72,138 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
 }
 
 .logo {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-}
-
-.logoIcon {
-  font-size: 24px;
+  font-size: 22px;
+  font-weight: bold;
+  color: #fff;
 }
 
 .logoText {
-  font-size: 20px;
-  font-weight: bold;
+  font-size: 18px;
+  font-weight: 600;
+  color: #fff;
 }
 
 .sidebarClose {
-  display: none;
   background: none;
   border: none;
-  color: white;
+  font-size: 22px;
+  color: #fff;
   cursor: pointer;
-  font-size: 24px;
-  padding: 0;
-  width: 30px;
-  height: 30px;
-  border-radius: 4px;
-  transition: background 0.3s ease;
+  border-radius: 6px;
+  padding: 4px 8px;
+  transition: background 0.2s;
+  display: none;
 }
 
 .sidebarClose:hover {
-  background: rgba(255, 255, 255, 0.1);
+  background: #222266;
 }
 
 .nav {
   flex: 1;
-  padding: 20px 0;
+  padding: 0 10px 20px 10px;
 }
 
 .navSection {
-  margin-bottom: 30px;
+  margin-bottom: 18px;
 }
 
 .navLabel {
-  padding: 0 20px 10px;
-  font-size: 12px;
-  text-transform: uppercase;
-  color: #696969;
-  font-weight: 600;
-  letter-spacing: 0.5px;
+  font-size: 13px;
+  color: #b0b0b0;
+  margin-bottom: 6px;
+  margin-top: 10px;
 }
 
 .navLink {
   display: flex;
   align-items: center;
-  padding: 12px 20px;
+  padding: 8px 12px;
   color: #CDC1C5;
   text-decoration: none;
-  transition: all 0.3s ease;
-  gap: 12px;
-  position: relative;
+  border-radius: 6px;
+  margin-bottom: 4px;
+  transition: background 0.2s;
+  font-size: 15px;
 }
 
 .navLink:hover {
-  background: rgba(255, 255, 255, 0.1);
-  color: white;
+  background: #222266;
+  color: #fff;
 }
 
 .navLink.active {
-  background: rgba(52, 152, 219, 0.2);
-  color: #DCDCDC;
-  border-left: 4px solid #3498db;
-}
-
-.navIcon {
-  font-size: 18px;
-  width: 24px;
-  text-align: center;
+  background: #458B00;
+  color: #fff;
 }
 
 .navText {
-  font-size: 14px;
-  font-weight: 500;
-  flex: 1;
+  margin-left: 6px;
 }
 
-/* Conteúdo Principal - CORRIGIDO */
+/* Conteúdo Principal */
 .mainContent {
   flex: 1;
-  padding: 0;
-  min-height: calc(100vh - 80px);
-  overflow-y: auto;
+  padding: 32px 24px;
   background: #f8fafc;
-  margin-left: 0;
-  transition: margin-left 0.3s ease;
+  min-height: 100vh;
 }
 
-/* Formulário */
+/* Container do Formulário */
 .formContainer {
-  max-width: 1000px;
-  margin: 0 auto;
-  padding: 30px;
+  background: white;
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+  padding: 24px;
+  margin-bottom: 24px;
 }
 
 .formHeader {
+  margin-bottom: 32px;
   text-align: center;
-  margin-bottom: 40px;
 }
 
 .formHeader h2 {
   font-size: 28px;
   font-weight: 700;
-  color: #1e293b;
   margin: 0 0 8px 0;
+  color: #191970;
 }
 
 .formHeader p {
-  font-size: 16px;
-  color: #64748b;
   margin: 0;
+  color: #64748b;
+  font-size: 16px;
 }
 
+/* Formulário */
 .form {
-  background: white;
-  border-radius: 16px;
-  padding: 40px;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+  width: 100%;
 }
 
 .formGrid {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 40px;
-  margin-bottom: 40px;
+  gap: 32px;
+  margin-bottom: 32px;
 }
 
 .formSection {
-  margin-bottom: 30px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
 }
 
 .sectionTitle {
   font-size: 18px;
   font-weight: 600;
-  color: #1e293b;
-  margin: 0 0 24px 0;
-  display: flex;
-  align-items: center;
-  gap: 8px;
-}
-
-.sectionIcon {
-  font-size: 20px;
-}
-
-.formGroup {
-  margin-bottom: 20px;
+  color: #191970;
+  margin: 0 0 8px 0;
+  padding-bottom: 8px;
+  border-bottom: 2px solid #e6f7e6;
 }
 
 .formRow {
@@ -247,261 +212,232 @@
   gap: 16px;
 }
 
-.inputLabel {
-  display: block;
-  font-size: 14px;
-  font-weight: 600;
-  color: #374151;
-  margin-bottom: 8px;
-}
-
-.inputLabel::after {
-  content: "*";
-  color: #ef4444;
-  margin-left: 4px;
-}
-
-.modernInput {
-  width: 100%;
-  padding: 12px 16px;
-  border: 2px solid #e5e7eb;
-  border-radius: 8px;
-  font-size: 14px;
-  transition: all 0.3s ease;
-  background: white;
-}
-
-.modernInput:focus {
-  outline: none;
-  border-color: #458B00;
-  box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.1);
-}
-
-.modernInput::placeholder {
-  color: #9ca3af;
-}
-
-select.modernInput {
-  appearance: none;
-  background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%236b7280' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='m6 8 4 4 4-4'/%3e%3c/svg%3e");
-  background-position: right 12px center;
-  background-repeat: no-repeat;
-  background-size: 16px;
-  padding-right: 40px;
-}
-
-.modernTextarea {
-  width: 100%;
-  padding: 12px 16px;
-  border: 2px solid #e5e7eb;
-  border-radius: 8px;
-  font-size: 14px;
-  transition: all 0.3s ease;
-  background: white;
-  resize: vertical;
-  min-height: 100px;
-  font-family: inherit;
-}
-
-.modernTextarea:focus {
-  outline: none;
-  border-color: #458B00;
-  box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.1);
-}
-
-/* Ações do Formulário */
-.formActions {
-  display: flex;
-  justify-content: flex-end;
-  gap: 16px;
-  padding-top: 32px;
-  border-top: 1px solid #e5e7eb;
-}
-
-.cancelButton {
-  padding: 12px 24px;
-  border: 2px solid #d1d5db;
-  border-radius: 8px;
-  background: white;
-  color: #374151;
-  font-weight: 600;
-  cursor: pointer;
-  transition: all 0.3s ease;
-}
-
-.cancelButton:hover:not(:disabled) {
-  background: #f9fafb;
-  border-color: #9ca3af;
-}
-
-.cancelButton:disabled {
-  opacity: 0.6;
-  cursor: not-allowed;
-}
-
-.submitButton {
-  padding: 12px 24px;
-  border: none;
-  border-radius: 8px;
-  background: #458B00;
-  color: white;
-  font-weight: 600;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  transition: all 0.3s ease;
-}
-
-.submitButton:hover:not(:disabled) {
-  transform: translateY(-1px);
-  box-shadow: 0 4px 12px #2F4F4F;
-}
-
-.submitButton:disabled {
-  opacity: 0.6;
-  cursor: not-allowed;
-  transform: none;
-}
-
-.buttonIcon {
-  font-size: 16px;
-}
-
-.loadingSpinnerSmall {
-  width: 16px;
-  height: 16px;
-  border: 2px solid rgba(255, 255, 255, 0.3);
-  border-top: 2px solid white;
-  border-radius: 50%;
-  animation: spin 1s linear infinite;
-}
-
-/* Overlay para mobile - CORRIGIDO */
-.overlay {
-  display: none;
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background: rgba(0, 0, 0, 0.5);
-  z-index: 80;
-}
-
-/* Loading */
-.loadingContainer {
+/* Controles do Formulário */
+.formControl {
   display: flex;
   flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  height: 100vh;
-  gap: 16px;
-  background: #f8fafc;
+  gap: 8px;
 }
 
-.loadingSpinner {
-  width: 40px;
-  height: 40px;
-  border: 4px solid #e2e8f0;
-  border-top: 4px solid #3498db;
-  border-radius: 50%;
-  animation: spin 1s linear infinite;
+.inputLabel {
+  font-size: 14px;
+  font-weight: 500;
+  color: #191970;
+  margin-bottom: 4px;
 }
 
-@keyframes spin {
-  0% {
-    transform: rotate(0deg);
-  }
-  100% {
-    transform: rotate(360deg);
-  }
-}
-
-/* Container para o input de código de barras com botão */
-.barcodeInputContainer {
+.divInput {
   position: relative;
   display: flex;
   align-items: center;
 }
 
-/* Botão para gerar código de barras */
-.generateBarcodeButton {
+.modernInput,
+.modernTextarea,
+.modernSelect {
+  width: 100%;
+  padding: 12px 16px;
+  border: 2px solid #e5e7eb;
+  border-radius: 8px;
+  font-size: 14px;
+  transition: all 0.3s ease;
+  background: white;
+}
+
+.modernInput:focus,
+.modernTextarea:focus,
+.modernSelect:focus {
+  outline: none;
+  border-color: #458B00;
+  box-shadow: 0 0 0 3px rgba(69, 139, 0, 0.1);
+}
+
+.modernTextarea {
+  resize: vertical;
+  min-height: 100px;
+}
+
+.modernSelect {
+  appearance: none;
+  background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
+  background-repeat: no-repeat;
+  background-position: right 16px center;
+  background-size: 16px;
+}
+
+/* Ícones de Validação */
+.sucesso,
+.erro {
   position: absolute;
-  right: 8px;
-  background: none;
+  right: 16px;
+  font-size: 20px;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.sucesso {
+  color: #458B00;
+}
+
+.erro {
+  color: #d32f2f;
+}
+
+/* Estados de Validação */
+.success .sucesso {
+  opacity: 1;
+}
+
+.success .modernInput,
+.success .modernTextarea,
+.success .modernSelect {
+  border-color: #458B00;
+}
+
+.error .erro {
+  opacity: 1;
+}
+
+.error .modernInput,
+.error .modernTextarea,
+.error .modernSelect {
+  border-color: #d32f2f;
+}
+
+.small {
+  color: #d32f2f;
+  font-size: 12px;
+  margin-top: 4px;
+}
+
+/* Container especial para código de barras */
+.barcodeInputContainer {
+  position: relative;
+}
+
+/* Botões de Ação */
+.formActions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 16px;
+  margin-top: 32px;
+  padding-top: 24px;
+  border-top: 1px solid #e5e7eb;
+}
+
+.cancelButton,
+.submitButton {
+  padding: 12px 24px;
   border: none;
+  border-radius: 8px;
+  font-weight: 500;
   cursor: pointer;
-  font-size: 16px;
-  padding: 4px;
-  border-radius: 4px;
-  background-color: #f0f0f0;
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  gap: 8px;
 }
 
-.generateBarcodeButton:hover {
-  background-color: #e0e0e0;
+.cancelButton {
+  background: #f1f5f9;
+  color: #64748b;
+  border: 1px solid #d1d5db;
 }
 
-/* Ajuste no input para acomodar o botão */
-.barcodeInputContainer .modernInput {
-  padding-right: 40px;
+.cancelButton:hover:not(:disabled) {
+  background: #e5e7eb;
 }
 
-/* Responsividade - CORRIGIDO */
+.submitButton {
+  background: #458B00;
+  color: white;
+}
+
+.submitButton:hover:not(:disabled) {
+  background: #2e7d32;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(69, 139, 0, 0.3);
+}
+
+.submitButton:disabled,
+.cancelButton:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  transform: none;
+}
+
+/* Spinner de carregamento */
+.loadingSpinnerSmall {
+  width: 16px;
+  height: 16px;
+  border: 2px solid transparent;
+  border-top: 2px solid white;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+/* Overlay para mobile */
+.overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.15);
+  z-index: 80;
+  display: none;
+}
+
+/* Responsividade */
 @media (max-width: 1024px) {
+  .mainContent {
+    padding: 24px 8px;
+  }
+  .sidebar {
+    width: 220px;
+  }
   .formGrid {
     grid-template-columns: 1fr;
-    gap: 30px;
+    gap: 24px;
   }
 }
 
 @media (max-width: 768px) {
+  .sidebar {
+    position: fixed;
+    left: 0;
+    top: 0;
+    height: 100vh;
+    transform: translateX(-100%);
+    transition: transform 0.3s;
+    z-index: 100;
+  }
+  .sidebar.sidebarOpen {
+    transform: translateX(0);
+  }
   .menuToggle {
     display: block;
   }
-
-  .sidebar {
-    position: fixed;
-    top: 0;
-    left: 0;
-    bottom: 0;
-    transform: translateX(-100%);
-    z-index: 90;
-  }
-
-  .sidebarOpen {
-    transform: translateX(0);
-  }
-
   .sidebarClose {
     display: block;
   }
-
   .overlay {
     display: block;
   }
-
-  .header {
-    padding: 16px 20px;
+  .mainContent {
+    padding: 16px 2px;
   }
-
   .formContainer {
-    padding: 20px;
+    padding: 16px;
   }
-
-  .form {
-    padding: 24px;
-  }
-
   .formRow {
     grid-template-columns: 1fr;
-    gap: 0;
+    gap: 16px;
   }
-
   .formActions {
-    flex-direction: column;
+    flex-direction: column-reverse;
   }
-
   .cancelButton,
   .submitButton {
     width: 100%;
@@ -514,102 +450,12 @@ select.modernInput {
     flex-direction: column;
     gap: 16px;
     align-items: flex-start;
+    padding: 16px 20px;
   }
-
   .formContainer {
-    padding: 16px;
+    padding: 12px;
   }
-
-  .form {
-    padding: 20px;
-  }
-
   .formHeader h2 {
     font-size: 24px;
   }
-}
-
-/* Estilos para desktop - CORRIGIDO */
-@media (min-width: 769px) {
-  .sidebar {
-    position: relative;
-    transform: translateX(0);
-    height: auto;
-  }
-  
-  .sidebarClose {
-    display: none;
-  }
-  
-  .menuToggle {
-    display: none;
-  }
-  
-  .overlay {
-    display: none !important;
-  }
-  
-  .mainContent {
-    margin-left: 0;
-  }
-}
-
-/* Estilos para validação */
-.formControl {
-  position: relative;
-}
-
-.success .modernInput,
-.success .modernTextarea,
-.success select.modernInput {
-  border-color: #4caf50;
-}
-
-.error .modernInput,
-.error .modernTextarea,
-.error select.modernInput {
-  border-color: #f44336;
-}
-
-.sucesso, .erro {
-  position: absolute;
-  right: 12px;
-  top: 38px;
-  font-size: 20px;
-  pointer-events: none;
-}
-
-.sucesso {
-  color: #4caf50;
-  display: none;
-}
-
-.erro {
-  color: #f44336;
-  display: none;
-}
-
-.success .sucesso {
-  display: block;
-}
-
-.error .erro {
-  display: block;
-}
-
-.small {
-  color: #f44336;
-  font-size: 12px;
-  margin-top: 4px;
-  display: block;
-}
-
-.divInput {
-  position: relative;
-}
-
-/* Ajuste para textarea */
-.modernTextarea + .sucesso,
-.modernTextarea + .erro {
-  top: 10px;
 }

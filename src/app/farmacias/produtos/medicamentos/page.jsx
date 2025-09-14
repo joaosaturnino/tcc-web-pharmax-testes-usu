@@ -193,6 +193,11 @@ function ListagemMedicamentos() {
   const handleExcluir = (id) => {
     if (window.confirm("Tem certeza que deseja excluir este medicamento?")) {
       setMedicamentos(medicamentos.filter((med) => med.id !== id));
+      // Fechar modal de detalhes se estiver aberto
+      if (modalDetalhesAberto && medicamentoSelecionado?.id === id) {
+        setModalDetalhesAberto(false);
+        setMedicamentoSelecionado(null);
+      }
     }
   };
 
@@ -204,6 +209,13 @@ function ListagemMedicamentos() {
           : med
       )
     );
+    // Atualizar medicamento selecionado se estiver aberto no modal
+    if (medicamentoSelecionado && medicamentoSelecionado.id === id) {
+      setMedicamentoSelecionado({
+        ...medicamentoSelecionado,
+        status: medicamentoSelecionado.status === "ativo" ? "inativo" : "ativo",
+      });
+    }
   };
 
   const handleEditar = (id) => {
@@ -280,6 +292,7 @@ function ListagemMedicamentos() {
           <button
             className={styles.menuToggle}
             onClick={() => setSidebarOpen(!sidebarOpen)}
+            aria-label="Alternar menu"
           >
             ☰
           </button>
@@ -298,6 +311,7 @@ function ListagemMedicamentos() {
               <button
                 className={styles.limparPesquisa}
                 onClick={() => setTermoPesquisa("")}
+                aria-label="Limpar pesquisa"
               >
                 ×
               </button>
@@ -324,6 +338,7 @@ function ListagemMedicamentos() {
             <button
               className={styles.sidebarClose}
               onClick={() => setSidebarOpen(false)}
+              aria-label="Fechar menu"
             >
               ✕
             </button>
@@ -332,30 +347,28 @@ function ListagemMedicamentos() {
           <nav className={styles.nav}>
             <div className={styles.navSection}>
               <p className={styles.navLabel}>Principal</p>
-              <a href="/farmacias/favoritos" className={styles.navLink}>
+              <Link href="/farmacias/favoritos" className={styles.navLink}>
                 <span className={styles.navText}>Favoritos</span>
-              </a>
-              <a
+              </Link>
+              <Link
                 href="/farmacias/produtos/medicamentos"
                 className={`${styles.navLink} ${styles.active}`}
               >
                 <span className={styles.navText}>Medicamentos</span>
-              </a>
-              
+              </Link>
             </div>
 
             <div className={styles.navSection}>
               <p className={styles.navLabel}>Gestão</p>
-              <a
+              <Link
                 href="/farmacias/cadastro/funcionario/lista"
                 className={styles.navLink}
               >
                 <span className={styles.navText}>Funcionários</span>
-              </a>
-              <a href="/farmacias/laboratorio/lista" className={styles.navLink}>
+              </Link>
+              <Link href="/farmacias/laboratorio/lista" className={styles.navLink}>
                 <span className={styles.navText}>Laboratórios</span>
-              </a>
-              
+              </Link>
             </div>
           </nav>
         </aside>
@@ -380,6 +393,7 @@ function ListagemMedicamentos() {
                   }`}
                   onClick={() => setVisualizacao("tabela")}
                   title="Visualização em tabela"
+                  aria-label="Visualização em tabela"
                 >
                   ≡
                 </button>
@@ -389,6 +403,7 @@ function ListagemMedicamentos() {
                   }`}
                   onClick={() => setVisualizacao("grade")}
                   title="Visualização em grade"
+                  aria-label="Visualização em grade"
                 >
                   ◼︎
                 </button>
@@ -464,262 +479,181 @@ function ListagemMedicamentos() {
                 <div className={styles.loadingSpinner}></div>
                 <p>Carregando medicamentos...</p>
               </div>
-            ) : medicamentosFiltrados.length === 0 ? (
-              <div className={styles.emptyState}>
-                <h3>Nenhum medicamento encontrado</h3>
-                <p>
-                  {termoPesquisa
-                    ? `Não encontramos resultados para "${termoPesquisa}"`
-                    : "Comece cadastrando seu primeiro medicamento."}
-                </p>
+            ) : medicamentosPaginados.length === 0 ? (
+              <div className={styles.semResultados}>
+                <p>Nenhum medicamento encontrado.</p>
                 <button onClick={abrirModal} className={styles.botaoPrincipal}>
-                  ➕ Novo Medicamento
+                  ➕ Adicionar Primeiro Medicamento
                 </button>
               </div>
             ) : visualizacao === "tabela" ? (
-              <>
-                <div className={styles.tableWrapper}>
-                  <table className={styles.tabela}>
-                    <thead>
-                      <tr>
-                        <th>Medicamento</th>
-                        <th>Dosagem</th>
-                        <th>Quantidade</th>
-                        <th>Preço</th>
-                        <th>Categoria</th>
-                        <th>Status</th>
-                        <th>Ações</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {medicamentosPaginados.map((med) => (
-                        <tr
-                          key={med.id}
-                          className={`${styles.tableRow} ${
-                            med.status === "inativo" ? styles.rowInativo : ""
+              <table className={styles.tabela}>
+                <thead>
+                  <tr>
+                    <th>Imagem</th>
+                    <th>Nome</th>
+                    <th>Dosagem</th>
+                    <th>Quantidade</th>
+                    <th>Laboratório</th>
+                    <th>Preço</th>
+                    <th>Status</th>
+                    <th>Ações</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {medicamentosPaginados.map((med) => (
+                    <tr
+                      key={med.id}
+                      className={`${styles.tableRow} ${
+                        med.status === "inativo" ? styles.inativo : ""
+                      }`}
+                    >
+                      <td>
+                        <img
+                          src={med.imagem || imagemPadrao}
+                          alt={med.nome}
+                          className={styles.medicamentoImagem}
+                          onError={(e) => {
+                            e.target.src = imagemPadrao;
+                          }}
+                        />
+                      </td>
+                      <td>
+                        <div className={styles.nomeContainer}>
+                          <span className={styles.nome}>{med.nome}</span>
+                          <span className={styles.categoria}>
+                            {med.categoria}
+                          </span>
+                        </div>
+                      </td>
+                      <td>{med.dosagem}</td>
+                      <td>
+                        <span
+                          className={`${styles.quantidade} ${
+                            med.quantidade === 0
+                              ? styles.quantidadeZero
+                              : med.quantidade <= 5
+                              ? styles.quantidadeBaixa
+                              : ""
                           }`}
                         >
-                          <td>
-                            <div
-                              className={styles.medInfo}
-                              onClick={() => abrirDetalhes(med)}
-                              style={{ cursor: "pointer" }}
-                            >
-                              <div className={styles.medInfoTop}>
-                                <img
-                                  src={med.imagem || imagemPadrao}
-                                  alt={med.nome}
-                                  className={styles.imgThumb}
-                                  onError={(e) => {
-                                    e.target.src = imagemPadrao;
-                                  }}
-                                />
-                                <div>
-                                  <span className={styles.medName}>
-                                    {med.nome}
-                                  </span>
-                                  <span className={styles.medLab}>
-                                    {med.laboratorio}
-                                  </span>
-                                  <span className={styles.medCodigo}>
-                                    {med.codigoBarras}
-                                  </span>
-                                </div>
-                              </div>
-                            </div>
-                          </td>
-                          <td>
-                            <span className={styles.medDosage}>
-                              {med.dosagem}
-                            </span>
-                          </td>
-                          <td>
-                            <span
-                              className={`${styles.medQuantity} ${
-                                med.quantidade <= 5 ? styles.estoqueBaixo : ""
-                              }`}
-                            >
-                              {med.quantidade}
-                              {med.quantidade <= 5 && (
-                                <span
-                                  className={styles.alertaEstoque}
-                                  title="Estoque baixo"
-                                >
-                                  ⚠️
-                                </span>
-                              )}
-                            </span>
-                          </td>
-                          <td className={styles.money}>
-                            {currency.format(Number(med.preco ?? 0))}
-                          </td>
-                          <td>
-                            <span className={styles.medCategory}>
-                              {med.categoria}
-                            </span>
-                          </td>
-                          <td>
-                            <button
-                              onClick={() => toggleStatus(med.id)}
-                              className={`${styles.statusBadge} ${
-                                med.status === "ativo"
-                                  ? styles.statusAtivo
-                                  : styles.statusInativo
-                              }`}
-                            >
-                              {med.status === "ativo" ? "Ativo" : "Inativo"}
-                            </button>
-                          </td>
-                          <td>
-                            <div className={styles.actionButtons}>
-                              <button
-                                className={`${styles.botao} ${styles.botaoDetalhes}`}
-                                onClick={() => abrirDetalhes(med)}
-                                title="Ver detalhes"
-                              >
-                                Informes
-                              </button>
-                              {/* <button
-                                className={`${styles.botao} ${styles.botaoEditar}`}
-                                onClick={() => handleEditar(med.id)}
-                                title="Editar medicamento"
-                              >
-                                ✏️
-                              </button> */}
-                              {/* <button
-                                className={`${styles.botao} ${styles.botaoExcluir}`}
-                                onClick={() => handleExcluir(med.id)}
-                                title="Excluir medicamento"
-                              >
-                                🗑️
-                              </button> */}
-                            </div>
-                          </td>
-                        </tr>
-                      ))}
-                    </tbody>
-                  </table>
-                </div>
-
-                {/* Paginação */}
-                {totalPaginas > 1 && (
-                  <div className={styles.paginacao}>
-                    <button
-                      onClick={() => setPaginaAtual((p) => Math.max(1, p - 1))}
-                      disabled={paginaAtual === 1}
-                      className={styles.botaoPagina}
-                    >
-                      &laquo; Anterior
-                    </button>
-
-                    {Array.from(
-                      { length: Math.min(5, totalPaginas) },
-                      (_, i) => {
-                        let paginaNum;
-                        if (totalPaginas <= 5) {
-                          paginaNum = i + 1;
-                        } else if (paginaAtual <= 3) {
-                          paginaNum = i + 1;
-                        } else if (paginaAtual >= totalPaginas - 2) {
-                          paginaNum = totalPaginas - 4 + i;
-                        } else {
-                          paginaNum = paginaAtual - 2 + i;
-                        }
-
-                        return (
-                          <button
-                            key={paginaNum}
-                            onClick={() => setPaginaAtual(paginaNum)}
-                            className={`${styles.botaoPagina} ${
-                              paginaAtual === paginaNum
-                                ? styles.paginaAtual
-                                : ""
-                            }`}
-                          >
-                            {paginaNum}
-                          </button>
-                        );
-                      }
-                    )}
-
-                    <button
-                      onClick={() =>
-                        setPaginaAtual((p) => Math.min(totalPaginas, p + 1))
-                      }
-                      disabled={paginaAtual === totalPaginas}
-                      className={styles.botaoPagina}
-                    >
-                      Próxima &raquo;
-                    </button>
-                  </div>
-                )}
-              </>
-            ) : (
-              // Visualização em Grade
-              <div className={styles.gridContainer}>
-                {medicamentosPaginados.map((med) => (
-                  <div
-                    key={med.id}
-                    className={`${styles.medCard} ${
-                      med.status === "inativo" ? styles.cardInativo : ""
-                    }`}
-                  >
-                    <div className={styles.cardHeader}>
-                      <img
-                        src={med.imagem || imagemPadrao}
-                        alt={med.nome}
-                        className={styles.cardImage}
-                        onError={(e) => {
-                          e.target.src = imagemPadrao;
-                        }}
-                      />
-                      <div className={styles.cardStatus}>
-                        <button
-                          onClick={() => toggleStatus(med.id)}
-                          className={`${styles.statusBadge} ${
+                          {med.quantidade}
+                        </span>
+                      </td>
+                      <td>{med.laboratorio}</td>
+                      <td>{currency.format(med.preco)}</td>
+                      <td>
+                        <span
+                          className={`${styles.status} ${
                             med.status === "ativo"
                               ? styles.statusAtivo
                               : styles.statusInativo
                           }`}
                         >
                           {med.status === "ativo" ? "Ativo" : "Inativo"}
-                        </button>
-                      </div>
+                        </span>
+                      </td>
+                      <td>
+                        <div className={styles.acoes}>
+                          <button
+                            onClick={() => abrirDetalhes(med)}
+                            className={styles.botaoAcao}
+                            title="Ver detalhes"
+                            aria-label={`Ver detalhes de ${med.nome}`}
+                          >
+                            👁️
+                          </button>
+                          <button
+                            onClick={() => handleEditar(med.id)}
+                            className={styles.botaoAcao}
+                            title="Editar"
+                            aria-label={`Editar ${med.nome}`}
+                          >
+                            ✏️
+                          </button>
+                          <button
+                            onClick={() => handleExcluir(med.id)}
+                            className={styles.botaoAcao}
+                            title="Excluir"
+                            aria-label={`Excluir ${med.nome}`}
+                          >
+                            🗑️
+                          </button>
+                          <button
+                            onClick={() => toggleStatus(med.id)}
+                            className={styles.botaoAcao}
+                            title={
+                              med.status === "ativo"
+                                ? "Desativar"
+                                : "Ativar"
+                            }
+                            aria-label={`${
+                              med.status === "ativo" ? "Desativar" : "Ativar"
+                            } ${med.nome}`}
+                          >
+                            {med.status === "ativo" ? "⏸️" : "▶️"}
+                          </button>
+                        </div>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            ) : (
+              // Visualização em Grade
+              <div className={styles.gradeContainer}>
+                {medicamentosPaginados.map((med) => (
+                  <div
+                    key={med.id}
+                    className={`${styles.medicamentoCard} ${
+                      med.status === "inativo" ? styles.inativo : ""
+                    }`}
+                  >
+                    <div className={styles.cardHeader}>
+                      <img
+                        src={med.imagem || imagemPadrao}
+                        alt={med.nome}
+                        className={styles.cardImagem}
+                        onError={(e) => {
+                          e.target.src = imagemPadrao;
+                        }}
+                      />
+                      <span
+                        className={`${styles.cardStatus} ${
+                          med.status === "ativo"
+                            ? styles.statusAtivo
+                            : styles.statusInativo
+                        }`}
+                      >
+                        {med.status === "ativo" ? "Ativo" : "Inativo"}
+                      </span>
                     </div>
 
-                    <div
-                      className={styles.cardBody}
-                      onClick={() => abrirDetalhes(med)}
-                    >
-                      <h3 className={styles.cardTitle}>{med.nome}</h3>
-                      <p className={styles.cardLab}>{med.laboratorio}</p>
-                      <p className={styles.cardDosage}>
-                        {med.dosagem} • {med.forma}
-                      </p>
+                    <div className={styles.cardContent}>
+                      <h3 className={styles.cardNome}>{med.nome}</h3>
+                      <p className={styles.cardDosagem}>{med.dosagem}</p>
+                      <p className={styles.cardLaboratorio}>{med.laboratorio}</p>
+                      <p className={styles.cardCategoria}>{med.categoria}</p>
 
-                      <div className={styles.cardDetails}>
-                        <div className={styles.cardDetail}>
-                          <span className={styles.detailLabel}>
-                            Quantidade:
-                          </span>
+                      <div className={styles.cardInfo}>
+                        <div className={styles.infoItem}>
+                          <span className={styles.infoLabel}>Quantidade:</span>
                           <span
-                            className={`${styles.detailValue} ${
-                              med.quantidade <= 5 ? styles.estoqueBaixo : ""
+                            className={`${styles.infoValue} ${
+                              med.quantidade === 0
+                                ? styles.quantidadeZero
+                                : med.quantidade <= 5
+                                ? styles.quantidadeBaixa
+                                : ""
                             }`}
                           >
                             {med.quantidade}
                           </span>
                         </div>
-                        <div className={styles.cardDetail}>
-                          <span className={styles.detailLabel}>Preço:</span>
-                          <span className={styles.detailValue}>
-                            {currency.format(Number(med.preco ?? 0))}
-                          </span>
-                        </div>
-                        <div className={styles.cardDetail}>
-                          <span className={styles.detailLabel}>Categoria:</span>
-                          <span className={styles.detailValue}>
-                            {med.categoria}
+                        <div className={styles.infoItem}>
+                          <span className={styles.infoLabel}>Preço:</span>
+                          <span className={styles.infoValue}>
+                            {currency.format(med.preco)}
                           </span>
                         </div>
                       </div>
@@ -727,18 +661,38 @@ function ListagemMedicamentos() {
 
                     <div className={styles.cardActions}>
                       <button
-                        className={`${styles.botao} ${styles.botaoDetalhes}`}
                         onClick={() => abrirDetalhes(med)}
+                        className={styles.botaoAcaoCard}
                         title="Ver detalhes"
+                        aria-label={`Ver detalhes de ${med.nome}`}
                       >
-                        👁️ Detalhes
+                        👁️
                       </button>
                       <button
-                        className={`${styles.botao} ${styles.botaoEditar}`}
                         onClick={() => handleEditar(med.id)}
-                        title="Editar medicamento"
+                        className={styles.botaoAcaoCard}
+                        title="Editar"
+                        aria-label={`Editar ${med.nome}`}
                       >
-                        ✏️ Editar
+                        ✏️
+                      </button>
+                      <button
+                        onClick={() => handleExcluir(med.id)}
+                        className={styles.botaoAcaoCard}
+                        title="Excluir"
+                        aria-label={`Excluir ${med.nome}`}
+                      >
+                        🗑️
+                      </button>
+                      <button
+                        onClick={() => toggleStatus(med.id)}
+                        className={styles.botaoAcaoCard}
+                        title={med.status === "ativo" ? "Desativar" : "Ativar"}
+                        aria-label={`${
+                          med.status === "ativo" ? "Desativar" : "Ativar"
+                        } ${med.nome}`}
+                      >
+                        {med.status === "ativo" ? "⏸️" : "▶️"}
                       </button>
                     </div>
                   </div>
@@ -746,6 +700,67 @@ function ListagemMedicamentos() {
               </div>
             )}
           </div>
+
+          {/* Paginação */}
+          {totalPaginas > 1 && (
+            <div className={styles.paginacao}>
+              <button
+                onClick={() => setPaginaAtual(Math.max(1, paginaAtual - 1))}
+                disabled={paginaAtual === 1}
+                className={styles.botaoPaginacao}
+              >
+                ← Anterior
+              </button>
+
+              {Array.from({ length: Math.min(5, totalPaginas) }, (_, i) => {
+                let pagina;
+                if (totalPaginas <= 5) {
+                  pagina = i + 1;
+                } else if (paginaAtual <= 3) {
+                  pagina = i + 1;
+                } else if (paginaAtual >= totalPaginas - 2) {
+                  pagina = totalPaginas - 4 + i;
+                } else {
+                  pagina = paginaAtual - 2 + i;
+                }
+
+                return (
+                  <button
+                    key={pagina}
+                    onClick={() => setPaginaAtual(pagina)}
+                    className={`${styles.botaoPaginacao} ${
+                      pagina === paginaAtual ? styles.paginaAtual : ""
+                    }`}
+                  >
+                    {pagina}
+                  </button>
+                );
+              })}
+
+              {totalPaginas > 5 && paginaAtual < totalPaginas - 2 && (
+                <span className={styles.pontos}>...</span>
+              )}
+
+              {totalPaginas > 5 && paginaAtual < totalPaginas - 1 && (
+                <button
+                  onClick={() => setPaginaAtual(totalPaginas)}
+                  className={styles.botaoPaginacao}
+                >
+                  {totalPaginas}
+                </button>
+              )}
+
+              <button
+                onClick={() =>
+                  setPaginaAtual(Math.min(totalPaginas, paginaAtual + 1))
+                }
+                disabled={paginaAtual === totalPaginas}
+                className={styles.botaoPaginacao}
+              >
+                Próxima →
+              </button>
+            </div>
+          )}
         </main>
       </div>
 
@@ -755,96 +770,133 @@ function ListagemMedicamentos() {
           <div className={styles.modal}>
             <div className={styles.modalHeader}>
               <h2>Cadastrar Novo Medicamento</h2>
-              <button className={styles.modalClose} onClick={fecharModal}>
-                &times;
+              <button
+                onClick={fecharModal}
+                className={styles.modalClose}
+                aria-label="Fechar modal"
+              >
+                ✕
               </button>
             </div>
-            <div className={styles.modalBody}>
-              {!medicamentoExistente && !produtoNaoEncontrado ? (
-                <>
-                  <p>Digite o código de barras do medicamento:</p>
-                  <div className={styles.inputGroup}>
-                    <input
-                      type="text"
-                      value={codigoBarras}
-                      onChange={(e) => setCodigoBarras(e.target.value)}
-                      className={styles.inputCodigo}
-                      placeholder="Código de barras"
-                      autoFocus
-                      onKeyPress={(e) =>
-                        e.key === "Enter" && verificarCodigoBarras()
-                      }
-                    />
-                    <button
-                      className={styles.botaoSecundario}
-                      onClick={verificarCodigoBarras}
-                    >
-                      Verificar
-                    </button>
-                  </div>
-                  {erro && <p className={styles.erro}>{erro}</p>}
-                </>
-              ) : medicamentoExistente ? (
-                <>
-                  <p className={styles.aviso}>
-                    Este medicamento já está cadastrado:
-                  </p>
-                  <div className={styles.medicamentoInfo}>
+
+            <div className={styles.modalContent}>
+              <p>
+                Digite o código de barras do medicamento para verificar se já
+                existe no sistema:
+              </p>
+
+              <div className={styles.codigoBarrasInput}>
+                <input
+                  type="text"
+                  placeholder="Digite o código de barras..."
+                  value={codigoBarras}
+                  onChange={(e) => setCodigoBarras(e.target.value)}
+                  onKeyPress={(e) => {
+                    if (e.key === "Enter") verificarCodigoBarras();
+                  }}
+                  className={styles.input}
+                />
+                <button
+                  onClick={verificarCodigoBarras}
+                  className={styles.botaoSecundario}
+                >
+                  Verificar
+                </button>
+              </div>
+
+              {erro && <p className={styles.erro}>{erro}</p>}
+
+              {medicamentoExistente && (
+                <div className={styles.medicamentoExistente}>
+                  <h3>Medicamento já cadastrado:</h3>
+                  <div className={styles.existenteInfo}>
                     <img
-                      src={medicamentoExistente.imagem || imagemPadrao}
+                      src={
+                        medicamentoExistente.imagem || imagemPadrao
+                      }
                       alt={medicamentoExistente.nome}
-                      className={styles.imgThumbModal}
-                      onError={(e) => {
-                        e.target.src = imagemPadrao;
-                      }}
+                      className={styles.existenteImagem}
                     />
-                    <div>
-                      <h3>{medicamentoExistente.nome}</h3>
+                    <div className={styles.existenteDetalhes}>
                       <p>
-                        {medicamentoExistente.dosagem} -{" "}
+                        <strong>Nome:</strong> {medicamentoExistente.nome}
+                      </p>
+                      <p>
+                        <strong>Dosagem:</strong>{" "}
+                        {medicamentoExistente.dosagem}
+                      </p>
+                      <p>
+                        <strong>Laboratório:</strong>{" "}
                         {medicamentoExistente.laboratorio}
                       </p>
-                      <p className={styles.medCodigoModal}>
-                        Código: {medicamentoExistente.codigoBarras}
+                      <p>
+                        <strong>Status:</strong>{" "}
+                        <span
+                          className={
+                            medicamentoExistente.status === "ativo"
+                              ? styles.statusAtivo
+                              : styles.statusInativo
+                          }
+                        >
+                          {medicamentoExistente.status === "ativo"
+                            ? "Ativo"
+                            : "Inativo"}
+                        </span>
                       </p>
                     </div>
                   </div>
-                  <p className={styles.pergunta}>
-                    Deseja continuar com o cadastro?
-                  </p>
-                </>
-              ) : (
-                <>
-                  <p className={styles.aviso}>
-                    Produto não encontrado em nossa base de dados.
-                  </p>
-                  <p>Deseja cadastrar este novo medicamento?</p>
-                </>
+                  <button
+                    onClick={() =>
+                      abrirDetalhes(medicamentoExistente)
+                    }
+                    className={styles.botaoPrincipal}
+                  >
+                    Ver Detalhes
+                  </button>
+                </div>
               )}
-            </div>
-            <div className={styles.modalFooter}>
-              <button
-                className={`${styles.botao} ${styles.botaoSecundario}`}
-                onClick={fecharModal}
-              >
-                Cancelar
-              </button>
-              <button
-                className={`${styles.botao} ${styles.botaoPrincipal}`}
-                onClick={
-                  medicamentoExistente
-                    ? continuarCadastro
-                    : produtoNaoEncontrado
-                    ? redirecionarParaCadastro
-                    : verificarCodigoBarras
-                }
-              >
-                {medicamentoExistente
-                  ? "Continuar"
-                  : produtoNaoEncontrado
-                  ? "Cadastrar"
-                  : "Verificar"}
-              </button>
+
+              {produtoNaoEncontrado && (
+                <div className={styles.produtoNaoEncontrado}>
+                  <h3>Produto não encontrado no sistema</h3>
+                  <p>
+                    Este código de barras não está cadastrado. Deseja
+                    cadastrar um novo medicamento?
+                  </p>
+                  <div className={styles.modalActions}>
+                    <button
+                      onClick={redirecionarParaCadastro}
+                      className={styles.botaoPrincipal}
+                    >
+                      Cadastrar Novo Medicamento
+                    </button>
+                    <button
+                      onClick={fecharModal}
+                      className={styles.botaoSecundario}
+                    >
+                      Cancelar
+                    </button>
+                  </div>
+                </div>
+              )}
+
+              {!medicamentoExistente && !produtoNaoEncontrado && (
+                <div className={styles.modalActions}>
+                  <button
+                    onClick={continuarCadastro}
+                    disabled={!codigoBarras.trim()}
+                    className={styles.botaoPrincipal}
+                  >
+                    Continuar
+                  </button>
+                  <button
+                    onClick={fecharModal}
+                    className={styles.botaoSecundario}
+                  >
+                    Cancelar
+                  </button>
+                </div>
+              )}
             </div>
           </div>
         </div>
@@ -857,19 +909,23 @@ function ListagemMedicamentos() {
             <div className={styles.modalHeader}>
               <h2>Detalhes do Medicamento</h2>
               <button
-                className={styles.modalClose}
                 onClick={fecharModalDetalhes}
+                className={styles.modalClose}
+                aria-label="Fechar detalhes"
               >
-                &times;
+                ✕
               </button>
             </div>
-            <div className={styles.modalBody}>
-              <div className={styles.detalhesMedicamento}>
+
+            <div className={styles.modalContent}>
+              <div className={styles.detalhesContainer}>
                 <div className={styles.detalhesImagem}>
                   <img
-                    src={medicamentoSelecionado.imagem || imagemPadrao}
+                    src={
+                      medicamentoSelecionado.imagem || imagemPadrao
+                    }
                     alt={medicamentoSelecionado.nome}
-                    className={styles.imgDetalhes}
+                    className={styles.detalhesImg}
                     onError={(e) => {
                       e.target.src = imagemPadrao;
                     }}
@@ -878,127 +934,126 @@ function ListagemMedicamentos() {
 
                 <div className={styles.detalhesInfo}>
                   <h3>{medicamentoSelecionado.nome}</h3>
-                  <p className={styles.detalhesLab}>
-                    {medicamentoSelecionado.laboratorio}
-                  </p>
 
-                  <div className={styles.detalhesGrid}>
-                    <div className={styles.detalhesItem}>
-                      <span className={styles.detalhesLabel}>Dosagem:</span>
-                      <span className={styles.detalhesValue}>
+                  <div className={styles.infoGrid}>
+                    <div className={styles.infoItem}>
+                      <span className={styles.infoLabel}>Dosagem:</span>
+                      <span className={styles.infoValue}>
                         {medicamentoSelecionado.dosagem}
                       </span>
                     </div>
-                    <div className={styles.detalhesItem}>
-                      <span className={styles.detalhesLabel}>
-                        Forma Farmacêutica:
-                      </span>
-                      <span className={styles.detalhesValue}>
-                        {medicamentoSelecionado.forma}
-                      </span>
-                    </div>
-                    <div className={styles.detalhesItem}>
-                      <span className={styles.detalhesLabel}>Tipo:</span>
-                      <span className={styles.detalhesValue}>
-                        {medicamentoSelecionado.tipo}
-                      </span>
-                    </div>
-                    <div className={styles.detalhesItem}>
-                      <span className={styles.detalhesLabel}>Categoria:</span>
-                      <span className={styles.detalhesValue}>
-                        {medicamentoSelecionado.categoria}
-                      </span>
-                    </div>
-                    <div className={styles.detalhesItem}>
-                      <span className={styles.detalhesLabel}>
-                        Quantidade em Estoque:
-                      </span>
+
+                    <div className={styles.infoItem}>
+                      <span className={styles.infoLabel}>Quantidade:</span>
                       <span
-                        className={`${styles.detalhesValue} ${
-                          medicamentoSelecionado.quantidade <= 5
-                            ? styles.estoqueBaixo
+                        className={`${styles.infoValue} ${
+                          medicamentoSelecionado.quantidade === 0
+                            ? styles.quantidadeZero
+                            : medicamentoSelecionado.quantidade <= 5
+                            ? styles.quantidadeBaixa
                             : ""
                         }`}
                       >
-                        {medicamentoSelecionado.quantidade} unidades
+                        {medicamentoSelecionado.quantidade}
                       </span>
                     </div>
-                    <div className={styles.detalhesItem}>
-                      <span className={styles.detalhesLabel}>Preço:</span>
-                      <span className={styles.detalhesValue}>
-                        {currency.format(
-                          Number(medicamentoSelecionado.preco ?? 0)
-                        )}
+
+                    <div className={styles.infoItem}>
+                      <span className={styles.infoLabel}>Tipo:</span>
+                      <span className={styles.infoValue}>
+                        {medicamentoSelecionado.tipo}
                       </span>
                     </div>
-                    <div className={styles.detalhesItem}>
-                      <span className={styles.detalhesLabel}>
-                        Código de Barras:
+
+                    <div className={styles.infoItem}>
+                      <span className={styles.infoLabel}>Forma:</span>
+                      <span className={styles.infoValue}>
+                        {medicamentoSelecionado.forma}
                       </span>
-                      <span className={styles.detalhesValue}>
+                    </div>
+
+                    <div className={styles.infoItem}>
+                      <span className={styles.infoLabel}>Laboratório:</span>
+                      <span className={styles.infoValue}>
+                        {medicamentoSelecionado.laboratorio}
+                      </span>
+                    </div>
+
+                    <div className={styles.infoItem}>
+                      <span className={styles.infoLabel}>Preço:</span>
+                      <span className={styles.infoValue}>
+                        {currency.format(medicamentoSelecionado.preco)}
+                      </span>
+                    </div>
+
+                    <div className={styles.infoItem}>
+                      <span className={styles.infoLabel}>Categoria:</span>
+                      <span className={styles.infoValue}>
+                        {medicamentoSelecionado.categoria}
+                      </span>
+                    </div>
+
+                    <div className={styles.infoItem}>
+                      <span className={styles.infoLabel}>Status:</span>
+                      <span
+                        className={`${styles.infoValue} ${
+                          medicamentoSelecionado.status === "ativo"
+                            ? styles.statusAtivo
+                            : styles.statusInativo
+                        }`}
+                      >
+                        {medicamentoSelecionado.status === "ativo"
+                          ? "Ativo"
+                          : "Inativo"}
+                      </span>
+                    </div>
+
+                    <div className={styles.infoItem}>
+                      <span className={styles.infoLabel}>Código de Barras:</span>
+                      <span className={styles.infoValue}>
                         {medicamentoSelecionado.codigoBarras}
                       </span>
                     </div>
-                    <div className={styles.detalhesItem}>
-                      <span className={styles.detalhesLabel}>Lote:</span>
-                      <span className={styles.detalhesValue}>
-                        {medicamentoSelecionado.lote || "N/A"}
-                      </span>
-                    </div>
-                    <div className={styles.detalhesItem}>
-                      <span className={styles.detalhesLabel}>Status:</span>
-                      <span className={styles.detalhesValue}>
-                        <button
-                          onClick={() => {
-                            toggleStatus(medicamentoSelecionado.id);
-                            setMedicamentoSelecionado({
-                              ...medicamentoSelecionado,
-                              status:
-                                medicamentoSelecionado.status === "ativo"
-                                  ? "inativo"
-                                  : "ativo",
-                            });
-                          }}
-                          className={`${styles.statusBadge} ${
-                            medicamentoSelecionado.status === "ativo"
-                              ? styles.statusAtivo
-                              : styles.statusInativo
-                          }`}
-                        >
-                          {medicamentoSelecionado.status === "ativo"
-                            ? "Ativo"
-                            : "Inativo"}
-                        </button>
+
+                    <div className={styles.infoItem}>
+                      <span className={styles.infoLabel}>Lote:</span>
+                      <span className={styles.infoValue}>
+                        {medicamentoSelecionado.lote}
                       </span>
                     </div>
                   </div>
 
-                  <div className={styles.detalhesItemFull}>
-                    <span className={styles.detalhesLabel}>Descrição:</span>
-                    <p className={styles.detalhesDescricao}>
-                      {medicamentoSelecionado.descricao}
-                    </p>
-                  </div>
+                  {medicamentoSelecionado.descricao && (
+                    <div className={styles.descricao}>
+                      <span className={styles.infoLabel}>Descrição:</span>
+                      <p>{medicamentoSelecionado.descricao}</p>
+                    </div>
+                  )}
                 </div>
               </div>
-            </div>
-            <div className={styles.modalFooter}>
-              <button
-                className={`${styles.botao} ${styles.botaoExcluir}`}
-                onClick={() => handleExcluir(med.id)}
-                title="Excluir medicamento"
-              >
-                🗑️
-              </button>
-              <button
-                className={`${styles.botao} ${styles.botaoPrincipal}`}
-                onClick={() => {
-                  fecharModalDetalhes();
-                  handleEditar(medicamentoSelecionado.id);
-                }}
-              >
-                ✏️ Editar Medicamento
-              </button>
+
+              <div className={styles.modalActions}>
+                <button
+                  onClick={() => handleEditar(medicamentoSelecionado.id)}
+                  className={styles.botaoPrincipal}
+                >
+                  ✏️ Editar
+                </button>
+                <button
+                  onClick={() => toggleStatus(medicamentoSelecionado.id)}
+                  className={styles.botaoSecundario}
+                >
+                  {medicamentoSelecionado.status === "ativo"
+                    ? "⏸️ Desativar"
+                    : "▶️ Ativar"}
+                </button>
+                <button
+                  onClick={() => handleExcluir(medicamentoSelecionado.id)}
+                  className={styles.botaoPerigo}
+                >
+                  🗑️ Excluir
+                </button>
+              </div>
             </div>
           </div>
         </div>
