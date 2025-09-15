@@ -27,7 +27,7 @@ h1 {
   font-size: 2.8rem;
   font-weight: bold;
   margin-bottom: 1rem;
-  font-family: "Geist Mono", "monospace";
+  /* font-family: "Geist Mono", "monospace"; */
   color: dimgray;
 }
 
@@ -72,7 +72,7 @@ a {
 
 
 .montserrat {
-  font-family: "Montserrat", sans-serif;
+  font-family: "Montserrat";
   font-optical-sizing: auto;
   font-weight: weight;
   font-style: normal;

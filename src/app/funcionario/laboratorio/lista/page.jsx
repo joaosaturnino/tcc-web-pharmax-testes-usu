@@ -201,7 +201,7 @@ export default function ListaLaboratorios() {
                         <td>
                           <div className={styles.acoes}>
                             <Link
-                              href={`/farmacias/laboratorio/cadastro/editar/${lab.id}`}
+                              href={`/funcionario/laboratorio/cadastro/editar/${lab.id}`}
                               className={styles.editarButton}
                               title="Editar laboratório"
                             >

@@ -1,4 +1,4 @@
-/* Layout Principal */
+/* Layout Principal - Mantido igual ao da tela de favoritos */
 .dashboard {
   min-height: 100vh;
   background-color: #f8fafc;
@@ -6,7 +6,7 @@
   flex-direction: column;
 }
 
-/* Header */
+/* Header - Mantido igual ao da tela de favoritos */
 .header {
   background: white;
   padding: 16px 30px;
@@ -47,14 +47,43 @@
   margin: 0;
 }
 
-/* Wrapper de Conteúdo */
+.headerActions {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.actionBtn {
+  padding: 10px 16px;
+  border: none;
+  border-radius: 8px;
+  background: #458B00;
+  color: white;
+  font-weight: 500;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  transition: all 0.3s ease;
+}
+
+.actionBtn:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(69, 139, 0, 0.3);
+}
+
+.btnIcon {
+  font-size: 16px;
+}
+
+/* Wrapper de Conteúdo - Mantido igual ao da tela de favoritos */
 .contentWrapper {
   display: flex;
   flex: 1;
   position: relative;
 }
 
-/* Sidebar - Estilo igual ao da tela de relatórios */
+/* Sidebar - Estilo idêntico ao da tela de favoritos */
 .sidebar {
   width: 280px;
   background: #191970;
@@ -144,7 +173,7 @@
   margin-left: 6px;
 }
 
-/* Conteúdo Principal */
+/* Conteúdo Principal - Mantido igual ao da tela de favoritos */
 .mainContent {
   flex: 1;
   padding: 32px 24px;
@@ -152,13 +181,57 @@
   min-height: 100vh;
 }
 
-/* Container do Formulário */
+/* Cabeçalho da página de edição - Estilo similar ao da tela de favoritos */
+.pageHeader {
+  display: flex;
+  align-items: center;
+  gap: 24px;
+  margin-bottom: 32px;
+}
+
+.pageLogo {
+  width: 48px;
+  height: 48px;
+  background: #458B00;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  font-size: 20px;
+  font-weight: bold;
+}
+
+.pageTitle h1 {
+  font-size: 28px;
+  font-weight: 700;
+  margin: 0 0 4px 0;
+  color: #191970;
+}
+
+.pageTitle p {
+  margin: 0;
+  color: #555;
+  font-size: 15px;
+}
+
+/* Container do Formulário - Estilo de card similar aos da tela de favoritos */
 .formContainer {
+  max-width: 1000px;
+  margin: 0 auto;
+}
+
+.form {
   background: white;
   border-radius: 12px;
+  padding: 32px;
   box-shadow: 0 2px 8px rgba(0,0,0,0.04);
-  padding: 24px;
-  margin-bottom: 24px;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.form:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
 }
 
 .formHeader {
@@ -180,50 +253,48 @@
 }
 
 /* Formulário */
-.form {
-  width: 100%;
-}
-
 .formGrid {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 32px;
-  margin-bottom: 32px;
+  gap: 24px;
+  margin-bottom: 24px;
 }
 
 .formSection {
-  display: flex;
-  flex-direction: column;
-  gap: 20px;
+  margin-bottom: 24px;
 }
 
 .sectionTitle {
   font-size: 18px;
   font-weight: 600;
   color: #191970;
-  margin: 0 0 8px 0;
-  padding-bottom: 8px;
-  border-bottom: 2px solid #e6f7e6;
+  margin: 0 0 16px 0;
+  padding-bottom: 12px;
+  border-bottom: 1px solid #e5e7eb;
 }
 
-/* Controles do Formulário */
-.formControl {
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
+.formGroup {
+  margin-bottom: 16px;
+}
+
+.formRow {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
 }
 
 .inputLabel {
+  display: block;
   font-size: 14px;
-  font-weight: 500;
-  color: #191970;
-  margin-bottom: 4px;
+  font-weight: 600;
+  color: #374151;
+  margin-bottom: 8px;
 }
 
-.divInput {
-  position: relative;
-  display: flex;
-  align-items: center;
+.inputLabel::after {
+  content: "*";
+  color: #ef4444;
+  margin-left: 4px;
 }
 
 .modernInput,
@@ -246,130 +317,133 @@
   box-shadow: 0 0 0 3px rgba(69, 139, 0, 0.1);
 }
 
-.modernTextarea {
-  resize: vertical;
-  min-height: 100px;
+.modernInput::placeholder {
+  color: #9ca3af;
 }
 
 .modernSelect {
   appearance: none;
-  background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
+  background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%236b7280' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='m6 8 4 4 4-4'/%3e%3c/svg%3e");
+  background-position: right 12px center;
   background-repeat: no-repeat;
-  background-position: right 16px center;
   background-size: 16px;
+  padding-right: 40px;
 }
 
-/* Ícones de Validação */
-.sucesso,
-.erro {
-  position: absolute;
-  right: 16px;
-  font-size: 20px;
-  opacity: 0;
-  transition: opacity 0.3s ease;
+.modernTextarea {
+  resize: vertical;
+  min-height: 100px;
+  
 }
 
-.sucesso {
-  color: #458B00;
+/* Grupo de Checkboxes - Estilo similar aos badges da tela de favoritos */
+.checkboxGroup {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-top: 8px;
 }
 
-.erro {
-  color: #d32f2f;
+.checkboxLabel {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+  font-size: 14px;
+  color: #374151;
+  padding: 8px 12px;
+  border-radius: 8px;
+  transition: background 0.2s;
 }
 
-/* Estados de Validação */
-.success .sucesso {
-  opacity: 1;
+.checkboxLabel:hover {
+  background: #f8fafc;
 }
 
-.success .modernInput,
-.success .modernTextarea,
-.success .modernSelect {
-  border-color: #458B00;
+.checkboxLabel input[type="checkbox"] {
+  width: 18px;
+  height: 18px;
+  accent-color: #458B00;
 }
 
-.error .erro {
-  opacity: 1;
+.checkboxText {
+  font-size: 14px;
+  font-weight: 500;
 }
 
-.error .modernInput,
-.error .modernTextarea,
-.error .modernSelect {
-  border-color: #d32f2f;
-}
-
-.small {
-  color: #d32f2f;
-  font-size: 12px;
-  margin-top: 4px;
-}
-
-/* Botões de Ação */
+/* Ações do Formulário - Estilo similar aos botões de paginação */
 .formActions {
   display: flex;
   justify-content: flex-end;
   gap: 16px;
-  margin-top: 32px;
   padding-top: 24px;
   border-top: 1px solid #e5e7eb;
 }
 
-.cancelButton,
+.cancelButton {
+  padding: 12px 24px;
+  border: 2px solid #d1d5db;
+  border-radius: 8px;
+  background: white;
+  color: #374151;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.cancelButton:hover {
+  background: #f9fafb;
+  border-color: #9ca3af;
+}
+
 .submitButton {
   padding: 12px 24px;
   border: none;
   border-radius: 8px;
-  font-weight: 500;
+  background: #458B00;
+  color: white;
+  font-weight: 600;
   cursor: pointer;
-  transition: all 0.3s ease;
   display: flex;
   align-items: center;
   gap: 8px;
+  transition: all 0.3s ease;
 }
 
-.cancelButton {
-  background: #f1f5f9;
-  color: #64748b;
-  border: 1px solid #d1d5db;
-}
-
-.cancelButton:hover:not(:disabled) {
-  background: #e5e7eb;
-}
-
-.submitButton {
-  background: #458B00;
-  color: white;
-}
-
-.submitButton:hover:not(:disabled) {
-  background: #2e7d32;
+.submitButton:hover {
   transform: translateY(-1px);
   box-shadow: 0 4px 12px rgba(69, 139, 0, 0.3);
 }
 
-.submitButton:disabled,
-.cancelButton:disabled {
-  opacity: 0.6;
-  cursor: not-allowed;
-  transform: none;
+.buttonIcon {
+  font-size: 16px;
 }
 
-/* Spinner de carregamento */
-.loadingSpinnerSmall {
-  width: 16px;
-  height: 16px;
-  border: 2px solid transparent;
-  border-top: 2px solid white;
+/* Loader - Estilo igual ao da tela de favoritos */
+.loadingContainer {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 300px;
+  color: #458B00;
+}
+
+.loadingSpinner {
+  width: 38px;
+  height: 38px;
+  border: 4px solid #e6f7e6;
+  border-top: 4px solid #458B00;
   border-radius: 50%;
   animation: spin 1s linear infinite;
+  margin-bottom: 12px;
 }
 
 @keyframes spin {
   to { transform: rotate(360deg); }
 }
 
-/* Overlay para mobile */
+/* Overlay para mobile - Mantido igual ao da tela de favoritos */
 .overlay {
   position: fixed;
   inset: 0;
@@ -378,7 +452,7 @@
   display: none;
 }
 
-/* Responsividade */
+/* Responsividade - Mantido igual ao da tela de favoritos com ajustes específicos */
 @media (max-width: 1024px) {
   .mainContent {
     padding: 24px 8px;
@@ -388,7 +462,7 @@
   }
   .formGrid {
     grid-template-columns: 1fr;
-    gap: 24px;
+    gap: 0;
   }
 }
 
@@ -417,16 +491,23 @@
   .mainContent {
     padding: 16px 2px;
   }
-  .formContainer {
-    padding: 16px;
+  .form {
+    padding: 24px;
+  }
+  .formRow {
+    grid-template-columns: 1fr;
+    gap: 0;
   }
   .formActions {
-    flex-direction: column-reverse;
+    flex-direction: column;
   }
-  .cancelButton,
-  .submitButton {
+  .cancelButton, .submitButton {
     width: 100%;
-    justify-content: center;
+  }
+  .pageHeader {
+    flex-direction: column;
+    gap: 10px;
+    text-align: center;
   }
 }
 
@@ -437,13 +518,12 @@
     align-items: flex-start;
     padding: 16px 20px;
   }
-  .formContainer {
-    padding: 12px;
+  .form {
+    padding: 20px;
   }
-  .formHeader h2 {
-    font-size: 24px;
-  }
-  .sectionTitle {
-    font-size: 16px;
+  .pageHeader {
+    flex-direction: column;
+    gap: 10px;
+    text-align: center;
   }
 }

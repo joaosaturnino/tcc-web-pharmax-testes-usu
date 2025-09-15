@@ -33,9 +33,7 @@ export default function EditarLaboratorioPage() {
         telefone: laboratorioData.telefone || "",
         email: laboratorioData.email || "",
         logo: laboratorioData.logo || null,
-        dataCadastro:
-          laboratorioData.dataCadastro ||
-          new Date().toISOString().split("T")[0],
+        dataCadastro: laboratorioData.dataCadastro || new Date().toISOString().split('T')[0],
       });
       setPreview(laboratorioData.logo || null);
     }
@@ -96,6 +94,7 @@ export default function EditarLaboratorioPage() {
             className={styles.menuToggle}
             onClick={() => setSidebarOpen(!sidebarOpen)}
           >
+            ☰
           </button>
           <h1 className={styles.title}> Editar Laboratório</h1>
         </div>
@@ -112,19 +111,17 @@ export default function EditarLaboratorioPage() {
               className={styles.sidebarClose}
               onClick={() => setSidebarOpen(false)}
             >
+              ✕
             </button>
           </div>
 
           <nav className={styles.nav}>
             <div className={styles.navSection}>
               <p className={styles.navLabel}>Principal</p>
-
+            
               <a href="/funcionario/produtos/medicamentos" className={styles.navLink}>
                 <span className={styles.navText}>Medicamentos</span>
               </a>
-            </div>
-
-            <div className={styles.navSection}>
               <a
                 href="/funcionario/laboratorio/lista"
                 className={`${styles.navLink} ${styles.active}`}
@@ -132,6 +129,8 @@ export default function EditarLaboratorioPage() {
                 <span className={styles.navText}>Laboratórios</span>
               </a>
             </div>
+
+            
           </nav>
         </aside>
 
@@ -152,10 +151,12 @@ export default function EditarLaboratorioPage() {
               <div className={styles.formGrid}>
                 {/* Informações do Laboratório */}
                 <div className={styles.formSection}>
-                  <h3 className={styles.sectionTitle}>Informações do Laboratório</h3>
+                  <h3 className={styles.sectionTitle}>
+                    Informações do Laboratório
+                  </h3>
 
                   <div className={styles.formGroup}>
-                    <label className={styles.inputLabel}>Nome do Laboratório </label>
+                    <label className={styles.inputLabel}>Nome do Laboratório *</label>
                     <input
                       className={styles.modernInput}
                       type="text"
@@ -169,7 +170,7 @@ export default function EditarLaboratorioPage() {
 
                   <div className={styles.formRow}>
                     <div className={styles.formGroup}>
-                      <label className={styles.inputLabel}>CNPJ</label>
+                      <label className={styles.inputLabel}>CNPJ *</label>
                       <input
                         className={styles.modernInput}
                         type="text"
@@ -195,7 +196,7 @@ export default function EditarLaboratorioPage() {
                   </div>
 
                   <div className={styles.formGroup}>
-                    <label className={styles.inputLabel}>E-mail</label>
+                    <label className={styles.inputLabel}>E-mail *</label>
                     <input
                       className={styles.modernInput}
                       type="email"
@@ -227,7 +228,7 @@ export default function EditarLaboratorioPage() {
                   </h3>
 
                   <div className={styles.formGroup}>
-                    <label className={styles.inputLabel}>Endereço Completo</label>
+                    <label className={styles.inputLabel}>Endereço Completo *</label>
                     <input
                       className={styles.modernInput}
                       type="text"
@@ -255,9 +256,7 @@ export default function EditarLaboratorioPage() {
                       </label>
                       {form.logo && (
                         <span className={styles.fileName}>
-                          {typeof form.logo === "string"
-                            ? "Imagem carregada"
-                            : form.logo.name}
+                          {typeof form.logo === 'string' ? "Imagem carregada" : form.logo.name}
                         </span>
                       )}
                     </div>
@@ -286,7 +285,6 @@ export default function EditarLaboratorioPage() {
                 >
                   Cancelar
                 </button>
-
                 <button type="submit" className={styles.submitButton}>
                   Atualizar Laboratório
                 </button>

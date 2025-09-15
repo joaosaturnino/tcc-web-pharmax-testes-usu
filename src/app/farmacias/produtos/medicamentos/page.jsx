@@ -12,7 +12,6 @@ const currency =
     ? new Intl.NumberFormat("pt-BR", { style: "currency", currency: "BRL" })
     : { format: (v) => `R$ ${Number(v).toFixed(2)}` };
 
-// Dados iniciais de exemplo mais completos
 const medicamentosIniciais = [
   {
     id: 1,
@@ -96,7 +95,6 @@ const medicamentosIniciais = [
   },
 ];
 
-// Simulação de banco de dados
 const bancoDeDados = {
   medicamentos: medicamentosIniciais,
   buscarPorCodigoBarras: function (codigo) {
@@ -119,24 +117,19 @@ function ListagemMedicamentos() {
   const [filtroCategoria, setFiltroCategoria] = useState("todos");
   const [ordenacao, setOrdenacao] = useState("nome");
   const [carregando, setCarregando] = useState(false);
-  const [visualizacao, setVisualizacao] = useState("tabela"); // 'tabela' ou 'grade'
+  const [visualizacao, setVisualizacao] = useState("tabela");
   const [paginaAtual, setPaginaAtual] = useState(1);
   const [itensPorPagina, setItensPorPagina] = useState(10);
   const router = useRouter();
 
-  // Extrair categorias únicas
   const categorias = useMemo(() => {
     const cats = [...new Set(medicamentos.map((m) => m.categoria))];
     return ["todos", ...cats];
   }, [medicamentos]);
 
-  // Filtros e ordenação
   const medicamentosFiltrados = useMemo(() => {
     setCarregando(true);
-
     let resultado = [...medicamentos];
-
-    // Filtro por pesquisa
     if (termoPesquisa) {
       const termo = termoPesquisa.toLowerCase();
       resultado = resultado.filter(
@@ -148,18 +141,12 @@ function ListagemMedicamentos() {
           med.categoria.toLowerCase().includes(termo)
       );
     }
-
-    // Filtro por status
     if (filtroStatus !== "todos") {
       resultado = resultado.filter((med) => med.status === filtroStatus);
     }
-
-    // Filtro por categoria
     if (filtroCategoria !== "todos") {
       resultado = resultado.filter((med) => med.categoria === filtroCategoria);
     }
-
-    // Ordenação
     resultado.sort((a, b) => {
       switch (ordenacao) {
         case "nome":
@@ -174,14 +161,10 @@ function ListagemMedicamentos() {
           return 0;
       }
     });
-
-    // Simular carregamento
     setTimeout(() => setCarregando(false), 200);
-
     return resultado;
   }, [medicamentos, termoPesquisa, filtroStatus, filtroCategoria, ordenacao]);
 
-  // Paginação
   const totalPaginas = Math.ceil(medicamentosFiltrados.length / itensPorPagina);
   const indiceInicial = (paginaAtual - 1) * itensPorPagina;
   const indiceFinal = indiceInicial + itensPorPagina;
@@ -193,7 +176,6 @@ function ListagemMedicamentos() {
   const handleExcluir = (id) => {
     if (window.confirm("Tem certeza que deseja excluir este medicamento?")) {
       setMedicamentos(medicamentos.filter((med) => med.id !== id));
-      // Fechar modal de detalhes se estiver aberto
       if (modalDetalhesAberto && medicamentoSelecionado?.id === id) {
         setModalDetalhesAberto(false);
         setMedicamentoSelecionado(null);
@@ -209,7 +191,6 @@ function ListagemMedicamentos() {
           : med
       )
     );
-    // Atualizar medicamento selecionado se estiver aberto no modal
     if (medicamentoSelecionado && medicamentoSelecionado.id === id) {
       setMedicamentoSelecionado({
         ...medicamentoSelecionado,
@@ -253,9 +234,7 @@ function ListagemMedicamentos() {
       setErro("Por favor, digite um código de barras válido.");
       return;
     }
-
     const medicamento = bancoDeDados.buscarPorCodigoBarras(codigoBarras);
-
     if (medicamento) {
       setMedicamentoExistente(medicamento);
       setProdutoNaoEncontrado(false);
@@ -281,7 +260,7 @@ function ListagemMedicamentos() {
 
   const handleItensPorPaginaChange = (e) => {
     setItensPorPagina(Number(e.target.value));
-    setPaginaAtual(1); // Reset para a primeira página
+    setPaginaAtual(1);
   };
 
   return (
@@ -317,7 +296,6 @@ function ListagemMedicamentos() {
               </button>
             )}
           </div>
-
           <button onClick={abrirModal} className={styles.botaoPrincipal}>
             ➕ Novo Medicamento
           </button>
@@ -325,7 +303,7 @@ function ListagemMedicamentos() {
       </header>
 
       <div className={styles.contentWrapper}>
-        {/* Sidebar Não Fixa */}
+        {/* Sidebar */}
         <aside
           className={`${styles.sidebar} ${
             sidebarOpen ? styles.sidebarOpen : ""
@@ -343,7 +321,6 @@ function ListagemMedicamentos() {
               ✕
             </button>
           </div>
-
           <nav className={styles.nav}>
             <div className={styles.navSection}>
               <p className={styles.navLabel}>Principal</p>
@@ -357,7 +334,6 @@ function ListagemMedicamentos() {
                 <span className={styles.navText}>Medicamentos</span>
               </Link>
             </div>
-
             <div className={styles.navSection}>
               <p className={styles.navLabel}>Gestão</p>
               <Link
@@ -366,7 +342,10 @@ function ListagemMedicamentos() {
               >
                 <span className={styles.navText}>Funcionários</span>
               </Link>
-              <Link href="/farmacias/laboratorio/lista" className={styles.navLink}>
+              <Link
+                href="/farmacias/laboratorio/lista"
+                className={styles.navLink}
+              >
                 <span className={styles.navText}>Laboratórios</span>
               </Link>
             </div>
@@ -408,7 +387,6 @@ function ListagemMedicamentos() {
                   ◼︎
                 </button>
               </div>
-
               <div className={styles.filtroGroup}>
                 <label>Status:</label>
                 <select
@@ -421,7 +399,6 @@ function ListagemMedicamentos() {
                   <option value="inativo">Inativos</option>
                 </select>
               </div>
-
               <div className={styles.filtroGroup}>
                 <label>Categoria:</label>
                 <select
@@ -436,7 +413,6 @@ function ListagemMedicamentos() {
                   ))}
                 </select>
               </div>
-
               <div className={styles.filtroGroup}>
                 <label>Ordenar por:</label>
                 <select
@@ -450,7 +426,6 @@ function ListagemMedicamentos() {
                   <option value="laboratorio">Laboratório</option>
                 </select>
               </div>
-
               <div className={styles.filtroGroup}>
                 <label>Itens por página:</label>
                 <select
@@ -465,7 +440,6 @@ function ListagemMedicamentos() {
                 </select>
               </div>
             </div>
-
             <div className={styles.infoResultados}>
               Exibindo {medicamentosPaginados.length} de{" "}
               {medicamentosFiltrados.length} medicamentos
@@ -561,17 +535,17 @@ function ListagemMedicamentos() {
                             title="Ver detalhes"
                             aria-label={`Ver detalhes de ${med.nome}`}
                           >
-                            👁️
+                            Detalhes
                           </button>
-                          <button
+                          {/* <button
                             onClick={() => handleEditar(med.id)}
                             className={styles.botaoAcao}
                             title="Editar"
                             aria-label={`Editar ${med.nome}`}
                           >
                             ✏️
-                          </button>
-                          <button
+                          </button> */}
+                          {/* <button
                             onClick={() => handleExcluir(med.id)}
                             className={styles.botaoAcao}
                             title="Excluir"
@@ -592,7 +566,7 @@ function ListagemMedicamentos() {
                             } ${med.nome}`}
                           >
                             {med.status === "ativo" ? "⏸️" : "▶️"}
-                          </button>
+                          </button> */}
                         </div>
                       </td>
                     </tr>
@@ -600,7 +574,6 @@ function ListagemMedicamentos() {
                 </tbody>
               </table>
             ) : (
-              // Visualização em Grade
               <div className={styles.gradeContainer}>
                 {medicamentosPaginados.map((med) => (
                   <div
@@ -628,13 +601,13 @@ function ListagemMedicamentos() {
                         {med.status === "ativo" ? "Ativo" : "Inativo"}
                       </span>
                     </div>
-
                     <div className={styles.cardContent}>
                       <h3 className={styles.cardNome}>{med.nome}</h3>
                       <p className={styles.cardDosagem}>{med.dosagem}</p>
-                      <p className={styles.cardLaboratorio}>{med.laboratorio}</p>
+                      <p className={styles.cardLaboratorio}>
+                        {med.laboratorio}
+                      </p>
                       <p className={styles.cardCategoria}>{med.categoria}</p>
-
                       <div className={styles.cardInfo}>
                         <div className={styles.infoItem}>
                           <span className={styles.infoLabel}>Quantidade:</span>
@@ -658,7 +631,6 @@ function ListagemMedicamentos() {
                         </div>
                       </div>
                     </div>
-
                     <div className={styles.cardActions}>
                       <button
                         onClick={() => abrirDetalhes(med)}
@@ -666,9 +638,9 @@ function ListagemMedicamentos() {
                         title="Ver detalhes"
                         aria-label={`Ver detalhes de ${med.nome}`}
                       >
-                        👁️
+                        Detalhes
                       </button>
-                      <button
+                      {/* <button
                         onClick={() => handleEditar(med.id)}
                         className={styles.botaoAcaoCard}
                         title="Editar"
@@ -693,7 +665,7 @@ function ListagemMedicamentos() {
                         } ${med.nome}`}
                       >
                         {med.status === "ativo" ? "⏸️" : "▶️"}
-                      </button>
+                      </button> */}
                     </div>
                   </div>
                 ))}
@@ -711,7 +683,6 @@ function ListagemMedicamentos() {
               >
                 ← Anterior
               </button>
-
               {Array.from({ length: Math.min(5, totalPaginas) }, (_, i) => {
                 let pagina;
                 if (totalPaginas <= 5) {
@@ -723,7 +694,6 @@ function ListagemMedicamentos() {
                 } else {
                   pagina = paginaAtual - 2 + i;
                 }
-
                 return (
                   <button
                     key={pagina}
@@ -736,11 +706,9 @@ function ListagemMedicamentos() {
                   </button>
                 );
               })}
-
               {totalPaginas > 5 && paginaAtual < totalPaginas - 2 && (
                 <span className={styles.pontos}>...</span>
               )}
-
               {totalPaginas > 5 && paginaAtual < totalPaginas - 1 && (
                 <button
                   onClick={() => setPaginaAtual(totalPaginas)}
@@ -749,7 +717,6 @@ function ListagemMedicamentos() {
                   {totalPaginas}
                 </button>
               )}
-
               <button
                 onClick={() =>
                   setPaginaAtual(Math.min(totalPaginas, paginaAtual + 1))
@@ -778,13 +745,11 @@ function ListagemMedicamentos() {
                 ✕
               </button>
             </div>
-
             <div className={styles.modalContent}>
               <p>
                 Digite o código de barras do medicamento para verificar se já
                 existe no sistema:
               </p>
-
               <div className={styles.codigoBarrasInput}>
                 <input
                   type="text"
@@ -803,17 +768,13 @@ function ListagemMedicamentos() {
                   Verificar
                 </button>
               </div>
-
               {erro && <p className={styles.erro}>{erro}</p>}
-
               {medicamentoExistente && (
                 <div className={styles.medicamentoExistente}>
                   <h3>Medicamento já cadastrado:</h3>
                   <div className={styles.existenteInfo}>
                     <img
-                      src={
-                        medicamentoExistente.imagem || imagemPadrao
-                      }
+                      src={medicamentoExistente.imagem || imagemPadrao}
                       alt={medicamentoExistente.nome}
                       className={styles.existenteImagem}
                     />
@@ -822,8 +783,7 @@ function ListagemMedicamentos() {
                         <strong>Nome:</strong> {medicamentoExistente.nome}
                       </p>
                       <p>
-                        <strong>Dosagem:</strong>{" "}
-                        {medicamentoExistente.dosagem}
+                        <strong>Dosagem:</strong> {medicamentoExistente.dosagem}
                       </p>
                       <p>
                         <strong>Laboratório:</strong>{" "}
@@ -846,22 +806,19 @@ function ListagemMedicamentos() {
                     </div>
                   </div>
                   <button
-                    onClick={() =>
-                      abrirDetalhes(medicamentoExistente)
-                    }
+                    onClick={() => abrirDetalhes(medicamentoExistente)}
                     className={styles.botaoPrincipal}
                   >
                     Ver Detalhes
                   </button>
                 </div>
               )}
-
               {produtoNaoEncontrado && (
                 <div className={styles.produtoNaoEncontrado}>
                   <h3>Produto não encontrado no sistema</h3>
                   <p>
-                    Este código de barras não está cadastrado. Deseja
-                    cadastrar um novo medicamento?
+                    Este código de barras não está cadastrado. Deseja cadastrar
+                    um novo medicamento?
                   </p>
                   <div className={styles.modalActions}>
                     <button
@@ -879,7 +836,6 @@ function ListagemMedicamentos() {
                   </div>
                 </div>
               )}
-
               {!medicamentoExistente && !produtoNaoEncontrado && (
                 <div className={styles.modalActions}>
                   <button
@@ -916,14 +872,11 @@ function ListagemMedicamentos() {
                 ✕
               </button>
             </div>
-
             <div className={styles.modalContent}>
               <div className={styles.detalhesContainer}>
                 <div className={styles.detalhesImagem}>
                   <img
-                    src={
-                      medicamentoSelecionado.imagem || imagemPadrao
-                    }
+                    src={medicamentoSelecionado.imagem || imagemPadrao}
                     alt={medicamentoSelecionado.nome}
                     className={styles.detalhesImg}
                     onError={(e) => {
@@ -931,10 +884,8 @@ function ListagemMedicamentos() {
                     }}
                   />
                 </div>
-
                 <div className={styles.detalhesInfo}>
                   <h3>{medicamentoSelecionado.nome}</h3>
-
                   <div className={styles.infoGrid}>
                     <div className={styles.infoItem}>
                       <span className={styles.infoLabel}>Dosagem:</span>
@@ -942,7 +893,6 @@ function ListagemMedicamentos() {
                         {medicamentoSelecionado.dosagem}
                       </span>
                     </div>
-
                     <div className={styles.infoItem}>
                       <span className={styles.infoLabel}>Quantidade:</span>
                       <span
@@ -957,42 +907,36 @@ function ListagemMedicamentos() {
                         {medicamentoSelecionado.quantidade}
                       </span>
                     </div>
-
                     <div className={styles.infoItem}>
                       <span className={styles.infoLabel}>Tipo:</span>
                       <span className={styles.infoValue}>
                         {medicamentoSelecionado.tipo}
                       </span>
                     </div>
-
                     <div className={styles.infoItem}>
                       <span className={styles.infoLabel}>Forma:</span>
                       <span className={styles.infoValue}>
                         {medicamentoSelecionado.forma}
                       </span>
                     </div>
-
                     <div className={styles.infoItem}>
                       <span className={styles.infoLabel}>Laboratório:</span>
                       <span className={styles.infoValue}>
                         {medicamentoSelecionado.laboratorio}
                       </span>
                     </div>
-
                     <div className={styles.infoItem}>
                       <span className={styles.infoLabel}>Preço:</span>
                       <span className={styles.infoValue}>
                         {currency.format(medicamentoSelecionado.preco)}
                       </span>
                     </div>
-
                     <div className={styles.infoItem}>
                       <span className={styles.infoLabel}>Categoria:</span>
                       <span className={styles.infoValue}>
                         {medicamentoSelecionado.categoria}
                       </span>
                     </div>
-
                     <div className={styles.infoItem}>
                       <span className={styles.infoLabel}>Status:</span>
                       <span
@@ -1007,14 +951,14 @@ function ListagemMedicamentos() {
                           : "Inativo"}
                       </span>
                     </div>
-
                     <div className={styles.infoItem}>
-                      <span className={styles.infoLabel}>Código de Barras:</span>
+                      <span className={styles.infoLabel}>
+                        Código de Barras:
+                      </span>
                       <span className={styles.infoValue}>
                         {medicamentoSelecionado.codigoBarras}
                       </span>
                     </div>
-
                     <div className={styles.infoItem}>
                       <span className={styles.infoLabel}>Lote:</span>
                       <span className={styles.infoValue}>
@@ -1022,7 +966,6 @@ function ListagemMedicamentos() {
                       </span>
                     </div>
                   </div>
-
                   {medicamentoSelecionado.descricao && (
                     <div className={styles.descricao}>
                       <span className={styles.infoLabel}>Descrição:</span>
@@ -1031,27 +974,26 @@ function ListagemMedicamentos() {
                   )}
                 </div>
               </div>
-
               <div className={styles.modalActions}>
                 <button
                   onClick={() => handleEditar(medicamentoSelecionado.id)}
                   className={styles.botaoPrincipal}
                 >
-                  ✏️ Editar
+                  Editar
                 </button>
                 <button
                   onClick={() => toggleStatus(medicamentoSelecionado.id)}
                   className={styles.botaoSecundario}
                 >
                   {medicamentoSelecionado.status === "ativo"
-                    ? "⏸️ Desativar"
-                    : "▶️ Ativar"}
+                    ? " Desativar"
+                    : " Ativar"}
                 </button>
                 <button
                   onClick={() => handleExcluir(medicamentoSelecionado.id)}
                   className={styles.botaoPerigo}
                 >
-                  🗑️ Excluir
+                  Excluir
                 </button>
               </div>
             </div>

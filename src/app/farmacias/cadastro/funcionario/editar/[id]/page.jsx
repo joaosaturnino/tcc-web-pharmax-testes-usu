@@ -139,7 +139,7 @@ export default function EditarFuncionarioPage() {
               <p className={styles.navLabel}>Gestão</p>
               <a
                 href="/farmacias/cadastro/funcionario/lista"
-                className={styles.navLink}
+                className={`${styles.navLink} ${styles.active}`}
               >
                 <span className={styles.navText}>Funcionários</span>
               </a>
@@ -148,27 +148,7 @@ export default function EditarFuncionarioPage() {
               </a>
             </div>
 
-            <div className={styles.navSection}>
-                <p className={styles.navLabel}>Relatórios</p>
-                <a
-                  href="/farmacias/relatorios/favoritos"
-                  className={styles.navLink}
-                >
-                  <span className={styles.navText}>Relatório de Favoritos</span>
-                </a>
-                <a
-                  href="/farmacias/relatorios/funcionarios"
-                  className={styles.navLink}
-                >
-                  <span className={styles.navText}>Relatório de Funcionários</span>
-                </a>
-                <a
-                  href="/farmacias/relatorios/laboratorios"
-                  className={styles.navLink}
-                >
-                  <span className={styles.navText}>Relatório de Laboratórios</span>
-                </a>
-              </div>
+            
           </nav>
         </aside>
 

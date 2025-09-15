@@ -29,27 +29,41 @@ const medicamentosFake = [
     laboratorio: "Neo Química",
     imagem: "",
   },
+  {
+    id: 3,
+    nome: "Omeprazol",
+    dosagem: "20mg",
+    quantidade: 5,
+    preco: "25.00",
+    tipo: "Referência",
+    forma: "Cápsula",
+    descricao: "Inibidor de bomba de prótons.",
+    laboratorio: "AstraZeneca",
+    imagem: "",
+  },
 ];
 
 export default function EditarMedicamento() {
   const router = useRouter();
   const params = useParams();
-  const id = Number(params.id);
+  const id = params.id;
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [medicamento, setMedicamento] = useState(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    // Simulando busca de dados do medicamento
     setTimeout(() => {
-      const encontrado = medicamentosFake.find((m) => m.id === id);
+      // Corrige para comparar como string
+      const encontrado = medicamentosFake.find(
+        (m) => String(m.id) === String(id)
+      );
       if (encontrado) {
         setMedicamento(encontrado);
       } else {
         router.push("/farmacias/produtos/medicamentos");
       }
       setLoading(false);
-    }, 1000);
+    }, 500);
   }, [id, router]);
 
   const handleChange = (e) => {
@@ -60,15 +74,16 @@ export default function EditarMedicamento() {
   const handleSubmit = (e) => {
     e.preventDefault();
     alert("Medicamento atualizado com sucesso!");
-    // Aqui você pode enviar para o backend
     router.push("/farmacias/produtos/medicamentos");
   };
 
   if (loading) {
     return (
-      <div className={styles.loadingContainer}>
-        <div className={styles.loadingSpinner}></div>
-        <span>Carregando dados do medicamento...</span>
+      <div className={styles.dashboard}>
+        <div className={styles.loadingContainer}>
+          <div className={styles.loadingSpinner}></div>
+          <span>Carregando dados do medicamento...</span>
+        </div>
       </div>
     );
   }
@@ -86,14 +101,14 @@ export default function EditarMedicamento() {
             className={styles.menuToggle}
             onClick={() => setSidebarOpen(!sidebarOpen)}
           >
-             ☰
+            ☰
           </button>
-          <h1 className={styles.title}> Editar Medicamento</h1>
+          <h1 className={styles.title}>Editar Medicamento</h1>
         </div>
       </header>
 
       <div className={styles.contentWrapper}>
-        {/* Sidebar Não Fixa */}
+        {/* Sidebar Padronizada */}
         <aside className={`${styles.sidebar} ${sidebarOpen ? styles.sidebarOpen : ""}`}>
           <div className={styles.sidebarHeader}>
             <div className={styles.logo}>
@@ -103,10 +118,9 @@ export default function EditarMedicamento() {
               className={styles.sidebarClose}
               onClick={() => setSidebarOpen(false)}
             >
-              X
+              ×
             </button>
           </div>
-
           <nav className={styles.nav}>
             <div className={styles.navSection}>
               <p className={styles.navLabel}>Principal</p>
@@ -120,7 +134,6 @@ export default function EditarMedicamento() {
                 <span className={styles.navText}>Medicamentos</span>
               </a>
             </div>
-
             <div className={styles.navSection}>
               <p className={styles.navLabel}>Gestão</p>
               <a
@@ -156,7 +169,6 @@ export default function EditarMedicamento() {
                   <h3 className={styles.sectionTitle}>
                     Informações Básicas
                   </h3>
-
                   <div className={styles.formGroup}>
                     <label className={styles.inputLabel}>Nome do Medicamento</label>
                     <input
@@ -169,7 +181,6 @@ export default function EditarMedicamento() {
                       required
                     />
                   </div>
-
                   <div className={styles.formRow}>
                     <div className={styles.formGroup}>
                       <label className={styles.inputLabel}>Dosagem</label>
@@ -183,7 +194,6 @@ export default function EditarMedicamento() {
                         required
                       />
                     </div>
-
                     <div className={styles.formGroup}>
                       <label className={styles.inputLabel}>Quantidade</label>
                       <input
@@ -198,7 +208,6 @@ export default function EditarMedicamento() {
                       />
                     </div>
                   </div>
-
                   <div className={styles.formGroup}>
                     <label className={styles.inputLabel}>Preço (R$)</label>
                     <input
@@ -214,13 +223,11 @@ export default function EditarMedicamento() {
                     />
                   </div>
                 </div>
-
                 {/* Informações Técnicas */}
                 <div className={styles.formSection}>
                   <h3 className={styles.sectionTitle}>
                     Informações Técnicas
                   </h3>
-
                   <div className={styles.formGroup}>
                     <label className={styles.inputLabel}>Tipo de Produto</label>
                     <select
@@ -240,7 +247,6 @@ export default function EditarMedicamento() {
                       <option value="Similar">Similar</option>
                     </select>
                   </div>
-
                   <div className={styles.formGroup}>
                     <label className={styles.inputLabel}>Forma Farmacêutica</label>
                     <select
@@ -282,7 +288,6 @@ export default function EditarMedicamento() {
                       <option value="Enemas">Enemas</option>
                     </select>
                   </div>
-
                   <div className={styles.formGroup}>
                     <label className={styles.inputLabel}>Laboratório</label>
                     <select
@@ -311,9 +316,9 @@ export default function EditarMedicamento() {
                       <option value="Sandoz">Sandoz</option>
                       <option value="Med Química">Med Química</option>
                       <option value="Mantecorp Farmasa">Mantecorp Farmasa</option>
+                      <option value="AstraZeneca">AstraZeneca</option>
                     </select>
                   </div>
-
                   <div className={styles.formGroup}>
                     <label className={styles.inputLabel}>Imagem (URL)</label>
                     <input
@@ -327,27 +332,24 @@ export default function EditarMedicamento() {
                   </div>
                 </div>
               </div>
-
               {/* Descrição */}
-              
-<div className={styles.formSection}>
-  <h3 className={styles.sectionTitle}>
-    Descrição
-  </h3>
-  <div className={styles.formGroup}>
-    <label className={styles.inputLabel}>Descrição</label>
-    <textarea
-      className={styles.modernTextarea}
-      name="descricao"
-      value={medicamento.descricao}
-      onChange={handleChange}
-      rows="4"
-      placeholder="Digite uma descrição para o medicamento"
-      required
-    ></textarea>
-  </div>
-</div>
-
+              <div className={styles.formSection}>
+                <h3 className={styles.sectionTitle}>
+                  Descrição
+                </h3>
+                <div className={styles.formGroup}>
+                  <label className={styles.inputLabel}>Descrição</label>
+                  <textarea
+                    className={styles.modernTextarea}
+                    name="descricao"
+                    value={medicamento.descricao}
+                    onChange={handleChange}
+                    rows="4"
+                    placeholder="Digite uma descrição para o medicamento"
+                    required
+                  ></textarea>
+                </div>
+              </div>
               <div className={styles.formActions}>
                 <button
                   type="button"

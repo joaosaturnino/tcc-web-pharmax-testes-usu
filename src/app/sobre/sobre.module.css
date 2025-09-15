@@ -134,7 +134,7 @@
   background: none;
   width: 100%;
   text-align: left;
-  font-family: inherit;
+ 
 }
 
 .navLink:hover {
@@ -172,7 +172,7 @@
   max-width: 1200px;
   margin: 0 auto;
   padding: 2rem;
-  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+ 
   color: #333;
 }
 

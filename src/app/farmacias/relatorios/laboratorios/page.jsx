@@ -11,9 +11,7 @@ export default function RelatorioLaboratoriosPage() {
   const [itemsPerPage] = useState(10);
   const [reportGenerated, setReportGenerated] = useState(false);
   const [dateRange, setDateRange] = useState({
-    start: new Date(Date.now() - 30 * 24 * 60 * 60 * 1000)
-      .toISOString()
-      .split("T")[0],
+    start: "2023-01-01",
     end: new Date().toISOString().split("T")[0],
   });
   const [statusFilter, setStatusFilter] = useState("todos");
@@ -34,7 +32,7 @@ export default function RelatorioLaboratoriosPage() {
           status: "ativo",
           medicamentosCadastrados: 42,
           dataCadastro: "2023-01-15",
-          cnpj: "12.345.678/0001-90"
+          cnpj: "12.345.678/0001-90",
         },
         {
           id: "l2",
@@ -45,7 +43,7 @@ export default function RelatorioLaboratoriosPage() {
           status: "inativo",
           medicamentosCadastrados: 15,
           dataCadastro: "2023-03-22",
-          cnpj: "98.765.432/0001-12"
+          cnpj: "98.765.432/0001-12",
         },
         {
           id: "l3",
@@ -56,7 +54,7 @@ export default function RelatorioLaboratoriosPage() {
           status: "ativo",
           medicamentosCadastrados: 28,
           dataCadastro: "2023-05-10",
-          cnpj: "11.222.333/0001-44"
+          cnpj: "11.222.333/0001-44",
         },
         {
           id: "l4",
@@ -67,8 +65,8 @@ export default function RelatorioLaboratoriosPage() {
           status: "ativo",
           medicamentosCadastrados: 60,
           dataCadastro: "2023-07-01",
-          cnpj: "22.333.444/0001-55"
-        }
+          cnpj: "22.333.444/0001-55",
+        },
       ]);
       setLoading(false);
     }, 800);
@@ -122,7 +120,10 @@ export default function RelatorioLaboratoriosPage() {
   // Paginação
   const indexOfLastItem = currentPage * itemsPerPage;
   const indexOfFirstItem = indexOfLastItem - itemsPerPage;
-  const currentItems = sortedLaboratorios.slice(indexOfFirstItem, indexOfLastItem);
+  const currentItems = sortedLaboratorios.slice(
+    indexOfFirstItem,
+    indexOfLastItem
+  );
   const totalPages = Math.ceil(sortedLaboratorios.length / itemsPerPage);
 
   const paginate = (pageNumber) => setCurrentPage(pageNumber);
@@ -151,9 +152,16 @@ export default function RelatorioLaboratoriosPage() {
 
   // Estatísticas para o resumo
   const totalLaboratorios = filteredLaboratorios.length;
-  const laboratoriosAtivos = filteredLaboratorios.filter(lab => lab.status === "ativo").length;
-  const laboratoriosInativos = filteredLaboratorios.filter(lab => lab.status === "inativo").length;
-  const totalMedicamentos = filteredLaboratorios.reduce((total, lab) => total + lab.medicamentosCadastrados, 0);
+  const laboratoriosAtivos = filteredLaboratorios.filter(
+    (lab) => lab.status === "ativo"
+  ).length;
+  const laboratoriosInativos = filteredLaboratorios.filter(
+    (lab) => lab.status === "inativo"
+  ).length;
+  const totalMedicamentos = filteredLaboratorios.reduce(
+    (total, lab) => total + lab.medicamentosCadastrados,
+    0
+  );
 
   if (loading) {
     return (
@@ -209,13 +217,19 @@ export default function RelatorioLaboratoriosPage() {
               <a href="/farmacias/favoritos" className={styles.navLink}>
                 <span className={styles.navText}>Favoritos</span>
               </a>
-              <a href="/farmacias/produtos/medicamentos" className={styles.navLink}>
+              <a
+                href="/farmacias/produtos/medicamentos"
+                className={styles.navLink}
+              >
                 <span className={styles.navText}>Medicamentos</span>
               </a>
             </div>
             <div className={styles.navSection}>
               <p className={styles.navLabel}>Gestão</p>
-              <a href="/farmacias/cadastro/funcionario/lista" className={styles.navLink}>
+              <a
+                href="/farmacias/cadastro/funcionario/lista"
+                className={styles.navLink}
+              >
                 <span className={styles.navText}>Funcionários</span>
               </a>
               <a href="/farmacias/laboratorio/lista" className={styles.navLink}>
@@ -224,14 +238,27 @@ export default function RelatorioLaboratoriosPage() {
             </div>
             <div className={styles.navSection}>
               <p className={styles.navLabel}>Relatórios</p>
-              <a href="/farmacias/relatorios/favoritos" className={styles.navLink}>
+              <a
+                href="/farmacias/relatorios/favoritos"
+                className={styles.navLink}
+              >
                 <span className={styles.navText}>Relatório de Favoritos</span>
               </a>
-              <a href="/farmacias/relatorios/funcionarios" className={styles.navLink}>
-                <span className={styles.navText}>Relatório de Funcionários</span>
+              <a
+                href="/farmacias/relatorios/funcionarios"
+                className={styles.navLink}
+              >
+                <span className={styles.navText}>
+                  Relatório de Funcionários
+                </span>
               </a>
-              <a href="/farmacias/relatorios/laboratorios" className={`${styles.navLink} ${styles.active}`}>
-                <span className={styles.navText}>Relatório de Laboratórios</span>
+              <a
+                href="/farmacias/relatorios/laboratorios"
+                className={`${styles.navLink} ${styles.active}`}
+              >
+                <span className={styles.navText}>
+                  Relatório de Laboratórios
+                </span>
               </a>
             </div>
           </nav>
@@ -248,22 +275,20 @@ export default function RelatorioLaboratoriosPage() {
             <div className={styles.reportTitle}>
               <h1>Relatório de Laboratórios</h1>
               <p>
-                Período:{" "}
-                {new Date(dateRange.start).toLocaleDateString("pt-BR")} a{" "}
-                {new Date(dateRange.end).toLocaleDateString("pt-BR")}
+                Período: {new Date(dateRange.start).toLocaleDateString("pt-BR")}{" "}
+                a {new Date(dateRange.end).toLocaleDateString("pt-BR")}
               </p>
-              <p>
-                Data do relatório: {new Date().toLocaleDateString("pt-BR")}
-              </p>
+              <p>Data do relatório: {new Date().toLocaleDateString("pt-BR")}</p>
             </div>
           </div>
           <div className={styles.reportInfo}>
             <p>
-              Mostrando {filteredLaboratorios.length} de {laboratorios.length} laboratórios
+              Mostrando {filteredLaboratorios.length} de {laboratorios.length}{" "}
+              laboratórios
             </p>
             <p>
-              Período: {new Date(dateRange.start).toLocaleDateString("pt-BR")}{" "}
-              a {new Date(dateRange.end).toLocaleDateString("pt-BR")}
+              Período: {new Date(dateRange.start).toLocaleDateString("pt-BR")} a{" "}
+              {new Date(dateRange.end).toLocaleDateString("pt-BR")}
             </p>
           </div>
           <div className={styles.controls}>
@@ -369,9 +394,7 @@ export default function RelatorioLaboratoriosPage() {
                         </span>
                       </td>
                       <td>
-                        {new Date(lab.dataCadastro).toLocaleDateString(
-                          "pt-BR"
-                        )}
+                        {new Date(lab.dataCadastro).toLocaleDateString("pt-BR")}
                       </td>
                     </tr>
                   ))
@@ -379,7 +402,9 @@ export default function RelatorioLaboratoriosPage() {
                   <tr>
                     <td colSpan="8" className={styles.emptyState}>
                       <h3>Nenhum laboratório encontrado</h3>
-                      <p>Nenhum laboratório corresponde aos filtros selecionados.</p>
+                      <p>
+                        Nenhum laboratório corresponde aos filtros selecionados.
+                      </p>
                     </td>
                   </tr>
                 )}
