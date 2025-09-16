@@ -9,11 +9,11 @@
 /* Header */
 .header {
   background: white;
-  padding: 16px 30px;
+  padding: 1.5rem 3rem;
   display: flex;
   justify-content: space-between;
   align-items: center;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 0.2rem 0.4rem rgba(0, 0, 0, 0.1);
   position: sticky;
   top: 0;
   z-index: 100;
@@ -22,16 +22,16 @@
 .headerLeft {
   display: flex;
   align-items: center;
-  gap: 16px;
+  gap: 1.6rem;
 }
 
 .menuToggle {
   background: none;
   border: none;
-  font-size: 20px;
+  font-size: 2rem;
   cursor: pointer;
-  padding: 8px;
-  border-radius: 6px;
+  padding: 0.8rem;
+  border-radius: 0.6rem;
   transition: background 0.3s ease;
   display: none;
 }
@@ -41,7 +41,7 @@
 }
 
 .titulo {
-  font-size: 24px;
+  font-size: 2.8rem;
   font-weight: 600;
   color: #1e293b;
   margin: 0;
@@ -50,7 +50,7 @@
 .headerActions {
   display: flex;
   align-items: center;
-  gap: 16px;
+  gap: 1.6rem;
 }
 
 .searchBox {
@@ -60,48 +60,49 @@
 }
 
 .searchInput {
-  padding: 10px 16px;
-  border: 1px solid #d1d5db;
-  border-radius: 8px;
-  font-size: 14px;
-  width: 250px;
+  padding: 1rem 1.6rem;
+  border: 0.1rem solid #d1d5db;
+  border-radius: 0.8rem;
+  font-size: 1.4rem;
+  width: 25rem;
   transition: border-color 0.3s ease;
 }
 
 .searchInput:focus {
   outline: none;
   border-color: #458B00;
-  box-shadow: 0 0 0 3px rgba(69, 139, 0, 0.1);
+  box-shadow: 0 0 0 0.3rem rgba(69, 139, 0, 0.1);
 }
 
 .limparPesquisa {
   position: absolute;
-  right: 10px;
+  right: 1rem;
   background: none;
   border: none;
-  font-size: 18px;
+  font-size: 1.8rem;
   cursor: pointer;
   color: #64748b;
   padding: 0;
 }
 
 .botaoPrincipal {
-  padding: 10px 16px;
+  padding: 1rem 1.6rem;
   border: none;
-  border-radius: 8px;
+  border-radius: 0.8rem;
   background: #458B00;
   color: white;
   font-weight: 500;
+  font-size: 1.5rem;
   cursor: pointer;
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: 0.8rem;
   transition: all 0.3s ease;
 }
 
 .botaoPrincipal:hover {
   transform: translateY(-1px);
-  box-shadow: 0 4px 12px rgba(69, 139, 0, 0.3);
+  box-shadow: 0 0.4rem 1.2rem rgba(69, 139, 0, 0.3);
 }
 
 /* Wrapper de Conteúdo */
@@ -113,32 +114,32 @@
 
 /* Sidebar */
 .sidebar {
-  width: 280px;
+  width: 30rem;
   background: #191970;
   color: #CDC1C5;
   display: flex;
   flex-direction: column;
   transition: transform 0.3s ease;
-  box-shadow: 2px 0 10px rgba(0, 0, 0, 0.1);
+  box-shadow: 0.2rem 0 1rem rgba(0, 0, 0, 0.1);
   z-index: 90;
   flex-shrink: 0;
 }
 
 .sidebarHeader {
-  padding: 20px;
+  padding: 2rem;
   display: flex;
   justify-content: space-between;
   align-items: center;
 }
 
 .logo {
-  font-size: 22px;
+  font-size: 2.2rem;
   font-weight: bold;
   color: #fff;
 }
 
 .logoText {
-  font-size: 18px;
+  font-size: 1.8rem;
   font-weight: 600;
   color: #fff;
 }
@@ -146,11 +147,11 @@
 .sidebarClose {
   background: none;
   border: none;
-  font-size: 22px;
+  font-size: 2.2rem;
   color: #fff;
   cursor: pointer;
-  border-radius: 6px;
-  padding: 4px 8px;
+  border-radius: 0.6rem;
+  padding: 0.4rem 0.8rem;
   transition: background 0.2s;
   display: none;
 }
@@ -161,30 +162,30 @@
 
 .nav {
   flex: 1;
-  padding: 0 10px 20px 10px;
+  padding: 0 1rem 2rem 1rem;
 }
 
 .navSection {
-  margin-bottom: 18px;
+  margin-bottom: 1.8rem;
 }
 
 .navLabel {
-  font-size: 13px;
+  font-size: 1.3rem;
   color: #b0b0b0;
-  margin-bottom: 6px;
-  margin-top: 10px;
+  margin-bottom: 0.6rem;
+  margin-top: 1rem;
 }
 
 .navLink {
   display: flex;
   align-items: center;
-  padding: 8px 12px;
+  padding: 0.8rem 1.2rem;
   color: #CDC1C5;
   text-decoration: none;
-  border-radius: 6px;
-  margin-bottom: 4px;
+  border-radius: 0.6rem;
+  margin-bottom: 0.4rem;
   transition: background 0.2s;
-  font-size: 15px;
+  font-size: 1.5rem;
 }
 
 .navLink:hover {
@@ -198,13 +199,13 @@
 }
 
 .navText {
-  margin-left: 6px;
+  margin-left: 0.6rem;
 }
 
 /* Conteúdo Principal */
 .mainContent {
   flex: 1;
-  padding: 32px 24px;
+  padding: 3.2rem 2.4rem;
   background: #f8fafc;
   min-height: 100vh;
 }
@@ -212,29 +213,29 @@
 /* Controles de Filtro */
 .controles {
   background: white;
-  border-radius: 12px;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.04);
-  padding: 20px;
-  margin-bottom: 24px;
+  border-radius: 1.2rem;
+  box-shadow: 0 0.2rem 0.8rem rgba(0,0,0,0.04);
+  padding: 2rem;
+  margin-bottom: 2.4rem;
 }
 
 .filtros {
   display: flex;
-  gap: 16px;
+  gap: 1.6rem;
   align-items: center;
   flex-wrap: wrap;
-  margin-bottom: 16px;
+  margin-bottom: 1.6rem;
 }
 
 .viewToggle {
   display: flex;
-  border: 1px solid #d1d5db;
-  border-radius: 8px;
+  border: 0.1rem solid #d1d5db;
+  border-radius: 0.8rem;
   overflow: hidden;
 }
 
 .viewButton {
-  padding: 8px 12px;
+  padding: 0.8rem 1.2rem;
   background: white;
   border: none;
   cursor: pointer;
@@ -253,26 +254,26 @@
 .filtroGroup {
   display: flex;
   flex-direction: column;
-  gap: 6px;
+  gap: 0.6rem;
 }
 
 .filtroGroup label {
-  font-size: 14px;
+  font-size: 1.6rem;
   font-weight: 500;
   color: #191970;
 }
 
 .selectFiltro {
-  padding: 8px 12px;
-  border: 1px solid #d1d5db;
-  border-radius: 6px;
-  font-size: 14px;
+  padding: 0.8rem 1.2rem;
+  border: 0.1rem solid #d1d5db;
+  border-radius: 0.6rem;
+  font-size: 1.4rem;
   background: white;
-  min-width: 120px;
+  min-width: 12rem;
 }
 
 .infoResultados {
-  font-size: 14px;
+  font-size: 1.4rem;
   color: #64748b;
   text-align: right;
 }
@@ -280,10 +281,10 @@
 /* Container da Tabela */
 .tableContainer {
   background: white;
-  border-radius: 12px;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.04);
-  padding: 24px;
-  margin-bottom: 24px;
+  border-radius: 1.2rem;
+  box-shadow: 0 0.2rem 0.8rem rgba(0,0,0,0.04);
+  padding: 2.4rem;
+  margin-bottom: 2.4rem;
   overflow-x: auto;
 }
 
@@ -293,18 +294,18 @@
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  padding: 40px;
+  padding: 4rem;
   color: #458B00;
 }
 
 .loadingSpinner {
-  width: 38px;
-  height: 38px;
-  border: 4px solid #e6f7e6;
-  border-top: 4px solid #458B00;
+  width: 3.8rem;
+  height: 3.8rem;
+  border: 0.4rem solid #e6f7e6;
+  border-top: 0.4rem solid #458B00;
   border-radius: 50%;
   animation: spin 1s linear infinite;
-  margin-bottom: 12px;
+  margin-bottom: 1.2rem;
 }
 
 @keyframes spin {
@@ -314,19 +315,19 @@
 /* Estado Vazio */
 .emptyState, .semResultados {
   text-align: center;
-  padding: 40px 0;
+  padding: 4rem 0;
   color: #888;
 }
 
 .emptyState h3, .semResultados h3 {
-  font-size: 20px;
+  font-size: 2rem;
   font-weight: 600;
-  margin-bottom: 8px;
+  margin-bottom: 0.8rem;
 }
 
 .emptyState p, .semResultados p {
-  font-size: 15px;
-  margin-bottom: 20px;
+  font-size: 1.5rem;
+  margin-bottom: 2rem;
 }
 
 /* Tabela */
@@ -337,21 +338,21 @@
 .tabela {
   width: 100%;
   border-collapse: collapse;
-  margin-bottom: 24px;
+  margin-bottom: 2.4rem;
 }
 
 .tabela th {
   background: #f1f5f9;
   font-weight: 600;
   color: #191970;
-  padding: 12px 16px;
+  padding: 1.2rem 1.6rem;
   text-align: left;
-  border-bottom: 1px solid #e5e7eb;
+  border-bottom: 0.1rem solid #e5e7eb;
 }
 
 .tabela td {
-  padding: 16px;
-  border-bottom: 1px solid #e5e7eb;
+  padding: 1.6rem;
+  border-bottom: 0.1rem solid #e5e7eb;
   vertical-align: middle;
 }
 
@@ -366,9 +367,9 @@
 
 /* Informações do Medicamento - Nova estrutura */
 .medicamentoImagem {
-  width: 50px;
-  height: 50px;
-  border-radius: 8px;
+  width: 5rem;
+  height: 5rem;
+  border-radius: 0.8rem;
   object-fit: cover;
   background: #f1f5f9;
 }
@@ -381,15 +382,15 @@
 .nome {
   font-weight: 500;
   color: #191970;
-  margin-bottom: 4px;
+  margin-bottom: 0.4rem;
 }
 
 .categoria {
-  font-size: 12px;
+  font-size: 1.2rem;
   color: #64748b;
   background: #f1f5f9;
-  padding: 2px 8px;
-  border-radius: 12px;
+  padding: 0.2rem 0.8rem;
+  border-radius: 1.2rem;
   display: inline-block;
 }
 
@@ -407,9 +408,9 @@
 }
 
 .status {
-  padding: 4px 8px;
-  border-radius: 12px;
-  font-size: 12px;
+  padding: 0.4rem 0.8rem;
+  border-radius: 1.2rem;
+  font-size: 1.2rem;
   font-weight: 500;
 }
 
@@ -425,13 +426,13 @@
 
 .acoes {
   display: flex;
-  gap: 8px;
+  gap: 0.8rem;
 }
 
 .botaoAcao {
-  padding: 8px;
+  padding: 0.8rem;
   border: none;
-  border-radius: 6px;
+  border-radius: 0.6rem;
   background: #f1f5f9;
   color: #64748b;
   cursor: pointer;
@@ -449,26 +450,26 @@
 /* Visualização em Grade */
 .gradeContainer {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-  gap: 24px;
+  grid-template-columns: repeat(auto-fill, minmax(30rem, 1fr));
+  gap: 2.4rem;
 }
 
 .medicamentoCard {
   background: white;
-  border-radius: 12px;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+  border-radius: 1.2rem;
+  box-shadow: 0 0.2rem 0.8rem rgba(0,0,0,0.04);
   overflow: hidden;
   transition: transform 0.3s ease, box-shadow 0.3s ease;
 }
 
 .medicamentoCard:hover {
   transform: translateY(-2px);
-  box-shadow: 0 8px 25px rgba(0,0,0,0.1);
+  box-shadow: 0 0.8rem 2.5rem rgba(0,0,0,0.1);
 }
 
 .cardHeader {
   position: relative;
-  height: 160px;
+  height: 16rem;
   overflow: hidden;
 }
 
@@ -481,51 +482,51 @@
 
 .cardStatus {
   position: absolute;
-  top: 12px;
-  right: 12px;
-  padding: 4px 8px;
-  border-radius: 12px;
-  font-size: 12px;
+  top: 1.2rem;
+  right: 1.2rem;
+  padding: 0.4rem 0.8rem;
+  border-radius: 1.2rem;
+  font-size: 1.2rem;
   font-weight: 500;
 }
 
 .cardContent {
-  padding: 16px;
+  padding: 1.6rem;
 }
 
 .cardNome {
-  font-size: 18px;
+  font-size: 1.8rem;
   font-weight: 600;
   color: #191970;
-  margin: 0 0 8px 0;
+  margin: 0 0 0.8rem 0;
 }
 
 .cardDosagem {
-  font-size: 14px;
+  font-size: 1.4rem;
   color: #64748b;
-  margin: 0 0 4px 0;
+  margin: 0 0 0.4rem 0;
 }
 
 .cardLaboratorio {
-  font-size: 14px;
+  font-size: 1.4rem;
   color: #64748b;
-  margin: 0 0 4px 0;
+  margin: 0 0 0.4rem 0;
 }
 
 .cardCategoria {
-  font-size: 12px;
+  font-size: 1.2rem;
   color: #64748b;
   background: #f1f5f9;
-  padding: 2px 8px;
-  border-radius: 12px;
+  padding: 0.2rem 0.8rem;
+  border-radius: 1.2rem;
   display: inline-block;
-  margin-bottom: 12px;
+  margin-bottom: 1.2rem;
 }
 
 .cardInfo {
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  gap: 0.8rem;
 }
 
 .infoItem {
@@ -535,27 +536,27 @@
 }
 
 .infoLabel {
-  font-size: 14px;
+  font-size: 1.4rem;
   color: #64748b;
 }
 
 .infoValue {
-  font-size: 14px;
+  font-size: 1.4rem;
   font-weight: 500;
   color: #1e293b;
 }
 
 .cardActions {
-  padding: 16px;
+  padding: 1.6rem;
   display: flex;
-  gap: 8px;
-  border-top: 1px solid #e5e7eb;
+  gap: 0.8rem;
+  border-top: 0.1rem solid #e5e7eb;
 }
 
 .botaoAcaoCard {
-  padding: 8px;
+  padding: 0.8rem;
   border: none;
-  border-radius: 6px;
+  border-radius: 0.6rem;
   background: #f1f5f9;
   color: #64748b;
   cursor: pointer;
@@ -576,20 +577,20 @@
   display: flex;
   justify-content: center;
   align-items: center;
-  gap: 8px;
-  margin-top: 24px;
+  gap: 0.8rem;
+  margin-top: 2.4rem;
   flex-wrap: wrap;
 }
 
 .botaoPaginacao {
-  padding: 8px 12px;
-  border: 1px solid #d1d5db;
+  padding: 0.8rem 1.2rem;
+  border: 0.1rem solid #d1d5db;
   background: white;
   color: #64748b;
-  border-radius: 6px;
+  border-radius: 0.6rem;
   cursor: pointer;
   transition: all 0.3s ease;
-  min-width: 40px;
+  min-width: 4rem;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -613,7 +614,7 @@
 }
 
 .pontos {
-  padding: 8px 4px;
+  padding: 0.8rem 0.4rem;
   color: #64748b;
 }
 
@@ -629,22 +630,22 @@
   align-items: center;
   justify-content: center;
   z-index: 1000;
-  padding: 20px;
+  padding: 2.0rem;
 }
 
 .modal {
   background: white;
-  border-radius: 12px;
-  box-shadow: 0 10px 25px rgba(0,0,0,0.2);
-  max-width: 600px;
+  border-radius: 1.2rem;
+  box-shadow: 0 1.0rem 2.5rem rgba(0,0,0,0.2);
+  max-width: 60rem;
   width: 100%;
   max-height: 90vh;
   overflow-y: auto;
 }
 
 .modalHeader {
-  padding: 20px;
-  border-bottom: 1px solid #e5e7eb;
+  padding: 2.0rem;
+  border-bottom: 0.1rem solid #e5e7eb;
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -653,22 +654,22 @@
 .modalHeader h2 {
   margin: 0;
   color: #191970;
-  font-size: 20px;
+  font-size: 2.0rem;
 }
 
 .modalClose {
   background: none;
   border: none;
-  font-size: 24px;
+  font-size: 2.4rem;
   cursor: pointer;
   color: #64748b;
   padding: 0;
-  width: 30px;
-  height: 30px;
+  width: 3rem;
+  height: 3rem;
   display: flex;
   align-items: center;
   justify-content: center;
-  border-radius: 4px;
+  border-radius: 0.4rem;
   transition: background 0.3s ease;
 }
 
@@ -677,84 +678,84 @@
 }
 
 .modalContent {
-  padding: 20px;
+  padding: 2.0rem;
 }
 
 .modalFooter {
-  padding: 20px;
-  border-top: 1px solid #e5e7eb;
+  padding: 2.0rem;
+  border-top: 0.1rem solid #e5e7eb;
   display: flex;
   justify-content: flex-end;
-  gap: 12px;
+  gap: 1.2rem;
 }
 
 /* Estilos específicos do modal de código de barras */
 .codigoBarrasInput {
   display: flex;
-  gap: 8px;
-  margin: 16px 0;
+  gap: 0.8rem;
+  margin: 1.6rem 0;
 }
 
 .input {
   flex: 1;
-  padding: 10px 12px;
-  border: 1px solid #d1d5db;
-  border-radius: 6px;
-  font-size: 14px;
+  padding: 1.0rem 1.2rem;
+  border: 0.1rem solid #d1d5db;
+  border-radius: 0.6rem;
+  font-size: 1.4rem;
 }
 
 .erro {
   color: #d32f2f;
-  font-size: 14px;
-  margin: 8px 0;
+  font-size: 1.4rem;
+  margin: 0.8rem 0;
 }
 
 .medicamentoExistente {
-  margin: 16px 0;
-  padding: 16px;
+  margin: 1.6rem 0;
+  padding: 1.6rem;
   background: #f8fafc;
-  border-radius: 8px;
+  border-radius: 0.8rem;
 }
 
 .existenteInfo {
   display: flex;
   align-items: center;
-  gap: 12px;
-  margin-bottom: 12px;
+  gap: 1.2rem;
+  margin-bottom: 1.2rem;
 }
 
 .existenteImagem {
-  width: 60px;
-  height: 60px;
-  border-radius: 8px;
+  width: 6rem;
+  height: 6rem;
+  border-radius: 0.8rem;
   object-fit: cover;
   background: #f1f5f9;
 }
 
 .existenteDetalhes p {
-  margin: 4px 0;
+  margin: 0.4rem 0;
 }
 
 .produtoNaoEncontrado {
-  margin: 16px 0;
-  padding: 16px;
+  margin: 1.6rem 0;
+  padding: 1.6rem;
   background: #fff8e1;
-  border-radius: 8px;
-  border-left: 4px solid #ff9800;
+  border-radius: 0.8rem;
+  border-left: 0.4rem solid #ff9800;
 }
 
 .modalActions {
   display: flex;
-  gap: 12px;
-  margin-top: 16px;
+  gap: 1.2rem;
+  margin-top: 1.6rem;
 }
 
 .botaoSecundario {
-  padding: 10px 16px;
-  border: 1px solid #d1d5db;
+  padding: 1rem 1.6rem;
+  border: 0.1rem solid #d1d5db;
   background: white;
   color: #64748b;
-  border-radius: 8px;
+  border-radius: 0.8rem;
   cursor: pointer;
   transition: all 0.3s ease;
 }
@@ -764,11 +765,11 @@
 }
 
 .botaoPerigo {
-  padding: 10px 16px;
+  padding: 1rem 1.6rem;
   border: none;
   background: #d32f2f;
   color: white;
-  border-radius: 8px;
+  border-radius: 0.8rem;
   cursor: pointer;
   transition: all 0.3s ease;
 }
@@ -781,7 +782,7 @@
 .detalhesContainer {
   display: flex;
   flex-direction: column;
-  gap: 20px;
+  gap: 2rem;
 }
 
 .detalhesImagem {
@@ -789,34 +790,34 @@
 }
 
 .detalhesImg {
-  width: 200px;
-  height: 200px;
+  width: 20rem;
+  height: 20rem;
   object-fit: cover;
-  border-radius: 12px;
+  border-radius: 1.2rem;
   background: #f1f5f9;
 }
 
 .detalhesInfo h3 {
-  margin: 0 0 8px 0;
+  margin: 0 0 0.8rem 0;
   color: #191970;
-  font-size: 24px;
+  font-size: 2.4rem;
 }
 
 .infoGrid {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
-  gap: 16px;
-  margin: 16px 0;
+  gap: 1.6rem;
+  margin: 1.6rem 0;
 }
 
 .descricao {
-  margin-top: 16px;
-  padding-top: 16px;
-  border-top: 1px solid #e5e7eb;
+  margin-top: 1.6rem;
+  padding-top: 1.6rem;
+  border-top: 0.1rem solid #e5e7eb;
 }
 
 .descricao p {
-  margin: 8px 0 0 0;
+  margin: 0.8rem 0 0 0;
   color: #64748b;
   line-height: 1.5;
 }
@@ -831,16 +832,16 @@
 }
 
 /* Responsividade */
-@media (max-width: 1024px) {
+@media (max-width: 64rem) {
   .mainContent {
-    padding: 24px 8px;
+    padding: 2.4rem 0.8rem;
   }
   .sidebar {
-    width: 220px;
+    width: 22rem;
   }
 }
 
-@media (max-width: 768px) {
+@media (max-width: 48rem) {
   .sidebar {
     position: fixed;
     left: 0;
@@ -863,7 +864,7 @@
     display: block;
   }
   .mainContent {
-    padding: 16px 2px;
+    padding: 1.6rem 2rem;
   }
   .filtros {
     flex-direction: column;
@@ -877,7 +878,7 @@
   }
   .header {
     flex-direction: column;
-    gap: 16px;
+    gap: 1.6rem;
     align-items: stretch;
   }
   .headerActions {
@@ -894,7 +895,7 @@
   }
 }
 
-@media (max-width: 480px) {
+@media (max-width: 30rem) {
   .acoes {
     flex-direction: column;
   }
@@ -905,10 +906,10 @@
     flex-direction: column;
   }
   .modalHeader h2 {
-    font-size: 18px;
+    font-size: 1.8rem;
   }
   .detalhesImg {
-    width: 150px;
-    height: 150px;
+    width: 15rem;
+    height: 15rem;
   }
 }

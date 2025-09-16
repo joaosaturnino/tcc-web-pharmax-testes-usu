@@ -271,7 +271,7 @@ export default function RelatorioLaboratoriosPage() {
         )}
         <main className={styles.mainContent}>
           <div className={styles.reportHeader}>
-            <div className={styles.reportLogo}></div>
+            {/* <div className={styles.reportLogo}></div> */}
             <div className={styles.reportTitle}>
               <h1>Relatório de Laboratórios</h1>
               <p>

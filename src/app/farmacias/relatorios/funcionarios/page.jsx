@@ -212,7 +212,7 @@ export default function RelatorioFuncionariosPage() {
         )}
         <main className={styles.mainContent}>
           <div className={styles.reportHeader}>
-            <div className={styles.reportLogo}></div>
+            {/* <div className={styles.reportLogo}></div> */}
             <div className={styles.reportTitle}>
               <h1>Relatório de Funcionários</h1>
               <p>

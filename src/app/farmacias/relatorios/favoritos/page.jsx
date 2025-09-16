@@ -221,21 +221,17 @@ export default function RelatorioFavoritosPage() {
         </div>
       </header>
       <div className={styles.contentWrapper}>
-        <aside
-          className={`${styles.sidebar} ${
-            sidebarOpen ? styles.sidebarOpen : ""
-          }`}
-        >
+        <aside className={`${styles.sidebar} ${sidebarOpen ? styles.sidebarOpen : ""}`}>
           <div className={styles.sidebarHeader}>
             <div className={styles.logo}>
               <span className={styles.logoText}>PharmaX</span>
             </div>
             <button
-              className={styles.sidebarClose}
-              onClick={() => setSidebarOpen(false)}
-            >
-              ×
-            </button>
+                className={styles.sidebarClose}
+                onClick={() => setSidebarOpen(false)}
+              >
+                ×
+              </button>
           </div>
           <nav className={styles.nav}>
             <div className={styles.navSection}>
@@ -278,9 +274,9 @@ export default function RelatorioFavoritosPage() {
         )}
         <main className={styles.mainContent}>
           <div className={styles.reportHeader}>
-            <div className={styles.reportLogo}></div>
+            {/* <div className={styles.reportLogo}></div> */}
             <div className={styles.reportTitle}>
-              <h1>Relatório de Medicamentos Favoritos</h1>
+              <h1>Medicamentos Favoritados</h1>
               <p>
                 Período:{" "}
                 {new Date(dateRange.start).toLocaleDateString("pt-BR")} a{" "}

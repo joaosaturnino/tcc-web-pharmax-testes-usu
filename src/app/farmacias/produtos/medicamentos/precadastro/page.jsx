@@ -1,10 +1,8 @@
 "use client";
+import Link from "next/link";
 import { useState, useEffect } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import styles from "./page.module.css";
-
-// Ícones para validação
-import { MdCheckCircle, MdError } from "react-icons/md";
 
 const imagemPadrao = "https://www.institutoaron.com.br/static/img/large/c28a030a59bae1283321c340cdc846df.webp";
 
@@ -64,18 +62,6 @@ export default function CadastroMedicamentoPage() {
     codigoBarras: codigoBarras || ""
   });
 
-  // Estados para validação
-  const valDefault = styles.formControl;
-  const valSucesso = `${styles.formControl} ${styles.success}`;
-  const valErro = `${styles.formControl} ${styles.error}`;
-
-  const [valida, setValida] = useState({
-    preco: {
-      validado: valDefault,
-      mensagem: []
-    }
-  });
-
   // Buscar medicamento existente quando o componente é montado
   useEffect(() => {
     if (codigoBarras) {
@@ -91,8 +77,14 @@ export default function CadastroMedicamentoPage() {
           descricao: medicamento.descricao,
           laboratorio: medicamento.laboratorio,
           preco: medicamento.preco.toString(),
-          imagem: medicamento.imagem,
+          imagem: medicamento.imagem || imagemPadrao,
           codigoBarras: medicamento.codigoBarras
+        });
+      } else {
+        // Se não encontrar o medicamento, redireciona para cadastro normal
+        setForm({
+          ...form,
+          codigoBarras: codigoBarras
         });
       }
     }
@@ -100,61 +92,28 @@ export default function CadastroMedicamentoPage() {
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-    // Permite alterar apenas o preço
-    if (name === "preco") {
-      setForm({
-        ...form,
-        [name]: value,
-      });
+    // Permite alterar apenas o preço quando existe um medicamento
+    if (medicamentoExistente && name !== "preco") {
+      return;
     }
+    
+    setForm({
+      ...form,
+      [name]: value,
+    });
   };
-
-  // Função de validação para preço
-  function validaPreco() {
-    let objTemp = {
-      validado: valSucesso,
-      mensagem: []
-    };
-
-    if (form.preco === '') {
-      objTemp.validado = valErro;
-      objTemp.mensagem.push('O preço é obrigatório');
-    } else if (parseFloat(form.preco) <= 0) {
-      objTemp.validado = valErro;
-      objTemp.mensagem.push('O preço deve ser maior que zero');
-    } else if (parseFloat(form.preco) > 10000) {
-      objTemp.validado = valErro;
-      objTemp.mensagem.push('O preço não pode ser superior a R$ 10.000,00');
-    }
-
-    setValida(prev => ({
-      ...prev,
-      preco: objTemp
-    }));
-
-    return objTemp.mensagem.length === 0 ? 1 : 0;
-  }
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    
-    // Se for um medicamento existente, valida apenas o preço
-    let itensValidados = 0;
-    if (medicamentoExistente) {
-      itensValidados += validaPreco();
-      
-      if (itensValidados !== 1) {
-        return; // Não prossegue se houver erros de validação
-      }
-    }
-    
     setLoading(true);
     
     // Simulando processamento
     setTimeout(() => {
       // Aqui você pode adicionar a lógica para enviar os dados para o backend
       console.log("Dados atualizados:", form);
-      alert("Preço do medicamento atualizado com sucesso!");
+      alert(medicamentoExistente 
+        ? "Preço do medicamento atualizado com sucesso!" 
+        : "Medicamento cadastrado com sucesso!");
       setLoading(false);
       
       // Redireciona para a página de listagem de medicamentos após o cadastro
@@ -171,6 +130,7 @@ export default function CadastroMedicamentoPage() {
             className={styles.menuToggle}
             onClick={() => setSidebarOpen(!sidebarOpen)}
           >
+            ☰
           </button>
           <h1 className={styles.title}>
             {medicamentoExistente ? "Atualizar Preço do Medicamento" : "Cadastro de Medicamento"}
@@ -180,7 +140,11 @@ export default function CadastroMedicamentoPage() {
 
       <div className={styles.contentWrapper}>
         {/* Sidebar Não Fixa */}
-        <aside className={`${styles.sidebar} ${sidebarOpen ? styles.sidebarOpen : ""}`}>
+        <aside
+          className={`${styles.sidebar} ${
+            sidebarOpen ? styles.sidebarOpen : ""
+          }`}
+        >
           <div className={styles.sidebarHeader}>
             <div className={styles.logo}>
               <span className={styles.logoText}>PharmaX</span>
@@ -188,36 +152,38 @@ export default function CadastroMedicamentoPage() {
             <button
               className={styles.sidebarClose}
               onClick={() => setSidebarOpen(false)}
+              aria-label="Fechar menu"
             >
-              ×
+              ✕
             </button>
           </div>
-
           <nav className={styles.nav}>
             <div className={styles.navSection}>
               <p className={styles.navLabel}>Principal</p>
-              <a href="/farmacias/favoritos" className={styles.navLink}>
+              <Link href="/farmacias/favoritos" className={styles.navLink}>
                 <span className={styles.navText}>Favoritos</span>
-              </a>
-              <a
+              </Link>
+              <Link
                 href="/farmacias/produtos/medicamentos"
                 className={`${styles.navLink} ${styles.active}`}
               >
                 <span className={styles.navText}>Medicamentos</span>
-              </a>
+              </Link>
             </div>
-
             <div className={styles.navSection}>
               <p className={styles.navLabel}>Gestão</p>
-              <a
+              <Link
                 href="/farmacias/cadastro/funcionario/lista"
                 className={styles.navLink}
               >
                 <span className={styles.navText}>Funcionários</span>
-              </a>
-              <a href="/farmacias/laboratorio/lista" className={styles.navLink}>
+              </Link>
+              <Link
+                href="/farmacias/laboratorio/lista"
+                className={styles.navLink}
+              >
                 <span className={styles.navText}>Laboratórios</span>
-              </a>
+              </Link>
             </div>
           </nav>
         </aside>
@@ -232,7 +198,7 @@ export default function CadastroMedicamentoPage() {
           <div className={styles.formContainer}>
             {medicamentoExistente && (
               <div className={styles.avisoExistente}>
-                <p>⚠️ Este medicamento já existe no sistema. Você pode alterar apenas o preço.</p>
+                <p> Este medicamento já existe no sistema. Você pode alterar apenas o preço.</p>
               </div>
             )}
 
@@ -256,9 +222,9 @@ export default function CadastroMedicamentoPage() {
                       type="text"
                       name="codigoBarras"
                       value={form.codigoBarras}
-                      onChange={() => {}} // Bloqueia edição
-                      readOnly
-                      style={{backgroundColor: "#f5f5f5", cursor: "not-allowed"}}
+                      onChange={handleChange}
+                      readOnly={!!medicamentoExistente}
+                      style={medicamentoExistente ? {backgroundColor: "#f5f5f5", cursor: "not-allowed"} : {}}
                     />
                   </div>
 
@@ -269,9 +235,10 @@ export default function CadastroMedicamentoPage() {
                       type="text"
                       name="nome"
                       value={form.nome}
-                      onChange={() => {}} // Bloqueia edição
-                      readOnly
-                      style={{backgroundColor: "#f5f5f5", cursor: "not-allowed"}}
+                      onChange={handleChange}
+                      readOnly={!!medicamentoExistente}
+                      style={medicamentoExistente ? {backgroundColor: "#f5f5f5", cursor: "not-allowed"} : {}}
+                      required={!medicamentoExistente}
                     />
                   </div>
 
@@ -283,9 +250,10 @@ export default function CadastroMedicamentoPage() {
                         type="text"
                         name="dosagem"
                         value={form.dosagem}
-                        onChange={() => {}} // Bloqueia edição
-                        readOnly
-                        style={{backgroundColor: "#f5f5f5", cursor: "not-allowed"}}
+                        onChange={handleChange}
+                        readOnly={!!medicamentoExistente}
+                        style={medicamentoExistente ? {backgroundColor: "#f5f5f5", cursor: "not-allowed"} : {}}
+                        required={!medicamentoExistente}
                       />
                     </div>
 
@@ -296,39 +264,27 @@ export default function CadastroMedicamentoPage() {
                         type="number"
                         name="quantidade"
                         value={form.quantidade}
-                        onChange={() => {}} // Bloqueia edição
-                        readOnly
-                        style={{backgroundColor: "#f5f5f5", cursor: "not-allowed"}}
+                        onChange={handleChange}
+                        readOnly={!!medicamentoExistente}
+                        style={medicamentoExistente ? {backgroundColor: "#f5f5f5", cursor: "not-allowed"} : {}}
+                        required={!medicamentoExistente}
                       />
                     </div>
                   </div>
 
-                  <div className={valida.preco.validado}>
+                  <div className={styles.formGroup}>
                     <label className={styles.inputLabel}>Preço (R$)</label>
-                    <div className={styles.divInput}>
-                      <input
-                        className={styles.modernInput}
-                        type="number"
-                        name="preco"
-                        value={form.preco}
-                        onChange={handleChange}
-                        min="0"
-                        step="0.01"
-                        placeholder="0,00"
-                        required
-                        style={medicamentoExistente ? {} : {backgroundColor: "#f5f5f5", cursor: "not-allowed"}}
-                        readOnly={!medicamentoExistente}
-                      />
-                      {medicamentoExistente && (
-                        <>
-                          <MdCheckCircle className={styles.sucesso} />
-                          <MdError className={styles.erro} />
-                        </>
-                      )}
-                    </div>
-                    {valida.preco.mensagem.map(mens => 
-                      <small key={mens} className={styles.small}>{mens}</small>
-                    )}
+                    <input
+                      className={styles.modernInput}
+                      type="number"
+                      name="preco"
+                      value={form.preco}
+                      onChange={handleChange}
+                      min="0"
+                      step="0.01"
+                      placeholder="0,00"
+                      required
+                    />
                   </div>
                 </div>
 
@@ -344,9 +300,10 @@ export default function CadastroMedicamentoPage() {
                       className={styles.modernInput}
                       name="tipo"
                       value={form.tipo}
-                      onChange={() => {}} // Bloqueia edição
-                      disabled
-                      style={{backgroundColor: "#f5f5f5", cursor: "not-allowed"}}
+                      onChange={handleChange}
+                      disabled={!!medicamentoExistente}
+                      style={medicamentoExistente ? {backgroundColor: "#f5f5f5", cursor: "not-allowed"} : {}}
+                      required={!medicamentoExistente}
                     >
                       <option value="">Selecione o tipo</option>
                       <option value="Alopático">Alopático</option>
@@ -365,9 +322,10 @@ export default function CadastroMedicamentoPage() {
                       className={styles.modernInput}
                       name="forma"
                       value={form.forma}
-                      onChange={() => {}} // Bloqueia edição
-                      disabled
-                      style={{backgroundColor: "#f5f5f5", cursor: "not-allowed"}}
+                      onChange={handleChange}
+                      disabled={!!medicamentoExistente}
+                      style={medicamentoExistente ? {backgroundColor: "#f5f5f5", cursor: "not-allowed"} : {}}
+                      required={!medicamentoExistente}
                     >
                       <option value="">Selecione a forma</option>
                       <option value="Comprimido">Comprimido</option>
@@ -408,9 +366,10 @@ export default function CadastroMedicamentoPage() {
                       className={styles.modernInput}
                       name="laboratorio"
                       value={form.laboratorio}
-                      onChange={() => {}} // Bloqueia edição
-                      disabled
-                      style={{backgroundColor: "#f5f5f5", cursor: "not-allowed"}}
+                      onChange={handleChange}
+                      disabled={!!medicamentoExistente}
+                      style={medicamentoExistente ? {backgroundColor: "#f5f5f5", cursor: "not-allowed"} : {}}
+                      required={!medicamentoExistente}
                     >
                       <option value="">Selecione o laboratório</option>
                       <option value="Neo Química">Neo Química</option>
@@ -441,9 +400,9 @@ export default function CadastroMedicamentoPage() {
                       type="text"
                       name="imagem"
                       value={form.imagem}
-                      onChange={() => {}} // Bloqueia edição
-                      readOnly
-                      style={{backgroundColor: "#f5f5f5", cursor: "not-allowed"}}
+                      onChange={handleChange}
+                      readOnly={!!medicamentoExistente}
+                      style={medicamentoExistente ? {backgroundColor: "#f5f5f5", cursor: "not-allowed"} : {}}
                     />
                   </div>
                 </div>
@@ -460,10 +419,11 @@ export default function CadastroMedicamentoPage() {
                     className={styles.modernTextarea}
                     name="descricao"
                     value={form.descricao}
-                    onChange={() => {}} // Bloqueia edição
+                    onChange={handleChange}
                     rows="4"
-                    readOnly
-                    style={{backgroundColor: "#f5f5f5", cursor: "not-allowed"}}
+                    readOnly={!!medicamentoExistente}
+                    style={medicamentoExistente ? {backgroundColor: "#f5f5f5", cursor: "not-allowed"} : {}}
+                    required={!medicamentoExistente}
                   ></textarea>
                 </div>
               </div>
@@ -472,7 +432,7 @@ export default function CadastroMedicamentoPage() {
                 <button
                   type="button"
                   className={styles.cancelButton}
-                  onClick={() => router.push("/farmacias/produtos/medicamentos")}
+                  onClick={() => router.push("/funcionario/produtos/medicamentos")}
                   disabled={loading}
                 >
                   Cancelar

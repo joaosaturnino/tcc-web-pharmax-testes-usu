@@ -297,7 +297,7 @@ function ListagemMedicamentos() {
             )}
           </div>
           <button onClick={abrirModal} className={styles.botaoPrincipal}>
-            ➕ Novo Medicamento
+             Novo Medicamento
           </button>
         </div>
       </header>
