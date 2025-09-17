@@ -186,7 +186,7 @@
   border-radius: 0.6rem;
   padding: 1.6rem;
   margin-bottom: 2.4rem;
-  color: #0050b3;
+  color: #458B00;
   display: flex;
   align-items: flex-start;
   gap: 1.2rem;
@@ -272,7 +272,7 @@
 .modernTextarea:focus,
 .modernSelect:focus {
   outline: none;
-  border-color: #1890ff;
+  border-color: #458B00;
   box-shadow: 0 0 0 0.3rem rgba(24, 144, 255, 0.1);
 }
 
@@ -333,14 +333,13 @@
 }
 
 .submitButton {
-  background: #1890ff;
+  background: #458B00;
   color: white;
 }
 
 .submitButton:hover:not(:disabled) {
-  background: #096dd9;
+  background: #006400;
   transform: translateY(-1px);
-  box-shadow: 0 0 0.4rem 1.2rem rgba(24, 144, 255, 0.3);
 }
 
 .submitButton:disabled,
@@ -374,20 +373,20 @@
 }
 
 /* Responsividade */
-@media (max-width: 1024px) {
+@media (max-width: 64rem) {
   .mainContent {
-    padding: 24px 8px;
+    padding: 2.4rem 0.8rem;
   }
   .sidebar {
-    width: 220px;
+    width: 22rem;
   }
   .formGrid {
     grid-template-columns: 1fr;
-    gap: 24px;
+    gap: 2.4rem;
   }
 }
 
-@media (max-width: 768px) {
+@media (max-width: 48rem) {
   .sidebar {
     position: fixed;
     left: 0;
@@ -410,14 +409,14 @@
     display: block;
   }
   .mainContent {
-    padding: 16px 2px;
+    padding: 1.6rem 2rem;
   }
   .formContainer {
-    padding: 16px;
+    padding: 1.6rem;
   }
   .formRow {
     grid-template-columns: 1fr;
-    gap: 16px;
+    gap: 1.6rem;
   }
   .formActions {
     flex-direction: column-reverse;
@@ -429,33 +428,33 @@
   }
 }
 
-@media (max-width: 480px) {
+@media (max-width: 30rem) {
   .header {
     flex-direction: column;
-    gap: 16px;
+    gap: 1.6rem;
     align-items: flex-start;
-    padding: 16px 20px;
+    padding: 1.6rem 2rem;
   }
   .formContainer {
-    padding: 12px;
+    padding: 1.2rem;
   }
   .formHeader h2 {
-    font-size: 24px;
+    font-size: 2.4rem;
   }
   .avisoPreCadastro {
     flex-direction: column;
     text-align: center;
-    gap: 8px;
+    gap: 0.8rem;
   }
 }
 
 .avisoExistente {
   background: linear-gradient(135deg, #fff3cd 0%, #ffeaa7 100%);
-  border: 2px solid #ffc107;
-  border-radius: 12px;
-  padding: 16px 20px;
-  margin: 16px 0;
-  box-shadow: 0 4px 12px rgba(255, 193, 7, 0.15);
+  border: 0.2rem solid #ffc107;
+  border-radius: 1.2rem;
+  padding: 1.6rem 2rem;
+  margin: 1.6rem 0;
+  box-shadow: 0 0.4rem 1.2rem rgba(255, 193, 7, 0.15);
   position: relative;
   overflow: hidden;
   animation: slideIn 0.3s ease-out;
@@ -466,27 +465,27 @@
   position: absolute;
   top: 0;
   left: 0;
-  width: 4px;
+  width: 0.4rem;
   height: 100%;
   background: linear-gradient(to bottom, #ffc107, #fd7e14);
-  border-radius: 2px 0 0 2px;
+  border-radius: 0.2rem 0 0 0.2rem;
 }
 
 .avisoExistente p {
   margin: 0;
   color: #856404;
   font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-  font-size: 14px;
+  font-size: 1.4rem;
   font-weight: 500;
   line-height: 1.5;
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: 0.8rem;
 }
 
 .avisoExistente p::before {
   content: '⚠️';
-  font-size: 18px;
+  font-size: 1.8rem;
   flex-shrink: 0;
 }
 
@@ -494,7 +493,7 @@
 @keyframes slideIn {
   from {
     opacity: 0;
-    transform: translateY(-10px);
+    transform: translateY(-1rem);
   }
   to {
     opacity: 1;
@@ -504,19 +503,19 @@
 
 /* Efeito hover suave */
 .avisoExistente:hover {
-  transform: translateY(-1px);
-  box-shadow: 0 6px 16px rgba(255, 193, 7, 0.2);
+  transform: translateY(-0.1rem);
+  box-shadow: 0 0.6rem 1.6rem rgba(255, 193, 7, 0.2);
   transition: all 0.2s ease;
 }
 
 /* Responsividade */
-@media (max-width: 768px) {
+@media (max-width: 30rem) {
   .avisoExistente {
-    padding: 14px 16px;
-    margin: 12px 0;
+    padding: 1.4rem 1.6rem;
+    margin: 1.2rem 0;
   }
   
   .avisoExistente p {
-    font-size: 13px;
+    font-size: 1.3rem;
   }
 }

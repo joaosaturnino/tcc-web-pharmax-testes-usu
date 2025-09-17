@@ -93,7 +93,7 @@ export default function CadastroMedicamentoPage() {
   const handleChange = (e) => {
     const { name, value } = e.target;
     // Permite alterar apenas o preço quando existe um medicamento
-    if (medicamentoExistente && name !== "preco") {
+    if (medicamentoExistente && name !== "preco" && name !== "descricao") {
       return;
     }
     
@@ -154,7 +154,7 @@ export default function CadastroMedicamentoPage() {
               onClick={() => setSidebarOpen(false)}
               aria-label="Fechar menu"
             >
-              ✕
+              x
             </button>
           </div>
           <nav className={styles.nav}>
@@ -198,7 +198,7 @@ export default function CadastroMedicamentoPage() {
           <div className={styles.formContainer}>
             {medicamentoExistente && (
               <div className={styles.avisoExistente}>
-                <p> Este medicamento já existe no sistema. Você pode alterar apenas o preço.</p>
+                <p> Este medicamento já existe no sistema.</p>
               </div>
             )}
 
@@ -421,8 +421,7 @@ export default function CadastroMedicamentoPage() {
                     value={form.descricao}
                     onChange={handleChange}
                     rows="4"
-                    readOnly={!!medicamentoExistente}
-                    style={medicamentoExistente ? {backgroundColor: "#f5f5f5", cursor: "not-allowed"} : {}}
+                    
                     required={!medicamentoExistente}
                   ></textarea>
                 </div>
