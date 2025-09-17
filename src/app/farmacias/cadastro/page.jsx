@@ -1,3 +1,4 @@
+
 "use client";
 import { useState, useRef } from "react";
 import { useRouter } from "next/navigation";
@@ -10,10 +11,35 @@ export default function CadastroFarmacia() {
   const router = useRouter();
   const fileInputRef = useRef(null);
 
+  // Lista de cidades (exemplo)
+  const cidades = [
+    "São Paulo",
+    "Rio de Janeiro",
+    "Belo Horizonte",
+    "Brasília",
+    "Salvador",
+    "Fortaleza",
+    "Recife",
+    "Porto Alegre",
+    "Curitiba",
+    "Goiânia",
+    "Manaus",
+    "Belém",
+    "Florianópolis",
+    "Vitória",
+    "Natal",
+    "João Pessoa",
+    "Maceió",
+    "Campo Grande",
+    "Cuiabá",
+    "Teresina"
+  ];
+
   const [farmacia, setFarmacia] = useState({
     nome: "",
     cnpj: "",
     endereco: "",
+    cidade: "",
     telefone: "",
     email: "",
     senha: "",
@@ -39,6 +65,10 @@ export default function CadastroFarmacia() {
       mensagem: []
     },
     endereco: {
+      validado: valDefault,
+      mensagem: []
+    },
+    cidade: {
       validado: valDefault,
       mensagem: []
     },
@@ -236,6 +266,25 @@ export default function CadastroFarmacia() {
     return objTemp.mensagem.length === 0 ? 1 : 0;
   }
 
+  function validaCidade() {
+    let objTemp = {
+      validado: valSucesso,
+      mensagem: []
+    };
+
+    if (farmacia.cidade === '') {
+      objTemp.validado = valErro;
+      objTemp.mensagem.push('A cidade é obrigatória');
+    }
+
+    setValida(prev => ({
+      ...prev,
+      cidade: objTemp
+    }));
+
+    return objTemp.mensagem.length === 0 ? 1 : 0;
+  }
+
   function validaTelefone() {
     let objTemp = {
       validado: valSucesso,
@@ -344,12 +393,13 @@ export default function CadastroFarmacia() {
     itensValidados += validaNome();
     itensValidados += validaCNPJ();
     itensValidados += validaEndereco();
+    itensValidados += validaCidade();
     itensValidados += validaTelefone();
     itensValidados += validaEmail();
     itensValidados += validaSenha();
     itensValidados += validaLogo();
 
-    if (itensValidados !== 7) {
+    if (itensValidados !== 8) {
       return; // Não prossegue se houver erros de validação
     }
 
@@ -451,13 +501,38 @@ export default function CadastroFarmacia() {
                     name="endereco"
                     value={farmacia.endereco}
                     onChange={handleChange}
-                    placeholder="Rua, número, bairro, cidade"
+                    placeholder="Rua, número, bairro"
                     required
                   />
                   <MdCheckCircle className={styles.sucesso} />
                   <MdError className={styles.erro} />
                 </div>
                 {valida.endereco.mensagem.map(mens => 
+                  <small key={mens} className={styles.small}>{mens}</small>
+                )}
+              </div>
+
+              <div className={valida.cidade.validado}>
+                <label className={styles.label}>Cidade</label>
+                <div className={styles.divInput}>
+                  <select
+                    className={styles.select}
+                    name="cidade"
+                    value={farmacia.cidade}
+                    onChange={handleChange}
+                    required
+                  >
+                    <option value="">Selecione uma cidade</option>
+                    {cidades.map((cidade) => (
+                      <option key={cidade} value={cidade}>
+                        {cidade}
+                      </option>
+                    ))}
+                  </select>
+                  <MdCheckCircle className={styles.sucesso} />
+                  <MdError className={styles.erro} />
+                </div>
+                {valida.cidade.mensagem.map(mens => 
                   <small key={mens} className={styles.small}>{mens}</small>
                 )}
               </div>
@@ -561,7 +636,7 @@ export default function CadastroFarmacia() {
               </div>
 
               <div className={valida.logo.validado}>
-                <label className={styles.label}>Logo da Farmácia (opcional)</label>
+                <label className={`${styles.label} ${styles.optional}`}>Logo da Farmácia (opcional)</label>
 
                 <div
                   className={`${styles.fileUploadContainer} ${
@@ -661,6 +736,7 @@ export default function CadastroFarmacia() {
                   </>
                 ) : (
                   <>
+                    <span className={styles.buttonIcon}>✓</span>
                     Cadastrar Farmácia
                   </>
                 )}
@@ -672,7 +748,7 @@ export default function CadastroFarmacia() {
             <p>
               Já possui uma conta?{" "}
               <a href="/login" className={styles.loginLink}>
-                Faça login
+                Faça login aqui
               </a>
             </p>
           </div>

@@ -1,3 +1,4 @@
+
 .container {
   min-height: 100vh;
   display: flex;
@@ -109,7 +110,11 @@
   margin-left: 4px;
 }
 
-.input {
+.label.optional::after {
+  content: "";
+}
+
+.input, .select {
   padding: 16px;
   border: 2px solid #e5e7eb;
   border-radius: 12px;
@@ -118,7 +123,7 @@
   background: white;
 }
 
-.input:focus {
+.input:focus, .select:focus {
   outline: none;
   border-color: #4facfe;
   box-shadow: 0 0 0 3px rgba(79, 172, 254, 0.1);
@@ -435,11 +440,13 @@
 }
 
 .success .input,
+.success .select,
 .success .fileUploadContainer {
   border-color: #4caf50;
 }
 
 .error .input,
+.error .select,
 .error .fileUploadContainer {
   border-color: #f44336;
 }
