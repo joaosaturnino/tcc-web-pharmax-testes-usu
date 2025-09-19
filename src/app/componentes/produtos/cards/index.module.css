@@ -1,0 +1,109 @@
+.card {
+  border: 1px solid #e1e1e1;
+  border-radius: 8px;
+  overflow: hidden;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  background: white;
+  max-width: 280px;
+}
+
+.card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.imagemContainer {
+  position: relative;
+  height: 200px;
+  overflow: hidden;
+}
+
+.imagemProduto {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.status {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  padding: 4px 8px;
+  border-radius: 12px;
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.statusAtivo {
+  background-color: #10b981;
+  color: white;
+}
+
+.statusInativo {
+  background-color: #ef4444;
+  color: white;
+}
+
+.infoContainer {
+  padding: 16px;
+}
+
+.medicamentoNome {
+  font-size: 16px;
+  font-weight: 600;
+  margin: 0 0 8px 0;
+  color: #1f2937;
+}
+
+.medicamentoDosagem {
+  font-size: 14px;
+  color: #6b7280;
+  margin: 0 0 4px 0;
+}
+
+.medicamentoLaboratorio {
+  font-size: 14px;
+  color: #6b7280;
+  margin: 0 0 12px 0;
+  font-style: italic;
+}
+
+.detalhes {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 12px;
+}
+
+.medicamentoPreco {
+  font-size: 18px;
+  font-weight: 700;
+  color: #059669;
+}
+
+.medicamentoQuantidade {
+  font-size: 14px;
+  font-weight: 500;
+  padding: 4px 8px;
+  border-radius: 6px;
+  background-color: #f3f4f6;
+}
+
+.quantidadeZero {
+  background-color: #fee2e2;
+  color: #dc2626;
+}
+
+.quantidadeBaixa {
+  background-color: #fef3c7;
+  color: #d97706;
+}
+
+.medicamentoCategoria {
+  font-size: 12px;
+  color: #9ca3af;
+  background-color: #f9fafb;
+  padding: 4px 8px;
+  border-radius: 6px;
+  display: inline-block;
+}
