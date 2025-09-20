@@ -1,5 +1,5 @@
 // /mockup/medicamentos.js
-const medicamentosMock = [
+const medicamentosFavoritosMock = [
   { med_id: 1, med_nome: "Paracetamol", med_dosagem: "500mg", med_quantidade: "20 comprimidos", forma_id: 1, med_descricao: "Analgésico e antitérmico", lab_id: 1, med_imagem: "paracetamol.png", tipo_id: 1, med_data_cadastro: new Date("2025-09-18T22:13:53.000Z"), med_data_atualizacao: new Date("2025-09-18T22:13:53.000Z"), med_ativo: true },
   { med_id: 2, med_nome: "Ibuprofeno", med_dosagem: "400mg", med_quantidade: "20 comprimidos", forma_id: 1, med_descricao: "Anti-inflamatório", lab_id: 2, med_imagem: "ibuprofeno.png", tipo_id: 5, med_data_cadastro: new Date("2025-09-18T22:13:53.000Z"), med_data_atualizacao: new Date("2025-09-18T22:13:53.000Z"), med_ativo: true },
   { med_id: 3, med_nome: "Amoxicilina", med_dosagem: "500mg", med_quantidade: "10 cápsulas", forma_id: 2, med_descricao: "Antibiótico", lab_id: 3, med_imagem: "amoxicilina.png", tipo_id: 3, med_data_cadastro: new Date("2025-09-18T22:13:53.000Z"), med_data_atualizacao: new Date("2025-09-18T22:13:53.000Z"), med_ativo: true },
@@ -32,4 +32,4 @@ const medicamentosMock = [
   { med_id: 30, med_nome: "Azitromicina Xarope", med_dosagem: "200mg/5ml", med_quantidade: "60ml", forma_id: 3, med_descricao: "Antibiótico", lab_id: 30, med_imagem: "azitromicinaxarope.png", tipo_id: 3, med_data_cadastro: new Date("2025-09-18T22:13:53.000Z"), med_data_atualizacao: new Date("2025-09-18T22:13:53.000Z"), med_ativo: true }
 ];
 
-export default medicamentosMock;
+export default medicamentosFavoritosMock;

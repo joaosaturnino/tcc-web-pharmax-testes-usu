@@ -542,3 +542,65 @@
     padding: 0.4rem 0.8rem;
   }
 }
+
+/* Adicione ao favoritos.module.css */
+.connectionStatus {
+  padding: 0.4rem 0.8rem;
+  border-radius: 1.2rem;
+  font-size: 1.2rem;
+  margin-left: 1rem;
+  font-weight: 500;
+}
+
+.connectionStatus.online {
+  background: #458B00;
+  color: white;
+}
+
+.connectionStatus.offline {
+  background: #d32f2f;
+  color: white;
+}
+
+.warningBanner {
+  background: #fff3cd;
+  border: 1px solid #ffeaa7;
+  color: #856404;
+  padding: 1rem;
+  border-radius: 0.5rem;
+  margin-bottom: 1rem;
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.retryLink {
+  background: none;
+  border: none;
+  color: #007bff;
+  text-decoration: underline;
+  cursor: pointer;
+}
+
+.retryLink:hover {
+  color: #0056b3;
+}
+
+.headerActions {
+  display: flex;
+  gap: 1rem;
+  align-items: center;
+}
+
+.retryButton {
+  padding: 0.5rem 1rem;
+  background: #458B00;
+  color: white;
+  border: none;
+  border-radius: 0.4rem;
+  cursor: pointer;
+}
+
+.retryButton:hover {
+  background: #2e7d32;
+}

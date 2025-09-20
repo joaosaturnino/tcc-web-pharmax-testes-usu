@@ -1,109 +1,158 @@
+/* src/components/medicamentos/card/index.module.css */
 .card {
-  border: 1px solid #e1e1e1;
-  border-radius: 8px;
-  overflow: hidden;
-  transition: transform 0.2s ease, box-shadow 0.2s ease;
-  background: white;
-  max-width: 280px;
+  background: #fff;
+  border-radius: 12px;
+  box-shadow: 0 0.2rem 0.8px rgba(0,0,0,0.04);
+  padding: 2.4rem;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
 }
 
 .card:hover {
   transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 0.8rem 2.5rem rgba(0, 0, 0, 0.1);
 }
 
-.imagemContainer {
-  position: relative;
-  height: 200px;
-  overflow: hidden;
+.cardHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 2rem;
+  padding-bottom: 2rem;
+  border-bottom: 0.1rem solid #e5e7eb;
 }
 
-.imagemProduto {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
+.cardUserInfo {
+  display: flex;
+  align-items: flex-start;
+  gap: 1.2rem;
 }
 
-.status {
-  position: absolute;
-  top: 10px;
-  right: 10px;
-  padding: 4px 8px;
-  border-radius: 12px;
-  font-size: 12px;
-  font-weight: 600;
-}
-
-.statusAtivo {
-  background-color: #10b981;
+.userAvatar {
+  width: 4.8rem;
+  height: 4.8rem;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #458B00 0%, #2e7d32 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 2rem;
   color: white;
+  flex-shrink: 0;
+  font-weight: bold;
 }
 
-.statusInativo {
-  background-color: #ef4444;
-  color: white;
-}
-
-.infoContainer {
-  padding: 16px;
-}
-
-.medicamentoNome {
-  font-size: 16px;
+.cardUserInfo h2 {
+  font-size: 1.8rem;
   font-weight: 600;
-  margin: 0 0 8px 0;
-  color: #1f2937;
+  color: #191970;
+  margin: 0 0 0.4rem 0;
 }
 
-.medicamentoDosagem {
-  font-size: 14px;
-  color: #6b7280;
-  margin: 0 0 4px 0;
+.cardUserInfo p {
+  font-size: 1.4rem;
+  color: #64748b;
+  margin: 0 0 0.8rem 0;
 }
 
-.medicamentoLaboratorio {
-  font-size: 14px;
-  color: #6b7280;
-  margin: 0 0 12px 0;
-  font-style: italic;
+.favoriteDate {
+  font-size: 1.2rem;
+  color: #94a3b8;
 }
 
-.detalhes {
+.medList {
+  display: flex;
+  flex-direction: column;
+  gap: 1.2rem;
+}
+
+.medItem {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 12px;
+  padding: 1.2rem;
+  background: #f8fafc;
+  border-radius: 8px;
+  border: 0.1rem solid #e5e7eb;
 }
 
-.medicamentoPreco {
-  font-size: 18px;
-  font-weight: 700;
-  color: #059669;
+.medInfo {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
 }
 
-.medicamentoQuantidade {
-  font-size: 14px;
+.medInfo strong {
+  font-size: 1.6rem;
+  font-weight: 600;
+  color: #1e293b;
+}
+
+.dosagem {
+  font-size: 1.2rem;
+  color: #64748b;
+}
+
+.badge {
+  padding: 0.6rem 1.2rem;
+  border-radius: 1.2rem;
+  font-size: 1.3rem;
   font-weight: 500;
-  padding: 4px 8px;
-  border-radius: 6px;
-  background-color: #f3f4f6;
+  text-align: center;
 }
 
-.quantidadeZero {
-  background-color: #fee2e2;
-  color: #dc2626;
+.inStock {
+  background: #e6f7e6;
+  color: #458B00;
 }
 
-.quantidadeBaixa {
-  background-color: #fef3c7;
-  color: #d97706;
+.outStock {
+  background: #ffeaea;
+  color: #d32f2f;
 }
 
-.medicamentoCategoria {
-  font-size: 12px;
-  color: #9ca3af;
-  background-color: #f9fafb;
-  padding: 4px 8px;
-  border-radius: 6px;
-  display: inline-block;
+.pending {
+  background: #fff7e6;
+  color: #ff9800;
+}
+
+/* Adicione ao src/components/medicamentos/card/index.module.css */
+.statusControls {
+  display: flex;
+  gap: 0.8rem;
+  margin-top: 1.2rem;
+  padding-top: 1.2rem;
+  border-top: 1px solid #e5e7eb;
+}
+
+.statusBtn {
+  padding: 0.6rem 1.2rem;
+  border: none;
+  border-radius: 0.4rem;
+  font-size: 1.2rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  flex: 1;
+}
+
+.statusBtn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.statusBtn.inStock {
+  background: #e6f7e6;
+  color: #458B00;
+  border: 1px solid #458B00;
+}
+
+.statusBtn.outStock {
+  background: #ffeaea;
+  color: #d32f2f;
+  border: 1px solid #d32f2f;
+}
+
+.statusBtn:hover:not(:disabled) {
+  transform: translateY(-1px);
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
 }
