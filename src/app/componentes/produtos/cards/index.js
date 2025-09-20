@@ -1,51 +1,43 @@
-import Image from 'next/image';
-import styles from './index.module.css';
+"use client";
+import styles from "./index.module.css";
+import Link from "next/link";
 
-const currency = new Intl.NumberFormat('pt-BR', { 
-  style: 'currency', 
-  currency: 'BRL' 
-});
+const imagemPadrao = "/images/placeholder.jpg";
 
-export default function Card({ medicamento }) {
-  const imagemPadrao = "https://www.institutoaron.com.br/static/img/large/c28a030a59bae1283321c340cdc846df.webp";
-
+export default function MedicamentoCard({ medicamento }) {
   return (
-    <div className={styles.card}>
-      <div className={styles.imagemContainer}>
-        <Image
-          src={medicamento.imagem || imagemPadrao}
-          alt={medicamento.nome}
-          width={200}
-          height={200}
-          className={styles.imagemProduto}
-          onError={(e) => {
-            e.target.src = imagemPadrao;
-          }}
-        />
-        <span className={`${styles.status} ${
-          medicamento.status === 'ativo' ? styles.statusAtivo : styles.statusInativo
-        }`}>
-          {medicamento.status === 'ativo' ? 'Ativo' : 'Inativo'}
-        </span>
-      </div>
-      <div className={styles.infoContainer}>
-        <h3 className={styles.medicamentoNome}>{medicamento.nome}</h3>
-        <p className={styles.medicamentoDosagem}>{medicamento.dosagem}</p>
-        <p className={styles.medicamentoLaboratorio}>{medicamento.laboratorio}</p>
-        <div className={styles.detalhes}>
-          <span className={styles.medicamentoPreco}>{currency.format(medicamento.preco)}</span>
-          <span className={`${styles.medicamentoQuantidade} ${
-            medicamento.quantidade === 0 
-              ? styles.quantidadeZero 
-              : medicamento.quantidade <= 5 
-                ? styles.quantidadeBaixa 
-                : ''
-          }`}>
-            Qtd: {medicamento.quantidade}
+    <Link href={`/farmacias/produtos/medicamentos/${medicamento.id}`}>
+      <div
+        className={`${styles.medicamentoCard} ${
+          medicamento.status === "inativo" ? styles.inativo : ""
+        }`}
+      >
+        <div className={styles.cardHeader}>
+          <img
+            src={medicamento.imagem || imagemPadrao}
+            alt={medicamento.nome}
+            className={styles.cardImagem}
+            onError={(e) => {
+              e.target.src = imagemPadrao;
+            }}
+          />
+          <span
+            className={`${styles.cardStatus} ${
+              medicamento.status === "ativo"
+                ? styles.statusAtivo
+                : styles.statusInativo
+            }`}
+          >
+            {medicamento.status === "ativo" ? "Ativo" : "Inativo"}
           </span>
         </div>
-        <span className={styles.medicamentoCategoria}>{medicamento.categoria}</span>
+        <div className={styles.cardContent}>
+          <h3 className={styles.cardNome}>{medicamento.nome}</h3>
+          <p className={styles.cardDosagem}>{medicamento.dosagem}</p>
+          <p className={styles.cardLaboratorio}>{medicamento.laboratorio}</p>
+          <p className={styles.cardCategoria}>{medicamento.categoria}</p>
+        </div>
       </div>
-    </div>
+    </Link>
   );
 }
