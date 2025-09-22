@@ -464,6 +464,12 @@
   color: #fff;
 }
 
+/* Adicione esta classe ao seu favoritos.module.css */
+.cardLink {
+  text-decoration: none;
+  color: inherit;
+}
+
 /* Responsividade */
 @media (max-width: 64rem) {
   .mainContent {
@@ -604,3 +610,4 @@
 .retryButton:hover {
   background: #2e7d32;
 }
+

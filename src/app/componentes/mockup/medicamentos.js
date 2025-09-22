@@ -33,3 +33,4 @@ const medicamentosFavoritosMock = [
 ];
 
 export default medicamentosFavoritosMock;
+

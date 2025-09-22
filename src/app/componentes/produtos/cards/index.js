@@ -18,6 +18,11 @@ export default function MedicamentoCard({ medicamento, index, onStatusChange }) 
     }
   };
 
+  // Verificação para garantir que o objeto 'medicamento' não é nulo ou indefinido
+  if (!medicamento) {
+    return null;
+  }
+
   return (
     <div className={styles.card}>
       <div className={styles.cardHeader}>
