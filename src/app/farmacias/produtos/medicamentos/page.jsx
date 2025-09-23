@@ -19,7 +19,7 @@ const medicamentosIniciais = [
     dosagem: "500mg",
     quantidade: 20,
     tipo: "Genérico",
-    forma: "Comprimido",
+    forma: "Comprimidos",
     descricao: "Analgésico e antitérmico.",
     laboratorio: "EMS",
     preco: 12.5,
@@ -33,9 +33,9 @@ const medicamentosIniciais = [
     id: 2,
     nome: "Dipirona Sódica",
     dosagem: "1g",
-    quantidade: 3,
+    quantidade: 10,
     tipo: "Similar",
-    forma: "Comprimido",
+    forma: "Comprimidos",
     descricao: "Analgésico e antitérmico.",
     laboratorio: "Neo Química",
     preco: 8.9,
@@ -49,9 +49,9 @@ const medicamentosIniciais = [
     id: 3,
     nome: "Omeprazol",
     dosagem: "20mg",
-    quantidade: 0,
+    quantidade: 28,
     tipo: "Referência",
-    forma: "Cápsula",
+    forma: "Cápsulas",
     descricao: "Inibidor de bomba de prótons.",
     laboratorio: "AstraZeneca",
     preco: 25.9,
@@ -64,10 +64,10 @@ const medicamentosIniciais = [
   {
     id: 4,
     nome: "Amoxicilina",
-    dosagem: "500mg",
-    quantidade: 15,
+    dosagem: "250mg/5ml",
+    quantidade: 60,
     tipo: "Genérico",
-    forma: "Cápsula",
+    forma: "ml (Pó p/ Suspensão)",
     descricao: "Antibiótico de amplo espectro.",
     laboratorio: "Eurofarma",
     preco: 32.75,
@@ -81,9 +81,9 @@ const medicamentosIniciais = [
     id: 5,
     nome: "Losartana Potássica",
     dosagem: "50mg",
-    quantidade: 28,
+    quantidade: 30,
     tipo: "Similar",
-    forma: "Comprimido",
+    forma: "Comprimidos",
     descricao: "Anti-hipertensivo.",
     laboratorio: "Medley",
     preco: 18.2,
@@ -94,6 +94,7 @@ const medicamentosIniciais = [
     lote: "LOTE13579",
   },
 ];
+
 
 const bancoDeDados = {
   medicamentos: medicamentosIniciais,
@@ -421,7 +422,7 @@ function ListagemMedicamentos() {
                   className={styles.selectFiltro}
                 >
                   <option value="nome">Nome</option>
-                  <option value="quantidade">Quantidade</option>
+                  <option value="quantidade">Conteúdo</option>
                   <option value="preco">Preço</option>
                   <option value="laboratorio">Laboratório</option>
                 </select>
@@ -467,7 +468,7 @@ function ListagemMedicamentos() {
                     <th>Imagem</th>
                     <th>Nome</th>
                     <th>Dosagem</th>
-                    <th>Quantidade</th>
+                    <th>Conteúdo</th>
                     <th>Laboratório</th>
                     <th>Preço</th>
                     <th>Status</th>
@@ -502,16 +503,8 @@ function ListagemMedicamentos() {
                       </td>
                       <td>{med.dosagem}</td>
                       <td>
-                        <span
-                          className={`${styles.quantidade} ${
-                            med.quantidade === 0
-                              ? styles.quantidadeZero
-                              : med.quantidade <= 5
-                              ? styles.quantidadeBaixa
-                              : ""
-                          }`}
-                        >
-                          {med.quantidade}
+                        <span className={styles.quantidade}>
+                          {`${med.quantidade} ${med.forma}`}
                         </span>
                       </td>
                       <td>{med.laboratorio}</td>
@@ -610,17 +603,9 @@ function ListagemMedicamentos() {
                       <p className={styles.cardCategoria}>{med.categoria}</p>
                       <div className={styles.cardInfo}>
                         <div className={styles.infoItem}>
-                          <span className={styles.infoLabel}>Quantidade:</span>
-                          <span
-                            className={`${styles.infoValue} ${
-                              med.quantidade === 0
-                                ? styles.quantidadeZero
-                                : med.quantidade <= 5
-                                ? styles.quantidadeBaixa
-                                : ""
-                            }`}
-                          >
-                            {med.quantidade}
+                          <span className={styles.infoLabel}>Conteúdo:</span>
+                          <span className={styles.infoValue}>
+                            {`${med.quantidade} ${med.forma}`}
                           </span>
                         </div>
                         <div className={styles.infoItem}>
@@ -894,17 +879,9 @@ function ListagemMedicamentos() {
                       </span>
                     </div>
                     <div className={styles.infoItem}>
-                      <span className={styles.infoLabel}>Quantidade:</span>
-                      <span
-                        className={`${styles.infoValue} ${
-                          medicamentoSelecionado.quantidade === 0
-                            ? styles.quantidadeZero
-                            : medicamentoSelecionado.quantidade <= 5
-                            ? styles.quantidadeBaixa
-                            : ""
-                        }`}
-                      >
-                        {medicamentoSelecionado.quantidade}
+                      <span className={styles.infoLabel}>Conteúdo:</span>
+                      <span className={styles.infoValue}>
+                        {`${medicamentoSelecionado.quantidade} ${medicamentoSelecionado.forma}`}
                       </span>
                     </div>
                     <div className={styles.infoItem}>

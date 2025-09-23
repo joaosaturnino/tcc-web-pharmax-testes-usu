@@ -9,7 +9,7 @@ export default function Rodape() {
         <div className={styles.secaoRodape}>
           <div className={styles.logo}>
             <h3>PharmaX</h3>
-            <div className={styles.logoSubtitle}>Sua farmácia digital</div>
+            <div className={styles.logoSubtitle}>Busca e comparação de preços de medicamentos</div>
           </div>
           <p className={styles.descricao}>
             Encontre os melhores preços de medicamentos.

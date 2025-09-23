@@ -1,14 +1,15 @@
 /* Layout Principal */
 .dashboard {
   min-height: 100vh;
-  background-color: #f8fafc;
+  background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
   display: flex;
   flex-direction: column;
+  font-family: 'Segoe UI', system-ui, sans-serif;
 }
 
 /* Header */
 .header {
-  background: white;
+  background: linear-gradient(135deg, #ffffff 0%, #fafbfc 100%);
   padding: 1.5rem 3rem;
   display: flex;
   justify-content: space-between;
@@ -30,10 +31,11 @@
   border: none;
   font-size: 2rem;
   cursor: pointer;
-  padding: 0.8px;
+  padding: 0.8rem;
   border-radius: 0.6rem;
   transition: background 0.3s ease;
   display: none;
+  color: #458B00;
 }
 
 .menuToggle:hover {
@@ -45,6 +47,10 @@
   font-weight: 600;
   color: #1e293b;
   margin: 0;
+  background: linear-gradient(135deg, #191970 0%, #458B00 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
 }
 
 .headerActions {
@@ -53,27 +59,13 @@
   gap: 1.6rem;
 }
 
-.actionBtn {
-  padding: 1rem 1.6rem;
-  border: none;
-  border-radius: 0.8rem;
+.connectionStatus {
+  padding: 0.4rem 0.8rem;
+  border-radius: 1.2rem;
+  font-size: 1.2rem;
+  font-weight: 500;
   background: #458B00;
   color: white;
-  font-weight: 500;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  gap: 0.8rem;
-  transition: all 0.3s ease;
-}
-
-.actionBtn:hover {
-  transform: translateY(-1px);
-  box-shadow: 0 0.4rem 1.2rem rgba(69, 139, 0, 0.3);
-}
-
-.btnIcon {
-  font-size: 1.6rem;
 }
 
 /* Wrapper de Conteúdo */
@@ -83,10 +75,10 @@
   position: relative;
 }
 
-/* Sidebar - Estilo igual ao da tela de relatórios */
+/* Sidebar - Estilo melhorado */
 .sidebar {
   width: 30rem;
-  background: #191970;
+  background: linear-gradient(180deg, #191970 0%, #0f1440 100%);
   color: #CDC1C5;
   display: flex;
   flex-direction: column;
@@ -94,6 +86,10 @@
   box-shadow: 0.2rem 0 1rem rgba(0, 0, 0, 0.1);
   z-index: 90;
   flex-shrink: 0;
+  height: calc(100vh - 80px);
+  position: sticky;
+  top: 80px;
+  overflow-y: auto;
 }
 
 .sidebarHeader {
@@ -101,6 +97,10 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
+  background: rgba(25, 25, 112, 0.95);
+  position: sticky;
+  top: 0;
+  z-index: 10;
 }
 
 .logo {
@@ -134,6 +134,7 @@
 .nav {
   flex: 1;
   padding: 0 1.0rem 2.0rem 1.0rem;
+  overflow-y: auto;
 }
 
 .navSection {
@@ -145,32 +146,46 @@
   color: #b0b0b0;
   margin-bottom: 0.6rem;
   margin-top: 1rem;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
 }
 
 .navLink {
   display: flex;
   align-items: center;
-  padding: 0.8rem 1.2rem;
+  padding: 1rem 1.2rem;
   color: #CDC1C5;
   text-decoration: none;
   border-radius: 0.6rem;
   margin-bottom: 0.4rem;
-  transition: background 0.2s;
+  transition: all 0.3s ease;
   font-size: 1.5rem;
+  border-left: 4px solid transparent;
+  gap: 1rem;
 }
 
 .navLink:hover {
-  background: #222266;
+  background: rgba(69, 139, 0, 0.15);
   color: #fff;
+  border-left-color: #458B00;
+  transform: translateX(5px);
 }
 
 .navLink.active {
-  background: #458B00;
+  background: linear-gradient(135deg, #458B00 0%, #2e7d32 100%);
   color: #fff;
+  border-left-color: #fff;
+  box-shadow: 0 4px 12px rgba(69, 139, 0, 0.3);
 }
 
 .navText {
   margin-left: 0.6rem;
+}
+
+.navIcon {
+  font-size: 1.6rem;
+  width: 20px;
+  text-align: center;
 }
 
 /* Conteúdo Principal */
@@ -179,48 +194,115 @@
   padding: 3.2rem 2.4rem;
   background: #f8fafc;
   min-height: 100vh;
+  overflow-y: auto;
 }
 
-/* Cabeçalho da página de favoritos */
-.pageHeader {
+/* Filtros e Controles */
+.controlsContainer {
+  background: #ffffff;
+  padding: 2rem;
+  border-radius: 16px;
+  margin-bottom: 2.5rem;
+  box-shadow: 0 0.2rem 0.8px rgba(0,0,0,0.04);
+  border: 1px solid #e5e7eb;
+}
+
+.controlsRow {
   display: flex;
+  gap: 1.5rem;
   align-items: center;
-  gap: 2.4rem;
-  margin-bottom: 1.8rem;
+  flex-wrap: wrap;
 }
 
-.pageLogo {
-  width: 4.8rem;
-  height: 4.8rem;
-  background: #458B00;
-  border-radius: 50%;
+.searchBox {
+  flex: 1;
+  min-width: 300px;
+  position: relative;
 }
 
-.pageTitle h1 {
+.searchInput {
+  width: 100%;
+  padding: 1.2rem 1.2rem 1.2rem 4rem;
+  border: 1px solid #e2e8f0;
+  border-radius: 12px;
+  font-size: 1.4rem;
+  background: #f8fafc;
+  transition: all 0.3s ease;
+}
+
+.searchInput:focus {
+  outline: none;
+  border-color: #458B00;
+  box-shadow: 0 0 0 3px rgba(69, 139, 0, 0.1);
+}
+
+.searchIcon {
+  position: absolute;
+  left: 1.5rem;
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: 1.6rem;
+  color: #64748b;
+}
+
+.filterGroup {
+  display: flex;
+  gap: 1rem;
+  align-items: center;
+}
+
+.filterSelect {
+  padding: 1.2rem 1.5rem;
+  border: 1px solid #e2e8f0;
+  border-radius: 12px;
+  background: #ffffff;
+  font-size: 1.4rem;
+  min-width: 180px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.filterSelect:focus {
+  outline: none;
+  border-color: #458B00;
+}
+
+/* Estatísticas */
+.statsContainer {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 1.5rem;
+  margin-bottom: 2.5rem;
+}
+
+.statCard {
+  background: linear-gradient(135deg, #ffffff 0%, #fafbfc 100%);
+  padding: 1.5rem;
+  border-radius: 12px;
+  box-shadow: 0 0.2rem 0.8px rgba(0,0,0,0.04);
+  border: 1px solid #e5e7eb;
+  text-align: center;
+  transition: transform 0.3s ease;
+}
+
+.statCard:hover {
+  transform: translateY(-2px);
+}
+
+.statValue {
   font-size: 2.8rem;
   font-weight: 700;
-  margin: 0 0 0.4rem 0;
   color: #191970;
+  margin-bottom: 0.5rem;
 }
 
-.pageTitle p {
-  margin: 0;
-  color: #555;
-  font-size: 1.6rem;
+.statLabel {
+  font-size: 1.3rem;
+  color: #64748b;
+  font-weight: 600;
 }
 
-/* Informações da página */
-.pageInfo {
-  margin-bottom: 1.8rem;
-  color: #444;
-  font-size: 1.5rem;
-}
-
-.pageInfo p {
-  margin: 0 0 0.4rem 0;
-}
-
-/* Grid de Favoritos - Estilo similar à tabela de relatórios */
+/* Grid de Favoritos - Estilo melhorado */
 .grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(400px, 1fr));
@@ -229,16 +311,42 @@
 }
 
 .card {
-  background: #fff;
+  background: linear-gradient(135deg, #ffffff 0%, #fafbfc 100%);
   border-radius: 12px;
   box-shadow: 0 0.2rem 0.8px rgba(0,0,0,0.04);
   padding: 2.4rem;
-  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  transition: all 0.3s ease;
+  border: 1px solid #e5e7eb;
+  position: relative;
+  overflow: hidden;
+}
+
+.card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 4px;
+  background: linear-gradient(90deg, #458B00, #191970);
 }
 
 .card:hover {
-  transform: translateY(-2px);
+  transform: translateY(-5px);
   box-shadow: 0 0.8rem 2.5rem rgba(0, 0, 0, 0.1);
+}
+
+.rankingBadge {
+  position: absolute;
+  top: 1.5rem;
+  right: 1.5rem;
+  background: linear-gradient(135deg, #ffd700 0%, #ffed4e 100%);
+  color: #000;
+  padding: 0.6rem 1.2rem;
+  border-radius: 20px;
+  font-weight: 700;
+  font-size: 1.3rem;
+  box-shadow: 0 4px 12px rgba(255, 215, 0, 0.3);
 }
 
 .cardHeader {
@@ -257,10 +365,10 @@
 }
 
 .userAvatar {
-  width: 4.8rem;
-  height: 4.8rem;
-  border-radius: 50%;
-  background: linear-gradient(135deg, #458B00 0%, #2e7d32 100%);
+  width: 5rem;
+  height: 5rem;
+  border-radius: 12px;
+  background: linear-gradient(135deg, #458B00 0%, #191970 100%);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -287,6 +395,31 @@
   font-size: 1.2rem;
   color: #94a3b8;
 }
+
+.favoriteStats {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin-top: 0.5rem;
+}
+
+.favoriteCount {
+  background: #fff3cd;
+  color: #856404;
+  padding: 0.5rem 1rem;
+  border-radius: 20px;
+  font-size: 1.2rem;
+  font-weight: 600;
+}
+
+.trendIndicator {
+  font-size: 1.4rem;
+  font-weight: 600;
+}
+
+.trendUp { color: #10b981; }
+.trendDown { color: #ef4444; }
+.trendStable { color: #6b7280; }
 
 /* Lista de Medicamentos */
 .medList {
@@ -318,32 +451,36 @@
 }
 
 .dosagem {
-  font-size: 1.2rem;
+  font-size: 1.3rem;
   color: #64748b;
 }
 
-/* Badges - Estilo similar ao da tela de relatórios */
+/* Badges - Estilo melhorado */
 .badge {
   padding: 0.6rem 1.2rem;
   border-radius: 1.2rem;
   font-size: 1.3rem;
-  font-weight: 500;
+  font-weight: 600;
   text-align: center;
+  border: 1px solid;
 }
 
 .inStock {
-  background: #e6f7e6;
-  color: #458B00;
+  background: #f0fff4;
+  color: #065f46;
+  border-color: #10b981;
 }
 
 .outStock {
-  background: #ffeaea;
-  color: #d32f2f;
+  background: #fef2f2;
+  color: #991b1b;
+  border-color: #ef4444;
 }
 
 .pending {
-  background: #fff7e6;
-  color: #ff9800;
+  background: #fffbeb;
+  color: #92400e;
+  border-color: #f59e0b;
 }
 
 /* Empty State */
@@ -409,7 +546,7 @@
   display: none;
 }
 
-/* Controles de paginação - Estilo similar ao da tela de relatórios */
+/* Controles de paginação - Estilo melhorado */
 .paginationControls {
   display: flex;
   align-items: center;
@@ -419,18 +556,20 @@
 }
 
 .paginationBtn {
-  padding: 0.6rem 1.4rem;
+  padding: 1rem 1.5rem;
   border: none;
   border-radius: 0.6rem;
   background: #458B00;
   color: white;
-  font-weight: 500;
+  font-weight: 600;
   cursor: pointer;
-  transition: background 0.2s;
+  transition: all 0.3s ease;
+  font-size: 1.3rem;
 }
 
 .paginationBtn:hover:not(.disabled) {
   background: #2e7d32;
+  transform: translateY(-1px);
 }
 
 .paginationBtn.disabled {
@@ -445,29 +584,28 @@
 }
 
 .paginationNumber {
-  padding: 0.6rem 1.2rem;
+  padding: 1rem 1.2rem;
   border: none;
   border-radius: 0.6rem;
   background: #f1f5f9;
   color: #191970;
-  font-weight: 500;
+  font-weight: 600;
   cursor: pointer;
-  transition: background 0.2s;
+  transition: all 0.3s ease;
+  min-width: 45px;
+  text-align: center;
+  font-size: 1.3rem;
 }
 
 .paginationNumber:hover {
   background: #e6f7e6;
+  transform: translateY(-1px);
 }
 
 .paginationNumber.active {
   background: #458B00;
   color: #fff;
-}
-
-/* Adicione esta classe ao seu favoritos.module.css */
-.cardLink {
-  text-decoration: none;
-  color: inherit;
+  transform: scale(1.05);
 }
 
 /* Responsividade */
@@ -476,10 +614,13 @@
     padding: 2.4rem 0.8rem;
   }
   .sidebar {
-    width: 22rem;
+    width: 25rem;
   }
   .grid {
     grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+  }
+  .statsContainer {
+    grid-template-columns: repeat(2, 1fr);
   }
 }
 
@@ -515,10 +656,15 @@
   .card {
     padding: 1.6rem;
   }
-  .pageHeader {
+  .controlsRow {
     flex-direction: column;
     gap: 1rem;
-    text-align: center;
+  }
+  .searchBox {
+    min-width: 100%;
+  }
+  .statsContainer {
+    grid-template-columns: 1fr;
   }
 }
 
@@ -547,67 +693,9 @@
   .paginationNumber {
     padding: 0.4rem 0.8rem;
   }
+  .medItem {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.5rem;
+  }
 }
-
-/* Adicione ao favoritos.module.css */
-.connectionStatus {
-  padding: 0.4rem 0.8rem;
-  border-radius: 1.2rem;
-  font-size: 1.2rem;
-  margin-left: 1rem;
-  font-weight: 500;
-}
-
-.connectionStatus.online {
-  background: #458B00;
-  color: white;
-}
-
-.connectionStatus.offline {
-  background: #d32f2f;
-  color: white;
-}
-
-.warningBanner {
-  background: #fff3cd;
-  border: 1px solid #ffeaa7;
-  color: #856404;
-  padding: 1rem;
-  border-radius: 0.5rem;
-  margin-bottom: 1rem;
-  display: flex;
-  align-items: center;
-  gap: 1rem;
-}
-
-.retryLink {
-  background: none;
-  border: none;
-  color: #007bff;
-  text-decoration: underline;
-  cursor: pointer;
-}
-
-.retryLink:hover {
-  color: #0056b3;
-}
-
-.headerActions {
-  display: flex;
-  gap: 1rem;
-  align-items: center;
-}
-
-.retryButton {
-  padding: 0.5rem 1rem;
-  background: #458B00;
-  color: white;
-  border: none;
-  border-radius: 0.4rem;
-  cursor: pointer;
-}
-
-.retryButton:hover {
-  background: #2e7d32;
-}
-
