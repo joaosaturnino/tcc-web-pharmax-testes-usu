@@ -58,10 +58,14 @@
 }
 
 .titulo {
-  font-size: 28px;
-  font-weight: 700;
-  margin: 0 0 8px 0;
-  color: white;
+  font-size: 2.8rem;
+  font-weight: 600;
+  color: #1e293b;
+  margin: 0;
+  background: linear-gradient(135deg, #191970 0%, #458B00 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
 }
 
 .subtitulo {

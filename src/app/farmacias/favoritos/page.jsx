@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import styles from "./favoritos.module.css";
 import AuthGuard from "../../componentes/AuthGuard";
-import medicamentosFavoritosMock from "../../componentes/mockup/medicamentos"; // Importação do mock real
+import api from "../../services/api";
 
 export default function FavoritosFarmaciaPage() {
   const [medicamentos, setMedicamentos] = useState([]);
@@ -15,24 +15,41 @@ export default function FavoritosFarmaciaPage() {
   const router = useRouter();
 
   useEffect(() => {
-    // Simula o fetch de dados e adiciona dados dinâmicos de "favoritações" e "status"
-    setTimeout(() => {
-      const processedMedicamentos = medicamentosFavoritosMock.map(med => ({
-        ...med,
-        id: med.med_id, // Garante um campo 'id' único
-        nome: med.med_nome,
-        fabricante: `Laboratório ${med.lab_id}`, // Simula um nome de fabricante
-        dosagem: med.med_dosagem,
-        // Simula um número aleatório de favoritados para ordenação
-        favoritacoes: Math.floor(Math.random() * 150) + 10,
-        // Simula o status do medicamento
-        status: med.med_id % 5 === 0 ? "indisponivel" : (med.med_id % 3 === 0 ? "pendente" : "em_estoque"),
-        ultimaAtualizacao: med.med_data_atualizacao.toISOString(),
-      }));
-      
-      setMedicamentos(processedMedicamentos);
-      setLoading(false);
-    }, 800);
+    const fetchMedicamentosFavoritos = async () => {
+      try {
+        const response = await api.get('/favoritos');
+
+        if (response.data.sucesso) {
+          const processedMedicamentos = response.data.dados.map(med => ({
+            ...med,
+            id: med.med_id,
+            nome: med.med_nome,
+            fabricante: med.fabricante_nome || `Laboratório ${med.lab_nome}`,
+            dosagem: med.med_dosagem,
+            favoritacoes: med.favoritacoes_count || 0,
+            status: med.status || "pendente",
+            ultimaAtualizacao: med.med_data_atualizacao 
+              ? new Date(med.med_data_atualizacao).toISOString() 
+              : new Date().toISOString(),
+          }));
+          
+          setMedicamentos(processedMedicamentos);
+        } else {
+          console.error("Erro ao buscar os medicamentos:", response.data.mensagem);
+        }
+      } catch (error) {
+        console.error("Falha ao conectar com a API:", error);
+        if (error.response) {
+            alert(`Erro: ${error.response.data.mensagem}`);
+        } else {
+            alert("Não foi possível conectar ao servidor. Tente novamente mais tarde.");
+        }
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchMedicamentosFavoritos();
   }, []);
 
   const handleLogout = async () => {
@@ -42,7 +59,6 @@ export default function FavoritosFarmaciaPage() {
       router.push("/login");
     } catch (error) {
       console.error("Erro ao fazer logout:", error);
-      // Fallback para a página home em caso de erro
       router.push("/home");
     }
   };
@@ -189,7 +205,6 @@ export default function FavoritosFarmaciaPage() {
                 .map((med, index) => (
                   <div className={styles.card} key={med.id}>
                     <div className={styles.cardHeader}>
-                      {/* CORRIGIDO: A classe CSS correta é cardUserInfo */}
                       <div className={styles.cardUserInfo}>
                         <div className={styles.userAvatar}>
                           <span>#{indexOfFirstItem + index + 1}</span>

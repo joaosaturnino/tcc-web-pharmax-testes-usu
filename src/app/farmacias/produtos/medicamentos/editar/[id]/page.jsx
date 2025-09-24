@@ -1,80 +1,75 @@
 "use client";
+
 import { useState, useEffect } from "react";
 import { useRouter, useParams } from "next/navigation";
+import Link from 'next/link'; // <--- CORREÇÃO: Para navegação otimizada
 import styles from "./edita.module.css";
-
-// Simulação de busca (substitua por chamada real ao backend)
-const medicamentosFake = [
-  {
-    id: 1,
-    nome: "Paracetamol",
-    dosagem: "500mg",
-    quantidade: 20,
-    preco: "12.50",
-    tipo: "Genérico",
-    forma: "Comprimido",
-    descricao: "Analgésico e antitérmico.",
-    laboratorio: "EMS",
-    imagem: "",
-  },
-  {
-    id: 2,
-    nome: "Dipirona",
-    dosagem: "1g",
-    quantidade: 10,
-    preco: "8.90",
-    tipo: "Similar",
-    forma: "Comprimido",
-    descricao: "Analgésico e antitérmico.",
-    laboratorio: "Neo Química",
-    imagem: "",
-  },
-  {
-    id: 3,
-    nome: "Omeprazol",
-    dosagem: "20mg",
-    quantidade: 5,
-    preco: "25.00",
-    tipo: "Referência",
-    forma: "Cápsula",
-    descricao: "Inibidor de bomba de prótons.",
-    laboratorio: "AstraZeneca",
-    imagem: "",
-  },
-];
+import api from "../../../../../services/api"; // <--- CORREÇÃO: Para chamadas à API
 
 export default function EditarMedicamento() {
   const router = useRouter();
   const params = useParams();
-  const id = params.id;
+  const { id } = params;
+
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [medicamento, setMedicamento] = useState(null);
   const [loading, setLoading] = useState(true);
 
+  // Estados para feedback ao usuário
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [error, setError] = useState("");
+  const [success, setSuccess] = useState("");
+
+  // <--- CORREÇÃO: Busca dados reais da API ---
   useEffect(() => {
-    setTimeout(() => {
-      // Corrige para comparar como string
-      const encontrado = medicamentosFake.find(
-        (m) => String(m.id) === String(id)
-      );
-      if (encontrado) {
-        setMedicamento(encontrado);
-      } else {
-        router.push("/farmacias/produtos/medicamentos");
-      }
-      setLoading(false);
-    }, 500);
-  }, [id, router]);
+    if (id) {
+      const fetchMedicamento = async () => {
+        try {
+          const response = await api.get(`/medicamentos/${id}`);
+          if (response.data.sucesso) {
+            setMedicamento(response.data.dados);
+          } else {
+            setError("Medicamento não encontrado.");
+          }
+        } catch (err) {
+          setError("Falha ao carregar os dados do medicamento.");
+        } finally {
+          setLoading(false);
+        }
+      };
+      fetchMedicamento();
+    }
+  }, [id]);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setMedicamento({ ...medicamento, [name]: value });
+    setMedicamento(prevState => ({ ...prevState, [name]: value }));
   };
 
-  const handleSubmit = (e) => {
+  // <--- CORREÇÃO: Envia dados atualizados para a API ---
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    alert("Medicamento atualizado com sucesso!");
-    router.push("/farmacias/produtos/medicamentos");
+    setIsSubmitting(true);
+    setError("");
+    setSuccess("");
+
+    try {
+      const response = await api.put(`/medicamentos/${id}`, medicamento);
+      if (response.data.sucesso) {
+        setSuccess("Medicamento atualizado com sucesso!");
+        setTimeout(() => router.push("/farmacias/produtos/medicamentos"), 1500);
+      }
+    } catch (err) {
+      setError(err.response?.data?.mensagem || "Erro ao conectar com o servidor.");
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
+  const handleLogout = () => {
+    localStorage.removeItem("authToken");
+    sessionStorage.removeItem("userData");
+    router.push("/login");
   };
 
   if (loading) {
@@ -89,18 +84,20 @@ export default function EditarMedicamento() {
   }
 
   if (!medicamento) {
-    return null;
+    return (
+      <div className={styles.dashboard}>
+        <div className={styles.loadingContainer}>
+          <p style={{ color: 'red' }}>{error || "Medicamento não encontrado."}</p>
+        </div>
+      </div>
+    );
   }
 
   return (
     <div className={styles.dashboard}>
-      {/* Header */}
       <header className={styles.header}>
         <div className={styles.headerLeft}>
-          <button
-            className={styles.menuToggle}
-            onClick={() => setSidebarOpen(!sidebarOpen)}
-          >
+          <button className={styles.menuToggle} onClick={() => setSidebarOpen(!sidebarOpen)}>
             ☰
           </button>
           <h1 className={styles.title}>Editar Medicamento</h1>
@@ -108,53 +105,22 @@ export default function EditarMedicamento() {
       </header>
 
       <div className={styles.contentWrapper}>
-        {/* Sidebar Padronizada */}
+        {/* <--- CORREÇÃO: Sidebar com Componente <Link> --- */}
         <aside className={`${styles.sidebar} ${sidebarOpen ? styles.sidebarOpen : ""}`}>
           <div className={styles.sidebarHeader}>
-            <div className={styles.logo}>
-              <span className={styles.logoText}>PharmaX</span>
-            </div>
-            <button
-              className={styles.sidebarClose}
-              onClick={() => setSidebarOpen(false)}
-            >
-              ×
-            </button>
+            <div className={styles.logo}><span className={styles.logoText}>PharmaX</span></div>
+            <button className={styles.sidebarClose} onClick={() => setSidebarOpen(false)}>×</button>
           </div>
           <nav className={styles.nav}>
-            <div className={styles.navSection}>
-              <p className={styles.navLabel}>Principal</p>
-              <a href="/farmacias/favoritos" className={styles.navLink}>
-                <span className={styles.navText}>Favoritos</span>
-              </a>
-              <a
-                href="/farmacias/produtos/medicamentos"
-                className={`${styles.navLink} ${styles.active}`}
-              >
-                <span className={styles.navText}>Medicamentos</span>
-              </a>
-            </div>
-            <div className={styles.navSection}>
-              <p className={styles.navLabel}>Gestão</p>
-              <a
-                href="/farmacias/cadastro/funcionario/lista"
-                className={styles.navLink}
-              >
-                <span className={styles.navText}>Funcionários</span>
-              </a>
-              <a href="/farmacias/laboratorio/lista" className={styles.navLink}>
-                <span className={styles.navText}>Laboratórios</span>
-              </a>
-            </div>
+            <div className={styles.navSection}><p className={styles.navLabel}>Principal</p><Link href="/farmacias/favoritos" className={styles.navLink}><span className={styles.navText}>Favoritos</span></Link><Link href="/farmacias/produtos/medicamentos" className={`${styles.navLink} ${styles.active}`}><span className={styles.navText}>Medicamentos</span></Link></div>
+            <div className={styles.navSection}><p className={styles.navLabel}>Gestão</p><Link href="/farmacias/cadastro/funcionario/lista" className={styles.navLink}><span className={styles.navText}>Funcionários</span></Link><Link href="/farmacias/laboratorio/lista" className={styles.navLink}><span className={styles.navText}>Laboratórios</span></Link></div>
+            <div className={styles.navSection}><p className={styles.navLabel}>Relatórios</p><Link href="/farmacias/relatorios/favoritos" className={styles.navLink}><span className={styles.navText}>Medicamentos Favoritos</span></Link><Link href="/farmacias/relatorios/funcionarios" className={styles.navLink}><span className={styles.navText}>Relatório de Funcionarios</span></Link><Link href="/farmacias/relatorios/laboratorios" className={styles.navLink}><span className={styles.navText}>Relatório de Laboratorios</span></Link></div>
+            <div className={styles.navSection}><p className={styles.navLabel}>Conta</p><Link href="/farmacias/perfil" className={styles.navLink}><span className={styles.navText}>Meu Perfil</span></Link><button onClick={handleLogout} className={styles.navLink} style={{ background: 'none', border: 'none', width: '100%', textAlign: 'left', cursor: 'pointer' }}><span className={styles.navText}>Sair</span></button></div>
           </nav>
         </aside>
 
-        {/* Overlay para mobile */}
-        {sidebarOpen && (
-          <div className={styles.overlay} onClick={() => setSidebarOpen(false)} />
-        )}
+        {sidebarOpen && <div className={styles.overlay} onClick={() => setSidebarOpen(false)} />}
 
-        {/* Conteúdo Principal */}
         <main className={styles.mainContent}>
           <div className={styles.formContainer}>
             <div className={styles.formHeader}>
@@ -166,200 +132,122 @@ export default function EditarMedicamento() {
               <div className={styles.formGrid}>
                 {/* Informações Básicas */}
                 <div className={styles.formSection}>
-                  <h3 className={styles.sectionTitle}>
-                    Informações Básicas
-                  </h3>
+                  <h3 className={styles.sectionTitle}>Informações Básicas</h3>
                   <div className={styles.formGroup}>
                     <label className={styles.inputLabel}>Nome do Medicamento</label>
+                    {/* <--- CORREÇÃO: name e value ajustados para o padrão da API --- */}
                     <input
-                      className={styles.modernInput}
-                      type="text"
-                      name="nome"
-                      value={medicamento.nome}
-                      onChange={handleChange}
-                      placeholder="Digite o nome do medicamento"
-                      required
+                      className={styles.modernInput} type="text"
+                      name="med_nome" value={medicamento.med_nome || ''}
+                      onChange={handleChange} placeholder="Digite o nome do medicamento" required
                     />
                   </div>
                   <div className={styles.formRow}>
                     <div className={styles.formGroup}>
                       <label className={styles.inputLabel}>Dosagem</label>
                       <input
-                        className={styles.modernInput}
-                        type="text"
-                        name="dosagem"
-                        value={medicamento.dosagem}
-                        onChange={handleChange}
-                        placeholder="Ex: 500mg"
-                        required
+                        className={styles.modernInput} type="text"
+                        name="med_dosagem" value={medicamento.med_dosagem || ''}
+                        onChange={handleChange} placeholder="Ex: 500mg" required
                       />
                     </div>
                     <div className={styles.formGroup}>
                       <label className={styles.inputLabel}>Quantidade</label>
                       <input
-                        className={styles.modernInput}
-                        type="number"
-                        name="quantidade"
-                        value={medicamento.quantidade}
-                        onChange={handleChange}
-                        min="0"
-                        placeholder="Quantidade em estoque"
-                        required
+                        className={styles.modernInput} type="number"
+                        name="med_quantidade" value={medicamento.med_quantidade || 0}
+                        onChange={handleChange} min="0" placeholder="Quantidade em estoque" required
                       />
                     </div>
                   </div>
                   <div className={styles.formGroup}>
                     <label className={styles.inputLabel}>Preço (R$)</label>
                     <input
-                      className={styles.modernInput}
-                      type="number"
-                      name="preco"
-                      value={medicamento.preco}
-                      onChange={handleChange}
-                      min="0"
-                      step="0.01"
-                      placeholder="0,00"
-                      required
+                      className={styles.modernInput} type="number"
+                      name="med_preco" value={medicamento.med_preco || 0.00} // Assumindo que o campo é med_preco
+                      onChange={handleChange} min="0" step="0.01" placeholder="0,00" required
                     />
                   </div>
                 </div>
                 {/* Informações Técnicas */}
                 <div className={styles.formSection}>
-                  <h3 className={styles.sectionTitle}>
-                    Informações Técnicas
-                  </h3>
+                  <h3 className={styles.sectionTitle}>Informações Técnicas</h3>
                   <div className={styles.formGroup}>
                     <label className={styles.inputLabel}>Tipo de Produto</label>
                     <select
                       className={styles.modernInput}
-                      name="tipo"
-                      value={medicamento.tipo}
-                      onChange={handleChange}
-                      required
+                      name="tipo_id" value={medicamento.tipo_id || ''} // Assumindo que você salva o ID
+                      onChange={handleChange} required
                     >
+                      {/* Os IDs (1, 2, 3...) devem corresponder à sua tabela `tipo` no banco de dados */}
                       <option value="">Selecione o tipo</option>
-                      <option value="Alopático">Alopático</option>
-                      <option value="Fitoterápico">Fitoterápico</option>
-                      <option value="Genérico">Genérico</option>
-                      <option value="Homeopático">Homeopático</option>
-                      <option value="Manipulado">Manipulado</option>
-                      <option value="Referência">Referência</option>
-                      <option value="Similar">Similar</option>
+                      <option value="1">Referência</option>
+                      <option value="2">Genérico</option>
+                      <option value="3">Similar</option>
+                      {/* Adicione outros tipos conforme sua base de dados */}
                     </select>
                   </div>
                   <div className={styles.formGroup}>
                     <label className={styles.inputLabel}>Forma Farmacêutica</label>
                     <select
                       className={styles.modernInput}
-                      name="forma"
-                      value={medicamento.forma}
-                      onChange={handleChange}
-                      required
+                      name="forma_id" value={medicamento.forma_id || ''} // Assumindo que você salva o ID
+                      onChange={handleChange} required
                     >
+                      {/* Os IDs (1, 2, 3...) devem corresponder à sua tabela `forma` no banco de dados */}
                       <option value="">Selecione a forma</option>
-                      <option value="Comprimido">Comprimido</option>
-                      <option value="Cápsula">Cápsula</option>
-                      <option value="Pastilhas">Pastilhas</option>
-                      <option value="Drágeas">Drágeas</option>
-                      <option value="Pós para Reconstituição">Pós para Reconstituição</option>
-                      <option value="Gotas">Gotas</option>
-                      <option value="Xarope">Xarope</option>
-                      <option value="Solução Oral">Solução Oral</option>
-                      <option value="Suspensão">Suspensão</option>
-                      <option value="Comprimidos Sublinguais">Comprimidos Sublinguais</option>
-                      <option value="Soluções">Soluções</option>
-                      <option value="Suspensões Injetáveis">Suspensões Injetáveis</option>
-                      <option value="Soluções Tópicas">Soluções Tópicas</option>
-                      <option value="Pomadas">Pomadas</option>
-                      <option value="Cremes">Cremes</option>
-                      <option value="Loção">Loção</option>
-                      <option value="Gel">Gel</option>
-                      <option value="Adesivos">Adesivos</option>
-                      <option value="Spray">Spray</option>
-                      <option value="Gotas Nasais">Gotas Nasais</option>
-                      <option value="Colírios">Colírios</option>
-                      <option value="Pomadas Oftálmicas">Pomadas Oftálmicas</option>
-                      <option value="Gotas Auriculares ou Otológicas">Gotas Auriculares ou Otológicas</option>
-                      <option value="Pomadas Auriculares">Pomadas Auriculares</option>
-                      <option value="Aerosol">Aerosol</option>
-                      <option value="Comprimidos Vaginais">Comprimidos Vaginais</option>
-                      <option value="Óvulos">Óvulos</option>
-                      <option value="Supositórios">Supositórios</option>
-                      <option value="Enemas">Enemas</option>
+                      <option value="1">Comprimidos</option>
+                      <option value="2">Cápsulas</option>
+                      <option value="3">Líquido</option>
+                      <option value="4">Pó para Suspensão</option>
+                      <option value="5">Pomada</option>
+                      <option value="6">Injetável</option>
                     </select>
                   </div>
                   <div className={styles.formGroup}>
                     <label className={styles.inputLabel}>Laboratório</label>
                     <select
                       className={styles.modernInput}
-                      name="laboratorio"
-                      value={medicamento.laboratorio}
-                      onChange={handleChange}
-                      required
+                      name="lab_id" value={medicamento.lab_id || ''} // Assumindo que você salva o ID
+                      onChange={handleChange} required
                     >
+                       {/* Os IDs (1, 2, 3...) devem corresponder à sua tabela `laboratorio` */}
                       <option value="">Selecione o laboratório</option>
-                      <option value="Neo Química">Neo Química</option>
-                      <option value="EMS">EMS</option>
-                      <option value="Eurofarma">Eurofarma</option>
-                      <option value="Aché">Aché</option>
-                      <option value="União Química">União Química</option>
-                      <option value="Medley">Medley</option>
-                      <option value="Sanofi">Sanofi</option>
-                      <option value="Geolab">Geolab</option>
-                      <option value="Merck">Merck</option>
-                      <option value="Legrand">Legrand</option>
-                      <option value="Natulab">Natulab</option>
-                      <option value="Germed">Germed</option>
-                      <option value="Prati Donaduzzi">Prati Donaduzzi</option>
-                      <option value="Biolab">Biolab</option>
-                      <option value="Hipera CH">Hipera CH</option>
-                      <option value="Sandoz">Sandoz</option>
-                      <option value="Med Química">Med Química</option>
-                      <option value="Mantecorp Farmasa">Mantecorp Farmasa</option>
-                      <option value="AstraZeneca">AstraZeneca</option>
+                      <option value="1">Neo Química</option>
+                      <option value="2">EMS</option>
                     </select>
                   </div>
                   <div className={styles.formGroup}>
                     <label className={styles.inputLabel}>Imagem (URL)</label>
                     <input
-                      className={styles.modernInput}
-                      type="text"
-                      name="imagem"
-                      value={medicamento.imagem}
-                      onChange={handleChange}
-                      placeholder="Cole a URL da imagem"
+                      className={styles.modernInput} type="text"
+                      name="med_imagem" value={medicamento.med_imagem || ''}
+                      onChange={handleChange} placeholder="Cole a URL da imagem"
                     />
                   </div>
                 </div>
               </div>
               {/* Descrição */}
               <div className={styles.formSection}>
-                <h3 className={styles.sectionTitle}>
-                  Descrição
-                </h3>
+                <h3 className={styles.sectionTitle}>Descrição</h3>
                 <div className={styles.formGroup}>
                   <label className={styles.inputLabel}>Descrição</label>
                   <textarea
                     className={styles.modernTextarea}
-                    name="descricao"
-                    value={medicamento.descricao}
-                    onChange={handleChange}
-                    rows="4"
-                    placeholder="Digite uma descrição para o medicamento"
-                    required
+                    name="med_descricao" value={medicamento.med_descricao || ''}
+                    onChange={handleChange} rows="4" placeholder="Digite uma descrição para o medicamento" required
                   ></textarea>
                 </div>
               </div>
               <div className={styles.formActions}>
-                <button
-                  type="button"
-                  className={styles.cancelButton}
-                  onClick={() => router.push("/farmacias/produtos/medicamentos")}
-                >
+                 {/* <--- CORREÇÃO: Mensagens de feedback --- */}
+                {error && <p style={{ color: 'red', marginRight: 'auto', fontWeight: 600 }}>{error}</p>}
+                {success && <p style={{ color: 'green', marginRight: 'auto', fontWeight: 600 }}>{success}</p>}
+                <button type="button" className={styles.cancelButton} onClick={() => router.push("/farmacias/produtos/medicamentos")}>
                   Cancelar
                 </button>
-                <button type="submit" className={styles.submitButton}>
-                  Atualizar Medicamento
+                <button type="submit" className={styles.submitButton} disabled={isSubmitting}>
+                  {isSubmitting ? 'Aguarde...' : 'Atualizar Medicamento'}
                 </button>
               </div>
             </form>

@@ -41,10 +41,14 @@
 }
 
 .title {
-  font-size: 24px;
+  font-size: 2.8rem;
   font-weight: 600;
   color: #1e293b;
   margin: 0;
+  background: linear-gradient(135deg, #191970 0%, #458B00 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
 }
 
 /* Wrapper de Conteúdo */
@@ -56,32 +60,40 @@
 
 /* Sidebar - Estilo igual ao da tela de relatórios */
 .sidebar {
-  width: 280px;
-  background: #191970;
+  width: 30rem;
+  background: linear-gradient(180deg, #191970 0%, #0f1440 100%);
   color: #CDC1C5;
   display: flex;
   flex-direction: column;
   transition: transform 0.3s ease;
-  box-shadow: 2px 0 10px rgba(0, 0, 0, 0.1);
+  box-shadow: 0.2rem 0 1rem rgba(0, 0, 0, 0.1);
   z-index: 90;
   flex-shrink: 0;
+  height: calc(100vh - 80px);
+  position: sticky;
+  top: 80px;
+  overflow-y: auto;
 }
 
 .sidebarHeader {
-  padding: 20px;
+  padding: 2rem;
   display: flex;
   justify-content: space-between;
   align-items: center;
+  background: rgba(25, 25, 112, 0.95);
+  position: sticky;
+  top: 0;
+  z-index: 10;
 }
 
 .logo {
-  font-size: 22px;
+  font-size: 2.2rem;
   font-weight: bold;
   color: #fff;
 }
 
 .logoText {
-  font-size: 18px;
+  font-size: 1.8rem;
   font-weight: 600;
   color: #fff;
 }
@@ -89,11 +101,11 @@
 .sidebarClose {
   background: none;
   border: none;
-  font-size: 22px;
+  font-size: 2.2rem;
   color: #fff;
   cursor: pointer;
-  border-radius: 6px;
-  padding: 4px 8px;
+  border-radius: 0.6rem;
+  padding: 0.4rem 0.8rem;
   transition: background 0.2s;
   display: none;
 }
@@ -104,45 +116,63 @@
 
 .nav {
   flex: 1;
-  padding: 0 10px 20px 10px;
+  padding: 0 1.0rem 2.0rem 1.0rem;
+  overflow-y: auto;
+  overflow: hidden;
 }
 
 .navSection {
-  margin-bottom: 18px;
+  margin-bottom: 1.8rem;
 }
 
 .navLabel {
-  font-size: 13px;
+  font-size: 1.3rem;
   color: #b0b0b0;
-  margin-bottom: 6px;
-  margin-top: 10px;
+  margin-bottom: 0.6rem;
+  margin-top: 1rem;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
 }
 
 .navLink {
   display: flex;
   align-items: center;
-  padding: 8px 12px;
+  padding: 1rem 1.2rem;
   color: #CDC1C5;
   text-decoration: none;
-  border-radius: 6px;
-  margin-bottom: 4px;
-  transition: background 0.2s;
-  font-size: 15px;
+  border-radius: 0.6rem;
+  margin-bottom: 0.4rem;
+  transition: all 0.3s ease;
+  font-size: 1.5rem;
+  border-left: 4px solid transparent;
+  gap: 1rem;
 }
 
 .navLink:hover {
-  background: #222266;
+  background: rgba(69, 139, 0, 0.15);
   color: #fff;
+  border-left-color: #458B00;
+  transform: translateX(5px);
 }
 
 .navLink.active {
-  background: #458B00;
+  background: linear-gradient(135deg, #458B00 0%, #2e7d32 100%);
   color: #fff;
+  border-left-color: #fff;
+  box-shadow: 0 4px 12px rgba(69, 139, 0, 0.3);
 }
 
 .navText {
-  margin-left: 6px;
+  margin-left: 0.6rem;
+  font-family: "Montserrat";
 }
+
+.navIcon {
+  font-size: 1.6rem;
+  width: 20px;
+  text-align: center;
+}
+
 
 /* Conteúdo Principal */
 .mainContent {

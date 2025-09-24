@@ -206,6 +206,8 @@ export default function PerfilUsuarioPage() {
     );
   }
 
+  
+
   return (
     <div className={styles.dashboard}>
       <header className={styles.header}>
@@ -221,67 +223,96 @@ export default function PerfilUsuarioPage() {
       </header>
 
       <div className={styles.contentWrapper}>
-        <aside
-          className={`${styles.sidebar} ${
-            sidebarOpen ? styles.sidebarOpen : ""
-          }`}
-        >
-          <div className={styles.sidebarHeader}>
-            <div className={styles.logo}>
-              <span className={styles.logoText}>PharmaX</span>
-            </div>
-            <button
-              className={styles.sidebarClose}
-              onClick={() => setSidebarOpen(false)}
-            >
-              ✕ {/* Ícone adicionado */}
-            </button>
-          </div>
-
-          <nav className={styles.nav}>
-            <div className={styles.navSection}>
-              <p className={styles.navLabel}>Principal</p>
-              <a href="/farmacias/favoritos" className={styles.navLink}>
-                <span className={styles.navText}>Favoritos</span>
-              </a>
-              <a
-                href="/farmacias/produtos/medicamentos"
-                className={styles.navLink}
+        <aside className={`${styles.sidebar} ${sidebarOpen ? styles.sidebarOpen : ""}`}>
+            <div className={styles.sidebarHeader}>
+              <div className={styles.logo}>
+                <span className={styles.logoText}>PharmaX</span>
+              </div>
+              <button
+                className={styles.sidebarClose}
+                onClick={() => setSidebarOpen(false)}
               >
-                <span className={styles.navText}>Medicamentos</span>
-              </a>
-            </div>
-
-            <div className={styles.navSection}>
-              <p className={styles.navLabel}>Gestão</p>
-              <a
-                href="/farmacias/cadastro/funcionario/lista"
-                className={styles.navLink}
-              >
-                <span className={styles.navText}>Funcionários</span>
-              </a>
-              <a href="/farmacias/laboratorio/lista" className={styles.navLink}>
-                <span className={styles.navText}>Laboratórios</span>
-              </a>
-            </div>
-
-            <div className={styles.navSection}>
-            </div>
-          </nav>
-
-          <div className={styles.userPanel}>
-            <button className={styles.navLink} onClick={handleLogout}>
-                <span className={styles.navText}>Sair</span>
+                ×
               </button>
-          </div>
-        </aside>
+            </div>
 
-        {sidebarOpen && (
-          <div
-            className={styles.overlay}
-            onClick={() => setSidebarOpen(false)}
-          />
-        )}
+            <nav className={styles.nav}>
+              <div className={styles.navSection}>
+                <p className={styles.navLabel}>Principal</p>
+                <a
+                  href="/farmacias/favoritos"
+                  className={styles.navLink}
+                  
+                >
+                  <span className={styles.navText}>Favoritos</span>
+                </a>
+                <a
+                  href="/farmacias/produtos/medicamentos"
+                  className={styles.navLink}
+                >
+                  <span className={styles.navText}>Medicamentos</span>
+                </a>
+              </div>
+
+              <div className={styles.navSection}>
+                <p className={styles.navLabel}>Gestão</p>
+                <a
+                  href="/farmacias/cadastro/funcionario/lista"
+                  className={styles.navLink}
+                >
+                  <span className={styles.navText}>Funcionários</span>
+                </a>
+                <a href="/farmacias/laboratorio/lista" className={styles.navLink}>
+                  <span className={styles.navText}>Laboratórios</span>
+                </a>
+              </div>
+
+              <div className={styles.navSection}>
+                <p className={styles.navLabel}>Relatórios</p>
+                <a
+                  href="/farmacias/relatorios/favoritos"
+                  className={styles.navLink}
+                >
+                  <span className={styles.navText}>Medicamentos Favoritos</span>
+                </a>
+                <a
+                  href="/farmacias/relatorios/funcionarios"
+                  className={styles.navLink}
+                >
+                  <span className={styles.navText}>Relatório de Funcionarios</span>
+                </a>
+                <a
+                  href="/farmacias/relatorios/laboratorios"
+                  className={styles.navLink}
+                >
+                  <span className={styles.navText}>Relatório de Laboratorios</span>
+                </a>
+              </div>
+
+              <div className={styles.navSection}>
+                <p className={styles.navLabel}>Conta</p>
+                <a
+                  href="/farmacias/perfil"
+                  className={`${styles.navLink} ${styles.active}`}
+                >
+                  <span className={styles.navText}>Meu Perfil</span>
+                </a>
+                <button
+                  onClick={handleLogout}
+                  className={styles.navLink}
+                  style={{ background: 'none', border: 'none', width: '100%', textAlign: 'left', cursor: 'pointer' }}
+                >
+                  <span className={styles.navText}>Sair</span>
+                </button>
+              </div>
+            </nav>
+          </aside>
+
+          {/* Overlay para mobile */}
+          {sidebarOpen && (
+            <div className={styles.overlay} onClick={() => setSidebarOpen(false)} />
+          )}
+
 
         <main className={styles.mainContent}>
           <div className={styles.profileHeader}>
