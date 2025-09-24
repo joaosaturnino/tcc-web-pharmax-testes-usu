@@ -4,7 +4,6 @@
   background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
   display: flex;
   flex-direction: column;
-  font-family: 'Segoe UI', system-ui, sans-serif;
 }
 
 /* Header */
@@ -89,7 +88,7 @@
   height: calc(100vh - 80px);
   position: sticky;
   top: 80px;
-  overflow-y: auto;
+  overflow: hidden;
 }
 
 .sidebarHeader {
@@ -110,7 +109,7 @@
 }
 
 .logoText {
-  font-size: 1.8rem;
+  font-size: 2.5rem;
   font-weight: 600;
   color: #fff;
 }
@@ -134,7 +133,7 @@
 .nav {
   flex: 1;
   padding: 0 1.0rem 2.0rem 1.0rem;
-  overflow-y: auto;
+  /* overflow-y: auto; */
 }
 
 .navSection {
@@ -162,6 +161,7 @@
   font-size: 1.5rem;
   border-left: 4px solid transparent;
   gap: 1rem;
+  font-family: "Montserrat";
 }
 
 .navLink:hover {
@@ -203,7 +203,7 @@
   padding: 2rem;
   border-radius: 16px;
   margin-bottom: 2.5rem;
-  box-shadow: 0 0.2rem 0.8px rgba(0,0,0,0.04);
+  box-shadow: 0 0.2rem 0.8px rgba(0, 0, 0, 0.04);
   border: 1px solid #e5e7eb;
 }
 
@@ -279,7 +279,7 @@
   background: linear-gradient(135deg, #ffffff 0%, #fafbfc 100%);
   padding: 1.5rem;
   border-radius: 12px;
-  box-shadow: 0 0.2rem 0.8px rgba(0,0,0,0.04);
+  box-shadow: 0 0.2rem 0.8px rgba(0, 0, 0, 0.04);
   border: 1px solid #e5e7eb;
   text-align: center;
   transition: transform 0.3s ease;
@@ -313,7 +313,7 @@
 .card {
   background: linear-gradient(135deg, #ffffff 0%, #fafbfc 100%);
   border-radius: 12px;
-  box-shadow: 0 0.2rem 0.8px rgba(0,0,0,0.04);
+  box-shadow: 0 0.2rem 0.8px rgba(0, 0, 0, 0.04);
   padding: 2.4rem;
   transition: all 0.3s ease;
   border: 1px solid #e5e7eb;
@@ -417,9 +417,17 @@
   font-weight: 600;
 }
 
-.trendUp { color: #10b981; }
-.trendDown { color: #ef4444; }
-.trendStable { color: #6b7280; }
+.trendUp {
+  color: #10b981;
+}
+
+.trendDown {
+  color: #ef4444;
+}
+
+.trendStable {
+  color: #6b7280;
+}
 
 /* Lista de Medicamentos */
 .medList {
@@ -490,7 +498,7 @@
   background: white;
   border-radius: 1.6rem;
   margin: 3rem;
-  box-shadow: 0 0.2rem 0.8rem rgba(0,0,0,0.04);
+  box-shadow: 0 0.2rem 0.8rem rgba(0, 0, 0, 0.04);
 }
 
 .emptyIcon {
@@ -534,14 +542,16 @@
 }
 
 @keyframes spin {
-  to { transform: rotate(360deg); }
+  to {
+    transform: rotate(360deg);
+  }
 }
 
 /* Overlay para mobile */
 .overlay {
   position: fixed;
   inset: 0;
-  background: rgba(0,0,0,0.15);
+  background: rgba(0, 0, 0, 0.15);
   z-index: 80;
   display: none;
 }
@@ -613,12 +623,15 @@
   .mainContent {
     padding: 2.4rem 0.8rem;
   }
+
   .sidebar {
     width: 25rem;
   }
+
   .grid {
     grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
   }
+
   .statsContainer {
     grid-template-columns: repeat(2, 1fr);
   }
@@ -634,35 +647,45 @@
     transition: transform 0.3s;
     z-index: 100;
   }
+
   .sidebar.sidebarOpen {
     transform: translateX(0);
   }
+
   .menuToggle {
     display: block;
   }
+
   .sidebarClose {
     display: block;
   }
+
   .overlay {
     display: block;
   }
+
   .mainContent {
     padding: 1.6rem 2rem;
   }
+
   .grid {
     grid-template-columns: 1fr;
     padding: 1rem;
   }
+
   .card {
     padding: 1.6rem;
   }
+
   .controlsRow {
     flex-direction: column;
     gap: 1rem;
   }
+
   .searchBox {
     min-width: 100%;
   }
+
   .statsContainer {
     grid-template-columns: 1fr;
   }
@@ -675,24 +698,30 @@
     align-items: flex-start;
     padding: 1.6rem 2rem;
   }
+
   .grid {
     padding: 0.8rem;
   }
+
   .card {
     padding: 1.2rem;
   }
+
   .cardHeader {
     flex-direction: column;
     gap: 1.2rem;
     align-items: flex-start;
   }
+
   .paginationNumbers {
     flex-wrap: wrap;
     justify-content: center;
   }
+
   .paginationNumber {
     padding: 0.4rem 0.8rem;
   }
+
   .medItem {
     flex-direction: column;
     align-items: flex-start;

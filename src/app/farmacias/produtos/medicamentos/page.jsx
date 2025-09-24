@@ -264,6 +264,18 @@ function ListagemMedicamentos() {
     setPaginaAtual(1);
   };
 
+  const handleLogout = async () => {
+    try {
+      localStorage.removeItem("authToken");
+      sessionStorage.removeItem("userData");
+      router.push("/login");
+    } catch (error) {
+      console.error("Erro ao fazer logout:", error);
+      // Fallback para a página home em caso de erro
+      router.push("/home");
+    }
+  };
+
   return (
     <div className={styles.dashboard}>
       {/* Header */}
@@ -305,61 +317,95 @@ function ListagemMedicamentos() {
 
       <div className={styles.contentWrapper}>
         {/* Sidebar */}
-        <aside
-          className={`${styles.sidebar} ${
-            sidebarOpen ? styles.sidebarOpen : ""
-          }`}
-        >
-          <div className={styles.sidebarHeader}>
-            <div className={styles.logo}>
-              <span className={styles.logoText}>PharmaX</span>
-            </div>
-            <button
-              className={styles.sidebarClose}
-              onClick={() => setSidebarOpen(false)}
-              aria-label="Fechar menu"
-            >
-              ✕
-            </button>
-          </div>
-          <nav className={styles.nav}>
-            <div className={styles.navSection}>
-              <p className={styles.navLabel}>Principal</p>
-              <Link href="/farmacias/favoritos" className={styles.navLink}>
-                <span className={styles.navText}>Favoritos</span>
-              </Link>
-              <Link
-                href="/farmacias/produtos/medicamentos"
-                className={`${styles.navLink} ${styles.active}`}
+        <aside className={`${styles.sidebar} ${sidebarOpen ? styles.sidebarOpen : ""}`}>
+            <div className={styles.sidebarHeader}>
+              <div className={styles.logo}>
+                <span className={styles.logoText}>PharmaX</span>
+              </div>
+              <button
+                className={styles.sidebarClose}
+                onClick={() => setSidebarOpen(false)}
               >
-                <span className={styles.navText}>Medicamentos</span>
-              </Link>
+                ×
+              </button>
             </div>
-            <div className={styles.navSection}>
-              <p className={styles.navLabel}>Gestão</p>
-              <Link
-                href="/farmacias/cadastro/funcionario/lista"
-                className={styles.navLink}
-              >
-                <span className={styles.navText}>Funcionários</span>
-              </Link>
-              <Link
-                href="/farmacias/laboratorio/lista"
-                className={styles.navLink}
-              >
-                <span className={styles.navText}>Laboratórios</span>
-              </Link>
-            </div>
-          </nav>
-        </aside>
 
-        {/* Overlay para mobile */}
-        {sidebarOpen && (
-          <div
-            className={styles.overlay}
-            onClick={() => setSidebarOpen(false)}
-          />
-        )}
+            <nav className={styles.nav}>
+              <div className={styles.navSection}>
+                <p className={styles.navLabel}>Principal</p>
+                <a
+                  href="/farmacias/favoritos"
+                  className={styles.navLink}
+                  
+                >
+                  <span className={styles.navText}>Favoritos</span>
+                </a>
+                <a
+                  href="/farmacias/produtos/medicamentos"
+                  className={`${styles.navLink} ${styles.active}`}
+                >
+                  <span className={styles.navText}>Medicamentos</span>
+                </a>
+              </div>
+
+              <div className={styles.navSection}>
+                <p className={styles.navLabel}>Gestão</p>
+                <a
+                  href="/farmacias/cadastro/funcionario/lista"
+                  className={styles.navLink}
+                >
+                  <span className={styles.navText}>Funcionários</span>
+                </a>
+                <a href="/farmacias/laboratorio/lista" className={styles.navLink}>
+                  <span className={styles.navText}>Laboratórios</span>
+                </a>
+              </div>
+
+              <div className={styles.navSection}>
+                <p className={styles.navLabel}>Relatórios</p>
+                <a
+                  href="/farmacias/relatorios/favoritos"
+                  className={styles.navLink}
+                >
+                  <span className={styles.navText}>Medicamentos Favoritos</span>
+                </a>
+                <a
+                  href="/farmacias/relatorios/funcionarios"
+                  className={styles.navLink}
+                >
+                  <span className={styles.navText}>Relatório de Funcionarios</span>
+                </a>
+                <a
+                  href="/farmacias/relatorios/laboratorios"
+                  className={styles.navLink}
+                >
+                  <span className={styles.navText}>Relatório de Laboratorios</span>
+                </a>
+              </div>
+
+              <div className={styles.navSection}>
+                <p className={styles.navLabel}>Conta</p>
+                <a
+                  href="/farmacias/perfil"
+                  className={styles.navLink}
+                >
+                  <span className={styles.navText}>Meu Perfil</span>
+                </a>
+                <button
+                  onClick={handleLogout}
+                  className={styles.navLink}
+                  style={{ background: 'none', border: 'none', width: '100%', textAlign: 'left', cursor: 'pointer' }}
+                >
+                  <span className={styles.navText}>Sair</span>
+                </button>
+              </div>
+            </nav>
+          </aside>
+
+          {/* Overlay para mobile */}
+          {sidebarOpen && (
+            <div className={styles.overlay} onClick={() => setSidebarOpen(false)} />
+          )}
 
         {/* Conteúdo Principal */}
         <main className={styles.mainContent}>
