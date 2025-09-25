@@ -3,6 +3,7 @@
 import { useState, useEffect, useRef } from "react";
 import { useRouter } from "next/navigation";
 import styles from "./page.module.css";
+import api from "../../../services/api"; // Ajuste o caminho conforme sua estrutura
 
 export default function RelatorioFuncionariosPage() {
   const [funcionarios, setFuncionarios] = useState([]);
@@ -21,11 +22,59 @@ export default function RelatorioFuncionariosPage() {
   const [statusFilter, setStatusFilter] = useState("todos");
   const [sortBy, setSortBy] = useState("dataCadastro");
   const [sortOrder, setSortOrder] = useState("desc");
+  const [error, setError] = useState("");
   const reportRef = useRef(null);
   const router = useRouter();
 
-  // Função para gerar dados fictícios de funcionários
-  const gerarFuncionariosFicticios = (quantidade = 50) => {
+  // Buscar funcionários da API
+  useEffect(() => {
+    listarFuncionarios();
+  }, []);
+
+  const listarFuncionarios = async () => {
+    setLoading(true);
+    setError("");
+    try {
+      const response = await api.get("/funcionario");
+      
+      if (response.data.sucesso) {
+        // Mapear os dados da API para o formato usado no frontend
+        const funcionariosFormatados = response.data.dados.map(func => ({
+          id: func.func_id,
+          nome: func.func_nome,
+          email: func.func_email,
+          telefone: func.func_telefone,
+          cpf: func.func_cpf,
+          dataNascimento: func.func_dtnasc,
+          endereco: func.func_endereco,
+          usuario: func.func_usuario,
+          nivelAcesso: func.func_nivel,
+          status: "ativo", // A API atual não tem status, considerar todos como ativos
+          dataCadastro: new Date().toISOString().split('T')[0] // Fallback - ajuste conforme sua necessidade
+        }));
+        
+        setFuncionarios(funcionariosFormatados);
+      } else {
+        setError("Erro ao carregar funcionários: " + response.data.mensagem);
+        // Fallback para dados fictícios em caso de erro
+        setFuncionarios(gerarFuncionariosFicticios(20));
+      }
+    } catch (error) {
+      console.error("Erro na requisição:", error);
+      setError("Erro ao conectar com o servidor. Usando dados de exemplo.");
+      
+      // Fallback para dados fictícios em desenvolvimento
+      if (process.env.NODE_ENV === 'development') {
+        console.warn("Usando dados fictícios devido ao erro na API");
+        setFuncionarios(gerarFuncionariosFicticios(20));
+      }
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // Função de fallback para dados fictícios (mantida para compatibilidade)
+  const gerarFuncionariosFicticios = (quantidade = 20) => {
     const niveis = [
       "Administrador",
       "Gerente",
@@ -55,26 +104,14 @@ export default function RelatorioFuncionariosPage() {
     return funcionarios;
   };
 
-  useEffect(() => {
-    setLoading(true);
-    setTimeout(() => {
-      setFuncionarios(gerarFuncionariosFicticios(50));
-      setLoading(false);
-    }, 800);
-  }, []);
-
   // Filtrar e ordenar funcionários
   const filteredFuncionarios = funcionarios.filter((func) => {
     const dataCadastro = new Date(func.dataCadastro);
     const startDate = new Date(dateRange.start);
     const endDate = new Date(dateRange.end);
-    const matchDate =
-      dataCadastro >= startDate && dataCadastro <= endDate;
-    const matchNivel =
-      nivelAcessoFilter === "todos" ||
-      func.nivelAcesso === nivelAcessoFilter;
-    const matchStatus =
-      statusFilter === "todos" || func.status === statusFilter;
+    const matchDate = dataCadastro >= startDate && dataCadastro <= endDate;
+    const matchNivel = nivelAcessoFilter === "todos" || func.nivelAcesso === nivelAcessoFilter;
+    const matchStatus = statusFilter === "todos" || func.status === statusFilter;
     return matchDate && matchNivel && matchStatus;
   });
 
@@ -93,10 +130,7 @@ export default function RelatorioFuncionariosPage() {
   // Cálculos de paginação
   const indexOfLastItem = currentPage * itemsPerPage;
   const indexOfFirstItem = indexOfLastItem - itemsPerPage;
-  const currentItems = sortedFuncionarios.slice(
-    indexOfFirstItem,
-    indexOfLastItem
-  );
+  const currentItems = sortedFuncionarios.slice(indexOfFirstItem, indexOfLastItem);
   const totalPages = Math.ceil(sortedFuncionarios.length / itemsPerPage);
 
   const paginate = (pageNumber) => setCurrentPage(pageNumber);
@@ -123,15 +157,6 @@ export default function RelatorioFuncionariosPage() {
     return sortOrder === "asc" ? "↑" : "↓";
   };
 
-  if (loading) {
-    return (
-      <div className={styles.loaderContainer}>
-        <div className={styles.spinner}></div>
-        <span>Carregando...</span>
-      </div>
-    );
-  }
-
   const handleLogout = async () => {
     try {
       localStorage.removeItem("authToken");
@@ -139,10 +164,18 @@ export default function RelatorioFuncionariosPage() {
       router.push("/login");
     } catch (error) {
       console.error("Erro ao fazer logout:", error);
-      // Fallback para a página home em caso de erro
       router.push("/home");
     }
   };
+
+  if (loading) {
+    return (
+      <div className={styles.loaderContainer}>
+        <div className={styles.spinner}></div>
+        <span>Carregando funcionários...</span>
+      </div>
+    );
+  }
 
   return (
     <div className={styles.dashboard}>
@@ -166,100 +199,86 @@ export default function RelatorioFuncionariosPage() {
           </button>
         </div>
       </header>
+      
       <div className={styles.contentWrapper}>
         <aside className={`${styles.sidebar} ${sidebarOpen ? styles.sidebarOpen : ""}`}>
-            <div className={styles.sidebarHeader}>
-              <div className={styles.logo}>
-                <span className={styles.logoText}>PharmaX</span>
-              </div>
-              <button
-                className={styles.sidebarClose}
-                onClick={() => setSidebarOpen(false)}
-              >
-                ×
-              </button>
+          {/* Sidebar mantido igual ao original */}
+          <div className={styles.sidebarHeader}>
+            <div className={styles.logo}>
+              <span className={styles.logoText}>PharmaX</span>
+            </div>
+            <button
+              className={styles.sidebarClose}
+              onClick={() => setSidebarOpen(false)}
+            >
+              ×
+            </button>
+          </div>
+
+          <nav className={styles.nav}>
+            <div className={styles.navSection}>
+              <p className={styles.navLabel}>Principal</p>
+              <a href="/farmacias/favoritos" className={styles.navLink}>
+                <span className={styles.navText}>Favoritos</span>
+              </a>
+              <a href="/farmacias/produtos/medicamentos" className={styles.navLink}>
+                <span className={styles.navText}>Medicamentos</span>
+              </a>
             </div>
 
-            <nav className={styles.nav}>
-              <div className={styles.navSection}>
-                <p className={styles.navLabel}>Principal</p>
-                <a
-                  href="/farmacias/favoritos"
-                  className={styles.navLink}
-                >
-                  <span className={styles.navText}>Favoritos</span>
-                </a>
-                <a
-                  href="/farmacias/produtos/medicamentos"
-                  className={styles.navLink}
-                >
-                  <span className={styles.navText}>Medicamentos</span>
-                </a>
-              </div>
+            <div className={styles.navSection}>
+              <p className={styles.navLabel}>Gestão</p>
+              <a href="/farmacias/cadastro/funcionario/lista" className={styles.navLink}>
+                <span className={styles.navText}>Funcionários</span>
+              </a>
+              <a href="/farmacias/laboratorio/lista" className={styles.navLink}>
+                <span className={styles.navText}>Laboratórios</span>
+              </a>
+            </div>
 
-              <div className={styles.navSection}>
-                <p className={styles.navLabel}>Gestão</p>
-                <a
-                  href="/farmacias/cadastro/funcionario/lista"
-                  className={styles.navLink}
-                >
-                  <span className={styles.navText}>Funcionários</span>
-                </a>
-                <a href="/farmacias/laboratorio/lista" className={styles.navLink}>
-                  <span className={styles.navText}>Laboratórios</span>
-                </a>
-              </div>
+            <div className={styles.navSection}>
+              <p className={styles.navLabel}>Relatórios</p>
+              <a href="/farmacias/relatorios/favoritos" className={styles.navLink}>
+                <span className={styles.navText}>Medicamentos Favoritos</span>
+              </a>
+              <a href="/farmacias/relatorios/funcionarios" className={`${styles.navLink} ${styles.active}`}>
+                <span className={styles.navText}>Relatório de Funcionarios</span>
+              </a>
+              <a href="/farmacias/relatorios/laboratorios" className={styles.navLink}>
+                <span className={styles.navText}>Relatório de Laboratorios</span>
+              </a>
+            </div>
 
-              <div className={styles.navSection}>
-                <p className={styles.navLabel}>Relatórios</p>
-                <a
-                  href="/farmacias/relatorios/favoritos"
-                  className={styles.navLink}
-                  
-                >
-                  <span className={styles.navText}>Medicamentos Favoritos</span>
-                </a>
-                <a
-                  href="/farmacias/relatorios/funcionarios"
-                  className={`${styles.navLink} ${styles.active}`}
-                  
-                >
-                  <span className={styles.navText}>Relatório de Funcionarios</span>
-                </a>
-                <a
-                  href="/farmacias/relatorios/laboratorios"
-                  className={styles.navLink}
-                >
-                  <span className={styles.navText}>Relatório de Laboratorios</span>
-                </a>
-              </div>
+            <div className={styles.navSection}>
+              <p className={styles.navLabel}>Conta</p>
+              <a href="/farmacias/perfil" className={styles.navLink}>
+                <span className={styles.navText}>Meu Perfil</span>
+              </a>
+              <button
+                onClick={handleLogout}
+                className={styles.navLink}
+                style={{ background: 'none', border: 'none', width: '100%', textAlign: 'left', cursor: 'pointer' }}
+              >
+                <span className={styles.navText}>Sair</span>
+              </button>
+            </div>
+          </nav>
+        </aside>
 
-              <div className={styles.navSection}>
-                <p className={styles.navLabel}>Conta</p>
-                <a
-                  href="/farmacias/perfil"
-                  className={styles.navLink}
-                >
-                  <span className={styles.navText}>Meu Perfil</span>
-                </a>
-                <button
-                  onClick={handleLogout}
-                  className={styles.navLink}
-                  style={{ background: 'none', border: 'none', width: '100%', textAlign: 'left', cursor: 'pointer' }}
-                >
-                  <span className={styles.navText}>Sair</span>
-                </button>
-              </div>
-            </nav>
-          </aside>
+        {/* Overlay para mobile */}
+        {sidebarOpen && (
+          <div className={styles.overlay} onClick={() => setSidebarOpen(false)} />
+        )}
 
-          {/* Overlay para mobile */}
-          {sidebarOpen && (
-            <div className={styles.overlay} onClick={() => setSidebarOpen(false)} />
-          )}
         <main className={styles.mainContent}>
+          {/* Mensagem de erro */}
+          {error && (
+            <div className={styles.errorMessage}>
+              <span>{error}</span>
+            </div>
+          )}
+
           <div className={styles.reportHeader}>
-            {/* <div className={styles.reportLogo}></div> */}
             <div className={styles.reportTitle}>
               <h1>Relatório de Funcionários</h1>
               <p>
@@ -272,6 +291,7 @@ export default function RelatorioFuncionariosPage() {
               </p>
             </div>
           </div>
+
           <div className={styles.reportInfo}>
             <p>
               Mostrando {filteredFuncionarios.length} de {funcionarios.length}{" "}
@@ -282,6 +302,7 @@ export default function RelatorioFuncionariosPage() {
               a {new Date(dateRange.end).toLocaleDateString("pt-BR")}
             </p>
           </div>
+
           <div className={styles.controls}>
             <div className={styles.filters}>
               <div className={styles.filterGroup}>
@@ -289,17 +310,13 @@ export default function RelatorioFuncionariosPage() {
                 <input
                   type="date"
                   value={dateRange.start}
-                  onChange={(e) =>
-                    setDateRange({ ...dateRange, start: e.target.value })
-                  }
+                  onChange={(e) => setDateRange({ ...dateRange, start: e.target.value })}
                 />
                 <span>até</span>
                 <input
                   type="date"
                   value={dateRange.end}
-                  onChange={(e) =>
-                    setDateRange({ ...dateRange, end: e.target.value })
-                  }
+                  onChange={(e) => setDateRange({ ...dateRange, end: e.target.value })}
                 />
               </div>
               <div className={styles.filterGroup}>
@@ -329,41 +346,28 @@ export default function RelatorioFuncionariosPage() {
               </div>
             </div>
           </div>
+
           <div
             ref={reportRef}
-            className={`${styles.reportContainer} ${
-              reportGenerated ? styles.reportMode : ""
-            }`}
+            className={`${styles.reportContainer} ${reportGenerated ? styles.reportMode : ""}`}
           >
             <table className={styles.reportTable}>
               <thead>
                 <tr>
-                  <th
-                    className={styles.sortableHeader}
-                    onClick={() => handleSort("nome")}
-                  >
+                  <th className={styles.sortableHeader} onClick={() => handleSort("nome")}>
                     Nome {getSortIcon("nome")}
                   </th>
                   <th>E-mail</th>
                   <th>Telefone</th>
                   <th>CPF</th>
                   <th>Usuário</th>
-                  <th
-                    className={styles.sortableHeader}
-                    onClick={() => handleSort("nivelAcesso")}
-                  >
+                  <th className={styles.sortableHeader} onClick={() => handleSort("nivelAcesso")}>
                     Nível de Acesso {getSortIcon("nivelAcesso")}
                   </th>
-                  <th
-                    className={styles.sortableHeader}
-                    onClick={() => handleSort("status")}
-                  >
+                  <th className={styles.sortableHeader} onClick={() => handleSort("status")}>
                     Status {getSortIcon("status")}
                   </th>
-                  <th
-                    className={styles.sortableHeader}
-                    onClick={() => handleSort("dataCadastro")}
-                  >
+                  <th className={styles.sortableHeader} onClick={() => handleSort("dataCadastro")}>
                     Data de Cadastro {getSortIcon("dataCadastro")}
                   </th>
                 </tr>
@@ -378,110 +382,76 @@ export default function RelatorioFuncionariosPage() {
                     <td>{funcionario.usuario}</td>
                     <td>
                       <span
-                        className={`${styles.statusBadge} ${
-                          styles[
-                            funcionario.nivelAcesso
-                              .toLowerCase()
-                              .normalize("NFD")
-                              .replace(/[\u0300-\u036f]/g, "")
-                          ]
-                        }`}
+                        className={`${styles.statusBadge} ${styles[funcionario.nivelAcesso.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "")]}`}
                       >
                         {funcionario.nivelAcesso}
                       </span>
                     </td>
                     <td>
                       <span
-                        className={`${styles.statusBadge} ${
-                          funcionario.status === "ativo"
-                            ? styles.inStock
-                            : styles.outStock
-                        }`}
+                        className={`${styles.statusBadge} ${funcionario.status === "ativo" ? styles.inStock : styles.outStock}`}
                       >
                         {funcionario.status === "ativo" ? "Ativo" : "Inativo"}
                       </span>
                     </td>
                     <td>
-                      {new Date(funcionario.dataCadastro).toLocaleDateString(
-                        "pt-BR"
-                      )}
+                      {new Date(funcionario.dataCadastro).toLocaleDateString("pt-BR")}
                     </td>
                   </tr>
                 ))}
               </tbody>
             </table>
+
             <div className={styles.reportSummary}>
               <h2>Resumo do Relatório</h2>
               <div className={styles.summaryGrid}>
                 <div className={styles.summaryItem}>
-                  <span className={styles.summaryLabel}>
-                    Total de Funcionários
-                  </span>
-                  <span className={styles.summaryValue}>
-                    {filteredFuncionarios.length}
-                  </span>
+                  <span className={styles.summaryLabel}>Total de Funcionários</span>
+                  <span className={styles.summaryValue}>{filteredFuncionarios.length}</span>
                 </div>
                 <div className={styles.summaryItem}>
-                  <span className={styles.summaryLabel}>
-                    Funcionários Ativos
-                  </span>
-                  <span className={styles.summaryValue}>
-                    {filteredFuncionarios.filter(f => f.status === "ativo").length}
-                  </span>
+                  <span className={styles.summaryLabel}>Funcionários Ativos</span>
+                  <span className={styles.summaryValue}>{filteredFuncionarios.filter(f => f.status === "ativo").length}</span>
                 </div>
                 <div className={styles.summaryItem}>
-                  <span className={styles.summaryLabel}>
-                    Funcionários Inativos
-                  </span>
-                  <span className={styles.summaryValue}>
-                    {filteredFuncionarios.filter(f => f.status === "inativo").length}
-                  </span>
+                  <span className={styles.summaryLabel}>Funcionários Inativos</span>
+                  <span className={styles.summaryValue}>{filteredFuncionarios.filter(f => f.status === "inativo").length}</span>
                 </div>
                 <div className={styles.summaryItem}>
-                  <span className={styles.summaryLabel}>
-                    Administradores
-                  </span>
-                  <span className={styles.summaryValue}>
-                    {filteredFuncionarios.filter(f => f.nivelAcesso === "Administrador").length}
-                  </span>
+                  <span className={styles.summaryLabel}>Administradores</span>
+                  <span className={styles.summaryValue}>{filteredFuncionarios.filter(f => f.nivelAcesso === "Administrador").length}</span>
                 </div>
               </div>
             </div>
+
             <div className={styles.reportFooter}>
               <p>Relatório gerado em: {new Date().toLocaleString("pt-BR")}</p>
               <p>PharmaX - Sistema de Gestão Farmacêutica</p>
             </div>
           </div>
+
           {totalPages > 1 && !reportGenerated && (
             <div className={styles.paginationControls}>
               <button
-                className={`${styles.paginationBtn} ${
-                  currentPage === 1 ? styles.disabled : ""
-                }`}
+                className={`${styles.paginationBtn} ${currentPage === 1 ? styles.disabled : ""}`}
                 onClick={() => paginate(currentPage - 1)}
                 disabled={currentPage === 1}
               >
                 ← Anterior
               </button>
               <div className={styles.paginationNumbers}>
-                {Array.from({ length: totalPages }, (_, i) => i + 1).map(
-                  (number) => (
-                    <button
-                      key={number}
-                      className={`${styles.paginationNumber} ${
-                        currentPage === number ? styles.active : ""
-                      }`}
-                      onClick={() => paginate(number)}
-                    >
-                      {number}
-                    </button>
-                  )
-                )}
+                {Array.from({ length: totalPages }, (_, i) => i + 1).map((number) => (
+                  <button
+                    key={number}
+                    className={`${styles.paginationNumber} ${currentPage === number ? styles.active : ""}`}
+                    onClick={() => paginate(number)}
+                  >
+                    {number}
+                  </button>
+                ))}
               </div>
               <button
-                className={`${styles.paginationBtn} ${
-                  currentPage === totalPages ? styles.disabled : ""
-                }`}
+                className={`${styles.paginationBtn} ${currentPage === totalPages ? styles.disabled : ""}`}
                 onClick={() => paginate(currentPage + 1)}
                 disabled={currentPage === totalPages}
               >
@@ -489,6 +459,7 @@ export default function RelatorioFuncionariosPage() {
               </button>
             </div>
           )}
+
           {filteredFuncionarios.length === 0 && !loading && (
             <div className={styles.emptyState}>
               <h3>Nenhum funcionário encontrado</h3>

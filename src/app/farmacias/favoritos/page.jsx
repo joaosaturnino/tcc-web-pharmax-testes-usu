@@ -18,7 +18,7 @@ export default function FavoritosFarmaciaPage() {
     const fetchMedicamentosFavoritos = async () => {
       try {
         const response = await api.get('/favoritos');
-
+        
         if (response.data.sucesso) {
           const processedMedicamentos = response.data.dados.map(med => ({
             ...med,

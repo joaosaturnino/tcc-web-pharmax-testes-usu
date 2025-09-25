@@ -2,15 +2,61 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import styles from "./laboratorio.module.css";
+import api from "../../../services/api"; // Ajuste o caminho conforme sua estrutura
 
 export default function ListaLaboratorios() {
   const [laboratorios, setLaboratorios] = useState([]);
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [filtro, setFiltro] = useState("");
+  const [loading, setLoading] = useState(true);
+  const router = useRouter();
 
   useEffect(() => {
-    // Mock de dados (substituir por chamada API depois)
+    listarLaboratorios();
+  }, []);
+
+  // Função para listar laboratórios da API
+  async function listarLaboratorios() {
+    try {
+      setLoading(true);
+      const response = await api.get('/laboratorio');
+      
+      if (response.data.sucesso === true) {
+        const labsApi = response.data.dados;
+        // Mapear os dados da API para o formato usado no frontend
+        const labsFormatados = labsApi.map(lab => ({
+          id: lab.lab_id,
+          nome: lab.lab_nome,
+          endereco: lab.lab_endereco,
+          telefone: lab.lab_telefone,
+          email: lab.lab_email,
+          status: lab.lab_ativo ? "Ativo" : "Inativo",
+          dataCadastro: lab.lab_data_cadastro,
+          cnpj: lab.lab_cnpj,
+          logo: lab.lab_logo
+        }));
+        setLaboratorios(labsFormatados);
+      } else {
+        alert('Erro: ' + response.data.mensagem);
+      }
+    } catch (error) {
+      console.error('Erro ao carregar laboratórios:', error);
+      if (error.response) {
+        alert('Erro: ' + error.response.data.mensagem + '\n' + error.response.data.dados);
+      } else {
+        alert('Erro no front-end: ' + error.message);
+      }
+      // Fallback para dados mock em caso de erro
+      carregarDadosMock();
+    } finally {
+      setLoading(false);
+    }
+  }
+
+  // Fallback com dados mock (mantido para caso a API não esteja disponível)
+  const carregarDadosMock = () => {
     const mockLabs = [
       {
         id: 1,
@@ -59,18 +105,29 @@ export default function ListaLaboratorios() {
       },
     ];
     setLaboratorios(mockLabs);
-  }, []);
+  };
 
-  const laboratoriosFiltrados = laboratorios.filter(
-    (lab) =>
-      lab.nome.toLowerCase().includes(filtro.toLowerCase()) ||
-      lab.email.toLowerCase().includes(filtro.toLowerCase()) ||
-      lab.endereco.toLowerCase().includes(filtro.toLowerCase())
-  );
-
-  const handleExcluir = (id, nome) => {
+  // Função para excluir laboratório
+  const handleExcluir = async (id, nome) => {
     if (confirm(`Tem certeza que deseja excluir o laboratório ${nome}?`)) {
-      setLaboratorios(laboratorios.filter((lab) => lab.id !== id));
+      try {
+        const response = await api.delete(`/laboratorios/${id}`);
+        
+        if (response.data.sucesso === true) {
+          alert(`Laboratório ${nome} excluído com sucesso!`);
+          // Atualiza a lista após exclusão
+          listarLaboratorios();
+        } else {
+          alert('Erro: ' + response.data.mensagem);
+        }
+      } catch (error) {
+        console.error('Erro ao excluir laboratório:', error);
+        if (error.response) {
+          alert('Erro: ' + error.response.data.mensagem + '\n' + error.response.data.dados);
+        } else {
+          alert('Erro no front-end: ' + error.message);
+        }
+      }
     }
   };
 
@@ -81,10 +138,16 @@ export default function ListaLaboratorios() {
       router.push("/login");
     } catch (error) {
       console.error("Erro ao fazer logout:", error);
-      // Fallback para a página home em caso de erro
       router.push("/home");
     }
   };
+
+  const laboratoriosFiltrados = laboratorios.filter(
+    (lab) =>
+      lab.nome.toLowerCase().includes(filtro.toLowerCase()) ||
+      lab.email.toLowerCase().includes(filtro.toLowerCase()) ||
+      lab.endereco.toLowerCase().includes(filtro.toLowerCase())
+  );
 
   return (
     <div className={styles.dashboard}>
@@ -123,7 +186,7 @@ export default function ListaLaboratorios() {
       </header>
 
       <div className={styles.contentWrapper}>
-        {/* Sidebar Não Fixa */}
+        {/* Sidebar Não Fixa - CÓDIGO ORIGINAL MANTIDO */}
         <aside className={`${styles.sidebar} ${sidebarOpen ? styles.sidebarOpen : ""}`}>
             <div className={styles.sidebarHeader}>
               <div className={styles.logo}>
@@ -223,87 +286,95 @@ export default function ListaLaboratorios() {
               </div>
             </div>
 
-            <div className={styles.tableContainer}>
-              <table className={styles.laboratoriosTable}>
-                <thead>
-                  <tr>
-                    <th>Nome</th>
-                    <th>Endereço</th>
-                    <th>Contato</th>
-                    <th>Status</th>
-                    <th>Data Cadastro</th>
-                    <th>Ações</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {laboratoriosFiltrados.length > 0 ? (
-                    laboratoriosFiltrados.map((lab) => (
-                      <tr key={lab.id}>
-                        <td>
-                          <div className={styles.labInfo}>
-                            <div className={styles.labAvatar}>
-                              {lab.nome.charAt(0)}
-                            </div>
-                            <div>
-                              <div className={styles.labNome}>{lab.nome}</div>
-                              <div className={styles.labEmail}>{lab.email}</div>
-                            </div>
-                          </div>
-                        </td>
-                        <td>{lab.endereco}</td>
-                        <td>{lab.telefone}</td>
-                        <td>
-                          <span
-                            className={`${styles.statusBadge} ${
-                              styles[lab.status.toLowerCase()]
-                            }`}
-                          >
-                            {lab.status}
-                          </span>
-                        </td>
-                        <td>
-                          {new Date(lab.dataCadastro).toLocaleDateString(
-                            "pt-BR"
-                          )}
-                        </td>
-                        <td>
-                          <div className={styles.acoes}>
-                            <Link
-                              href={`/farmacias/laboratorio/cadastro/editar/${lab.id}`}
-                              className={styles.editarButton}
-                              title="Editar laboratório"
-                            >
-                              ✏️
-                            </Link>
-                            <button
-                              className={styles.excluirButton}
-                              onClick={() => handleExcluir(lab.id, lab.nome)}
-                              title="Excluir laboratório"
-                            >
-                              🗑️
-                            </button>
-                          </div>
-                        </td>
-                      </tr>
-                    ))
-                  ) : (
-                    <tr>
-                      <td colSpan="6" className={styles.semRegistros}>
-                        {filtro
-                          ? "Nenhum laboratório encontrado com o filtro aplicado"
-                          : "Nenhum laboratório cadastrado"}
-                      </td>
-                    </tr>
-                  )}
-                </tbody>
-              </table>
-            </div>
-
-            <div className={styles.listaFooter}>
-              <div className={styles.totalRegistros}>
-                Total: {laboratoriosFiltrados.length} laboratório(s)
+            {loading ? (
+              <div className={styles.loading}>
+                <p>Carregando laboratórios...</p>
               </div>
-            </div>
+            ) : (
+              <>
+                <div className={styles.tableContainer}>
+                  <table className={styles.laboratoriosTable}>
+                    <thead>
+                      <tr>
+                        <th>Nome</th>
+                        <th>Endereço</th>
+                        <th>Contato</th>
+                        <th>Status</th>
+                        <th>Data Cadastro</th>
+                        <th>Ações</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {laboratoriosFiltrados.length > 0 ? (
+                        laboratoriosFiltrados.map((lab) => (
+                          <tr key={lab.id}>
+                            <td>
+                              <div className={styles.labInfo}>
+                                <div className={styles.labAvatar}>
+                                  {lab.nome.charAt(0)}
+                                </div>
+                                <div>
+                                  <div className={styles.labNome}>{lab.nome}</div>
+                                  <div className={styles.labEmail}>{lab.email}</div>
+                                </div>
+                              </div>
+                            </td>
+                            <td>{lab.endereco}</td>
+                            <td>{lab.telefone}</td>
+                            <td>
+                              <span
+                                className={`${styles.statusBadge} ${
+                                  styles[lab.status.toLowerCase()]
+                                }`}
+                              >
+                                {lab.status}
+                              </span>
+                            </td>
+                            <td>
+                              {new Date(lab.dataCadastro).toLocaleDateString(
+                                "pt-BR"
+                              )}
+                            </td>
+                            <td>
+                              <div className={styles.acoes}>
+                                <Link
+                                  href={`/farmacias/laboratorio/cadastro/editar/${lab.id}`}
+                                  className={styles.editarButton}
+                                  title="Editar laboratório"
+                                >
+                                  ✏️
+                                </Link>
+                                <button
+                                  className={styles.excluirButton}
+                                  onClick={() => handleExcluir(lab.id, lab.nome)}
+                                  title="Excluir laboratório"
+                                >
+                                  🗑️
+                                </button>
+                              </div>
+                            </td>
+                          </tr>
+                        ))
+                      ) : (
+                        <tr>
+                          <td colSpan="6" className={styles.semRegistros}>
+                            {filtro
+                              ? "Nenhum laboratório encontrado com o filtro aplicado"
+                              : "Nenhum laboratório cadastrado"}
+                          </td>
+                        </tr>
+                      )}
+                    </tbody>
+                  </table>
+                </div>
+
+                <div className={styles.listaFooter}>
+                  <div className={styles.totalRegistros}>
+                    Total: {laboratoriosFiltrados.length} laboratório(s)
+                  </div>
+                </div>
+              </>
+            )}
           </div>
         </main>
       </div>

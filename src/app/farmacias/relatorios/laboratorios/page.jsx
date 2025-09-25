@@ -1,7 +1,9 @@
 "use client";
 
 import React, { useEffect, useState, useRef } from "react";
+import { useRouter } from "next/navigation";
 import styles from "./page.module.css";
+import api from "../../../services/api"; // Ajuste o caminho conforme sua estrutura
 
 export default function RelatorioLaboratoriosPage() {
   const [laboratorios, setLaboratorios] = useState([]);
@@ -19,58 +21,104 @@ export default function RelatorioLaboratoriosPage() {
   const [sortOrder, setSortOrder] = useState("asc");
   const [searchTerm, setSearchTerm] = useState("");
   const reportRef = useRef(null);
+  const router = useRouter();
 
   useEffect(() => {
-    setTimeout(() => {
-      setLaboratorios([
-        {
-          id: "l1",
-          nome: "LabVida",
-          endereco: "Rua A, 123 - Centro, São Paulo/SP",
-          telefone: "(11) 9999-9999",
-          email: "contato@labvida.com",
-          status: "ativo",
-          medicamentosCadastrados: 42,
-          dataCadastro: "2023-01-15",
-          cnpj: "12.345.678/0001-90",
-        },
-        {
-          id: "l2",
-          nome: "BioQuímica",
-          endereco: "Av. Brasil, 456 - Bela Vista, Rio de Janeiro/RJ",
-          telefone: "(21) 98888-8888",
-          email: "bioquimica@laboratorio.com",
-          status: "inativo",
-          medicamentosCadastrados: 15,
-          dataCadastro: "2023-03-22",
-          cnpj: "98.765.432/0001-12",
-        },
-        {
-          id: "l3",
-          nome: "Farmalab",
-          endereco: "Rua das Flores, 789 - Centro, Belo Horizonte/MG",
-          telefone: "(31) 97777-7777",
-          email: "farmalab@lab.com",
-          status: "ativo",
-          medicamentosCadastrados: 28,
-          dataCadastro: "2023-05-10",
-          cnpj: "11.222.333/0001-44",
-        },
-        {
-          id: "l4",
-          nome: "LabMais",
-          endereco: "Av. Paulista, 1000 - São Paulo/SP",
-          telefone: "(11) 91234-5678",
-          email: "contato@labmais.com",
-          status: "ativo",
-          medicamentosCadastrados: 60,
-          dataCadastro: "2023-07-01",
-          cnpj: "22.333.444/0001-55",
-        },
-      ]);
-      setLoading(false);
-    }, 800);
+    listarLaboratorios();
   }, []);
+
+  // Função para listar laboratórios da API
+  async function listarLaboratorios() {
+    try {
+      setLoading(true);
+      const response = await api.get('/laboratorio');
+      
+      if (response.data.sucesso === true) {
+        const labsApi = response.data.dados;
+        // Mapear os dados da API para o formato usado no frontend
+        const labsFormatados = labsApi.map(lab => ({
+          id: lab.lab_id,
+          nome: lab.lab_nome,
+          endereco: lab.lab_endereco,
+          telefone: lab.lab_telefone,
+          email: lab.lab_email,
+          status: lab.lab_ativo ? "ativo" : "inativo",
+          medicamentosCadastrados: Math.floor(Math.random() * 100) + 1, // Mock para demonstração
+          dataCadastro: lab.lab_data_cadastro,
+          cnpj: lab.lab_cnpj,
+          logo: lab.lab_logo
+        }));
+        setLaboratorios(labsFormatados);
+      } else {
+        alert('Erro: ' + response.data.mensagem);
+        // Fallback para dados mock em caso de erro na API
+        carregarDadosMock();
+      }
+    } catch (error) {
+      console.error('Erro ao carregar laboratórios:', error);
+      if (error.response) {
+        alert('Erro: ' + error.response.data.mensagem + '\n' + error.response.data.dados);
+      } else {
+        alert('Erro no front-end: ' + error.message);
+      }
+      // Fallback para dados mock em caso de erro
+      carregarDadosMock();
+    } finally {
+      setLoading(false);
+    }
+  }
+
+  // Fallback com dados mock (mantido para caso a API não esteja disponível)
+  const carregarDadosMock = () => {
+    const mockLabs = [
+      {
+        id: "l1",
+        nome: "LabVida",
+        endereco: "Rua A, 123 - Centro, São Paulo/SP",
+        telefone: "(11) 9999-9999",
+        email: "contato@labvida.com",
+        status: "ativo",
+        medicamentosCadastrados: 42,
+        dataCadastro: "2023-01-15",
+        cnpj: "12.345.678/0001-90",
+      },
+      {
+        id: "l2",
+        nome: "BioQuímica",
+        endereco: "Av. Brasil, 456 - Bela Vista, Rio de Janeiro/RJ",
+        telefone: "(21) 98888-8888",
+        email: "bioquimica@laboratorio.com",
+        status: "inativo",
+        medicamentosCadastrados: 15,
+        dataCadastro: "2023-03-22",
+        cnpj: "98.765.432/0001-12",
+      },
+      {
+        id: "l3",
+        nome: "Farmalab",
+        endereco: "Rua das Flores, 789 - Centro, Belo Horizonte/MG",
+        telefone: "(31) 97777-7777",
+        email: "farmalab@lab.com",
+        status: "ativo",
+        medicamentosCadastrados: 28,
+        dataCadastro: "2023-05-10",
+        cnpj: "11.222.333/0001-44",
+      },
+      {
+        id: "l4",
+        nome: "LabMais",
+        endereco: "Av. Paulista, 1000 - São Paulo/SP",
+        telefone: "(11) 91234-5678",
+        email: "contato@labmais.com",
+        status: "ativo",
+        medicamentosCadastrados: 60,
+        dataCadastro: "2023-07-01",
+        cnpj: "22.333.444/0001-55",
+      },
+    ];
+    setLaboratorios(mockLabs);
+    setLoading(false);
+  };
 
   // Filtro e busca
   const filteredLaboratorios = laboratorios.filter((lab) => {
@@ -163,6 +211,17 @@ export default function RelatorioLaboratoriosPage() {
     0
   );
 
+  const handleLogout = async () => {
+    try {
+      localStorage.removeItem("authToken");
+      sessionStorage.removeItem("userData");
+      router.push("/login");
+    } catch (error) {
+      console.error("Erro ao fazer logout:", error);
+      router.push("/home");
+    }
+  };
+
   if (loading) {
     return (
       <div className={styles.loaderContainer}>
@@ -171,18 +230,6 @@ export default function RelatorioLaboratoriosPage() {
       </div>
     );
   }
-
-  const handleLogout = async () => {
-    try {
-      localStorage.removeItem("authToken");
-      sessionStorage.removeItem("userData");
-      router.push("/login");
-    } catch (error) {
-      console.error("Erro ao fazer logout:", error);
-      // Fallback para a página home em caso de erro
-      router.push("/home");
-    }
-  };
 
   return (
     <div className={styles.dashboard}>
@@ -255,7 +302,6 @@ export default function RelatorioLaboratoriosPage() {
                 <a
                   href="/farmacias/relatorios/favoritos"
                   className={styles.navLink}
-                  
                 >
                   <span className={styles.navText}>Medicamentos Favoritos</span>
                 </a>
@@ -268,7 +314,6 @@ export default function RelatorioLaboratoriosPage() {
                 <a
                   href="/farmacias/relatorios/laboratorios"
                   className={`${styles.navLink} ${styles.active}`}
-                  
                 >
                   <span className={styles.navText}>Relatório de Laboratorios</span>
                 </a>
@@ -299,7 +344,6 @@ export default function RelatorioLaboratoriosPage() {
           )}
         <main className={styles.mainContent}>
           <div className={styles.reportHeader}>
-            {/* <div className={styles.reportLogo}></div> */}
             <div className={styles.reportTitle}>
               <h1>Relatório de Laboratórios</h1>
               <p>
