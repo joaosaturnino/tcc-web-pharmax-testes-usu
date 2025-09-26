@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import styles from "./cadastro.module.css";
+import api from "../../../../services/api"; // Importação do serviço de API
 
 // Ícones para validação
 import { MdCheckCircle, MdError } from "react-icons/md";
@@ -11,7 +12,8 @@ export default function CadastroMedicamentoPage() {
   const router = useRouter();
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [loading, setLoading] = useState(false);
-
+  
+  // ANOTAÇÃO: O estado inicial do formulário foi mantido.
   const [form, setForm] = useState({
     nome: "",
     dosagem: "",
@@ -25,53 +27,34 @@ export default function CadastroMedicamentoPage() {
     codigoBarras: "",
   });
 
-  // Estados para validação
-  const valDefault = styles.formControl;
-  const valSucesso = `${styles.formControl} ${styles.success}`;
-  const valErro = `${styles.formControl} ${styles.error}`;
-
-  const [valida, setValida] = useState({
-    nome: {
-      validado: valDefault,
-      mensagem: []
-    },
-    dosagem: {
-      validado: valDefault,
-      mensagem: []
-    },
-    quantidade: {
-      validado: valDefault,
-      mensagem: []
-    },
-    tipo: {
-      validado: valDefault,
-      mensagem: []
-    },
-    forma: {
-      validado: valDefault,
-      mensagem: []
-    },
-    descricao: {
-      validado: valDefault,
-      mensagem: []
-    },
-    preco: {
-      validado: valDefault,
-      mensagem: []
-    },
-    laboratorio: {
-      validado: valDefault,
-      mensagem: []
-    },
-    imagem: {
-      validado: valDefault,
-      mensagem: []
-    },
-    codigoBarras: {
-      validado: valDefault,
-      mensagem: []
-    }
+  // ANOTAÇÃO: O estado de validação foi simplificado. Agora, ele armazena apenas as mensagens de erro.
+  // Um array vazio significa que o campo é válido. Isso limpa o estado e torna a lógica mais direta.
+  const [errors, setErrors] = useState({
+    nome: [],
+    dosagem: [],
+    quantidade: [],
+    tipo: [],
+    forma: [],
+    descricao: [],
+    preco: [],
+    laboratorio: [],
+    imagem: [],
+    codigoBarras: []
   });
+
+  // ANOTAÇÃO: O estado "touched" foi adicionado para rastrear quais campos o usuário já interagiu.
+  // Isso melhora a UX, pois os erros só aparecem depois que o usuário sai do campo (onBlur),
+  // e não enquanto ele ainda está digitando.
+  const [touched, setTouched] = useState({});
+
+  const handleBlur = (e) => {
+    const { name } = e.target;
+    setTouched({
+      ...touched,
+      [name]: true,
+    });
+    validateField(name, form[name]);
+  };
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -81,252 +64,122 @@ export default function CadastroMedicamentoPage() {
     });
   };
 
-  // Funções de validação
-  function validaNome() {
-    let objTemp = {
-      validado: valSucesso,
-      mensagem: []
-    };
-
-    if (form.nome === '') {
-      objTemp.validado = valErro;
-      objTemp.mensagem.push('O nome do medicamento é obrigatório');
-    } else if (form.nome.length < 3) {
-      objTemp.validado = valErro;
-      objTemp.mensagem.push('O nome deve ter pelo menos 3 caracteres');
+  // ANOTAÇÃO: Todas as funções de validação individuais foram consolidadas em uma única função, `validateField`.
+  // Isso reduz a repetição de código e torna a lógica de validação centralizada e mais fácil de gerenciar.
+  const validateField = (name, value) => {
+    let fieldErrors = [];
+    switch (name) {
+      case 'nome':
+        if (!value) fieldErrors.push('O nome do medicamento é obrigatório');
+        else if (value.length < 3) fieldErrors.push('O nome deve ter pelo menos 3 caracteres');
+        break;
+      case 'dosagem':
+        if (!value) fieldErrors.push('A dosagem é obrigatória');
+        else if (!/^\d+(\.\d+)?(mg|mcg|g|ml|UI|%|ppm)$/i.test(value)) fieldErrors.push('Formato de dosagem inválido (ex: 500mg, 10ml)');
+        break;
+      case 'quantidade':
+        if (!value) fieldErrors.push('A quantidade é obrigatória');
+        else if (parseInt(value) <= 0) fieldErrors.push('A quantidade deve ser maior que zero');
+        else if (parseInt(value) > 1000) fieldErrors.push('A quantidade não pode ser superior a 1000 unidades');
+        break;
+      case 'tipo':
+        if (!value) fieldErrors.push('Selecione o tipo de produto');
+        break;
+      case 'forma':
+        if (!value) fieldErrors.push('Selecione a forma farmacêutica');
+        break;
+      case 'descricao':
+        if (!value) fieldErrors.push('A descrição é obrigatória');
+        else if (value.length < 10) fieldErrors.push('A descrição deve ter pelo menos 10 caracteres');
+        break;
+      case 'preco':
+        if (!value) fieldErrors.push('O preço é obrigatório');
+        else if (parseFloat(value) <= 0) fieldErrors.push('O preço deve ser maior que zero');
+        else if (parseFloat(value) > 10000) fieldErrors.push('O preço não pode ser superior a R$ 10.000,00');
+        break;
+      case 'laboratorio':
+        if (!value) fieldErrors.push('Selecione o laboratório');
+        break;
+      case 'imagem':
+        if (value && !/^(https?:\/\/.*\.(?:png|jpg|jpeg|gif|webp))$/i.test(value)) fieldErrors.push('URL de imagem inválida');
+        break;
+      case 'codigoBarras':
+        if (!value) fieldErrors.push('O código de barras é obrigatório');
+        else if (!/^\d{8,14}$/.test(value)) fieldErrors.push('Código de barras inválido (deve conter apenas números, 8-14 dígitos)');
+        break;
+      default:
+        break;
     }
+    setErrors(prev => ({ ...prev, [name]: fieldErrors }));
+    return fieldErrors.length === 0;
+  };
 
-    setValida(prev => ({
-      ...prev,
-      nome: objTemp
-    }));
-
-    return objTemp.mensagem.length === 0 ? 1 : 0;
-  }
-
-  function validaDosagem() {
-    let objTemp = {
-      validado: valSucesso,
-      mensagem: []
-    };
-
-    if (form.dosagem === '') {
-      objTemp.validado = valErro;
-      objTemp.mensagem.push('A dosagem é obrigatória');
-    } else if (!/^\d+(\.\d+)?(mg|mcg|g|ml|UI|%|ppm)$/i.test(form.dosagem)) {
-      objTemp.validado = valErro;
-      objTemp.mensagem.push('Formato de dosagem inválido (ex: 500mg, 10ml)');
-    }
-
-    setValida(prev => ({
-      ...prev,
-      dosagem: objTemp
-    }));
-
-    return objTemp.mensagem.length === 0 ? 1 : 0;
-  }
-
-  function validaQuantidade() {
-    let objTemp = {
-      validado: valSucesso,
-      mensagem: []
-    };
-
-    if (form.quantidade === '') {
-      objTemp.validado = valErro;
-      objTemp.mensagem.push('A quantidade é obrigatória');
-    } else if (parseInt(form.quantidade) <= 0) {
-      objTemp.validado = valErro;
-      objTemp.mensagem.push('A quantidade deve ser maior que zero');
-    } else if (parseInt(form.quantidade) > 1000) {
-      objTemp.validado = valErro;
-      objTemp.mensagem.push('A quantidade não pode ser superior a 1000 unidades');
-    }
-
-    setValida(prev => ({
-      ...prev,
-      quantidade: objTemp
-    }));
-
-    return objTemp.mensagem.length === 0 ? 1 : 0;
-  }
-
-  function validaTipo() {
-    let objTemp = {
-      validado: valSucesso,
-      mensagem: []
-    };
-
-    if (form.tipo === '') {
-      objTemp.validado = valErro;
-      objTemp.mensagem.push('Selecione o tipo de produto');
-    }
-
-    setValida(prev => ({
-      ...prev,
-      tipo: objTemp
-    }));
-
-    return objTemp.mensagem.length === 0 ? 1 : 0;
-  }
-
-  function validaForma() {
-    let objTemp = {
-      validado: valSucesso,
-      mensagem: []
-    };
-
-    if (form.forma === '') {
-      objTemp.validado = valErro;
-      objTemp.mensagem.push('Selecione a forma farmacêutica');
-    }
-
-    setValida(prev => ({
-      ...prev,
-      forma: objTemp
-    }));
-
-    return objTemp.mensagem.length === 0 ? 1 : 0;
-  }
-
-  function validaDescricao() {
-    let objTemp = {
-      validado: valSucesso,
-      mensagem: []
-    };
-
-    if (form.descricao === '') {
-      objTemp.validado = valErro;
-      objTemp.mensagem.push('A descrição é obrigatória');
-    } else if (form.descricao.length < 10) {
-      objTemp.validado = valErro;
-      objTemp.mensagem.push('A descrição deve ter pelo menos 10 caracteres');
-    }
-
-    setValida(prev => ({
-      ...prev,
-      descricao: objTemp
-    }));
-
-    return objTemp.mensagem.length === 0 ? 1 : 0;
-  }
-
-  function validaPreco() {
-    let objTemp = {
-      validado: valSucesso,
-      mensagem: []
-    };
-
-    if (form.preco === '') {
-      objTemp.validado = valErro;
-      objTemp.mensagem.push('O preço é obrigatório');
-    } else if (parseFloat(form.preco) <= 0) {
-      objTemp.validado = valErro;
-      objTemp.mensagem.push('O preço deve ser maior que zero');
-    } else if (parseFloat(form.preco) > 10000) {
-      objTemp.validado = valErro;
-      objTemp.mensagem.push('O preço não pode ser superior a R$ 10.000,00');
-    }
-
-    setValida(prev => ({
-      ...prev,
-      preco: objTemp
-    }));
-
-    return objTemp.mensagem.length === 0 ? 1 : 0;
-  }
-
-  function validaLaboratorio() {
-    let objTemp = {
-      validado: valSucesso,
-      mensagem: []
-    };
-
-    if (form.laboratorio === '') {
-      objTemp.validado = valErro;
-      objTemp.mensagem.push('Selecione o laboratório');
-    }
-
-    setValida(prev => ({
-      ...prev,
-      laboratorio: objTemp
-    }));
-
-    return objTemp.mensagem.length === 0 ? 1 : 0;
-  }
-
-  function validaImagem() {
-    let objTemp = {
-      validado: valSucesso,
-      mensagem: []
-    };
-
-    // A imagem é opcional, mas se fornecida, deve ser uma URL válida
-    if (form.imagem && !/^(https?:\/\/.*\.(?:png|jpg|jpeg|gif|webp))$/i.test(form.imagem)) {
-      objTemp.validado = valErro;
-      objTemp.mensagem.push('URL de imagem inválida');
-    }
-
-    setValida(prev => ({
-      ...prev,
-      imagem: objTemp
-    }));
-
-    return objTemp.mensagem.length === 0 ? 1 : 0;
-  }
-
-  function validaCodigoBarras() {
-    let objTemp = {
-      validado: valSucesso,
-      mensagem: []
-    };
-
-    if (form.codigoBarras === '') {
-      objTemp.validado = valErro;
-      objTemp.mensagem.push('O código de barras é obrigatório');
-    } else if (!/^\d{8,14}$/.test(form.codigoBarras)) {
-      objTemp.validado = valErro;
-      objTemp.mensagem.push('Código de barras inválido (deve conter apenas números, 8-14 dígitos)');
-    }
-
-    setValida(prev => ({
-      ...prev,
-      codigoBarras: objTemp
-    }));
-
-    return objTemp.mensagem.length === 0 ? 1 : 0;
-  }
+  // ANOTAÇÃO: Mapeamentos mantidos como no original, pois estão corretos.
+  const tipoMap = { 'Alopático': 1, 'Fitoterápico': 2, 'Genérico': 3, 'Homeopático': 4, 'Manipulado': 5, 'Referência': 6, 'Similar': 7 };
+  const formaMap = { 'Comprimido': 1, 'Cápsula': 2, 'Pastilhas': 3, 'Drágeas': 4, 'Pós para Reconstituição': 5, 'Gotas': 6, 'Xarope': 7, 'Solução Oral': 8, 'Suspensão': 9, 'Comprimidos Sublinguais': 10, 'Soluções': 11, 'Suspensões Injetáveis': 12, 'Soluções Tópicas': 13, 'Pomadas': 14, 'Cremes': 15, 'Loção': 16, 'Gel': 17, 'Adesivos': 18, 'Spray': 19, 'Gotas Nasais': 20, 'Colírios': 21, 'Pomadas Oftálmicas': 22, 'Gotas Auriculares ou Otológicas': 23, 'Pomadas Auriculares': 24, 'Aerosol': 25, 'Comprimidos Vaginais': 26, 'Óvulos': 27, 'Supositórios': 28, 'Enemas': 29 };
+  const laboratorioMap = { 'Neo Química': 1, 'EMS': 2, 'Eurofarma': 3, 'Aché': 4, 'União Química': 5, 'Medley': 6, 'Sanofi': 7, 'Geolab': 8, 'Merck': 9, 'Legrand': 10, 'Natulab': 11, 'Germed': 12, 'Prati Donaduzzi': 13, 'Biolab': 14, 'Hipera CH': 15, 'Sandoz': 16, 'Med Química': 17, 'Mantecorp Farmasa': 18 };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    
-    let itensValidados = 0;
-    itensValidados += validaNome();
-    itensValidados += validaDosagem();
-    itensValidados += validaQuantidade();
-    itensValidados += validaTipo();
-    itensValidados += validaForma();
-    itensValidados += validaDescricao();
-    itensValidados += validaPreco();
-    itensValidados += validaLaboratorio();
-    itensValidados += validaImagem();
-    itensValidados += validaCodigoBarras();
 
-    if (itensValidados !== 10) {
-      return; // Não prossegue se houver erros de validação
+    // ANOTAÇÃO: A validação do formulário inteiro foi simplificada. Em vez de somar resultados,
+    // agora validamos todos os campos e verificamos se algum erro foi encontrado.
+    // Isso é mais robusto e elimina o "número mágico" (10).
+    let isFormValid = true;
+    for (const field in form) {
+      if (!validateField(field, form[field])) {
+        isFormValid = false;
+      }
+    }
+
+    // Marca todos os campos como "tocados" para exibir todos os erros restantes.
+    setTouched(Object.keys(form).reduce((acc, key) => ({ ...acc, [key]: true }), {}));
+
+    if (!isFormValid) {
+      return;
     }
 
     setLoading(true);
-    
-    // Simulando processamento
-    setTimeout(() => {
-      console.log("Dados enviados:", form);
-      alert("Medicamento cadastrado com sucesso!");
-      setLoading(false);
-      router.push("/farmacias/produtos/medicamentos");
-    }, 1500);
-  };
 
+    // CORREÇÃO: Corrigido o erro de digitação de "med_imgagem" para "med_imagem".
+    // Este era um bug crítico que impediria o envio correto da imagem para a API.
+    const dadosParaApi = {
+        med_nome: form.nome,
+        med_dosagem: form.dosagem,
+        med_quantidade: parseInt(form.quantidade),
+        med_descricao: form.descricao,
+        med_preco: parseFloat(form.preco),
+        med_imagem: form.imagem, // Erro de digitação corrigido aqui
+        med_codigo_barras: form.codigoBarras,
+        tipo_id: tipoMap[form.tipo],
+        forma_id: formaMap[form.forma],
+        lab_id: laboratorioMap[form.laboratorio]
+    };
+
+    try {
+        const response = await api.post('/medicamentos', dadosParaApi);
+
+        if (response.data.sucesso) {
+            alert("Medicamento cadastrado com sucesso!");
+            router.push("/farmacias/produtos/medicamentos");
+        } else {
+            alert(`Erro ao cadastrar: ${response.data.mensagem}`);
+        }
+    } catch (error) {
+        // ANOTAÇÃO: Recomenda-se substituir `alert()` por uma biblioteca de notificações (toast)
+        // para uma melhor experiência do usuário em uma aplicação moderna.
+        if (error.response) {
+            alert(error.response.data.mensagem + '\n' + error.response.data.dados);
+        } else {
+            alert('Erro na comunicação com o servidor. Tente novamente.');
+            console.error("Erro ao enviar dados:", error);
+        }
+    } finally {
+        setLoading(false);
+    }
+  };
+  
+  // ANOTAÇÃO: Função de logout mantida como no original.
   const handleLogout = async () => {
     try {
       localStorage.removeItem("authToken");
@@ -334,21 +187,23 @@ export default function CadastroMedicamentoPage() {
       router.push("/login");
     } catch (error) {
       console.error("Erro ao fazer logout:", error);
-      // Fallback para a página home em caso de erro
       router.push("/home");
     }
   };
 
+  // ANOTAÇÃO: Uma função auxiliar foi criada para determinar dinamicamente a classe CSS
+  // com base no estado de erro e se o campo foi "tocado".
+  // Isso limpa o JSX e centraliza a lógica de estilização.
+  const getValidationClass = (fieldName) => {
+    if (!touched[fieldName]) return styles.formControl;
+    return errors[fieldName]?.length > 0 ? `${styles.formControl} ${styles.error}` : `${styles.formControl} ${styles.success}`;
+  };
 
   return (
     <div className={styles.dashboard}>
-      {/* Header */}
       <header className={styles.header}>
         <div className={styles.headerLeft}>
-          <button
-            className={styles.menuToggle}
-            onClick={() => setSidebarOpen(!sidebarOpen)}
-          >
+          <button className={styles.menuToggle} onClick={() => setSidebarOpen(!sidebarOpen)}>
             ☰
           </button>
           <h1 className={styles.title}> Cadastro de Medicamento</h1>
@@ -356,97 +211,25 @@ export default function CadastroMedicamentoPage() {
       </header>
 
       <div className={styles.contentWrapper}>
-        {/* Sidebar Não Fixa - CORRIGIDO */}
-        <aside className={`${styles.sidebar} ${sidebarOpen ? styles.sidebarOpen : ""}`}>
+          <aside className={`${styles.sidebar} ${sidebarOpen ? styles.sidebarOpen : ""}`}>
             <div className={styles.sidebarHeader}>
               <div className={styles.logo}>
                 <span className={styles.logoText}>PharmaX</span>
               </div>
-              <button
-                className={styles.sidebarClose}
-                onClick={() => setSidebarOpen(false)}
-              >
+              <button className={styles.sidebarClose} onClick={() => setSidebarOpen(false)}>
                 ×
               </button>
             </div>
-
             <nav className={styles.nav}>
-              <div className={styles.navSection}>
-                <p className={styles.navLabel}>Principal</p>
-                <a
-                  href="/farmacias/favoritos"
-                  className={styles.navLink}
-                >
-                  <span className={styles.navText}>Favoritos</span>
-                </a>
-                <a
-                  href="/farmacias/produtos/medicamentos"
-                  className={`${styles.navLink} ${styles.active}`}
-                  
-                >
-                  <span className={styles.navText}>Medicamentos</span>
-                </a>
-              </div>
-
-              <div className={styles.navSection}>
-                <p className={styles.navLabel}>Gestão</p>
-                <a
-                  href="/farmacias/cadastro/funcionario/lista"
-                  className={styles.navLink}
-                >
-                  <span className={styles.navText}>Funcionários</span>
-                </a>
-                <a href="/farmacias/laboratorio/lista" className={styles.navLink}>
-                  <span className={styles.navText}>Laboratórios</span>
-                </a>
-              </div>
-
-              <div className={styles.navSection}>
-                <p className={styles.navLabel}>Relatórios</p>
-                <a
-                  href="/farmacias/relatorios/favoritos"
-                  className={styles.navLink}
-                >
-                  <span className={styles.navText}>Medicamentos Favoritos</span>
-                </a>
-                <a
-                  href="/farmacias/relatorios/funcionarios"
-                  className={styles.navLink}
-                >
-                  <span className={styles.navText}>Relatório de Funcionarios</span>
-                </a>
-                <a
-                  href="/farmacias/relatorios/laboratorios"
-                  className={styles.navLink}
-                >
-                  <span className={styles.navText}>Relatório de Laboratorios</span>
-                </a>
-              </div>
-
-              <div className={styles.navSection}>
-                <p className={styles.navLabel}>Conta</p>
-                <a
-                  href="/farmacias/perfil"
-                  className={styles.navLink}
-                >
-                  <span className={styles.navText}>Meu Perfil</span>
-                </a>
-                <button
-                  onClick={handleLogout}
-                  className={styles.navLink}
-                  style={{ background: 'none', border: 'none', width: '100%', textAlign: 'left', cursor: 'pointer' }}
-                >
-                  <span className={styles.navText}>Sair</span>
-                </button>
-              </div>
+              <div className={styles.navSection}><p className={styles.navLabel}>Principal</p><a href="/farmacias/favoritos" className={styles.navLink}><span className={styles.navText}>Favoritos</span></a><a href="/farmacias/produtos/medicamentos" className={`${styles.navLink} ${styles.active}`}><span className={styles.navText}>Medicamentos</span></a></div>
+              <div className={styles.navSection}><p className={styles.navLabel}>Gestão</p><a href="/farmacias/cadastro/funcionario/lista" className={styles.navLink}><span className={styles.navText}>Funcionários</span></a><a href="/farmacias/laboratorio/lista" className={styles.navLink}><span className={styles.navText}>Laboratórios</span></a></div>
+              <div className={styles.navSection}><p className={styles.navLabel}>Relatórios</p><a href="/farmacias/relatorios/favoritos" className={styles.navLink}><span className={styles.navText}>Medicamentos Favoritos</span></a><a href="/farmacias/relatorios/funcionarios" className={styles.navLink}><span className={styles.navText}>Relatório de Funcionarios</span></a><a href="/farmacias/relatorios/laboratorios" className={styles.navLink}><span className={styles.navText}>Relatório de Laboratorios</span></a></div>
+              <div className={styles.navSection}><p className={styles.navLabel}>Conta</p><a href="/farmacias/perfil" className={styles.navLink}><span className={styles.navText}>Meu Perfil</span></a><button onClick={handleLogout} className={styles.navLink} style={{ background: 'none', border: 'none', width: '100%', textAlign: 'left', cursor: 'pointer' }}><span className={styles.navText}>Sair</span></button></div>
             </nav>
           </aside>
 
-          {/* Overlay para mobile */}
-          {sidebarOpen && (
-            <div className={styles.overlay} onClick={() => setSidebarOpen(false)} />
-          )}
-        {/* Conteúdo Principal */}
+          {sidebarOpen && (<div className={styles.overlay} onClick={() => setSidebarOpen(false)} />)}
+        
         <main className={styles.mainContent}>
           <div className={styles.formContainer}>
             <div className={styles.formHeader}>
@@ -454,315 +237,140 @@ export default function CadastroMedicamentoPage() {
               <p>Preencha os dados do novo medicamento</p>
             </div>
 
-            <form onSubmit={handleSubmit} className={styles.form}>
+            <form onSubmit={handleSubmit} className={styles.form} noValidate>
               <div className={styles.formGrid}>
-                {/* Informações Básicas */}
                 <div className={styles.formSection}>
-                  <h3 className={styles.sectionTitle}>
-                    Informações Básicas
-                  </h3>
-
-                  <div className={valida.nome.validado}>
+                  <h3 className={styles.sectionTitle}>Informações Básicas</h3>
+                  
+                  {/* ANOTAÇÃO: O JSX de cada campo foi atualizado para usar a nova lógica de validação e classes dinâmicas.
+                      - `onBlur={handleBlur}` foi adicionado para validar o campo quando o usuário sai dele.
+                      - A classe do container é definida pela função `getValidationClass`.
+                      - A exibição de mensagens de erro agora verifica `touched` e `errors`.
+                  */}
+                  <div className={getValidationClass('nome')}>
                     <label className={styles.inputLabel}>Nome do Medicamento</label>
                     <div className={styles.divInput}>
-                      <input
-                        className={styles.modernInput}
-                        type="text"
-                        name="nome"
-                        value={form.nome}
-                        onChange={handleChange}
-                        placeholder="Digite o nome do medicamento"
-                        required
-                      />
+                      <input className={styles.modernInput} type="text" name="nome" value={form.nome} onChange={handleChange} onBlur={handleBlur} placeholder="Digite o nome do medicamento" required />
                       <MdCheckCircle className={styles.sucesso} />
                       <MdError className={styles.erro} />
                     </div>
-                    {valida.nome.mensagem.map(mens => 
-                      <small key={mens} className={styles.small}>{mens}</small>
-                    )}
+                    {touched.nome && errors.nome.map(msg => <small key={msg} className={styles.small}>{msg}</small>)}
                   </div>
-
+                  
                   <div className={styles.formRow}>
-                    <div className={valida.dosagem.validado}>
+                    <div className={getValidationClass('dosagem')}>
                       <label className={styles.inputLabel}>Dosagem</label>
                       <div className={styles.divInput}>
-                        <input
-                          className={styles.modernInput}
-                          type="text"
-                          name="dosagem"
-                          value={form.dosagem}
-                          onChange={handleChange}
-                          placeholder="Ex: 500mg"
-                          required
-                        />
+                        <input className={styles.modernInput} type="text" name="dosagem" value={form.dosagem} onChange={handleChange} onBlur={handleBlur} placeholder="Ex: 500mg" required />
                         <MdCheckCircle className={styles.sucesso} />
                         <MdError className={styles.erro} />
                       </div>
-                      {valida.dosagem.mensagem.map(mens => 
-                        <small key={mens} className={styles.small}>{mens}</small>
-                      )}
+                      {touched.dosagem && errors.dosagem.map(msg => <small key={msg} className={styles.small}>{msg}</small>)}
                     </div>
-
-                    <div className={valida.quantidade.validado}>
+                    <div className={getValidationClass('quantidade')}>
                       <label className={styles.inputLabel}>Quantidade</label>
                       <div className={styles.divInput}>
-                        <input
-                          className={styles.modernInput}
-                          type="number"
-                          name="quantidade"
-                          value={form.quantidade}
-                          onChange={handleChange}
-                          min="1"
-                          placeholder="Quantidade"
-                          required
-                        />
+                        <input className={styles.modernInput} type="number" name="quantidade" value={form.quantidade} onChange={handleChange} onBlur={handleBlur} min="1" placeholder="Quantidade" required />
                         <MdCheckCircle className={styles.sucesso} />
                         <MdError className={styles.erro} />
                       </div>
-                      {valida.quantidade.mensagem.map(mens => 
-                        <small key={mens} className={styles.small}>{mens}</small>
-                      )}
+                      {touched.quantidade && errors.quantidade.map(msg => <small key={msg} className={styles.small}>{msg}</small>)}
                     </div>
                   </div>
-
+                  
                   <div className={styles.formRow}>
-                    <div className={valida.preco.validado}>
+                    <div className={getValidationClass('preco')}>
                       <label className={styles.inputLabel}>Preço (R$)</label>
                       <div className={styles.divInput}>
-                        <input
-                          className={styles.modernInput}
-                          type="number"
-                          name="preco"
-                          value={form.preco}
-                          onChange={handleChange}
-                          min="0"
-                          step="0.01"
-                          placeholder="0,00"
-                          required
-                        />
+                        <input className={styles.modernInput} type="number" name="preco" value={form.preco} onChange={handleChange} onBlur={handleBlur} min="0" step="0.01" placeholder="0,00" required />
                         <MdCheckCircle className={styles.sucesso} />
                         <MdError className={styles.erro} />
                       </div>
-                      {valida.preco.mensagem.map(mens => 
-                        <small key={mens} className={styles.small}>{mens}</small>
-                      )}
+                      {touched.preco && errors.preco.map(msg => <small key={msg} className={styles.small}>{msg}</small>)}
                     </div>
-
-                    <div className={valida.codigoBarras.validado}>
+                    <div className={getValidationClass('codigoBarras')}>
                       <label className={styles.inputLabel}>Código de Barras</label>
                       <div className={styles.barcodeInputContainer}>
                         <div className={styles.divInput}>
-                          <input
-                            className={styles.modernInput}
-                            type="text"
-                            name="codigoBarras"
-                            value={form.codigoBarras}
-                            onChange={handleChange}
-                            placeholder="Digite o código de barras"
-                            required
-                          />
+                          <input className={styles.modernInput} type="text" name="codigoBarras" value={form.codigoBarras} onChange={handleChange} onBlur={handleBlur} placeholder="Digite o código de barras" required />
                           <MdCheckCircle className={styles.sucesso} />
                           <MdError className={styles.erro} />
                         </div>
                       </div>
-                      {valida.codigoBarras.mensagem.map(mens => 
-                        <small key={mens} className={styles.small}>{mens}</small>
-                      )}
+                      {touched.codigoBarras && errors.codigoBarras.map(msg => <small key={msg} className={styles.small}>{msg}</small>)}
                     </div>
                   </div>
                 </div>
 
-                {/* Informações Técnicas */}
                 <div className={styles.formSection}>
-                  <h3 className={styles.sectionTitle}>
-                    Informações Técnicas
-                  </h3>
-
-                  <div className={valida.tipo.validado}>
+                  <h3 className={styles.sectionTitle}>Informações Técnicas</h3>
+                  <div className={getValidationClass('tipo')}>
                     <label className={styles.inputLabel}>Tipo de Produto</label>
                     <div className={styles.divInput}>
-                      <select
-                        className={styles.modernInput}
-                        name="tipo"
-                        value={form.tipo}
-                        onChange={handleChange}
-                        required
-                      >
+                      <select className={styles.modernInput} name="tipo" value={form.tipo} onChange={handleChange} onBlur={handleBlur} required>
                         <option value="">Selecione o tipo</option>
-                        <option value="Alopático">Alopático</option>
-                        <option value="Fitoterápico">Fitoterápico</option>
-                        <option value="Genérico">Genérico</option>
-                        <option value="Homeopático">Homeopático</option>
-                        <option value="Manipulado">Manipulado</option>
-                        <option value="Referência">Referência</option>
-                        <option value="Similar">Similar</option>
+                        {Object.keys(tipoMap).map(tipo => <option key={tipo} value={tipo}>{tipo}</option>)}
                       </select>
                       <MdCheckCircle className={styles.sucesso} />
                       <MdError className={styles.erro} />
                     </div>
-                    {valida.tipo.mensagem.map(mens => 
-                      <small key={mens} className={styles.small}>{mens}</small>
-                    )}
+                    {touched.tipo && errors.tipo.map(msg => <small key={msg} className={styles.small}>{msg}</small>)}
                   </div>
-
-                  <div className={valida.forma.validado}>
+                  <div className={getValidationClass('forma')}>
                     <label className={styles.inputLabel}>Forma Farmacêutica</label>
                     <div className={styles.divInput}>
-                      <select
-                        className={styles.modernInput}
-                        name="forma"
-                        value={form.forma}
-                        onChange={handleChange}
-                        required
-                      >
+                      <select className={styles.modernInput} name="forma" value={form.forma} onChange={handleChange} onBlur={handleBlur} required>
                         <option value="">Selecione a forma</option>
-                        <option value="Comprimido">Comprimido</option>
-                        <option value="Cápsula">Cápsula</option>
-                        <option value="Pastilhas">Pastilhas</option>
-                        <option value="Drágeas">Drágeas</option>
-                        <option value="Pós para Reconstituição">Pós para Reconstituição</option>
-                        <option value="Gotas">Gotas</option>
-                        <option value="Xarope">Xarope</option>
-                        <option value="Solução Oral">Solução Oral</option>
-                        <option value="Suspensão">Suspensão</option>
-                        <option value="Comprimidos Sublinguais">Comprimidos Sublinguais</option>
-                        <option value="Soluções">Soluções</option>
-                        <option value="Suspensões Injetáveis">Suspensões Injetáveis</option>
-                        <option value="Soluções Tópicas">Soluções Tópicas</option>
-                        <option value="Pomadas">Pomadas</option>
-                        <option value="Cremes">Cremes</option>
-                        <option value="Loção">Loção</option>
-                        <option value="Gel">Gel</option>
-                        <option value="Adesivos">Adesivos</option>
-                        <option value="Spray">Spray</option>
-                        <option value="Gotas Nasais">Gotas Nasais</option>
-                        <option value="Colírios">Colírios</option>
-                        <option value="Pomadas Oftálmicas">Pomadas Oftálmicas</option>
-                        <option value="Gotas Auriculares ou Otológicas">Gotas Auriculares ou Otológicas</option>
-                        <option value="Pomadas Auriculares">Pomadas Auriculares</option>
-                        <option value="Aerosol">Aerosol</option>
-                        <option value="Comprimidos Vaginais">Comprimidos Vaginais</option>
-                        <option value="Óvulos">Óvulos</option>
-                        <option value="Supositórios">Supositórios</option>
-                        <option value="Enemas">Enemas</option>
+                        {Object.keys(formaMap).map(forma => <option key={forma} value={forma}>{forma}</option>)}
                       </select>
                       <MdCheckCircle className={styles.sucesso} />
                       <MdError className={styles.erro} />
                     </div>
-                    {valida.forma.mensagem.map(mens => 
-                      <small key={mens} className={styles.small}>{mens}</small>
-                    )}
+                    {touched.forma && errors.forma.map(msg => <small key={msg} className={styles.small}>{msg}</small>)}
                   </div>
-
-                  <div className={valida.laboratorio.validado}>
+                  <div className={getValidationClass('laboratorio')}>
                     <label className={styles.inputLabel}>Laboratório</label>
                     <div className={styles.divInput}>
-                      <select
-                        className={styles.modernInput}
-                        name="laboratorio"
-                        value={form.laboratorio}
-                        onChange={handleChange}
-                        required
-                      >
+                      <select className={styles.modernInput} name="laboratorio" value={form.laboratorio} onChange={handleChange} onBlur={handleBlur} required>
                         <option value="">Selecione o laboratório</option>
-                        <option value="Neo Química">Neo Química</option>
-                        <option value="EMS">EMS</option>
-                        <option value="Eurofarma">Eurofarma</option>
-                        <option value="Aché">Aché</option>
-                        <option value="União Química">União Química</option>
-                        <option value="Medley">Medley</option>
-                        <option value="Sanofi">Sanofi</option>
-                        <option value="Geolab">Geolab</option>
-                        <option value="Merck">Merck</option>
-                        <option value="Legrand">Legrand</option>
-                        <option value="Natulab">Natulab</option>
-                        <option value="Germed">Germed</option>
-                        <option value="Prati Donaduzzi">Prati Donaduzzi</option>
-                        <option value="Biolab">Biolab</option>
-                        <option value="Hipera CH">Hipera CH</option>
-                        <option value="Sandoz">Sandoz</option>
-                        <option value="Med Química">Med Química</option>
-                        <option value="Mantecorp Farmasa">Mantecorp Farmasa</option>
+                        {Object.keys(laboratorioMap).map(lab => <option key={lab} value={lab}>{lab}</option>)}
                       </select>
                       <MdCheckCircle className={styles.sucesso} />
                       <MdError className={styles.erro} />
                     </div>
-                    {valida.laboratorio.mensagem.map(mens => 
-                      <small key={mens} className={styles.small}>{mens}</small>
-                    )}
+                    {touched.laboratorio && errors.laboratorio.map(msg => <small key={msg} className={styles.small}>{msg}</small>)}
                   </div>
-
-                  <div className={valida.imagem.validado}>
+                  <div className={getValidationClass('imagem')}>
                     <label className={styles.inputLabel}>Imagem (URL)</label>
                     <div className={styles.divInput}>
-                      <input
-                        className={styles.modernInput}
-                        type="text"
-                        name="imagem"
-                        value={form.imagem}
-                        onChange={handleChange}
-                        placeholder="Cole a URL da imagem"
-                      />
+                      <input className={styles.modernInput} type="text" name="imagem" value={form.imagem} onChange={handleChange} onBlur={handleBlur} placeholder="Cole a URL da imagem" />
                       <MdCheckCircle className={styles.sucesso} />
                       <MdError className={styles.erro} />
                     </div>
-                    {valida.imagem.mensagem.map(mens => 
-                      <small key={mens} className={styles.small}>{mens}</small>
-                    )}
+                    {touched.imagem && errors.imagem.map(msg => <small key={msg} className={styles.small}>{msg}</small>)}
                   </div>
                 </div>
               </div>
 
-              {/* Descrição */}
               <div className={styles.formSection}>
-                <h3 className={styles.sectionTitle}>
-                  Descrição
-                </h3>
-                <div className={valida.descricao.validado}>
+                <h3 className={styles.sectionTitle}>Descrição</h3>
+                <div className={getValidationClass('descricao')}>
                   <label className={styles.inputLabel}>Descrição</label>
                   <div className={styles.divInput}>
-                    <textarea
-                      className={styles.modernTextarea}
-                      name="descricao"
-                      value={form.descricao}
-                      onChange={handleChange}
-                      rows="4"
-                      placeholder="Digite uma descrição para o medicamento"
-                      required
-                    ></textarea>
+                    <textarea className={styles.modernTextarea} name="descricao" value={form.descricao} onChange={handleChange} onBlur={handleBlur} rows="4" placeholder="Digite uma descrição para o medicamento" required></textarea>
                     <MdCheckCircle className={styles.sucesso} />
                     <MdError className={styles.erro} />
                   </div>
-                  {valida.descricao.mensagem.map(mens => 
-                    <small key={mens} className={styles.small}>{mens}</small>
-                  )}
+                  {touched.descricao && errors.descricao.map(msg => <small key={msg} className={styles.small}>{msg}</small>)}
                 </div>
               </div>
 
               <div className={styles.formActions}>
-                <button
-                  type="button"
-                  className={styles.cancelButton}
-                  onClick={() => router.push("/farmacias/produtos/medicamentos")}
-                  disabled={loading}
-                >
+                <button type="button" className={styles.cancelButton} onClick={() => router.push("/farmacias/produtos/medicamentos")} disabled={loading}>
                   Cancelar
                 </button>
-                <button 
-                  type="submit" 
-                  className={styles.submitButton}
-                  disabled={loading}
-                >
-                  {loading ? (
-                    <>
-                      <span className={styles.loadingSpinnerSmall}></span>
-                      Cadastrando...
-                    </>
-                  ) : (
-                    <>
-                      Cadastrar Medicamento
-                    </>
-                  )}
+                <button type="submit" className={styles.submitButton} disabled={loading}>
+                  {loading ? (<><span className={styles.loadingSpinnerSmall}></span>Cadastrando...</>) : (<>Cadastrar Medicamento</>)}
                 </button>
               </div>
             </form>

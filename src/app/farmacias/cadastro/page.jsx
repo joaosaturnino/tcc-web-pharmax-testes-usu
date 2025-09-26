@@ -419,7 +419,7 @@ export default function CadastroFarmacia() {
       localStorage.setItem("usuarioLogado", "true");
 
       // Redireciona para página apropriada
-      router.push("/perfil");
+      router.push("/farmacias/favoritos");
     } catch (error) {
       console.error("Erro ao cadastrar farmácia:", error);
       alert("Erro ao cadastrar. Tente novamente.");

@@ -1,34 +1,45 @@
-// app/componentes/AuthGuard.jsx
 "use client";
 
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 
-export default function AuthGuard({ children, requiredRole = 'admin' }) {
+export default function AuthGuard({ children }) {
   const [isAuthorized, setIsAuthorized] = useState(false);
   const [loading, setLoading] = useState(true);
   const router = useRouter();
 
   useEffect(() => {
     const checkAuth = () => {
+      console.log("--- AuthGuard: A verificar autenticação... ---");
+      let userDataString = null;
+
       try {
-        const userData = localStorage.getItem('usuario');
-        
-        if (!userData) {
+        userDataString = localStorage.getItem('userData');
+        // Esta linha é crucial para a depuração.
+        console.log("--- AuthGuard: 'userData' encontrado no localStorage:", userDataString);
+
+        // Se não houver dados ou se os dados forem inválidos (null, undefined), redireciona.
+        if (!userDataString || userDataString === 'undefined' || userDataString === 'null') {
+          console.error("--- AuthGuard: FALHA. 'userData' não encontrado ou inválido. A redirecionar para /login.");
           router.push('/login');
           return;
         }
 
-        const user = JSON.parse(userData);
-        
-        if (user.tipo !== requiredRole) {
-          router.push('/unauthorized');
-          return;
+        // Tenta analisar os dados. Se falhar (dados corrompidos), redireciona.
+        const user = JSON.parse(userDataString);
+        if (!user) {
+             console.error("--- AuthGuard: FALHA. 'userData' é inválido após JSON.parse. A redirecionar para /login.");
+             router.push('/login');
+             return;
         }
 
+        console.log("--- AuthGuard: SUCESSO. Autorização concedida. A exibir a página.");
         setIsAuthorized(true);
+
       } catch (error) {
-        console.error('Erro na verificação de autenticação:', error);
+        console.error("--- AuthGuard: Ocorreu um erro ao verificar a autenticação.", error);
+        localStorage.removeItem('userData');
+        localStorage.removeItem('authToken');
         router.push('/login');
       } finally {
         setLoading(false);
@@ -36,42 +47,16 @@ export default function AuthGuard({ children, requiredRole = 'admin' }) {
     };
 
     checkAuth();
-  }, [router, requiredRole]);
+  }, [router]);
 
   if (loading) {
     return (
-      <div style={{ 
-        display: 'flex', 
-        justifyContent: 'center', 
-        alignItems: 'center', 
-        height: '100vh',
-        backgroundColor: '#f8fafc'
-      }}>
-        <div style={{
-          display: 'flex',
-          flexDirection: 'column',
-          alignItems: 'center',
-          gap: '16px'
-        }}>
-          <div style={{
-            width: '40px',
-            height: '40px',
-            border: '4px solid #e2e8f0',
-            borderTop: '4px solid #3498db',
-            borderRadius: '50%',
-            animation: 'spin 1s linear infinite'
-          }}></div>
-          <span>Verificando autenticação...</span>
-        </div>
-        <style jsx>{`
-          @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
-          }
-        `}</style>
+      <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh', flexDirection: 'column' }}>
+        <p>A verificar autenticação...</p>
       </div>
     );
   }
 
+  // Só renderiza os "filhos" (a página protegida) se estiver autorizado.
   return isAuthorized ? children : null;
 }

@@ -283,7 +283,7 @@ function ListagemMedicamentos() {
   }
 
   return (
-    <AuthGuard requiredRole="admin">
+    <AuthGuard>
       <div className={styles.dashboard}>
         <header className={styles.header}>
           <div className={styles.headerLeft}>
