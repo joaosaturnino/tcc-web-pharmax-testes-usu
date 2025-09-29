@@ -7,7 +7,7 @@ import api from "../../../services/api"; // Ajuste o caminho conforme sua estrut
 
 export default function RelatorioLaboratoriosPage() {
   const [laboratorios, setLaboratorios] = useState([]);
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading]  = useState(true);
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
   const [itemsPerPage] = useState(10);
@@ -31,7 +31,7 @@ export default function RelatorioLaboratoriosPage() {
   async function listarLaboratorios() {
     try {
       setLoading(true);
-      const response = await api.get('/laboratorio');
+      const response = await api.get('/laboratorios');
       
       if (response.data.sucesso === true) {
         const labsApi = response.data.dados;
@@ -231,6 +231,9 @@ export default function RelatorioLaboratoriosPage() {
     );
   }
 
+  // Define a lista de itens a serem renderizados (paginados ou todos)
+  const itemsToRender = reportGenerated ? sortedLaboratorios : currentItems;
+
   return (
     <div className={styles.dashboard}>
       <header className={styles.header}>
@@ -338,115 +341,79 @@ export default function RelatorioLaboratoriosPage() {
             </nav>
           </aside>
 
-          {/* Overlay para mobile */}
           {sidebarOpen && (
             <div className={styles.overlay} onClick={() => setSidebarOpen(false)} />
           )}
         <main className={styles.mainContent}>
-          <div className={styles.reportHeader}>
-            <div className={styles.reportTitle}>
-              <h1>Relatório de Laboratórios</h1>
+
+        {!reportGenerated && (
+          <>
+            <div className={styles.reportInfo}>
               <p>
-                Período: {new Date(dateRange.start).toLocaleDateString("pt-BR")}{" "}
-                a {new Date(dateRange.end).toLocaleDateString("pt-BR")}
+                Mostrando {currentItems.length} de {filteredLaboratorios.length}{" "}
+                laboratórios
               </p>
-              <p>Data do relatório: {new Date().toLocaleDateString("pt-BR")}</p>
             </div>
-          </div>
-          <div className={styles.reportInfo}>
-            <p>
-              Mostrando {filteredLaboratorios.length} de {laboratorios.length}{" "}
-              laboratórios
-            </p>
-            <p>
-              Período: {new Date(dateRange.start).toLocaleDateString("pt-BR")} a{" "}
-              {new Date(dateRange.end).toLocaleDateString("pt-BR")}
-            </p>
-          </div>
-          <div className={styles.controls}>
-            <div className={styles.filters}>
-              <div className={styles.filterGroup}>
-                <label>Período:</label>
-                <input
-                  type="date"
-                  value={dateRange.start}
-                  onChange={(e) =>
-                    setDateRange({ ...dateRange, start: e.target.value })
-                  }
-                />
-                <span>até</span>
-                <input
-                  type="date"
-                  value={dateRange.end}
-                  onChange={(e) =>
-                    setDateRange({ ...dateRange, end: e.target.value })
-                  }
-                />
-              </div>
-              <div className={styles.filterGroup}>
-                <label>Status:</label>
-                <select
-                  value={statusFilter}
-                  onChange={(e) => setStatusFilter(e.target.value)}
-                >
-                  <option value="todos">Todos</option>
-                  <option value="ativo">Ativo</option>
-                  <option value="inativo">Inativo</option>
-                </select>
-              </div>
-              <div className={styles.filterGroup}>
-                <label>Pesquisar:</label>
-                <input
-                  type="text"
-                  placeholder="Nome, email ou CNPJ..."
-                  value={searchTerm}
-                  onChange={(e) => setSearchTerm(e.target.value)}
-                />
+            <div className={styles.controls}>
+              <div className={styles.filters}>
+                <div className={styles.filterGroup}>
+                  <label>Período:</label>
+                  <input type="date" value={dateRange.start} onChange={(e) => setDateRange({ ...dateRange, start: e.target.value })}/>
+                  <span>até</span>
+                  <input type="date" value={dateRange.end} onChange={(e) => setDateRange({ ...dateRange, end: e.target.value })} />
+                </div>
+                <div className={styles.filterGroup}>
+                  <label>Status:</label>
+                  <select value={statusFilter} onChange={(e) => setStatusFilter(e.target.value)}>
+                    <option value="todos">Todos</option>
+                    <option value="ativo">Ativo</option>
+                    <option value="inativo">Inativo</option>
+                  </select>
+                </div>
+                <div className={styles.filterGroup}>
+                  <label>Pesquisar:</label>
+                  <input type="text" placeholder="Nome, email ou CNPJ..." value={searchTerm} onChange={(e) => setSearchTerm(e.target.value)} />
+                </div>
               </div>
             </div>
-          </div>
-          <div
-            ref={reportRef}
-            className={`${styles.reportContainer} ${
-              reportGenerated ? styles.reportMode : ""
-            }`}
-          >
+          </>
+        )}
+
+          {/* INÍCIO DA ÁREA DE IMPRESSÃO */}
+          <div ref={reportRef} className={`${styles.reportContainer} ${reportGenerated ? styles.reportMode : ""}`}>
+            
+            <div className={styles.reportHeader}>
+              <img 
+                src="../../../../../temp/LogoEscrita.png" 
+                alt="Logo PharmaX" 
+                className={styles.printLogo} 
+              />
+              <div className={styles.reportTitle}>
+                <h1>Relatório de Laboratórios</h1>
+                <p>
+                  Período: {new Date(dateRange.start).toLocaleDateString("pt-BR", { timeZone: 'UTC' })}{" "}
+                  a {new Date(dateRange.end).toLocaleDateString("pt-BR", { timeZone: 'UTC' })}
+                </p>
+                <p>Data do relatório: {new Date().toLocaleDateString("pt-BR")}</p>
+              </div>
+            </div>
+            
             <table className={styles.reportTable}>
               <thead>
                 <tr>
-                  <th
-                    className={styles.sortableHeader}
-                    onClick={() => handleSort("nome")}
-                  >
-                    Nome {getSortIcon("nome")}
-                  </th>
+                  <th className={styles.sortableHeader} onClick={() => handleSort("nome")}> Nome {getSortIcon("nome")} </th>
                   <th>CNPJ</th>
                   <th>Endereço</th>
                   <th>Telefone</th>
-                  <th
-                    className={styles.sortableHeader}
-                    onClick={() => handleSort("email")}
-                  >
-                    Email {getSortIcon("email")}
-                  </th>
-                  <th
-                    className={styles.sortableHeader}
-                    onClick={() => handleSort("medicamentosCadastrados")}
-                  >
-                    Medicamentos {getSortIcon("medicamentosCadastrados")}
-                  </th>
+                  <th className={styles.sortableHeader} onClick={() => handleSort("email")}> Email {getSortIcon("email")} </th>
+                  <th className={styles.sortableHeader} onClick={() => handleSort("medicamentosCadastrados")}> Medicamentos {getSortIcon("medicamentosCadastrados")} </th>
                   <th>Status</th>
-                  <th
-                    className={styles.sortableHeader}
-                    onClick={() => handleSort("dataCadastro")}
-                  >
-                    Data Cadastro {getSortIcon("dataCadastro")}
-                  </th>
+                  <th className={styles.sortableHeader} onClick={() => handleSort("dataCadastro")}> Data Cadastro {getSortIcon("dataCadastro")} </th>
                 </tr>
               </thead>
               <tbody>
-                {currentItems.length > 0 ? (
-                  currentItems.map((lab) => (
+                {itemsToRender.length > 0 ? (
+                  itemsToRender.map((lab) => (
                     <tr key={lab.id}>
                       <td className={styles.medName}>{lab.nome}</td>
                       <td>{lab.cnpj}</td>
@@ -455,18 +422,12 @@ export default function RelatorioLaboratoriosPage() {
                       <td>{lab.email}</td>
                       <td>{lab.medicamentosCadastrados}</td>
                       <td>
-                        <span
-                          className={`${styles.statusBadge} ${
-                            lab.status === "ativo"
-                              ? styles.inStock
-                              : styles.outStock
-                          }`}
-                        >
+                        <span className={`${styles.statusBadge} ${lab.status === "ativo" ? styles.inStock : styles.outStock}`}>
                           {lab.status === "ativo" ? "Ativo" : "Inativo"}
                         </span>
                       </td>
                       <td>
-                        {new Date(lab.dataCadastro).toLocaleDateString("pt-BR")}
+                        {new Date(lab.dataCadastro).toLocaleDateString("pt-BR", { timeZone: 'UTC' })}
                       </td>
                     </tr>
                   ))
@@ -474,9 +435,7 @@ export default function RelatorioLaboratoriosPage() {
                   <tr>
                     <td colSpan="8" className={styles.emptyState}>
                       <h3>Nenhum laboratório encontrado</h3>
-                      <p>
-                        Nenhum laboratório corresponde aos filtros selecionados.
-                      </p>
+                      <p> Nenhum laboratório corresponde aos filtros selecionados. </p>
                     </td>
                   </tr>
                 )}
@@ -485,38 +444,10 @@ export default function RelatorioLaboratoriosPage() {
             <div className={styles.reportSummary}>
               <h2>Resumo do Relatório</h2>
               <div className={styles.summaryGrid}>
-                <div className={styles.summaryItem}>
-                  <span className={styles.summaryLabel}>
-                    Total de Laboratórios
-                  </span>
-                  <span className={styles.summaryValue}>
-                    {totalLaboratorios}
-                  </span>
-                </div>
-                <div className={styles.summaryItem}>
-                  <span className={styles.summaryLabel}>
-                    Laboratórios Ativos
-                  </span>
-                  <span className={styles.summaryValue}>
-                    {laboratoriosAtivos}
-                  </span>
-                </div>
-                <div className={styles.summaryItem}>
-                  <span className={styles.summaryLabel}>
-                    Laboratórios Inativos
-                  </span>
-                  <span className={styles.summaryValue}>
-                    {laboratoriosInativos}
-                  </span>
-                </div>
-                <div className={styles.summaryItem}>
-                  <span className={styles.summaryLabel}>
-                    Total de Medicamentos
-                  </span>
-                  <span className={styles.summaryValue}>
-                    {totalMedicamentos}
-                  </span>
-                </div>
+                <div className={styles.summaryItem}> <span className={styles.summaryLabel}> Total de Laboratórios </span> <span className={styles.summaryValue}> {totalLaboratorios} </span> </div>
+                <div className={styles.summaryItem}> <span className={styles.summaryLabel}> Laboratórios Ativos </span> <span className={styles.summaryValue}> {laboratoriosAtivos} </span> </div>
+                <div className={styles.summaryItem}> <span className={styles.summaryLabel}> Laboratórios Inativos </span> <span className={styles.summaryValue}> {laboratoriosInativos} </span> </div>
+                <div className={styles.summaryItem}> <span className={styles.summaryLabel}> Total de Medicamentos </span> <span className={styles.summaryValue}> {totalMedicamentos} </span> </div>
               </div>
             </div>
             <div className={styles.reportFooter}>
@@ -524,7 +455,9 @@ export default function RelatorioLaboratoriosPage() {
               <p>PharmaX - Sistema de Gestão Farmacêutica</p>
             </div>
           </div>
-          {totalPages > 1 && !reportGenerated && (
+          {/* FIM DA ÁREA DE IMPRESSÃO */}
+          
+          {!reportGenerated && totalPages > 1 && (
             <div className={styles.paginationControls}>
               <button
                 className={`${styles.paginationBtn} ${

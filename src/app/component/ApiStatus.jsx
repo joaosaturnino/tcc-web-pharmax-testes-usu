@@ -79,3 +79,16 @@ export default function ApiStatus() {
     </div>
   );
 }
+
+<div className={styles.formActions}>
+                <button
+                  type="button"
+                  className={styles.cancelButton}
+                  onClick={() => router.push("/farmacias/laboratorio/lista")}
+                >
+                  Cancelar
+                </button>
+                <button type="submit" className={styles.submitButton}>
+                  Atualizar Laboratório
+                </button>
+              </div>

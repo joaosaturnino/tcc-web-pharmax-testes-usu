@@ -39,8 +39,8 @@ export default function RelatorioFavoritosPage() {
             dosagem: med.med_dosagem,
             favoritacoes: med.favoritacoes_count || 0,
             status: med.status || "pendente",
-            ultimaAtualizacao: med.med_data_atualizacao 
-              ? new Date(med.med_data_atualizacao).toISOString() 
+            ultimaAtualizacao: med.med_data_atualizacao
+              ? new Date(med.med_data_atualizacao).toISOString()
               : new Date().toISOString(),
           }));
           
@@ -65,14 +65,9 @@ export default function RelatorioFavoritosPage() {
 
   // Filtrar e ordenar medicamentos
   const filteredMedicamentos = medicamentos.filter((med) => {
-    const medDate = new Date(med.ultimaAtualizacao);
-    const startDate = new Date(dateRange.start);
-    const endDate = new Date(dateRange.end);
-    endDate.setHours(23, 59, 59, 999);
-
-    const dateInRange = medDate >= startDate && medDate <= endDate;
+    const medDateStr = med.ultimaAtualizacao.split("T")[0];
+    const dateInRange = medDateStr >= dateRange.start && medDateStr <= dateRange.end;
     const statusMatch = statusFilter === "todos" || med.status === statusFilter;
-
     return dateInRange && statusMatch;
   });
 
@@ -103,13 +98,12 @@ export default function RelatorioFavoritosPage() {
     }
   });
 
-  // Paginação - usado apenas para exibição normal
+  // Paginação
   const indexOfLastItem = currentPage * itemsPerPage;
   const indexOfFirstItem = indexOfLastItem - itemsPerPage;
   const currentItems = sortedMedicamentos.slice(indexOfFirstItem, indexOfLastItem);
   const totalPages = Math.ceil(sortedMedicamentos.length / itemsPerPage);
 
-  // Para o relatório, usar todos os medicamentos filtrados
   const reportItems = reportGenerated ? sortedMedicamentos : currentItems;
 
   const paginate = (pageNumber) => setCurrentPage(pageNumber);
@@ -118,7 +112,6 @@ export default function RelatorioFavoritosPage() {
     setReportGenerated(true);
     setTimeout(() => {
       window.print();
-      // Resetar após a impressão
       setTimeout(() => {
         setReportGenerated(false);
       }, 500);
@@ -132,7 +125,6 @@ export default function RelatorioFavoritosPage() {
       setSortBy(column);
       setSortOrder("desc");
     }
-    // Resetar para a primeira página quando ordenar
     setCurrentPage(1);
   };
 
@@ -269,80 +261,81 @@ export default function RelatorioFavoritosPage() {
             </nav>
           </aside>
 
-          {/* Overlay para mobile */}
           {sidebarOpen && (
             <div className={styles.overlay} onClick={() => setSidebarOpen(false)} />
           )}
           
           <main className={styles.mainContent}>
-            <div className={styles.reportHeader}>
-              <div className={styles.reportTitle}>
-                <h1>Medicamentos Favoritados</h1>
-                <p>
-                  Período:{" "}
-                  {new Date(dateRange.start).toLocaleDateString("pt-BR")} a{" "}
-                  {new Date(dateRange.end).toLocaleDateString("pt-BR")}
-                </p>
-                <p>
-                  Data do relatório: {new Date().toLocaleDateString("pt-BR")}
-                </p>
-              </div>
-            </div>
-            
-            {!reportGenerated && (
-              <>
-                <div className={styles.reportInfo}>
-                  <p>
-                    Mostrando {filteredMedicamentos.length} de {medicamentos.length} medicamentos
-                  </p>
-                  <p>
-                    Período: {new Date(dateRange.start).toLocaleDateString("pt-BR")}{" "}
-                    a {new Date(dateRange.end).toLocaleDateString("pt-BR")}
-                  </p>
-                </div>
-                <div className={styles.controls}>
-                  <div className={styles.filters}>
-                    <div className={styles.filterGroup}>
-                      <label>Período:</label>
-                      <input
-                        type="date"
-                        value={dateRange.start}
-                        onChange={(e) =>
-                          setDateRange({ ...dateRange, start: e.target.value })
-                        }
-                      />
-                      <span>até</span>
-                      <input
-                        type="date"
-                        value={dateRange.end}
-                        onChange={(e) =>
-                          setDateRange({ ...dateRange, end: e.target.value })
-                        }
-                      />
-                    </div>
-                    <div className={styles.filterGroup}>
-                      <label>Status:</label>
-                      <select
-                        value={statusFilter}
-                        onChange={(e) => setStatusFilter(e.target.value)}
-                      >
-                        <option value="todos">Todos</option>
-                        <option value="em_estoque">Disponível</option>
-                        <option value="indisponivel">Indisponível</option>
-                        <option value="pendente">Pendente</option>
-                      </select>
-                    </div>
-                  </div>
-                </div>
-              </>
-            )}
-
             <div
               ref={reportRef}
               className={`${styles.reportContainer} ${
                 reportGenerated ? styles.reportMode : ""
               }`}
             >
+              <div className={styles.reportHeader}>
+                <img 
+                  src="../../../../../temp/LogoEscrita.png" 
+                  alt="Logo PharmaX" 
+                  className={styles.printLogo} 
+                />
+
+                <div className={styles.reportTitle}>
+                  <h1>Medicamentos Favoritados</h1>
+                  <p>
+                    Período:{" "}
+                    {new Date(dateRange.start).toLocaleDateString("pt-BR", {timeZone: 'UTC'})} a{" "}
+                    {new Date(dateRange.end).toLocaleDateString("pt-BR", {timeZone: 'UTC'})}
+                  </p>
+                  <p>
+                    Data do relatório: {new Date().toLocaleDateString("pt-BR")}
+                  </p>
+                </div>
+              </div>
+              
+              {!reportGenerated && (
+                <>
+                  <div className={styles.reportInfo}>
+                    <p>
+                      Mostrando {filteredMedicamentos.length} de {medicamentos.length} medicamentos
+                    </p>
+                  </div>
+                  <div className={styles.controls}>
+                    <div className={styles.filters}>
+                      <div className={styles.filterGroup}>
+                        <label>Período:</label>
+                        <input
+                          type="date"
+                          value={dateRange.start}
+                          onChange={(e) =>
+                            setDateRange({ ...dateRange, start: e.target.value })
+                          }
+                        />
+                        <span>até</span>
+                        <input
+                          type="date"
+                          value={dateRange.end}
+                          onChange={(e) =>
+                            setDateRange({ ...dateRange, end: e.target.value })
+                          }
+                        />
+                      </div>
+                      <div className={styles.filterGroup}>
+                        <label>Status:</label>
+                        <select
+                          value={statusFilter}
+                          onChange={(e) => setStatusFilter(e.target.value)}
+                        >
+                          <option value="todos">Todos</option>
+                          <option value="em_estoque">Disponível</option>
+                          <option value="indisponivel">Indisponível</option>
+                          <option value="pendente">Pendente</option>
+                        </select>
+                      </div>
+                    </div>
+                  </div>
+                </>
+              )}
+
               <table className={styles.reportTable}>
                 <thead>
                   <tr>
@@ -401,7 +394,8 @@ export default function RelatorioFavoritosPage() {
                         </td>
                         <td>
                           {new Date(med.ultimaAtualizacao).toLocaleDateString(
-                            "pt-BR"
+                            "pt-BR",
+                             {timeZone: 'UTC'}
                           )}
                         </td>
                       </tr>
@@ -460,7 +454,7 @@ export default function RelatorioFavoritosPage() {
                     </span>
                     <span className={styles.summaryValue}>
                       {filteredMedicamentos.length > 0
-                        ? filteredMedicamentos.sort(
+                        ? [...filteredMedicamentos].sort(
                             (a, b) => b.favoritacoes - a.favoritacoes
                           )[0].nome
                         : "N/A"}
@@ -475,7 +469,6 @@ export default function RelatorioFavoritosPage() {
               </div>
             </div>
 
-            {/* Mostrar paginação apenas quando NÃO estiver no modo de relatório */}
             {totalPages > 1 && !reportGenerated && (
               <div className={styles.paginationControls}>
                 <button

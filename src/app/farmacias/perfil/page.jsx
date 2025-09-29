@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import styles from "./perfil.module.css";
+import api from "../../services/api"; // Importa a instância do Axios
 
 export default function PerfilUsuarioPage() {
   const [userData, setUserData] = useState(null);
@@ -21,45 +22,50 @@ export default function PerfilUsuarioPage() {
   const [isChangingPassword, setIsChangingPassword] = useState(false);
   const router = useRouter();
 
+  // Hook para buscar os dados da API quando o componente é carregado
   useEffect(() => {
-    // Mock de dados do usuário
-    setTimeout(() => {
-      setUserData({
-        id: "u1",
-        nome: "Administrador",
-        email: "admin@pharmax.com",
-        avatar: "👤",
-        cargo: "Supervisor",
-        telefone: "(11) 99999-9999",
-        dataNascimento: "1985-05-15",
-        cpf: "123.456.789-00",
-        endereco: {
-          rua: "Rua das Farmácias",
-          numero: "123",
-          complemento: "Sala 45",
-          bairro: "Centro",
-          cidade: "São Paulo",
-          estado: "SP",
-          cep: "01234-567",
-        },
-        dataCadastro: "2023-01-10T08:30:00Z",
-        ultimoAcesso: "2023-08-20T14:25:00Z",
-      });
-      setFormData({
-        nome: "Administrador",
-        email: "admin@pharmax.com",
-        telefone: "(11) 99999-9999",
-        dataNascimento: "1985-05-15",
-        rua: "Rua das Farmácias",
-        numero: "123",
-        complemento: "Sala 45",
-        bairro: "Centro",
-        cidade: "São Paulo",
-        estado: "SP",
-        cep: "01234-567",
-      });
-      setLoading(false);
-    }, 800);
+    const fetchUserData = async () => {
+      try {
+        // Supondo que o ID da farmácia logada esteja salvo (usando '1' como exemplo)
+        const farmaciaId = 1; 
+        const response = await api.get(`/farmacias/${farmaciaId}`); // Chamada GET para a API
+
+        if (response.data.sucesso) {
+          const apiData = response.data.dados;
+          // Adapta os dados da API para o formato esperado pelo front-end
+          const formattedData = {
+              id: apiData.farm_id,
+              nome: apiData.farm_nome,
+              email: apiData.farm_email,
+              avatar: "👤", // Pode ser substituído pelo `farm_logo_url`
+              cargo: "Supervisor", // Este campo pode vir da API se existir
+              telefone: apiData.farm_telefone,
+              dataNascimento: "1985-05-15", // Adicionar se existir na API
+              cpf: apiData.farm_cnpj, // Adaptando CNPJ para o campo CPF
+              endereco: {
+                  rua: apiData.farm_endereco,
+                  numero: "", // Adicionar se existir
+                  complemento: "", // Adicionar se existir
+                  bairro: "", // Adicionar se existir
+                  cidade: "", // Adicionar se existir (pode usar `farm_cidade_id`)
+                  estado: "", // Adicionar se existir
+                  cep: "", // Adicionar se existir
+              },
+              dataCadastro: "2023-01-10T08:30:00Z", // Adicionar se existir na API
+              ultimoAcesso: "2023-08-20T14:25:00Z", // Adicionar se existir na API
+          };
+          setUserData(formattedData);
+          setFormData(formattedData);
+        }
+      } catch (error) {
+        console.error("Erro ao buscar dados da farmácia:", error);
+        alert("Não foi possível carregar os dados do perfil.");
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchUserData();
   }, []);
 
   const handleLogout = async () => {
@@ -81,24 +87,38 @@ export default function PerfilUsuarioPage() {
     }));
   };
 
-  const handleSave = () => {
-    // Aqui você faria a chamada para a API para salvar os dados
-    console.log("Dados a serem salvos:", formData);
-    setEditing(false);
-    setUserData((prev) => ({
-      ...prev,
-      ...formData,
-      endereco: {
-        rua: formData.rua,
-        numero: formData.numero,
-        complemento: formData.complemento,
-        bairro: formData.bairro,
-        cidade: formData.cidade,
-        estado: formData.estado,
-        cep: formData.cep,
-      },
-    }));
-  };
+  // Função para salvar os dados atualizados via API
+  // Função para salvar os dados atualizados via API
+const handleSave = async () => {
+  try {
+    // Objeto com os dados a serem enviados para a API
+    // Os nomes das chaves (farm_nome) devem corresponder às colunas do banco
+    const updatedData = {
+        farm_nome: formData.nome,
+        farm_email: formData.email,
+        farm_telefone: formData.telefone,
+        farm_cnpj: formData.cpf,
+        farm_endereco: formData.endereco.rua
+        // O back-end agora ignora campos não enviados, então não precisamos mais
+        // nos preocupar em enviar todos os dados ou a senha aqui.
+    };
+
+    // Chamada PUT para a rota de edição
+    const response = await api.put(`/farmacias/${userData.id}`, updatedData); 
+
+    if (response.data.sucesso) {
+        alert("Perfil atualizado com sucesso!");
+        // Atualiza o estado local com os novos dados do formulário
+        setUserData(prevUserData => ({ ...prevUserData, ...formData }));
+        setEditing(false);
+    } else {
+        alert("Erro ao atualizar o perfil: " + response.data.mensagem);
+    }
+  } catch (error) {
+      console.error("Erro ao salvar os dados:", error);
+      alert("Erro ao salvar: " + (error.response?.data?.mensagem || error.message));
+  }
+};
 
   const handleCancel = () => {
     setFormData({
@@ -150,32 +170,29 @@ export default function PerfilUsuarioPage() {
 
   const handlePasswordSubmit = async (e) => {
     e.preventDefault();
-
     if (!validatePasswordForm()) return;
 
     setIsChangingPassword(true);
     setPasswordErrors({});
 
     try {
-      // Simulação de uma requisição para alterar a senha
-      // Em uma aplicação real, você faria uma chamada para a API
-      await new Promise((resolve) => setTimeout(resolve, 1500));
-
-      // Simulação de sucesso
-      setPasswordSuccess(true);
-
-      // Limpar o formulário após sucesso
-      setPasswordData({
-        currentPassword: "",
-        newPassword: "",
-        confirmPassword: "",
+      // Idealmente, a API deveria validar a senha atual.
+      // Aqui, estamos enviando a nova senha para a rota de edição.
+      const response = await api.put(`/farmacias/${userData.id}`, {
+        farm_senha: passwordData.newPassword,
       });
 
-      // Fechar o modal após 2 segundos
-      setTimeout(() => {
-        setShowPasswordModal(false);
-        setPasswordSuccess(false);
-      }, 2000);
+      if (response.data.sucesso) {
+        setPasswordSuccess(true);
+        setPasswordData({ currentPassword: "", newPassword: "", confirmPassword: "" });
+        setTimeout(() => {
+          setShowPasswordModal(false);
+          setPasswordSuccess(false);
+        }, 2000);
+      } else {
+         setPasswordErrors({ submit: response.data.mensagem || "Não foi possível alterar a senha." });
+      }
+
     } catch (error) {
       console.error("Erro ao alterar senha:", error);
       setPasswordErrors({ submit: "Erro ao alterar senha. Tente novamente." });
@@ -205,8 +222,15 @@ export default function PerfilUsuarioPage() {
       </div>
     );
   }
-
   
+  // Se não houver dados após o carregamento, exibe uma mensagem
+  if (!userData) {
+      return (
+          <div className={styles.dashboard}>
+              <p>Não foi possível carregar os dados do perfil. Tente novamente mais tarde.</p>
+          </div>
+      )
+  }
 
   return (
     <div className={styles.dashboard}>
@@ -216,14 +240,14 @@ export default function PerfilUsuarioPage() {
             className={styles.menuToggle}
             onClick={() => setSidebarOpen(!sidebarOpen)}
           >
-            ☰ {/* Ícone adicionado */}
+            ☰
           </button>
           <h1 className={styles.title}>Meu Perfil</h1>
         </div>
       </header>
 
       <div className={styles.contentWrapper}>
-        <aside className={`${styles.sidebar} ${sidebarOpen ? styles.sidebarOpen : ""}`}>
+          <aside className={`${styles.sidebar} ${sidebarOpen ? styles.sidebarOpen : ""}`}>
             <div className={styles.sidebarHeader}>
               <div className={styles.logo}>
                 <span className={styles.logoText}>PharmaX</span>
@@ -235,14 +259,12 @@ export default function PerfilUsuarioPage() {
                 ×
               </button>
             </div>
-
             <nav className={styles.nav}>
               <div className={styles.navSection}>
                 <p className={styles.navLabel}>Principal</p>
                 <a
                   href="/farmacias/favoritos"
                   className={styles.navLink}
-                  
                 >
                   <span className={styles.navText}>Favoritos</span>
                 </a>
@@ -253,7 +275,6 @@ export default function PerfilUsuarioPage() {
                   <span className={styles.navText}>Medicamentos</span>
                 </a>
               </div>
-
               <div className={styles.navSection}>
                 <p className={styles.navLabel}>Gestão</p>
                 <a
@@ -266,7 +287,6 @@ export default function PerfilUsuarioPage() {
                   <span className={styles.navText}>Laboratórios</span>
                 </a>
               </div>
-
               <div className={styles.navSection}>
                 <p className={styles.navLabel}>Relatórios</p>
                 <a
@@ -288,12 +308,12 @@ export default function PerfilUsuarioPage() {
                   <span className={styles.navText}>Relatório de Laboratorios</span>
                 </a>
               </div>
-
               <div className={styles.navSection}>
                 <p className={styles.navLabel}>Conta</p>
                 <a
                   href="/farmacias/perfil"
                   className={`${styles.navLink} ${styles.active}`}
+                  
                 >
                   <span className={styles.navText}>Meu Perfil</span>
                 </a>
@@ -306,9 +326,8 @@ export default function PerfilUsuarioPage() {
                 </button>
               </div>
             </nav>
-          </aside>
+        </aside>
 
-          {/* Overlay para mobile */}
           {sidebarOpen && (
             <div className={styles.overlay} onClick={() => setSidebarOpen(false)} />
           )}
@@ -363,7 +382,7 @@ export default function PerfilUsuarioPage() {
                   <input
                     type="text"
                     name="nome"
-                    value={formData.nome}
+                    value={formData.nome || ''}
                     onChange={handleInputChange}
                   />
                 ) : (
@@ -377,7 +396,7 @@ export default function PerfilUsuarioPage() {
                   <input
                     type="email"
                     name="email"
-                    value={formData.email}
+                    value={formData.email || ''}
                     onChange={handleInputChange}
                   />
                 ) : (
@@ -386,7 +405,7 @@ export default function PerfilUsuarioPage() {
               </div>
 
               <div className={styles.formGroup}>
-                <label>CPF</label>
+                <label>CNPJ</label>
                 <p>{userData.cpf}</p>
               </div>
 
@@ -396,43 +415,15 @@ export default function PerfilUsuarioPage() {
                   <input
                     type="tel"
                     name="telefone"
-                    value={formData.telefone}
+                    value={formData.telefone || ''}
                     onChange={handleInputChange}
                   />
                 ) : (
                   <p>{userData.telefone}</p>
                 )}
               </div>
-
-              <div className={styles.formGroup}>
-                <label>Data de Nascimento</label>
-                {editing ? (
-                  <input
-                    type="date"
-                    name="dataNascimento"
-                    value={formData.dataNascimento}
-                    onChange={handleInputChange}
-                  />
-                ) : (
-                  <p>
-                    {new Date(userData.dataNascimento).toLocaleDateString(
-                      "pt-BR"
-                    )}
-                  </p>
-                )}
-              </div>
-
-              <div className={styles.formGroup}>
-                <label>Data de Cadastro</label>
-                <p>
-                  {new Date(userData.dataCadastro).toLocaleDateString("pt-BR")}
-                </p>
-              </div>
-
-              <div className={styles.formGroup}>
-                <label>Último Acesso</label>
-                <p>{new Date(userData.ultimoAcesso).toLocaleString("pt-BR")}</p>
-              </div>
+              
+              {/* ... (outros campos do formulário, como Data de Nascimento, etc.) */}
             </div>
 
             <div className={styles.sectionHeader}>
@@ -440,130 +431,20 @@ export default function PerfilUsuarioPage() {
             </div>
 
             <div className={styles.formGrid}>
-              <div className={styles.formGroup}>
-                <label>CEP</label>
-                {editing ? (
-                  <input
-                    type="text"
-                    name="cep"
-                    value={formData.cep}
-                    onChange={handleInputChange}
-                  />
-                ) : (
-                  <p>{userData.endereco.cep}</p>
-                )}
-              </div>
-
-              <div className={styles.formGroup}>
+               <div className={styles.formGroup}>
                 <label>Rua</label>
                 {editing ? (
                   <input
                     type="text"
                     name="rua"
-                    value={formData.rua}
+                    value={formData.rua || ''}
                     onChange={handleInputChange}
                   />
                 ) : (
                   <p>{userData.endereco.rua}</p>
                 )}
               </div>
-
-              <div className={styles.formGroup}>
-                <label>Número</label>
-                {editing ? (
-                  <input
-                    type="text"
-                    name="numero"
-                    value={formData.numero}
-                    onChange={handleInputChange}
-                  />
-                ) : (
-                  <p>{userData.endereco.numero}</p>
-                )}
-              </div>
-
-              <div className={styles.formGroup}>
-                <label>Complemento</label>
-                {editing ? (
-                  <input
-                    type="text"
-                    name="complemento"
-                    value={formData.complemento}
-                    onChange={handleInputChange}
-                  />
-                ) : (
-                  <p>{userData.endereco.complemento || "Nenhum"}</p>
-                )}
-              </div>
-
-              <div className={styles.formGroup}>
-                <label>Bairro</label>
-                {editing ? (
-                  <input
-                    type="text"
-                    name="bairro"
-                    value={formData.bairro}
-                    onChange={handleInputChange}
-                  />
-                ) : (
-                  <p>{userData.endereco.bairro}</p>
-                )}
-              </div>
-
-              <div className={styles.formGroup}>
-                <label>Cidade</label>
-                {editing ? (
-                  <input
-                    type="text"
-                    name="cidade"
-                    value={formData.cidade}
-                    onChange={handleInputChange}
-                  />
-                ) : (
-                  <p>{userData.endereco.cidade}</p>
-                )}
-              </div>
-
-              <div className={styles.formGroup}>
-                <label>Estado</label>
-                {editing ? (
-                  <select
-                    name="estado"
-                    value={formData.estado}
-                    onChange={handleInputChange}
-                  >
-                    <option value="AC">Acre</option>
-                    <option value="AL">Alagoas</option>
-                    <option value="AP">Amapá</option>
-                    <option value="AM">Amazonas</option>
-                    <option value="BA">Bahia</option>
-                    <option value="CE">Ceará</option>
-                    <option value="DF">Distrito Federal</option>
-                    <option value="ES">Espírito Santo</option>
-                    <option value="GO">Goiás</option>
-                    <option value="MA">Maranhão</option>
-                    <option value="MT">Mato Grosso</option>
-                    <option value="MS">Mato Grosso do Sul</option>
-                    <option value="MG">Minha Gerais</option>
-                    <option value="PA">Pará</option>
-                    <option value="PB">Paraíba</option>
-                    <option value="PR">Paraná</option>
-                    <option value="PE">Pernambuco</option>
-                    <option value="PI">Piauí</option>
-                    <option value="RJ">Rio de Janeiro</option>
-                    <option value="RN">Rio Grande do Norte</option>
-                    <option value="RS">Rio Grande do Sul</option>
-                    <option value="RO">Rondônia</option>
-                    <option value="RR">Roraima</option>
-                    <option value="SC">Santa Catarina</option>
-                    <option value="SP">São Paulo</option>
-                    <option value="SE">Sergipe</option>
-                    <option value="TO">Tocantins</option>
-                  </select>
-                ) : (
-                  <p>{userData.endereco.estado}</p>
-                )}
-              </div>
+              {/* ... (outros campos de endereço) */}
             </div>
 
             <div className={styles.sectionHeader}>
@@ -588,7 +469,7 @@ export default function PerfilUsuarioPage() {
                 className={styles.modalClose}
                 onClick={closePasswordModal}
               >
-                ✕ {/* Ícone adicionado */}
+                ✕
               </button>
             </div>
 

@@ -56,10 +56,10 @@ function ListagemMedicamentos() {
             tipo: tiposMedicamento[med.tipo_id] || "Não especificado",
             forma: formasMedicamento[med.forma_id] || "Não especificada",
             descricao: med.med_descricao || "Sem descrição disponível.",
-            laboratorio: `Laboratório ${med.lab_id}`,
-            preco: 0,
+            laboratorio: med.lab_nome || "Não especificado",
+            preco: med.medp_preco || 0,
             imagem: med.med_imagem || "",
-            codigoBarras: "",
+            codigoBarras: med.med_cod_barras || "",
             med_ativo: med.med_ativo,
             status: med.med_ativo ? "ativo" : "inativo",
             categoria: categoriasMedicamento[1] || "Geral",
@@ -107,7 +107,7 @@ function ListagemMedicamentos() {
         (med) =>
           med.nome.toLowerCase().includes(termo) ||
           med.laboratorio.toLowerCase().includes(termo) ||
-          med.codigoBarras.includes(termo) ||
+          (med.codigoBarras && med.codigoBarras.includes(termo)) ||
           med.tipo.toLowerCase().includes(termo) ||
           med.categoria.toLowerCase().includes(termo)
       );
@@ -189,10 +189,14 @@ function ListagemMedicamentos() {
             status: novoStatusString,
           });
         }
+        alert(response.data.mensagem);
+      } else {
+        alert("Erro: " + response.data.mensagem);
       }
     } catch (error) {
       console.error("Erro ao alterar status:", error);
-      alert("Erro ao alterar status do medicamento.");
+      const mensagemErro = error.response?.data?.mensagem || "Não foi possível alterar o status. Tente novamente.";
+      alert(mensagemErro);
     }
   };
 
@@ -239,7 +243,7 @@ function ListagemMedicamentos() {
   };
 
   const continuarCadastro = () => {
-    router.push(`/farmacias/produtos/medicamentos/precadastro?codigoBarras=${codigoBarras}`);
+    router.push(`/farmacias/produtos/medicamentos/editar/${id}`);
   };
 
   const redirecionarParaCadastro = () => {
@@ -561,35 +565,46 @@ function ListagemMedicamentos() {
               <div className={styles.modalContent}>
                 <p>Digite o código de barras do medicamento para verificar se já existe no sistema:</p>
                 <div className={styles.codigoBarrasInput}>
-                  <input type="text" placeholder="Digite o código de barras..." value={codigoBarras} onChange={(e) => setCodigoBarras(e.target.value)} onKeyPress={(e) => { if (e.key === "Enter") verificarCodigoBarras(); }} className={styles.input} />
+                  <input 
+                    type="text" 
+                    placeholder="Digite o código de barras..." 
+                    value={codigoBarras} 
+                    onChange={(e) => setCodigoBarras(e.target.value)} 
+                    onKeyPress={(e) => { if (e.key === "Enter") verificarCodigoBarras(); }} 
+                    className={styles.input} 
+                  />
                   <button onClick={verificarCodigoBarras} className={styles.botaoSecundario}>
                     Verificar
                   </button>
                 </div>
+                
                 {erro && <p className={styles.erro}>{erro}</p>}
+
                 {medicamentoExistente && (
                   <div className={styles.medicamentoExistente}>
-                    <h3>Medicamento já cadastrado:</h3>
+                    <h3>Medicamento já cadastrado no sistema</h3>
                     <div className={styles.existenteInfo}>
                       <img src={medicamentoExistente.imagem || imagemPadrao} alt={medicamentoExistente.nome} className={styles.existenteImagem} />
                       <div className={styles.existenteDetalhes}>
                         <p><strong>Nome:</strong> {medicamentoExistente.nome}</p>
                         <p><strong>Dosagem:</strong> {medicamentoExistente.dosagem}</p>
                         <p><strong>Laboratório:</strong> {medicamentoExistente.laboratorio}</p>
-                        <p><strong>Status:</strong> <span className={medicamentoExistente.status === "ativo" ? styles.statusAtivo : styles.statusInativo}>
-                          {medicamentoExistente.status === "ativo" ? "Ativo" : "Inativo"}
-                        </span></p>
                       </div>
                     </div>
-                    <button onClick={() => abrirDetalhes(medicamentoExistente)} className={styles.botaoPrincipal}>
-                      Ver Detalhes
-                    </button>
+                    
+                    <div className={styles.modalActions}>
+                      
+                      <button onClick={fecharModal} className={styles.botaoSecundario}>
+                        Cancelar
+                      </button>
+                    </div>
                   </div>
                 )}
+
                 {produtoNaoEncontrado && (
                   <div className={styles.produtoNaoEncontrado}>
-                    <h3>Produto não encontrado no sistema</h3>
-                    <p>Este código de barras não está cadastrado. Deseja cadastrar um novo medicamento?</p>
+                    <h3>Produto não encontrado</h3>
+                    <p>Este código de barras não corresponde a nenhum medicamento cadastrado. Deseja iniciar um novo cadastro?</p>
                     <div className={styles.modalActions}>
                       <button onClick={redirecionarParaCadastro} className={styles.botaoPrincipal}>
                         Cadastrar Novo Medicamento
@@ -598,16 +613,6 @@ function ListagemMedicamentos() {
                         Cancelar
                       </button>
                     </div>
-                  </div>
-                )}
-                {!medicamentoExistente && !produtoNaoEncontrado && (
-                  <div className={styles.modalActions}>
-                    <button onClick={continuarCadastro} disabled={!codigoBarras.trim()} className={styles.botaoPrincipal}>
-                      Continuar
-                    </button>
-                    <button onClick={fecharModal} className={styles.botaoSecundario}>
-                      Cancelar
-                    </button>
                   </div>
                 )}
               </div>
@@ -661,7 +666,7 @@ function ListagemMedicamentos() {
                     Editar
                   </button>
                   <button onClick={() => toggleStatus(medicamentoSelecionado.id)} className={styles.botaoSecundario}>
-                    {medicamentoSelecionado.status === "ativo" ? " Desativar" : " Ativar"}
+                    {medicamentoSelecionado.status === "ativo" ? " Desativar" : " Inativo"}
                   </button>
                   <button onClick={() => handleExcluir(medicamentoSelecionado.id)} className={styles.botaoPerigo}>
                     Excluir

@@ -62,7 +62,7 @@ export default function FavoritosFarmaciaPage() {
   const handleLogout = () => {
     localStorage.removeItem("authToken");
     localStorage.removeItem("userData");
-    router.push("/login");
+    router.push("/home");
   };
 
   // --- LÓGICA DE PAGINAÇÃO ---

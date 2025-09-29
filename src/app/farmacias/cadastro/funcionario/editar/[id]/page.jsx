@@ -1,85 +1,118 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { useRouter } from "next/navigation";
+import { useRouter, useParams } from "next/navigation";
 import styles from "./index.module.css";
+import api from "../../../../../services/api"; // Verifique se o caminho para a sua 'api.js' está correto
 
 export default function EditarFuncionarioPage() {
   const router = useRouter();
+  const params = useParams();
+  const { id } = params; // Captura o ID da URL
+
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [loading, setLoading] = useState(true);
 
+  // O estado inicial do formulário está correto
   const [form, setForm] = useState({
-    nome: "",
-    email: "",
-    telefone: "",
-    cpf: "",
-    dataNascimento: "",
-    endereco: "",
-    usuario: "",
-    senha: "",
-    nivelAcesso: "",
-    acessoRelatorios: false,
-    acessoEstoque: false,
-    acessoFinanceiro: false,
-    acessoConfiguracoes: false,
+    func_nome: "",
+    func_email: "",
+    func_telefone: "",
+    func_cpf: "",
+    func_dtnasc: "",
+    func_endereco: "",
+    func_usuario: "",
+    func_senha: "",
+    func_nivel: "",
+    farmacia_id: 1,
   });
 
-  // Dados de exemplo (em uma aplicação real, viriam de uma API)
+  // CORREÇÃO: Usar a rota correta da API para buscar dados
   useEffect(() => {
-    // Simulando busca de dados do funcionário
-    setTimeout(() => {
-      const funcionario = {
-        id: 1,
-        nome: "Maria Silva",
-        email: "maria.silva@pharmax.com",
-        telefone: "(11) 99999-9999",
-        cpf: "123.456.789-00",
-        dataNascimento: "1990-05-15",
-        endereco: "Rua das Flores, 123 - São Paulo/SP",
-        usuario: "maria.silva",
-        senha: "********",
-        nivelAcesso: "Administrador",
-        acessoRelatorios: true,
-        acessoEstoque: true,
-        acessoFinanceiro: true,
-        acessoConfiguracoes: true,
-        dataCadastro: "2023-01-15",
+    // Só executa se o ID estiver presente na URL
+    if (id) {
+      const fetchFuncionario = async () => {
+        setLoading(true);
+        try {
+          // Utiliza a rota específica para buscar um funcionário pelo ID
+          const response = await api.get(`/funcionario/${id}`);
+          
+          if (response.data.sucesso) {
+            const funcionarioData = response.data.dados;
+            // Formata a data para o formato YYYY-MM-DD que o input 'date' espera
+            const dataFormatada = new Date(funcionarioData.func_dtnasc).toISOString().split('T')[0];
+
+            setForm({
+              func_nome: funcionarioData.func_nome,
+              func_email: funcionarioData.func_email,
+              func_telefone: funcionarioData.func_telefone,
+              func_cpf: funcionarioData.func_cpf,
+              func_dtnasc: dataFormatada,
+              func_endereco: funcionarioData.func_endereco,
+              func_usuario: funcionarioData.func_usuario,
+              func_senha: "", // Campo de senha sempre inicia vazio por segurança
+              func_nivel: funcionarioData.func_nivel,
+              farmacia_id: funcionarioData.farmacia_id,
+            });
+          } else {
+             // Exibe a mensagem de erro vinda da API
+             alert(response.data.mensagem);
+          }
+        } catch (error) {
+          console.error("Erro ao buscar dados do funcionário:", error);
+          if (error.response) {
+            // Exibe o erro da API, como "Funcionário não encontrado"
+            alert(`Erro: ${error.response.data.mensagem}`);
+          } else {
+            // Erro de rede ou de conexão com a API
+            alert('Não foi possível carregar os dados. Verifique a conexão com a API.');
+          }
+          // Em caso de erro, volta para a lista
+          router.push("/farmacias/cadastro/funcionario/lista");
+        } finally {
+          setLoading(false);
+        }
       };
-
-      setForm({
-        nome: funcionario.nome,
-        email: funcionario.email,
-        telefone: funcionario.telefone,
-        cpf: funcionario.cpf,
-        dataNascimento: funcionario.dataNascimento,
-        endereco: funcionario.endereco,
-        usuario: funcionario.usuario,
-        senha: funcionario.senha,
-        nivelAcesso: funcionario.nivelAcesso,
-        acessoRelatorios: funcionario.acessoRelatorios,
-        acessoEstoque: funcionario.acessoEstoque,
-        acessoFinanceiro: funcionario.acessoFinanceiro,
-        acessoConfiguracoes: funcionario.acessoConfiguracoes,
-      });
-
+      fetchFuncionario();
+    } else {
       setLoading(false);
-    }, 1000);
-  }, []);
+    }
+  }, [id, router]); // Adicionado 'router' às dependências do useEffect
 
   const handleChange = (e) => {
-    const { name, value, type, checked } = e.target;
+    const { name, value } = e.target;
     setForm({
       ...form,
-      [name]: type === "checkbox" ? checked : value,
+      [name]: value,
     });
   };
 
-  const handleSubmit = (e) => {
+  // Lógica de envio já está correta, usando PUT para /funcionarios/:id
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log("Dados atualizados:", form);
-    alert("Funcionário atualizado com sucesso!");
-    router.push("/farmacias/cadastro/funcionario/lista");
+    try {
+      // Cria um objeto para enviar, removendo a senha se estiver vazia
+      const dadosParaEnviar = { ...form };
+      if (!dadosParaEnviar.func_senha) {
+        delete dadosParaEnviar.func_senha;
+      }
+
+      // Sua API espera o método PUT para edição
+      const response = await api.patch(`/funcionario/${id}`, dadosParaEnviar);
+
+      if (response.data.sucesso) {
+        alert("Funcionário atualizado com sucesso!");
+        router.push("/farmacias/cadastro/funcionario/lista");
+      } else {
+        alert("Erro ao atualizar funcionário: " + response.data.mensagem);
+      }
+    } catch (error) {
+        if (error.response) {
+            alert(error.response.data.mensagem + '\n' + (error.response.data.dados || ''));
+        } else {
+            alert('Erro no front-end: ' + error.message);
+        }
+    }
   };
 
   const handleLogout = async () => {
@@ -89,10 +122,11 @@ export default function EditarFuncionarioPage() {
       router.push("/login");
     } catch (error) {
       console.error("Erro ao fazer logout:", error);
-      // Fallback para a página home em caso de erro
       router.push("/home");
     }
   };
+
+  // O restante do código permanece o mesmo
 
   if (loading) {
     return (
@@ -119,8 +153,9 @@ export default function EditarFuncionarioPage() {
       </header>
 
       <div className={styles.contentWrapper}>
-        {/* Sidebar Não Fixa */}
+        {/* Sidebar */}
         <aside className={`${styles.sidebar} ${sidebarOpen ? styles.sidebarOpen : ""}`}>
+          <aside className={`${styles.sidebar} ${sidebarOpen ? styles.sidebarOpen : ""}`}>
             <div className={styles.sidebarHeader}>
               <div className={styles.logo}>
                 <span className={styles.logoText}>PharmaX</span>
@@ -204,11 +239,12 @@ export default function EditarFuncionarioPage() {
               </div>
             </nav>
           </aside>
+        </aside>
 
-          {/* Overlay para mobile */}
-          {sidebarOpen && (
+        {/* Overlay para mobile */}
+        {sidebarOpen && (
             <div className={styles.overlay} onClick={() => setSidebarOpen(false)} />
-          )}
+        )}
 
         {/* Conteúdo Principal */}
         <main className={styles.mainContent}>
@@ -231,8 +267,8 @@ export default function EditarFuncionarioPage() {
                     <input
                       className={styles.modernInput}
                       type="text"
-                      name="nome"
-                      value={form.nome}
+                      name="func_nome"
+                      value={form.func_nome}
                       onChange={handleChange}
                       placeholder="Digite o nome completo"
                       required
@@ -245,8 +281,8 @@ export default function EditarFuncionarioPage() {
                       <input
                         className={styles.modernInput}
                         type="text"
-                        name="cpf"
-                        value={form.cpf}
+                        name="func_cpf"
+                        value={form.func_cpf}
                         onChange={handleChange}
                         placeholder="000.000.000-00"
                         required
@@ -258,8 +294,8 @@ export default function EditarFuncionarioPage() {
                       <input
                         className={styles.modernInput}
                         type="date"
-                        name="dataNascimento"
-                        value={form.dataNascimento}
+                        name="func_dtnasc"
+                        value={form.func_dtnasc}
                         onChange={handleChange}
                       />
                     </div>
@@ -270,8 +306,8 @@ export default function EditarFuncionarioPage() {
                     <input
                       className={styles.modernInput}
                       type="email"
-                      name="email"
-                      value={form.email}
+                      name="func_email"
+                      value={form.func_email}
                       onChange={handleChange}
                       placeholder="funcionario@empresa.com"
                       required
@@ -283,8 +319,8 @@ export default function EditarFuncionarioPage() {
                     <input
                       className={styles.modernInput}
                       type="tel"
-                      name="telefone"
-                      value={form.telefone}
+                      name="func_telefone"
+                      value={form.func_telefone}
                       onChange={handleChange}
                       placeholder="(00) 00000-0000"
                     />
@@ -295,8 +331,8 @@ export default function EditarFuncionarioPage() {
                     <input
                       className={styles.modernInput}
                       type="text"
-                      name="endereco"
-                      value={form.endereco}
+                      name="func_endereco"
+                      value={form.func_endereco}
                       onChange={handleChange}
                       placeholder="Endereço completo"
                     />
@@ -314,8 +350,8 @@ export default function EditarFuncionarioPage() {
                     <input
                       className={styles.modernInput}
                       type="text"
-                      name="usuario"
-                      value={form.usuario}
+                      name="func_usuario"
+                      value={form.func_usuario}
                       onChange={handleChange}
                       placeholder="Digite o nome de usuário"
                       required
@@ -323,15 +359,14 @@ export default function EditarFuncionarioPage() {
                   </div>
 
                   <div className={styles.formGroup}>
-                    <label className={styles.inputLabel}>Senha *</label>
+                    <label className={styles.inputLabel}>Nova Senha</label>
                     <input
                       className={styles.modernInput}
                       type="password"
-                      name="senha"
-                      value={form.senha}
+                      name="func_senha"
+                      value={form.func_senha}
                       onChange={handleChange}
-                      placeholder="Digite a nova senha"
-                      required
+                      placeholder="Deixe em branco para não alterar"
                     />
                   </div>
 
@@ -339,8 +374,8 @@ export default function EditarFuncionarioPage() {
                     <label className={styles.inputLabel}>Nível de Acesso *</label>
                     <select
                       className={styles.modernInput}
-                      name="nivelAcesso"
-                      value={form.nivelAcesso}
+                      name="func_nivel"
+                      value={form.func_nivel}
                       onChange={handleChange}
                       required
                     >
@@ -353,52 +388,6 @@ export default function EditarFuncionarioPage() {
                         Visitante (Somente leitura)
                       </option>
                     </select>
-                  </div>
-
-                  <div className={styles.formGroup}>
-                    <label className={styles.inputLabel}>Permissões Especiais</label>
-                    <div className={styles.checkboxGroup}>
-                      <label className={styles.checkboxLabel}>
-                        <input
-                          type="checkbox"
-                          name="acessoRelatorios"
-                          checked={form.acessoRelatorios}
-                          onChange={handleChange}
-                        />
-                        <span className={styles.checkboxText}>
-                          Acesso a relatórios
-                        </span>
-                      </label>
-                      <label className={styles.checkboxLabel}>
-                        <input
-                          type="checkbox"
-                          name="acessoEstoque"
-                          checked={form.acessoEstoque}
-                          onChange={handleChange}
-                        />
-                        <span className={styles.checkboxText}>Gerenciar estoque</span>
-                      </label>
-                      <label className={styles.checkboxLabel}>
-                        <input
-                          type="checkbox"
-                          name="acessoFinanceiro"
-                          checked={form.acessoFinanceiro}
-                          onChange={handleChange}
-                        />
-                        <span className={styles.checkboxText}>Acesso financeiro</span>
-                      </label>
-                      <label className={styles.checkboxLabel}>
-                        <input
-                          type="checkbox"
-                          name="acessoConfiguracoes"
-                          checked={form.acessoConfiguracoes}
-                          onChange={handleChange}
-                        />
-                        <span className={styles.checkboxText}>
-                          Configurações do sistema
-                        </span>
-                      </label>
-                    </div>
                   </div>
                 </div>
               </div>

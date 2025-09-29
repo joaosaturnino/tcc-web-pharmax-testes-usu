@@ -213,13 +213,15 @@
   align-items: center;
   gap: 2.4rem;
   margin-bottom: 1.8rem;
+  border-bottom: 1px solid #e5e7eb;
+  padding-bottom: 1.8rem;
 }
 
-.reportLogo {
-  width: 4.8rem;
-  height: 4.8rem;
-  background: #458B00;
-  border-radius: 50%;
+.printLogo {
+  display: none; /* Oculto por padrão na tela */
+  height: 50px;
+  width: auto;
+  object-fit: contain;
 }
 
 .reportTitle h1 {
@@ -240,7 +242,6 @@
   margin-bottom: 1.8rem;
   color: #444;
   font-size: 1.6rem;
-  margin-left: 80rem;
 }
 
 .reportInfo p {
@@ -347,215 +348,50 @@
   font-size: 1.3rem;
   font-weight: 500;
   text-align: center;
+  white-space: nowrap;
 }
 
-.statusBadge.inStock {
-  background: #e6f7e6;
-  color: #458B00;
-}
+.statusBadge.inStock { background: #e6f7e6; color: #458B00; }
+.statusBadge.outStock { background: #ffeaea; color: #d32f2f; }
+.statusBadge.pending { background: #fff7e6; color: #ff9800; }
 
-.statusBadge.outStock {
-  background: #ffeaea;
-  color: #d32f2f;
-}
-
-.statusBadge.pending {
-  background: #fff7e6;
-  color: #ff9800;
-}
-
-/* Badges específicas para níveis de acesso */
-.administrador {
-  background: #e6f7e6;
-  color: #458B00;
-}
-.gerente {
-  background: #e6f7e6;
-  color: #2e7d32;
-}
-.supervisor {
-  background: #e6f7e6;
-  color: #1976d2;
-}
-.funcionario {
-  background: #e6f7e6;
-  color: #191970;
-}
-.visitante {
-  background: #f1f5f9;
-  color: #555;
-}
+.administrador { background: #e0e7ff; color: #4338ca; }
+.gerente { background: #d1fae5; color: #065f46; }
+.supervisor { background: #dbeafe; color: #1e40af; }
+.funcionario { background: #e5e7eb; color: #374151; }
+.visitante { background: #f3f4f6; color: #6b7280; }
 
 /* Resumo do relatório */
-.reportSummary {
-  margin-top: 1.2rem;
-}
-
-.reportSummary h2 {
-  font-size: 2rem;
-  font-weight: 600;
-  color: #191970;
-  margin-bottom: 1rem;
-}
-
-.summaryGrid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-  gap: 1.8rem;
-}
-
-.summaryItem {
-  background: #f1f5f9;
-  border-radius: 0.8rem;
-  padding: 1.4rem 1.8rem;
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-}
-
-.summaryLabel {
-  font-size: 1.7rem;
-  color: #555;
-  margin-bottom: 0.4rem;
-}
-
-.summaryValue {
-  font-size: 2rem;
-  font-weight: 700;
-  color: #458B00;
-}
+.reportSummary { margin-top: 1.2rem; }
+.reportSummary h2 { font-size: 2rem; font-weight: 600; color: #191970; margin-bottom: 1rem; }
+.summaryGrid { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 1.8rem; }
+.summaryItem { background: #f1f5f9; border-radius: 0.8rem; padding: 1.4rem 1.8rem; display: flex; flex-direction: column; align-items: flex-start; }
+.summaryLabel { font-size: 1.7rem; color: #555; margin-bottom: 0.4rem; }
+.summaryValue { font-size: 2rem; font-weight: 700; color: #458B00; }
 
 /* Empty State */
-.emptyState {
-  text-align: center;
-  padding: 4rem 0;
-  color: #888;
-}
-
-.emptyState h3 {
-  font-size: 2rem;
-  font-weight: 600;
-  margin-bottom: 0.8rem;
-}
-
-.emptyState p {
-  font-size: 1.5rem;
-}
+.emptyState { text-align: center; padding: 4rem 0; color: #888; }
+.emptyState h3 { font-size: 2rem; font-weight: 600; margin-bottom: 0.8rem; }
+.emptyState p { font-size: 1.5rem; }
 
 /* Loader */
-.loaderContainer {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  min-height: 300px;
-  color: #458B00;
-}
-
-.spinner {
-  width: 3.8rem;
-  height: 3.8rem;
-  border: 0.4rem solid #e6f7e6;
-  border-top: 0.4rem solid #458B00;
-  border-radius: 50%;
-  animation: spin 1s linear infinite;
-  margin-bottom: 1.2rem;
-}
-
-@keyframes spin {
-  to { transform: rotate(360deg); }
-}
-
-/* Overlay para mobile */
-.overlay {
-  position: fixed;
-  inset: 0;
-  background: rgba(0,0,0,0.15);
-  z-index: 80;
-}
-
-/* Informações de paginação */
-.paginationInfo {
-  margin-bottom: 0.8rem;
-  color: #555;
-  font-size: 1.4rem;
-}
-
-/* Controles de paginação */
-.paginationControls {
-  display: flex;
-  align-items: center;
-  gap: 1.2rem;
-  justify-content: center;
-  margin-bottom: 1.8rem;
-}
-
-.paginationBtn {
-  padding: 0.6rem 1.4rem;
-  border: none;
-  border-radius: 0.6rem;
-  background: #458B00;
-  color: white;
-  font-weight: 500;
-  cursor: pointer;
-  transition: background 0.2s;
-}
-
-.paginationBtn:hover:not(.disabled) {
-  background: #2e7d32;
-}
-
-.paginationBtn.disabled {
-  background: #d1d5db;
-  color: #888;
-  cursor: not-allowed;
-}
-
-.paginationNumbers {
-  display: flex;
-  gap: 0.4rem;
-}
-
-.paginationNumber {
-  padding: 0.6rem 1.2rem;
-  border: none;
-  border-radius: 0.6rem;
-  background: #f1f5f9;
-  color: #191970;
-  font-weight: 500;
-  cursor: pointer;
-  transition: background 0.2s;
-}
-
-.paginationNumber:hover {
-  background: #e6f7e6;
-}
-
-.paginationNumber.active {
-  background: #458B00;
-  color: #fff;
-}
+.loaderContainer { display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 300px; color: #458B00; }
+.spinner { width: 3.8rem; height: 3.8rem; border: 0.4rem solid #e6f7e6; border-top: 0.4rem solid #458B00; border-radius: 50%; animation: spin 1s linear infinite; margin-bottom: 1.2rem; }
+@keyframes spin { to { transform: rotate(360deg); } }
 
 /* Rodapé do relatório (visível apenas na impressão) */
-.reportFooter {
-  display: none;
-  margin-top: 2.4rem;
-  text-align: center;
-  color: #888;
-  font-size: 1.4rem;
-}
+.reportFooter { display: none; margin-top: 2.4rem; text-align: center; color: #888; font-size: 1.4rem; }
 
-/* Esconde o botão de fechar em telas grandes */
-.sidebarClose {
-  display: none;
-}
+/* Controles de Paginação */
+.paginationControls { display: flex; align-items: center; gap: 1.2rem; justify-content: center; margin-top: 1.8rem; }
+.paginationBtn { padding: 0.6rem 1.4rem; border: none; border-radius: 0.6rem; background: #458B00; color: white; font-weight: 500; cursor: pointer; transition: background 0.2s; }
+.paginationBtn:hover:not(.disabled) { background: #2e7d32; }
+.paginationBtn.disabled { background: #d1d5db; color: #888; cursor: not-allowed; }
+.paginationNumbers { display: flex; gap: 0.4rem; }
+.paginationNumber { padding: 0.6rem 1.2rem; border: none; border-radius: 0.6rem; background: #f1f5f9; color: #191970; font-weight: 500; cursor: pointer; transition: background 0.2s; }
+.paginationNumber:hover { background: #e6f7e6; }
+.paginationNumber.active { background: #458B00; color: #fff; }
 
-/* Mostra o botão de fechar apenas em telas pequenas */
-@media (max-width: 9rem) {
-  .sidebarClose {
-    display: block;
-  }
-}
 /* Melhorias para impressão */
 @media print {
   body * {
@@ -571,74 +407,27 @@
     width: 100vw;
     background: #fff;
     box-shadow: none;
-    padding: 0;
+    padding: 2rem;
   }
   .reportFooter {
     display: block !important;
   }
-  .sidebar, .header, .controls, .paginationControls, .emptyState {
+  .sidebar, .header, .controls, .paginationControls, .emptyState, .reportInfo, .errorMessage {
     display: none !important;
+  }
+
+  .printLogo {
+    display: block !important;
   }
 }
 
 /* Responsividade */
-@media (max-width: 64rem) {
-  .mainContent {
-    padding: 2.4rem 0.8rem;
-  }
-  .sidebar {
-    width: 22rem;
-  }
-}
-
+@media (max-width: 64rem) { .mainContent { padding: 2.4rem 0.8rem; } .sidebar { width: 22rem; } }
 @media (max-width: 48rem) {
-  .sidebar {
-    position: fixed;
-    left: 0;
-    top: 0;
-    height: 100vh;
-    transform: translateX(-100%);
-    transition: transform 0.3s;
-    z-index: 100;
-  }
-  .sidebar.sidebarOpen {
-    transform: translateX(0);
-  }
-  .menuToggle {
-    display: block;
-  }
-  .mainContent {
-    padding: 1.6rem 2rem;
-  }
-  .reportContainer {
-    padding: 1rem;
-  }
-  .filters {
-    flex-direction: column;
-    gap: 1.2rem;
-  }
-}
-
-@media (max-width: 30rem) {
-  .reportHeader {
-    flex-direction: column;
-    gap: 1rem;
-  }
-  .summaryGrid {
-    grid-template-columns: 1fr;
-  }
-  .reportContainer {
-    padding: 2rem;
-  }
-}
-
-/* Estilo para o modo de impressão ativo */
-@media screen {
-  .reportMode .reportHeader,
-  .reportMode .reportTable,
-  .reportMode .reportSummary,
-  .reportMode .reportFooter {
-    box-shadow: none;
-    background: #fff;
-  }
+  .sidebar { position: fixed; left: 0; top: 0; height: 100vh; transform: translateX(-100%); transition: transform 0.3s; z-index: 100; }
+  .sidebar.sidebarOpen { transform: translateX(0); }
+  .menuToggle { display: block; }
+  .mainContent { padding: 1.6rem; }
+  .reportContainer { padding: 1rem; }
+  .filters { flex-direction: column; gap: 1.2rem; }
 }

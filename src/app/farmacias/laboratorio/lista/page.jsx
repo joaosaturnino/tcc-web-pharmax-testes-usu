@@ -21,7 +21,7 @@ export default function ListaLaboratorios() {
   async function listarLaboratorios() {
     try {
       setLoading(true);
-      const response = await api.get('/laboratorio');
+      const response = await api.get('/laboratorios');
       
       if (response.data.sucesso === true) {
         const labsApi = response.data.dados;

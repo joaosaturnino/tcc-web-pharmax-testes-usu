@@ -132,7 +132,7 @@ export default function ListaFuncionariosPage() {
       setLoading(true);
       
       try {
-        const response = await api.delete(`/funcionarios/${funcionario.id}`);
+        const response = await api.delete(`/funcionario/${funcionario.id}`);
         
         if (response.data.sucesso) {
           // Atualizar a lista local
@@ -193,11 +193,7 @@ export default function ListaFuncionariosPage() {
           </button>
           <h1 className={styles.title}>Lista de Funcionários</h1>
         </div>
-        <div className={styles.headerRight}>
-          <button className={styles.userMenu} onClick={handleLogout}>
-            Sair
-          </button>
-        </div>
+        
       </header>
 
       <div className={styles.contentWrapper}>

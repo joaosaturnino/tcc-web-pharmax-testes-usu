@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import styles from "./laboratorio.module.css";
+import api from "../../../services/api"; // Importa a instância configurada do axios
 
 // Ícones para validação
 import { MdCheckCircle, MdError } from "react-icons/md";
@@ -28,85 +29,37 @@ export default function CadastroLaboratorioPage() {
   const valErro = `${styles.formControl} ${styles.error}`;
 
   const [valida, setValida] = useState({
-    nome: {
-      validado: valDefault,
-      mensagem: []
-    },
-    cnpj: {
-      validado: valDefault,
-      mensagem: []
-    },
-    endereco: {
-      validado: valDefault,
-      mensagem: []
-    },
-    telefone: {
-      validado: valDefault,
-      mensagem: []
-    },
-    email: {
-      validado: valDefault,
-      mensagem: []
-    },
-    logo: {
-      validado: valDefault,
-      mensagem: []
-    }
+    nome: { validado: valDefault, mensagem: [] },
+    cnpj: { validado: valDefault, mensagem: [] },
+    endereco: { validado: valDefault, mensagem: [] },
+    telefone: { validado: valDefault, mensagem: [] },
+    email: { validado: valDefault, mensagem: [] },
+    logo: { validado: valDefault, mensagem: [] },
   });
 
   const handleChange = (e) => {
     const { name, value, type, files } = e.target;
     if (type === "file" && files.length > 0) {
       const file = files[0];
-      setForm({
-        ...form,
-        [name]: file,
-      });
-      
-      // Validar arquivo
+      setForm({ ...form, [name]: file });
       if (file.type.startsWith("image/")) {
         if (file.size > 5 * 1024 * 1024) {
-          setValida(prev => ({
-            ...prev,
-            logo: {
-              validado: valErro,
-              mensagem: ["O arquivo deve ter no máximo 5MB."]
-            }
-          }));
+          setValida(prev => ({ ...prev, logo: { validado: valErro, mensagem: ["O arquivo deve ter no máximo 5MB."] } }));
         } else {
-          setValida(prev => ({
-            ...prev,
-            logo: {
-              validado: valSucesso,
-              mensagem: []
-            }
-          }));
+          setValida(prev => ({ ...prev, logo: { validado: valSucesso, mensagem: [] } }));
           setPreview(URL.createObjectURL(file));
         }
       } else {
-        setValida(prev => ({
-          ...prev,
-          logo: {
-            validado: valErro,
-            mensagem: ["Por favor, selecione apenas arquivos de imagem."]
-          }
-        }));
+        setValida(prev => ({ ...prev, logo: { validado: valErro, mensagem: ["Por favor, selecione apenas arquivos de imagem."] } }));
       }
     } else {
-      setForm({
-        ...form,
-        [name]: value,
-      });
+      setForm({ ...form, [name]: value });
     }
   };
 
-  // Funções de validação
+  // --- Funções de validação (permanecem as mesmas) ---
   function validaNome() {
-    let objTemp = {
-      validado: valSucesso,
-      mensagem: []
-    };
-
+    let objTemp = { validado: valSucesso, mensagem: [] };
     if (form.nome === '') {
       objTemp.validado = valErro;
       objTemp.mensagem.push('O nome do laboratório é obrigatório');
@@ -114,24 +67,13 @@ export default function CadastroLaboratorioPage() {
       objTemp.validado = valErro;
       objTemp.mensagem.push('O nome deve ter pelo menos 3 caracteres');
     }
-
-    setValida(prev => ({
-      ...prev,
-      nome: objTemp
-    }));
-
+    setValida(prev => ({ ...prev, nome: objTemp }));
     return objTemp.mensagem.length === 0 ? 1 : 0;
   }
 
   function validaCNPJ() {
-    let objTemp = {
-      validado: valSucesso,
-      mensagem: []
-    };
-
-    // Remove caracteres não numéricos
+    let objTemp = { validado: valSucesso, mensagem: [] };
     const cnpj = form.cnpj.replace(/\D/g, '');
-    
     if (cnpj === '') {
       objTemp.validado = valErro;
       objTemp.mensagem.push('O CNPJ é obrigatório');
@@ -142,55 +84,38 @@ export default function CadastroLaboratorioPage() {
       objTemp.validado = valErro;
       objTemp.mensagem.push('CNPJ inválido');
     }
-
-    setValida(prev => ({
-      ...prev,
-      cnpj: objTemp
-    }));
-
+    setValida(prev => ({ ...prev, cnpj: objTemp }));
     return objTemp.mensagem.length === 0 ? 1 : 0;
   }
 
   function validaDigitosCNPJ(cnpj) {
-    // Valida os dígitos verificadores do CNPJ
-    if (/^(\d)\1{13}$/.test(cnpj)) return false; // CNPJ com todos os dígitos iguais
-
+    if (/^(\d)\1{13}$/.test(cnpj)) return false;
     let tamanho = cnpj.length - 2;
     let numeros = cnpj.substring(0, tamanho);
     let digitos = cnpj.substring(tamanho);
     let soma = 0;
     let pos = tamanho - 7;
-
     for (let i = tamanho; i >= 1; i--) {
       soma += numeros.charAt(tamanho - i) * pos--;
       if (pos < 2) pos = 9;
     }
-
     let resultado = soma % 11 < 2 ? 0 : 11 - soma % 11;
     if (resultado !== parseInt(digitos.charAt(0))) return false;
-
     tamanho = tamanho + 1;
     numeros = cnpj.substring(0, tamanho);
     soma = 0;
     pos = tamanho - 7;
-
     for (let i = tamanho; i >= 1; i--) {
       soma += numeros.charAt(tamanho - i) * pos--;
       if (pos < 2) pos = 9;
     }
-
     resultado = soma % 11 < 2 ? 0 : 11 - soma % 11;
     if (resultado !== parseInt(digitos.charAt(1))) return false;
-
     return true;
   }
 
   function validaEndereco() {
-    let objTemp = {
-      validado: valSucesso,
-      mensagem: []
-    };
-
+    let objTemp = { validado: valSucesso, mensagem: [] };
     if (form.endereco === '') {
       objTemp.validado = valErro;
       objTemp.mensagem.push('O endereço é obrigatório');
@@ -198,50 +123,27 @@ export default function CadastroLaboratorioPage() {
       objTemp.validado = valErro;
       objTemp.mensagem.push('Insira um endereço completo');
     }
-
-    setValida(prev => ({
-      ...prev,
-      endereco: objTemp
-    }));
-
+    setValida(prev => ({ ...prev, endereco: objTemp }));
     return objTemp.mensagem.length === 0 ? 1 : 0;
   }
 
   function validaTelefone() {
-    let objTemp = {
-      validado: valSucesso,
-      mensagem: []
-    };
-
-    // Remove caracteres não numéricos
+    let objTemp = { validado: valSucesso, mensagem: [] };
     const telefone = form.telefone.replace(/\D/g, '');
-    
-    // Telefone é opcional, mas se preenchido, deve ser válido
     if (telefone && (telefone.length < 10 || telefone.length > 11)) {
       objTemp.validado = valErro;
       objTemp.mensagem.push('Telefone inválido');
     }
-
-    setValida(prev => ({
-      ...prev,
-      telefone: objTemp
-    }));
-
+    setValida(prev => ({ ...prev, telefone: objTemp }));
     return objTemp.mensagem.length === 0 ? 1 : 0;
   }
 
   function checkEmail(email) {
-    return /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/.test(
-      email
-    );
+    return /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/.test(email);
   }
 
   function validaEmail() {
-    let objTemp = {
-      validado: valSucesso,
-      mensagem: []
-    };
-
+    let objTemp = { validado: valSucesso, mensagem: [] };
     if (form.email === "") {
       objTemp.validado = valErro;
       objTemp.mensagem.push('O e-mail é obrigatório');
@@ -249,23 +151,12 @@ export default function CadastroLaboratorioPage() {
       objTemp.validado = valErro;
       objTemp.mensagem.push('Insira um e-mail válido');
     }
-
-    setValida(prev => ({
-      ...prev,
-      email: objTemp
-    }));
-
+    setValida(prev => ({ ...prev, email: objTemp }));
     return objTemp.mensagem.length === 0 ? 1 : 0;
   }
 
   function validaLogo() {
-    let objTemp = {
-      validado: valSucesso,
-      mensagem: []
-    };
-
-    // A logo é opcional, então não há validação obrigatória
-    // Mas se houver um arquivo, validamos seu tipo e tamanho
+    let objTemp = { validado: valSucesso, mensagem: [] };
     if (form.logo) {
       if (!form.logo.type.startsWith("image/")) {
         objTemp.validado = valErro;
@@ -275,16 +166,11 @@ export default function CadastroLaboratorioPage() {
         objTemp.mensagem.push('O arquivo deve ter no máximo 5MB');
       }
     }
-
-    setValida(prev => ({
-      ...prev,
-      logo: objTemp
-    }));
-
+    setValida(prev => ({ ...prev, logo: objTemp }));
     return objTemp.mensagem.length === 0 ? 1 : 0;
   }
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
 
     let itensValidados = 0;
@@ -296,15 +182,46 @@ export default function CadastroLaboratorioPage() {
     itensValidados += validaLogo();
 
     if (itensValidados !== 6) {
-      return; // Não prossegue se houver erros de validação
+      alert("Por favor, corrija os erros no formulário.");
+      return;
     }
 
-    // Salvar no localStorage
-    const dados = { ...form, logo: preview };
-    localStorage.setItem("laboratorio", JSON.stringify(dados));
+    // Cria um objeto FormData para enviar dados de formulário, incluindo arquivos
+    const formData = new FormData();
+    formData.append('lab_nome', form.nome);
+    formData.append('lab_cnpj', form.cnpj.replace(/\D/g, ''));
+    formData.append('lab_endereco', form.endereco);
+    formData.append('lab_telefone', form.telefone.replace(/\D/g, ''));
+    formData.append('lab_email', form.email);
+    if (form.logo) {
+      formData.append('lab_logo', form.logo);
+    }
+    formData.append('lab_data_cadastro', new Date().toISOString());
+    formData.append('lab_data_atualizacao', new Date().toISOString());
+    formData.append('lab_ativo', 1);
 
-    alert("Laboratório cadastrado com sucesso!");
-    router.push("/farmacias/laboratorio/lista");
+    try {
+      // CORREÇÃO APLICADA AQUI: O endpoint foi alterado para '/laboratorios' (plural)
+      const response = await api.post('/laboratorios', formData, {
+        headers: {
+          'Content-Type': 'multipart/form-data',
+        },
+      });
+
+      if (response.data.sucesso) {
+        alert("Laboratório cadastrado com sucesso!");
+        router.push("/farmacias/laboratorio/lista");
+      } else {
+        alert('Erro ao cadastrar: ' + response.data.mensagem);
+      }
+    } catch (error) {
+      // Trata possíveis erros na requisição
+      if (error.response) {
+        alert(error.response.data.mensagem + '\n' + error.response.data.dados);
+      } else {
+        alert('Erro na comunicação com o servidor. Tente novamente.');
+      }
+    }
   };
 
   const handleLogout = async () => {
@@ -314,14 +231,12 @@ export default function CadastroLaboratorioPage() {
       router.push("/login");
     } catch (error) {
       console.error("Erro ao fazer logout:", error);
-      // Fallback para a página home em caso de erro
       router.push("/home");
     }
   };
 
   return (
     <div className={styles.dashboard}>
-      {/* Header */}
       <header className={styles.header}>
         <div className={styles.headerLeft}>
           <button
@@ -335,7 +250,6 @@ export default function CadastroLaboratorioPage() {
       </header>
 
       <div className={styles.contentWrapper}>
-        {/* Sidebar Não Fixa */}
         <aside className={`${styles.sidebar} ${sidebarOpen ? styles.sidebarOpen : ""}`}>
             <div className={styles.sidebarHeader}>
               <div className={styles.logo}>
@@ -348,7 +262,6 @@ export default function CadastroLaboratorioPage() {
                 ×
               </button>
             </div>
-
             <nav className={styles.nav}>
               <div className={styles.navSection}>
                 <p className={styles.navLabel}>Principal</p>
@@ -365,7 +278,6 @@ export default function CadastroLaboratorioPage() {
                   <span className={styles.navText}>Medicamentos</span>
                 </a>
               </div>
-
               <div className={styles.navSection}>
                 <p className={styles.navLabel}>Gestão</p>
                 <a
@@ -378,7 +290,6 @@ export default function CadastroLaboratorioPage() {
                   <span className={styles.navText}>Laboratórios</span>
                 </a>
               </div>
-
               <div className={styles.navSection}>
                 <p className={styles.navLabel}>Relatórios</p>
                 <a
@@ -400,7 +311,6 @@ export default function CadastroLaboratorioPage() {
                   <span className={styles.navText}>Relatório de Laboratorios</span>
                 </a>
               </div>
-
               <div className={styles.navSection}>
                 <p className={styles.navLabel}>Conta</p>
                 <a
@@ -418,29 +328,24 @@ export default function CadastroLaboratorioPage() {
                 </button>
               </div>
             </nav>
-          </aside>
+        </aside>
 
-          {/* Overlay para mobile */}
-          {sidebarOpen && (
-            <div className={styles.overlay} onClick={() => setSidebarOpen(false)} />
-          )}
+        {sidebarOpen && (
+          <div className={styles.overlay} onClick={() => setSidebarOpen(false)} />
+        )}
 
-        {/* Conteúdo Principal */}
         <main className={styles.mainContent}>
           <div className={styles.formContainer}>
             <div className={styles.formHeader}>
               <h2>Novo Laboratório</h2>
               <p>Preencha os dados do novo laboratório farmacêutico</p>
             </div>
-
             <form onSubmit={handleSubmit} className={styles.form}>
               <div className={styles.formGrid}>
-                {/* Informações do Laboratório */}
                 <div className={styles.formSection}>
                   <h3 className={styles.sectionTitle}>
                     Informações do Laboratório
                   </h3>
-
                   <div className={valida.nome.validado}>
                     <label className={styles.inputLabel}>Nome do Laboratório *</label>
                     <div className={styles.divInput}>
@@ -460,7 +365,6 @@ export default function CadastroLaboratorioPage() {
                       <small key={mens} className={styles.small}>{mens}</small>
                     )}
                   </div>
-
                   <div className={valida.cnpj.validado}>
                     <label className={styles.inputLabel}>CNPJ *</label>
                     <div className={styles.divInput}>
@@ -480,7 +384,6 @@ export default function CadastroLaboratorioPage() {
                       <small key={mens} className={styles.small}>{mens}</small>
                     )}
                   </div>
-
                   <div className={valida.email.validado}>
                     <label className={styles.inputLabel}>E-mail *</label>
                     <div className={styles.divInput}>
@@ -500,7 +403,6 @@ export default function CadastroLaboratorioPage() {
                       <small key={mens} className={styles.small}>{mens}</small>
                     )}
                   </div>
-
                   <div className={valida.telefone.validado}>
                     <label className={styles.inputLabel}>Telefone</label>
                     <div className={styles.divInput}>
@@ -520,13 +422,10 @@ export default function CadastroLaboratorioPage() {
                     )}
                   </div>
                 </div>
-
-                {/* Endereço e Logo */}
                 <div className={styles.formSection}>
                   <h3 className={styles.sectionTitle}>
                     Localização e Identidade Visual
                   </h3>
-
                   <div className={valida.endereco.validado}>
                     <label className={styles.inputLabel}>Endereço Completo *</label>
                     <div className={styles.divInput}>
@@ -546,7 +445,6 @@ export default function CadastroLaboratorioPage() {
                       <small key={mens} className={styles.small}>{mens}</small>
                     )}
                   </div>
-
                   <div className={valida.logo.validado}>
                     <label className={styles.inputLabel}>Logo do Laboratório</label>
                     <div className={styles.fileUploadGroup}>
@@ -572,7 +470,6 @@ export default function CadastroLaboratorioPage() {
                       <small key={mens} className={styles.small}>{mens}</small>
                     )}
                   </div>
-
                   {preview && (
                     <div className={styles.formGroup}>
                       <label className={styles.inputLabel}>Pré-visualização</label>
@@ -587,7 +484,6 @@ export default function CadastroLaboratorioPage() {
                   )}
                 </div>
               </div>
-
               <div className={styles.formActions}>
                 <button
                   type="button"

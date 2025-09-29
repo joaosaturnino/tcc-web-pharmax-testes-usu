@@ -211,13 +211,15 @@
   align-items: center;
   gap: 2.4rem;
   margin-bottom: 1.8rem;
+  border-bottom: 1px solid #e5e7eb;
+  padding-bottom: 1.8rem;
 }
 
-.reportLogo {
-  width: 4.8rem;
-  height: 4.8rem;
-  background: #458b00;
-  border-radius: 50%;
+.printLogo {
+  display: none;
+  height: 50px;
+  width: auto;
+  object-fit: contain;
 }
 
 .reportTitle h1 {
@@ -238,7 +240,6 @@
   margin-bottom: 1.8rem;
   color: #444;
   font-size: 1.6rem;
-  margin-left: 80rem;
 }
 
 .reportInfo p {
@@ -364,28 +365,6 @@
   color: #ff9800;
 }
 
-/* Badges específicas para níveis de acesso */
-.administrador {
-  background: #e6f7e6;
-  color: #458b00;
-}
-.gerente {
-  background: #e6f7e6;
-  color: #2e7d32;
-}
-.supervisor {
-  background: #e6f7e6;
-  color: #1976d2;
-}
-.funcionario {
-  background: #e6f7e6;
-  color: #191970;
-}
-.visitante {
-  background: #f1f5f9;
-  color: #555;
-}
-
 /* Resumo do relatório */
 .reportSummary {
   margin-top: 1.2rem;
@@ -430,17 +409,6 @@
   text-align: center;
   padding: 4rem 0;
   color: #888;
-  background: #f8fafc;
-}
-
-.emptyState h3 {
-  font-size: 2rem;
-  font-weight: 600;
-  margin-bottom: 0.8rem;
-}
-
-.emptyState p {
-  font-size: 1.5rem;
 }
 
 /* Loader */
@@ -469,30 +437,14 @@
   }
 }
 
-/* Overlay para mobile */
-.overlay {
-  position: fixed;
-  inset: 0;
-  background: rgba(0, 0, 0, 0.15);
-  z-index: 80;
-}
-
-/* Informações de paginação */
-.paginationInfo {
-  margin-bottom: 0.8rem;
-  color: #555;
-  font-size: 1.4rem;
-}
-
-/* Controles de paginação */
+/* Controles de Paginação */
 .paginationControls {
   display: flex;
   align-items: center;
   gap: 1.2rem;
   justify-content: center;
-  margin-bottom: 1.8rem;
+  margin-top: 1.8rem;
 }
-
 .paginationBtn {
   padding: 0.6rem 1.4rem;
   border: none;
@@ -503,22 +455,18 @@
   cursor: pointer;
   transition: background 0.2s;
 }
-
 .paginationBtn:hover:not(.disabled) {
   background: #2e7d32;
 }
-
 .paginationBtn.disabled {
   background: #d1d5db;
   color: #888;
   cursor: not-allowed;
 }
-
 .paginationNumbers {
   display: flex;
   gap: 0.4rem;
 }
-
 .paginationNumber {
   padding: 0.6rem 1.2rem;
   border: none;
@@ -529,15 +477,12 @@
   cursor: pointer;
   transition: background 0.2s;
 }
-
 .paginationNumber:hover {
   background: #e6f7e6;
 }
-
 .paginationNumber.active {
   background: #458b00;
   color: #fff;
-  transition: background 0.2s, color 0.2s;
 }
 
 /* Rodapé do relatório (visível apenas na impressão) */
@@ -547,18 +492,6 @@
   text-align: center;
   color: #888;
   font-size: 1.4rem;
-}
-
-/* Esconde o botão de fechar em telas grandes */
-.sidebarClose {
-  display: none;
-}
-
-/* Mostra o botão de fechar apenas em telas pequenas */
-@media (max-width: 9rem) {
-  .sidebarClose {
-    display: block;
-  }
 }
 
 /* Melhorias para impressão */
@@ -577,7 +510,7 @@
     width: 100vw;
     background: #fff;
     box-shadow: none;
-    padding: 0;
+    padding: 2rem;
   }
   .reportFooter {
     display: block !important;
@@ -586,8 +519,12 @@
   .header,
   .controls,
   .paginationControls,
-  .emptyState {
+  .emptyState,
+  .reportInfo {
     display: none !important;
+  }
+  .printLogo {
+    display: block !important;
   }
 }
 
@@ -598,9 +535,6 @@
   }
   .sidebar {
     width: 22rem;
-  }
-  .reportInfo {
-    margin-left: 0;
   }
 }
 
@@ -621,7 +555,7 @@
     display: block;
   }
   .mainContent {
-    padding: 1.6rem 2rem;
+    padding: 1.6rem;
   }
   .reportContainer {
     padding: 1rem;
@@ -629,29 +563,5 @@
   .filters {
     flex-direction: column;
     gap: 1.2rem;
-  }
-}
-
-@media (max-width: 30rem) {
-  .reportHeader {
-    flex-direction: column;
-    gap: 1rem;
-  }
-  .summaryGrid {
-    grid-template-columns: 1fr;
-  }
-  .reportContainer {
-    padding: 2rem;
-  }
-}
-
-/* Estilo para o modo de impressão ativo */
-@media screen {
-  .reportMode .reportHeader,
-  .reportMode .reportTable,
-  .reportMode .reportSummary,
-  .reportMode .reportFooter {
-    box-shadow: none;
-    background: #fff;
   }
 }

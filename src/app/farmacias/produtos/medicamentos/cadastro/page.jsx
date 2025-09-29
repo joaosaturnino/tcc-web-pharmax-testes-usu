@@ -3,9 +3,8 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import styles from "./cadastro.module.css";
-import api from "../../../../services/api"; // Importação do serviço de API
+import api from "../../../../services/api";
 
-// Ícones para validação
 import { MdCheckCircle, MdError } from "react-icons/md";
 
 export default function CadastroMedicamentoPage() {
@@ -13,59 +12,29 @@ export default function CadastroMedicamentoPage() {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [loading, setLoading] = useState(false);
   
-  // ANOTAÇÃO: O estado inicial do formulário foi mantido.
   const [form, setForm] = useState({
-    nome: "",
-    dosagem: "",
-    quantidade: "",
-    tipo: "",
-    forma: "",
-    descricao: "",
-    preco: "",
-    laboratorio: "",
-    imagem: "",
-    codigoBarras: "",
+    nome: "", dosagem: "", quantidade: "", tipo: "", forma: "",
+    descricao: "", preco: "", laboratorio: "", imagem: "", codigoBarras: "",
   });
 
-  // ANOTAÇÃO: O estado de validação foi simplificado. Agora, ele armazena apenas as mensagens de erro.
-  // Um array vazio significa que o campo é válido. Isso limpa o estado e torna a lógica mais direta.
   const [errors, setErrors] = useState({
-    nome: [],
-    dosagem: [],
-    quantidade: [],
-    tipo: [],
-    forma: [],
-    descricao: [],
-    preco: [],
-    laboratorio: [],
-    imagem: [],
-    codigoBarras: []
+    nome: [], dosagem: [], quantidade: [], tipo: [], forma: [],
+    descricao: [], preco: [], laboratorio: [], imagem: [], codigoBarras: []
   });
 
-  // ANOTAÇÃO: O estado "touched" foi adicionado para rastrear quais campos o usuário já interagiu.
-  // Isso melhora a UX, pois os erros só aparecem depois que o usuário sai do campo (onBlur),
-  // e não enquanto ele ainda está digitando.
   const [touched, setTouched] = useState({});
 
   const handleBlur = (e) => {
     const { name } = e.target;
-    setTouched({
-      ...touched,
-      [name]: true,
-    });
+    setTouched({ ...touched, [name]: true });
     validateField(name, form[name]);
   };
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setForm({
-      ...form,
-      [name]: value,
-    });
+    setForm({ ...form, [name]: value });
   };
 
-  // ANOTAÇÃO: Todas as funções de validação individuais foram consolidadas em uma única função, `validateField`.
-  // Isso reduz a repetição de código e torna a lógica de validação centralizada e mais fácil de gerenciar.
   const validateField = (name, value) => {
     let fieldErrors = [];
     switch (name) {
@@ -75,12 +44,12 @@ export default function CadastroMedicamentoPage() {
         break;
       case 'dosagem':
         if (!value) fieldErrors.push('A dosagem é obrigatória');
-        else if (!/^\d+(\.\d+)?(mg|mcg|g|ml|UI|%|ppm)$/i.test(value)) fieldErrors.push('Formato de dosagem inválido (ex: 500mg, 10ml)');
+        else if (!/^\d+(\.\d+)?(mg|mcg|g|ml|UI|%|ppm)$/i.test(value)) fieldErrors.push('Formato inválido (ex: 500mg, 10ml)');
         break;
       case 'quantidade':
         if (!value) fieldErrors.push('A quantidade é obrigatória');
         else if (parseInt(value) <= 0) fieldErrors.push('A quantidade deve ser maior que zero');
-        else if (parseInt(value) > 1000) fieldErrors.push('A quantidade não pode ser superior a 1000 unidades');
+        else if (parseInt(value) > 1000) fieldErrors.push('A quantidade não pode ser superior a 1000');
         break;
       case 'tipo':
         if (!value) fieldErrors.push('Selecione o tipo de produto');
@@ -105,60 +74,51 @@ export default function CadastroMedicamentoPage() {
         break;
       case 'codigoBarras':
         if (!value) fieldErrors.push('O código de barras é obrigatório');
-        else if (!/^\d{8,14}$/.test(value)) fieldErrors.push('Código de barras inválido (deve conter apenas números, 8-14 dígitos)');
+        else if (!/^\d{8,14}$/.test(value)) fieldErrors.push('Código de barras inválido (8-14 dígitos numéricos)');
         break;
-      default:
-        break;
+      default: break;
     }
     setErrors(prev => ({ ...prev, [name]: fieldErrors }));
     return fieldErrors.length === 0;
   };
 
-  // ANOTAÇÃO: Mapeamentos mantidos como no original, pois estão corretos.
   const tipoMap = { 'Alopático': 1, 'Fitoterápico': 2, 'Genérico': 3, 'Homeopático': 4, 'Manipulado': 5, 'Referência': 6, 'Similar': 7 };
   const formaMap = { 'Comprimido': 1, 'Cápsula': 2, 'Pastilhas': 3, 'Drágeas': 4, 'Pós para Reconstituição': 5, 'Gotas': 6, 'Xarope': 7, 'Solução Oral': 8, 'Suspensão': 9, 'Comprimidos Sublinguais': 10, 'Soluções': 11, 'Suspensões Injetáveis': 12, 'Soluções Tópicas': 13, 'Pomadas': 14, 'Cremes': 15, 'Loção': 16, 'Gel': 17, 'Adesivos': 18, 'Spray': 19, 'Gotas Nasais': 20, 'Colírios': 21, 'Pomadas Oftálmicas': 22, 'Gotas Auriculares ou Otológicas': 23, 'Pomadas Auriculares': 24, 'Aerosol': 25, 'Comprimidos Vaginais': 26, 'Óvulos': 27, 'Supositórios': 28, 'Enemas': 29 };
   const laboratorioMap = { 'Neo Química': 1, 'EMS': 2, 'Eurofarma': 3, 'Aché': 4, 'União Química': 5, 'Medley': 6, 'Sanofi': 7, 'Geolab': 8, 'Merck': 9, 'Legrand': 10, 'Natulab': 11, 'Germed': 12, 'Prati Donaduzzi': 13, 'Biolab': 14, 'Hipera CH': 15, 'Sandoz': 16, 'Med Química': 17, 'Mantecorp Farmasa': 18 };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-
-    // ANOTAÇÃO: A validação do formulário inteiro foi simplificada. Em vez de somar resultados,
-    // agora validamos todos os campos e verificamos se algum erro foi encontrado.
-    // Isso é mais robusto e elimina o "número mágico" (10).
     let isFormValid = true;
     for (const field in form) {
       if (!validateField(field, form[field])) {
         isFormValid = false;
       }
     }
-
-    // Marca todos os campos como "tocados" para exibir todos os erros restantes.
     setTouched(Object.keys(form).reduce((acc, key) => ({ ...acc, [key]: true }), {}));
 
     if (!isFormValid) {
+      alert("Por favor, corrija os erros no formulário.");
       return;
     }
 
     setLoading(true);
 
-    // CORREÇÃO: Corrigido o erro de digitação de "med_imgagem" para "med_imagem".
-    // Este era um bug crítico que impediria o envio correto da imagem para a API.
     const dadosParaApi = {
         med_nome: form.nome,
         med_dosagem: form.dosagem,
         med_quantidade: parseInt(form.quantidade),
         med_descricao: form.descricao,
         med_preco: parseFloat(form.preco),
-        med_imagem: form.imagem, // Erro de digitação corrigido aqui
-        med_codigo_barras: form.codigoBarras,
+        med_imagem: form.imagem,
+        med_cod_barras: form.codigoBarras,
         tipo_id: tipoMap[form.tipo],
         forma_id: formaMap[form.forma],
-        lab_id: laboratorioMap[form.laboratorio]
+        lab_id: laboratorioMap[form.laboratorio],
+        farmacia_id: 1
     };
 
     try {
         const response = await api.post('/medicamentos', dadosParaApi);
-
         if (response.data.sucesso) {
             alert("Medicamento cadastrado com sucesso!");
             router.push("/farmacias/produtos/medicamentos");
@@ -166,10 +126,8 @@ export default function CadastroMedicamentoPage() {
             alert(`Erro ao cadastrar: ${response.data.mensagem}`);
         }
     } catch (error) {
-        // ANOTAÇÃO: Recomenda-se substituir `alert()` por uma biblioteca de notificações (toast)
-        // para uma melhor experiência do usuário em uma aplicação moderna.
         if (error.response) {
-            alert(error.response.data.mensagem + '\n' + error.response.data.dados);
+            alert(error.response.data.mensagem + '\n' + (error.response.data.dados || ''));
         } else {
             alert('Erro na comunicação com o servidor. Tente novamente.');
             console.error("Erro ao enviar dados:", error);
@@ -179,7 +137,6 @@ export default function CadastroMedicamentoPage() {
     }
   };
   
-  // ANOTAÇÃO: Função de logout mantida como no original.
   const handleLogout = async () => {
     try {
       localStorage.removeItem("authToken");
@@ -191,9 +148,6 @@ export default function CadastroMedicamentoPage() {
     }
   };
 
-  // ANOTAÇÃO: Uma função auxiliar foi criada para determinar dinamicamente a classe CSS
-  // com base no estado de erro e se o campo foi "tocado".
-  // Isso limpa o JSX e centraliza a lógica de estilização.
   const getValidationClass = (fieldName) => {
     if (!touched[fieldName]) return styles.formControl;
     return errors[fieldName]?.length > 0 ? `${styles.formControl} ${styles.error}` : `${styles.formControl} ${styles.success}`;
@@ -209,16 +163,11 @@ export default function CadastroMedicamentoPage() {
           <h1 className={styles.title}> Cadastro de Medicamento</h1>
         </div>
       </header>
-
       <div className={styles.contentWrapper}>
           <aside className={`${styles.sidebar} ${sidebarOpen ? styles.sidebarOpen : ""}`}>
             <div className={styles.sidebarHeader}>
-              <div className={styles.logo}>
-                <span className={styles.logoText}>PharmaX</span>
-              </div>
-              <button className={styles.sidebarClose} onClick={() => setSidebarOpen(false)}>
-                ×
-              </button>
+              <div className={styles.logo}><span className={styles.logoText}>PharmaX</span></div>
+              <button className={styles.sidebarClose} onClick={() => setSidebarOpen(false)}>×</button>
             </div>
             <nav className={styles.nav}>
               <div className={styles.navSection}><p className={styles.navLabel}>Principal</p><a href="/farmacias/favoritos" className={styles.navLink}><span className={styles.navText}>Favoritos</span></a><a href="/farmacias/produtos/medicamentos" className={`${styles.navLink} ${styles.active}`}><span className={styles.navText}>Medicamentos</span></a></div>
@@ -227,26 +176,17 @@ export default function CadastroMedicamentoPage() {
               <div className={styles.navSection}><p className={styles.navLabel}>Conta</p><a href="/farmacias/perfil" className={styles.navLink}><span className={styles.navText}>Meu Perfil</span></a><button onClick={handleLogout} className={styles.navLink} style={{ background: 'none', border: 'none', width: '100%', textAlign: 'left', cursor: 'pointer' }}><span className={styles.navText}>Sair</span></button></div>
             </nav>
           </aside>
-
           {sidebarOpen && (<div className={styles.overlay} onClick={() => setSidebarOpen(false)} />)}
-        
         <main className={styles.mainContent}>
           <div className={styles.formContainer}>
             <div className={styles.formHeader}>
               <h2>Novo Medicamento</h2>
               <p>Preencha os dados do novo medicamento</p>
             </div>
-
             <form onSubmit={handleSubmit} className={styles.form} noValidate>
               <div className={styles.formGrid}>
                 <div className={styles.formSection}>
                   <h3 className={styles.sectionTitle}>Informações Básicas</h3>
-                  
-                  {/* ANOTAÇÃO: O JSX de cada campo foi atualizado para usar a nova lógica de validação e classes dinâmicas.
-                      - `onBlur={handleBlur}` foi adicionado para validar o campo quando o usuário sai dele.
-                      - A classe do container é definida pela função `getValidationClass`.
-                      - A exibição de mensagens de erro agora verifica `touched` e `errors`.
-                  */}
                   <div className={getValidationClass('nome')}>
                     <label className={styles.inputLabel}>Nome do Medicamento</label>
                     <div className={styles.divInput}>
@@ -256,7 +196,6 @@ export default function CadastroMedicamentoPage() {
                     </div>
                     {touched.nome && errors.nome.map(msg => <small key={msg} className={styles.small}>{msg}</small>)}
                   </div>
-                  
                   <div className={styles.formRow}>
                     <div className={getValidationClass('dosagem')}>
                       <label className={styles.inputLabel}>Dosagem</label>
@@ -277,7 +216,6 @@ export default function CadastroMedicamentoPage() {
                       {touched.quantidade && errors.quantidade.map(msg => <small key={msg} className={styles.small}>{msg}</small>)}
                     </div>
                   </div>
-                  
                   <div className={styles.formRow}>
                     <div className={getValidationClass('preco')}>
                       <label className={styles.inputLabel}>Preço (R$)</label>
@@ -290,18 +228,15 @@ export default function CadastroMedicamentoPage() {
                     </div>
                     <div className={getValidationClass('codigoBarras')}>
                       <label className={styles.inputLabel}>Código de Barras</label>
-                      <div className={styles.barcodeInputContainer}>
-                        <div className={styles.divInput}>
+                      <div className={styles.divInput}>
                           <input className={styles.modernInput} type="text" name="codigoBarras" value={form.codigoBarras} onChange={handleChange} onBlur={handleBlur} placeholder="Digite o código de barras" required />
                           <MdCheckCircle className={styles.sucesso} />
                           <MdError className={styles.erro} />
-                        </div>
                       </div>
                       {touched.codigoBarras && errors.codigoBarras.map(msg => <small key={msg} className={styles.small}>{msg}</small>)}
                     </div>
                   </div>
                 </div>
-
                 <div className={styles.formSection}>
                   <h3 className={styles.sectionTitle}>Informações Técnicas</h3>
                   <div className={getValidationClass('tipo')}>
@@ -351,7 +286,6 @@ export default function CadastroMedicamentoPage() {
                   </div>
                 </div>
               </div>
-
               <div className={styles.formSection}>
                 <h3 className={styles.sectionTitle}>Descrição</h3>
                 <div className={getValidationClass('descricao')}>
@@ -364,7 +298,6 @@ export default function CadastroMedicamentoPage() {
                   {touched.descricao && errors.descricao.map(msg => <small key={msg} className={styles.small}>{msg}</small>)}
                 </div>
               </div>
-
               <div className={styles.formActions}>
                 <button type="button" className={styles.cancelButton} onClick={() => router.push("/farmacias/produtos/medicamentos")} disabled={loading}>
                   Cancelar

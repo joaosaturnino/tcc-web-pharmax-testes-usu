@@ -213,13 +213,15 @@
   align-items: center;
   gap: 2.4rem;
   margin-bottom: 1.8rem;
+  border-bottom: 1px solid #e5e7eb;
+  padding-bottom: 1.8rem;
 }
 
-.reportLogo {
-  width: 4.8rem;
-  height: 4.8rem;
-  background: #458B00;
-  border-radius: 50%;
+.printLogo {
+  display: none;
+  height: 50px;
+  width: auto;
+  object-fit: contain;
 }
 
 .reportTitle h1 {
@@ -579,6 +581,10 @@
   }
   .sidebar, .header, .controls, .paginationControls, .emptyState {
     display: none !important;
+  }
+
+  .printLogo {
+    display: block !important;
   }
 }
 

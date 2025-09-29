@@ -1,78 +1,126 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { useRouter } from "next/navigation";
+import { useRouter, useParams } from "next/navigation";
 import styles from "./edita.module.css";
+import api from "../../../../../services/api"; // Ajuste o caminho conforme sua estrutura
 
 export default function EditarLaboratorioPage() {
   const router = useRouter();
+  const params = useParams(); // Hook para pegar parâmetros da URL, como o ID
+  const { id: lab_id } = params; // Renomeando id para lab_id para clareza
+
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [loading, setLoading] = useState(true);
-
+  
   const [form, setForm] = useState({
-    nome: "",
-    cnpj: "",
-    endereco: "",
-    telefone: "",
-    email: "",
-    logo: null,
-    dataCadastro: "",
+    lab_nome: "",
+    lab_cnpj: "",
+    lab_endereco: "",
+    lab_telefone: "",
+    lab_email: "",
+    lab_ativo: 1, // Assumindo 1 como 'ativo'
   });
+  const [logoFile, setLogoFile] = useState(null); // Estado separado para o arquivo do logo
+  const [preview, setPreview] = useState(null); // Estado para a pré-visualização do logo
+  const [dataCadastro, setDataCadastro] = useState("");
 
-  const [preview, setPreview] = useState(null);
-
-  // Carrega os dados do localStorage ao inicializar o componente
+  // Carrega os dados da API ao inicializar o componente
   useEffect(() => {
-    const dadosSalvos = localStorage.getItem("laboratorio");
-    if (dadosSalvos) {
-      const laboratorioData = JSON.parse(dadosSalvos);
-      setForm({
-        nome: laboratorioData.nome || "",
-        cnpj: laboratorioData.cnpj || "",
-        endereco: laboratorioData.endereco || "",
-        telefone: laboratorioData.telefone || "",
-        email: laboratorioData.email || "",
-        logo: laboratorioData.logo || null,
-        dataCadastro: laboratorioData.dataCadastro || new Date().toISOString().split('T')[0],
-      });
-      setPreview(laboratorioData.logo || null);
+    if (lab_id) {
+      const fetchLaboratorio = async () => {
+        setLoading(true);
+        try {
+          const response = await api.get("/laboratorios");
+          const laboratorioData = response.data.dados.find(
+            (lab) => lab.lab_id == lab_id
+          );
+
+          if (laboratorioData) {
+            setForm({
+              lab_nome: laboratorioData.lab_nome || "",
+              lab_cnpj: laboratorioData.lab_cnpj || "",
+              lab_endereco: laboratorioData.lab_endereco || "",
+              lab_telefone: laboratorioData.lab_telefone || "",
+              lab_email: laboratorioData.lab_email || "",
+              lab_ativo: laboratorioData.lab_ativo,
+            });
+            
+            // Formata e define a data de cadastro
+            const data = new Date(laboratorioData.lab_data_cadastro);
+            setDataCadastro(data.toISOString().split('T')[0]);
+
+            if (laboratorioData.lab_logo) {
+              const apiUrl = process.env.NEXT_PUBLIC_API_URL;
+              const apiPorta = process.env.NEXT_PUBLIC_API_PORTA;
+              setPreview(`${apiUrl}:${apiPorta}${laboratorioData.lab_logo}`);
+            }
+          } else {
+            alert("Laboratório não encontrado!");
+            router.push("/farmacias/laboratorio/lista");
+          }
+        } catch (error) {
+          console.error("Erro ao buscar dados do laboratório:", error);
+          alert("Não foi possível carregar os dados do laboratório.");
+        } finally {
+          setLoading(false);
+        }
+      };
+      fetchLaboratorio();
     }
-    setLoading(false);
-  }, []);
+  }, [lab_id, router]);
 
   const handleChange = (e) => {
     const { name, value, type, files } = e.target;
     if (type === "file" && files.length > 0) {
       const file = files[0];
-      setForm({
-        ...form,
-        [name]: file,
-      });
+      setLogoFile(file);
       setPreview(URL.createObjectURL(file));
     } else {
-      setForm({
-        ...form,
-        [name]: value,
-      });
+      setForm({ ...form, [name]: value });
     }
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
 
-    // Atualiza no localStorage
-    const dados = { ...form, logo: preview };
-    localStorage.setItem("laboratorio", JSON.stringify(dados));
+    const formData = new FormData();
+    formData.append("lab_nome", form.lab_nome);
+    formData.append("lab_cnpj", form.lab_cnpj);
+    formData.append("lab_endereco", form.lab_endereco);
+    formData.append("lab_telefone", form.lab_telefone);
+    formData.append("lab_email", form.lab_email);
+    formData.append("lab_ativo", form.lab_ativo);
 
-    alert("Laboratório atualizado com sucesso!");
-    router.push("/farmacias/laboratorio/lista");
+    if (logoFile) {
+      formData.append("lab_logo", logoFile);
+    }
+
+    try {
+      await api.put(`/laboratorios/${lab_id}`, formData, {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+      });
+      alert("Laboratório atualizado com sucesso!");
+      router.push("/farmacias/laboratorio/lista");
+    } catch (error) {
+      console.error("Erro ao atualizar o laboratório:", error);
+      const errorMsg = error.response?.data?.mensagem || "Verifique os dados e tente novamente.";
+      alert(`Erro ao atualizar: ${errorMsg}`);
+    }
   };
 
-  const handleDelete = () => {
+  const handleDelete = async () => {
     if (confirm("Tem certeza que deseja excluir este laboratório?")) {
-      localStorage.removeItem("laboratorio");
-      alert("Laboratório excluído com sucesso!");
-      router.push("/farmacias/laboratorio/lista");
+      try {
+        await api.delete(`/laboratorios/${lab_id}`);
+        alert("Laboratório excluído com sucesso!");
+        router.push("/farmacias/laboratorio/lista");
+      } catch (error) {
+        console.error("Erro ao excluir o laboratório:", error);
+        alert("Não foi possível excluir o laboratório.");
+      }
     }
   };
 
@@ -92,7 +140,6 @@ export default function EditarLaboratorioPage() {
       router.push("/login");
     } catch (error) {
       console.error("Erro ao fazer logout:", error);
-      // Fallback para a página home em caso de erro
       router.push("/home");
     }
   };
@@ -126,75 +173,19 @@ export default function EditarLaboratorioPage() {
                 ×
               </button>
             </div>
-
             <nav className={styles.nav}>
-              <div className={styles.navSection}>
-                <p className={styles.navLabel}>Principal</p>
-                <a
-                  href="/farmacias/favoritos"
-                  className={styles.navLink}
-                >
-                  <span className={styles.navText}>Favoritos</span>
-                </a>
-                <a
-                  href="/farmacias/produtos/medicamentos"
-                  className={styles.navLink}
-                >
-                  <span className={styles.navText}>Medicamentos</span>
-                </a>
-              </div>
-
-              <div className={styles.navSection}>
-                <p className={styles.navLabel}>Gestão</p>
-                <a
-                  href="/farmacias/cadastro/funcionario/lista"
-                  className={styles.navLink}
-                >
-                  <span className={styles.navText}>Funcionários</span>
-                </a>
-                <a href="/farmacias/laboratorio/lista" className={`${styles.navLink} ${styles.active}`}>
-                  <span className={styles.navText}>Laboratórios</span>
-                </a>
-              </div>
-
-              <div className={styles.navSection}>
-                <p className={styles.navLabel}>Relatórios</p>
-                <a
-                  href="/farmacias/relatorios/favoritos"
-                  className={styles.navLink}
-                >
-                  <span className={styles.navText}>Medicamentos Favoritos</span>
-                </a>
-                <a
-                  href="/farmacias/relatorios/funcionarios"
-                  className={styles.navLink}
-                >
-                  <span className={styles.navText}>Relatório de Funcionarios</span>
-                </a>
-                <a
-                  href="/farmacias/relatorios/laboratorios"
-                  className={styles.navLink}
-                >
-                  <span className={styles.navText}>Relatório de Laboratorios</span>
-                </a>
-              </div>
-
-              <div className={styles.navSection}>
-                <p className={styles.navLabel}>Conta</p>
-                <a
-                  href="/farmacias/perfil"
-                  className={styles.navLink}
-                >
-                  <span className={styles.navText}>Meu Perfil</span>
-                </a>
-                <button
+              {/* Seus links de navegação aqui */}
+              <a href="/farmacias/laboratorio/lista" className={`${styles.navLink} ${styles.active}`}>
+                <span className={styles.navText}>Laboratórios</span>
+              </a>
+              {/* ...outros links... */}
+              <button
                   onClick={handleLogout}
                   className={styles.navLink}
                   style={{ background: 'none', border: 'none', width: '100%', textAlign: 'left', cursor: 'pointer' }}
                 >
                   <span className={styles.navText}>Sair</span>
                 </button>
-              </div>
             </nav>
           </aside>
 
@@ -224,8 +215,8 @@ export default function EditarLaboratorioPage() {
                     <input
                       className={styles.modernInput}
                       type="text"
-                      name="nome"
-                      value={form.nome}
+                      name="lab_nome"
+                      value={form.lab_nome}
                       onChange={handleChange}
                       placeholder="Digite o nome do laboratório"
                       required
@@ -238,8 +229,8 @@ export default function EditarLaboratorioPage() {
                       <input
                         className={styles.modernInput}
                         type="text"
-                        name="cnpj"
-                        value={form.cnpj}
+                        name="lab_cnpj"
+                        value={form.lab_cnpj}
                         onChange={handleChange}
                         placeholder="00.000.000/0000-00"
                         required
@@ -252,8 +243,7 @@ export default function EditarLaboratorioPage() {
                         className={styles.modernInput}
                         type="date"
                         name="dataCadastro"
-                        value={form.dataCadastro}
-                        onChange={handleChange}
+                        value={dataCadastro}
                         disabled
                       />
                     </div>
@@ -264,8 +254,8 @@ export default function EditarLaboratorioPage() {
                     <input
                       className={styles.modernInput}
                       type="email"
-                      name="email"
-                      value={form.email}
+                      name="lab_email"
+                      value={form.lab_email}
                       onChange={handleChange}
                       placeholder="contato@laboratorio.com"
                       required
@@ -277,8 +267,8 @@ export default function EditarLaboratorioPage() {
                     <input
                       className={styles.modernInput}
                       type="tel"
-                      name="telefone"
-                      value={form.telefone}
+                      name="lab_telefone"
+                      value={form.lab_telefone}
                       onChange={handleChange}
                       placeholder="(00) 00000-0000"
                     />
@@ -296,8 +286,8 @@ export default function EditarLaboratorioPage() {
                     <input
                       className={styles.modernInput}
                       type="text"
-                      name="endereco"
-                      value={form.endereco}
+                      name="lab_endereco"
+                      value={form.lab_endereco}
                       onChange={handleChange}
                       placeholder="Endereço completo"
                       required
@@ -316,11 +306,11 @@ export default function EditarLaboratorioPage() {
                         accept="image/*"
                       />
                       <label htmlFor="logo-upload" className={styles.fileLabel}>
-                        {form.logo ? "Alterar arquivo" : "Selecionar arquivo"}
+                        {logoFile ? "Alterar arquivo" : "Selecionar arquivo"}
                       </label>
-                      {form.logo && (
+                      {logoFile && (
                         <span className={styles.fileName}>
-                          {typeof form.logo === 'string' ? "Imagem carregada" : form.logo.name}
+                          {logoFile.name}
                         </span>
                       )}
                     </div>

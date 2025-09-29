@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import styles from "./funcionario.module.css";
+import api from "../../../services/api"; // Verifique se o caminho para o serviço da API está correto
 
 // Ícones para validação
 import { MdCheckCircle, MdError } from "react-icons/md";
@@ -352,22 +353,51 @@ export default function CadastroFuncionarioPage() {
     itensValidados += validaSenha();
     itensValidados += validaConfirmarSenha();
     itensValidados += validaNivelAcesso();
-
+  
     if (itensValidados !== 10) {
       return; // Não prossegue se houver erros de validação
     }
-
+  
     setLoading(true);
+  
+    // Mapeia os dados do formulário para o formato esperado pela API
+    const dadosFuncionario = {
+      func_nome: form.nome,
+      func_email: form.email,
+      func_telefone: form.telefone,
+      func_cpf: form.cpf,
+      func_dtnasc: form.dataNascimento,
+      func_endereco: form.endereco,
+      farmacia_id: 1, // Defina um valor padrão ou dinâmico, se necessário
+      func_usuario: form.usuario,
+      func_senha: form.senha,
+      func_nivel: form.nivelAcesso,
+    };
     
-    // Simulando processamento
-    setTimeout(() => {
-      console.log("Dados enviados:", form);
-      alert("Funcionário cadastrado com sucesso!");
+    try {
+     // Envia os dados para a API usando o método post
+      const response = await api.post('/funcionario', dadosFuncionario);
+  
+      if (response.data.sucesso) {
+        alert("Funcionário cadastrado com sucesso!");
+        // Redireciona para a página de listagem de funcionários após o cadastro
+        router.push("/farmacias/cadastro/funcionario/lista");
+      } else {
+        // Exibe uma mensagem de erro caso a API retorne sucesso: false
+        alert('Erro ao cadastrar funcionário: ' + response.data.mensagem);
+      }
+    } catch (error) {
+      // Trata erros na requisição, como os de rede ou os retornados pela API
+      if (error.response) {
+        // Mostra a mensagem de erro vinda da API
+        alert(error.response.data.mensagem + '\n' + error.response.data.dados);
+      } else {
+        // Mostra um erro genérico do front-end
+        alert('Erro no front-end ao tentar cadastrar: \n' + error);
+      }
+    } finally {
       setLoading(false);
-      
-      // Redireciona para a página de listagem de funcionários após o cadastro
-      router.push("/farmacias/cadastro/funcionario/lista");
-    }, 1500);
+    }
   };
 
   return (
