@@ -15,12 +15,39 @@ export default function FavoritosFarmaciaPage() {
   const [itemsPerPage] = useState(10);
   const router = useRouter();
 
+  // --- FUNÇÃO DE LOGOUT ---
+  const handleLogout = () => {
+    localStorage.removeItem("authToken");
+    localStorage.removeItem("userData");
+    router.push("/home");
+  };
+
   // --- EFEITO PARA BUSCAR OS DADOS QUANDO O COMPONENTE É MONTADO ---
   useEffect(() => {
     const fetchMedicamentosFavoritos = async () => {
       try {
-        // A instância 'api' deve ser configurada para enviar o 'authToken' salvo no localStorage
-        const response = await api.get('/favoritos');
+        // Passo 1: Obter os dados da farmácia salvos no localStorage durante o login.
+        const userDataString = localStorage.getItem("userData");
+        if (!userDataString) {
+          alert("Sua sessão não foi encontrada. Por favor, faça o login novamente.");
+          handleLogout(); // Reutiliza a função de logout
+          return; // Interrompe a execução
+        }
+
+        // Passo 2: Extrair o ID da farmácia.
+        const userData = JSON.parse(userDataString);
+        // IMPORTANTE: Confirme se a propriedade do ID no objeto userData é 'farm_id'.
+        const idDaFarmacia = userData.farm_id;
+
+        if (!idDaFarmacia) {
+          alert("Não foi possível identificar sua farmácia. Faça o login novamente.");
+          handleLogout();
+          return; // Interrompe a execução se o ID não for encontrado
+        }
+        
+        // ALTERAÇÃO: A chamada à API agora usa o ID da farmácia para buscar dados específicos.
+        // A URL foi alterada de '/favoritos' para um endpoint dinâmico.
+        const response = await api.get(`/favoritos/${idDaFarmacia}/favoritos`);
         
         if (response.data.sucesso) {
           // Processa os dados recebidos para o formato esperado pelo frontend
@@ -48,7 +75,7 @@ export default function FavoritosFarmaciaPage() {
           alert("Sua sessão expirou. Por favor, faça o login novamente.");
           handleLogout();
         } else {
-          alert("Não foi possível conectar ao servidor.");
+          alert("Não foi possível conectar ao servidor. Verifique sua conexão e se a API está online.");
         }
       } finally {
         setLoadingData(false); // Finaliza o carregamento dos dados
@@ -57,13 +84,6 @@ export default function FavoritosFarmaciaPage() {
 
     fetchMedicamentosFavoritos();
   }, []); // O array vazio garante que o useEffect rode apenas uma vez
-
-  // --- FUNÇÃO DE LOGOUT ---
-  const handleLogout = () => {
-    localStorage.removeItem("authToken");
-    localStorage.removeItem("userData");
-    router.push("/home");
-  };
 
   // --- LÓGICA DE PAGINAÇÃO ---
   const indexOfLastItem = currentPage * itemsPerPage;

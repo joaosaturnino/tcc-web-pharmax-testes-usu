@@ -1,36 +1,60 @@
 "use client";
-
-import { useEffect, useState, useRef } from "react";
+import Link from "next/link";
+import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import styles from "./page.module.css";
-import AuthGuard from "../../../componentes/AuthGuard";
-import api from "../../../services/api";
+import AuthGuard from "../../../componentes/AuthGuard"; // Componente que protege a rota
+import api from "../../../services/api"; // Seu arquivo de configuração da API
 
-export default function RelatorioFavoritosPage() {
+export default function FavoritosFarmaciaPage() {
+  // --- ESTADOS DO COMPONENTE ---
   const [medicamentos, setMedicamentos] = useState([]);
-  const [loading, setLoading] = useState(true);
+  const [loadingData, setLoadingData] = useState(true); // Estado para o carregamento dos dados da API
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
   const [itemsPerPage] = useState(10);
-  const [reportGenerated, setReportGenerated] = useState(false);
-  const [dateRange, setDateRange] = useState({
-    start: new Date(Date.now() - 30 * 24 * 60 * 60 * 1000)
-      .toISOString()
-      .split("T")[0],
-    end: new Date().toISOString().split("T")[0],
-  });
-  const [statusFilter, setStatusFilter] = useState("todos");
-  const [sortBy, setSortBy] = useState("favoritacoes");
-  const [sortOrder, setSortOrder] = useState("desc");
-  const reportRef = useRef(null);
   const router = useRouter();
 
+  // --- FUNÇÃO DE LOGOUT ---
+  const handleLogout = () => {
+    localStorage.removeItem("authToken");
+    localStorage.removeItem("userData");
+    router.push("/home");
+  };
+
+  // --- EFEITO PARA BUSCAR OS DADOS QUANDO O COMPONENTE É MONTADO ---
   useEffect(() => {
     const fetchMedicamentosFavoritos = async () => {
       try {
-        const response = await api.get('/favoritos');
+        // --- INÍCIO DA IMPLEMENTAÇÃO ---
 
+        // Passo 1: Obter os dados da farmácia do localStorage.
+        const userDataString = localStorage.getItem("userData");
+        if (!userDataString) {
+          alert("Sua sessão não foi encontrada. Por favor, faça o login novamente.");
+          handleLogout(); // Reutiliza a função de logout existente
+          return; // Interrompe a execução se não houver dados do usuário
+        }
+
+        // Passo 2: Extrair o ID da farmácia logada.
+        const userData = JSON.parse(userDataString);
+        // IMPORTANTE: Confirme que o nome da propriedade do ID é 'farm_id' no seu objeto 'userData'.
+        const idDaFarmacia = userData.farm_id; 
+
+        if (!idDaFarmacia) {
+          alert("Não foi possível identificar sua farmácia. Faça o login novamente.");
+          handleLogout();
+          return; // Interrompe a execução se o ID não for encontrado
+        }
+        
+        // Passo 3: Fazer a chamada à API usando o ID da farmácia.
+        // O endpoint foi alterado de '/favoritos' para um que aceite o ID.
+        const response = await api.get(`/farmacias/${idDaFarmacia}/favoritos`);
+        
+        // --- FIM DA IMPLEMENTAÇÃO ---
+        
         if (response.data.sucesso) {
+          // Processa os dados recebidos para o formato esperado pelo frontend
           const processedMedicamentos = response.data.dados.map(med => ({
             ...med,
             id: med.med_id,
@@ -39,123 +63,47 @@ export default function RelatorioFavoritosPage() {
             dosagem: med.med_dosagem,
             favoritacoes: med.favoritacoes_count || 0,
             status: med.status || "pendente",
-            ultimaAtualizacao: med.med_data_atualizacao
-              ? new Date(med.med_data_atualizacao).toISOString()
+            ultimaAtualizacao: med.med_data_atualizacao 
+              ? new Date(med.med_data_atualizacao).toISOString() 
               : new Date().toISOString(),
           }));
-          
           setMedicamentos(processedMedicamentos);
         } else {
-          console.error("Erro ao buscar os medicamentos:", response.data.mensagem);
+          console.error("A API retornou um erro:", response.data.mensagem);
+          alert("Não foi possível carregar os favoritos.");
         }
       } catch (error) {
-        console.error("Falha ao conectar com a API:", error);
-        if (error.response) {
-            alert(`Erro: ${error.response.data.mensagem}`);
+        console.error("Falha na chamada à API:", error);
+        // Se o erro for 'Não Autorizado' (token inválido/expirado), desloga o usuário
+        if (error.response?.status === 401) {
+          alert("Sua sessão expirou. Por favor, faça o login novamente.");
+          handleLogout();
         } else {
-            alert("Não foi possível conectar ao servidor. Tente novamente mais tarde.");
+          alert("Não foi possível conectar ao servidor.");
         }
       } finally {
-        setLoading(false);
+        setLoadingData(false); // Finaliza o carregamento dos dados
       }
     };
 
     fetchMedicamentosFavoritos();
-  }, []);
+  }, []); // O array vazio garante que o useEffect rode apenas uma vez
 
-  // Filtrar e ordenar medicamentos
-  const filteredMedicamentos = medicamentos.filter((med) => {
-    const medDateStr = med.ultimaAtualizacao.split("T")[0];
-    const dateInRange = medDateStr >= dateRange.start && medDateStr <= dateRange.end;
-    const statusMatch = statusFilter === "todos" || med.status === statusFilter;
-    return dateInRange && statusMatch;
-  });
 
-  const sortedMedicamentos = [...filteredMedicamentos].sort((a, b) => {
-    let valueA, valueB;
-    if (sortBy === "nome") {
-      valueA = a.nome.toLowerCase();
-      valueB = b.nome.toLowerCase();
-    } else if (sortBy === "fabricante") {
-      valueA = a.fabricante.toLowerCase();
-      valueB = b.fabricante.toLowerCase();
-    } else if (sortBy === "favoritacoes") {
-      valueA = a.favoritacoes;
-      valueB = b.favoritacoes;
-    } else if (sortBy === "data") {
-      valueA = new Date(a.ultimaAtualizacao);
-      valueB = new Date(b.ultimaAtualizacao);
-    } else {
-      valueA = a[sortBy];
-      valueB = b[sortBy];
-    }
-    if (typeof valueA === "string") {
-      return sortOrder === "asc"
-        ? valueA.localeCompare(valueB)
-        : valueB.localeCompare(valueA);
-    } else {
-      return sortOrder === "asc" ? valueA - valueB : valueB - valueA;
-    }
-  });
-
-  // Paginação
+  // --- LÓGICA DE PAGINAÇÃO ---
   const indexOfLastItem = currentPage * itemsPerPage;
   const indexOfFirstItem = indexOfLastItem - itemsPerPage;
-  const currentItems = sortedMedicamentos.slice(indexOfFirstItem, indexOfLastItem);
-  const totalPages = Math.ceil(sortedMedicamentos.length / itemsPerPage);
-
-  const reportItems = reportGenerated ? sortedMedicamentos : currentItems;
-
+  const currentItems = medicamentos.slice(indexOfFirstItem, indexOfLastItem);
+  const totalPages = Math.ceil(medicamentos.length / itemsPerPage);
   const paginate = (pageNumber) => setCurrentPage(pageNumber);
 
-  const generateReport = () => {
-    setReportGenerated(true);
-    setTimeout(() => {
-      window.print();
-      setTimeout(() => {
-        setReportGenerated(false);
-      }, 500);
-    }, 500);
-  };
 
-  const handleSort = (column) => {
-    if (sortBy === column) {
-      setSortOrder(sortOrder === "asc" ? "desc" : "asc");
-    } else {
-      setSortBy(column);
-      setSortOrder("desc");
-    }
-    setCurrentPage(1);
-  };
-
-  const getSortIcon = (column) => {
-    if (sortBy !== column) return "⇅";
-    return sortOrder === "asc" ? "↑" : "↓";
-  };
-
-  const handleLogout = async () => {
-    try {
-      localStorage.removeItem("authToken");
-      sessionStorage.removeItem("userData");
-      router.push("/login");
-    } catch (error) {
-      console.error("Erro ao fazer logout:", error);
-      router.push("/home");
-    }
-  };
-
-  if (loading) {
-    return (
-      <div className={styles.loaderContainer}>
-        <div className={styles.spinner}></div>
-        <span>Carregando...</span>
-      </div>
-    );
-  }
-
+  // --- RENDERIZAÇÃO DO COMPONENTE ---
   return (
+    // AuthGuard protege todo o conteúdo da página
     <AuthGuard>
       <div className={styles.dashboard}>
+        {/* Header */}
         <header className={styles.header}>
           <div className={styles.headerLeft}>
             <button
@@ -164,347 +112,160 @@ export default function RelatorioFavoritosPage() {
             >
               ☰
             </button>
-            <h1 className={styles.title}>Relatório de Favoritos</h1>
-          </div>
-          <div className={styles.headerActions}>
-            <button
-              className={styles.reportButton}
-              onClick={generateReport}
-              title="Gerar relatório para impressão"
-            >
-              Gerar Relatório
-            </button>
+            <h1 className={styles.title}>Medicamentos Mais Favoritados</h1>
           </div>
         </header>
+
         <div className={styles.contentWrapper}>
+          {/* Sidebar */}
           <aside className={`${styles.sidebar} ${sidebarOpen ? styles.sidebarOpen : ""}`}>
             <div className={styles.sidebarHeader}>
               <div className={styles.logo}>
                 <span className={styles.logoText}>PharmaX</span>
               </div>
-              <button
-                className={styles.sidebarClose}
-                onClick={() => setSidebarOpen(false)}
-              >
+              <button className={styles.sidebarClose} onClick={() => setSidebarOpen(false)}>
                 ×
               </button>
             </div>
-
             <nav className={styles.nav}>
               <div className={styles.navSection}>
                 <p className={styles.navLabel}>Principal</p>
-                <a
-                  href="/farmacias/favoritos"
-                  className={styles.navLink}
-                >
+                <Link href="/farmacias/favoritos" className={`${styles.navLink} ${styles.active}`}>
                   <span className={styles.navText}>Favoritos</span>
-                </a>
-                <a
-                  href="/farmacias/produtos/medicamentos"
-                  className={styles.navLink}
-                >
+                </Link>
+                <Link href="/farmacias/produtos/medicamentos" className={styles.navLink}>
                   <span className={styles.navText}>Medicamentos</span>
-                </a>
+                </Link>
               </div>
-
               <div className={styles.navSection}>
                 <p className={styles.navLabel}>Gestão</p>
-                <a
-                  href="/farmacias/cadastro/funcionario/lista"
-                  className={styles.navLink}
-                >
+                <Link href="/farmacias/cadastro/funcionario/lista" className={styles.navLink}>
                   <span className={styles.navText}>Funcionários</span>
-                </a>
-                <a href="/farmacias/laboratorio/lista" className={styles.navLink}>
+                </Link>
+                <Link href="/farmacias/laboratorio/lista" className={styles.navLink}>
                   <span className={styles.navText}>Laboratórios</span>
-                </a>
+                </Link>
               </div>
-
               <div className={styles.navSection}>
                 <p className={styles.navLabel}>Relatórios</p>
-                <a
-                  href="/farmacias/relatorios/favoritos"
-                  className={`${styles.navLink} ${styles.active}`}
-                >
+                <Link href="/farmacias/relatorios/favoritos" className={styles.navLink}>
                   <span className={styles.navText}>Medicamentos Favoritos</span>
-                </a>
-                <a
-                  href="/farmacias/relatorios/funcionarios"
-                  className={styles.navLink}
-                >
+                </Link>
+                <Link href="/farmacias/relatorios/funcionarios" className={styles.navLink}>
                   <span className={styles.navText}>Relatório de Funcionarios</span>
-                </a>
-                <a
-                  href="/farmacias/relatorios/laboratorios"
-                  className={styles.navLink}
-                >
+                </Link>
+                <Link href="/farmacias/relatorios/laboratorios" className={styles.navLink}>
                   <span className={styles.navText}>Relatório de Laboratorios</span>
-                </a>
+                </Link>
               </div>
-
               <div className={styles.navSection}>
                 <p className={styles.navLabel}>Conta</p>
-                <a
-                  href="/farmacias/perfil"
-                  className={styles.navLink}
-                >
+                <Link href="/farmacias/perfil" className={styles.navLink}>
                   <span className={styles.navText}>Meu Perfil</span>
-                </a>
-                <button
-                  onClick={handleLogout}
-                  className={styles.navLink}
-                  style={{ background: 'none', border: 'none', width: '100%', textAlign: 'left', cursor: 'pointer' }}
-                >
+                </Link>
+                <button onClick={handleLogout} className={styles.navLink} style={{ background: 'none', border: 'none', width: '100%', textAlign: 'left', cursor: 'pointer' }}>
                   <span className={styles.navText}>Sair</span>
                 </button>
               </div>
             </nav>
           </aside>
 
+          {/* Overlay para fechar a sidebar em telas menores */}
           {sidebarOpen && (
             <div className={styles.overlay} onClick={() => setSidebarOpen(false)} />
           )}
-          
+
+          {/* Conteúdo Principal */}
           <main className={styles.mainContent}>
-            <div
-              ref={reportRef}
-              className={`${styles.reportContainer} ${
-                reportGenerated ? styles.reportMode : ""
-              }`}
-            >
-              <div className={styles.reportHeader}>
-                <img 
-                  src="../../../../../temp/LogoEscrita.png" 
-                  alt="Logo PharmaX" 
-                  className={styles.printLogo} 
-                />
-
-                <div className={styles.reportTitle}>
-                  <h1>Medicamentos Favoritados</h1>
-                  <p>
-                    Período:{" "}
-                    {new Date(dateRange.start).toLocaleDateString("pt-BR", {timeZone: 'UTC'})} a{" "}
-                    {new Date(dateRange.end).toLocaleDateString("pt-BR", {timeZone: 'UTC'})}
-                  </p>
-                  <p>
-                    Data do relatório: {new Date().toLocaleDateString("pt-BR")}
-                  </p>
-                </div>
+            {loadingData ? (
+              <div className={styles.loaderContainer}>
+                <div className={styles.spinner}></div>
+                <p>Carregando medicamentos favoritos...</p>
               </div>
-              
-              {!reportGenerated && (
-                <>
-                  <div className={styles.reportInfo}>
-                    <p>
-                      Mostrando {filteredMedicamentos.length} de {medicamentos.length} medicamentos
-                    </p>
-                  </div>
-                  <div className={styles.controls}>
-                    <div className={styles.filters}>
-                      <div className={styles.filterGroup}>
-                        <label>Período:</label>
-                        <input
-                          type="date"
-                          value={dateRange.start}
-                          onChange={(e) =>
-                            setDateRange({ ...dateRange, start: e.target.value })
-                          }
-                        />
-                        <span>até</span>
-                        <input
-                          type="date"
-                          value={dateRange.end}
-                          onChange={(e) =>
-                            setDateRange({ ...dateRange, end: e.target.value })
-                          }
-                        />
-                      </div>
-                      <div className={styles.filterGroup}>
-                        <label>Status:</label>
-                        <select
-                          value={statusFilter}
-                          onChange={(e) => setStatusFilter(e.target.value)}
-                        >
-                          <option value="todos">Todos</option>
-                          <option value="em_estoque">Disponível</option>
-                          <option value="indisponivel">Indisponível</option>
-                          <option value="pendente">Pendente</option>
-                        </select>
-                      </div>
-                    </div>
-                  </div>
-                </>
-              )}
-
-              <table className={styles.reportTable}>
-                <thead>
-                  <tr>
-                    <th
-                      className={styles.sortableHeader}
-                      onClick={() => !reportGenerated && handleSort("nome")}
-                    >
-                      Nome {!reportGenerated && getSortIcon("nome")}
-                    </th>
-                    <th>Dosagem</th>
-                    <th
-                      className={styles.sortableHeader}
-                      onClick={() => !reportGenerated && handleSort("fabricante")}
-                    >
-                      Fabricante {!reportGenerated && getSortIcon("fabricante")}
-                    </th>
-                    <th
-                      className={styles.sortableHeader}
-                      onClick={() => !reportGenerated && handleSort("favoritacoes")}
-                    >
-                      Favoritações {!reportGenerated && getSortIcon("favoritacoes")}
-                    </th>
-                    <th>Status</th>
-                    <th
-                      className={styles.sortableHeader}
-                      onClick={() => !reportGenerated && handleSort("data")}
-                    >
-                      Última Atualização {!reportGenerated && getSortIcon("data")}
-                    </th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {reportItems.length > 0 ? (
-                    reportItems.map((med) => (
-                      <tr key={med.id}>
-                        <td className={styles.medName}>{med.nome}</td>
-                        <td>{med.dosagem}</td>
-                        <td>{med.fabricante}</td>
-                        <td className={styles.favoritacoes}>{med.favoritacoes}</td>
-                        <td>
-                          <span
-                            className={`${styles.statusBadge} ${
-                              med.status === "em_estoque"
-                                ? styles.inStock
-                                : med.status === "indisponivel"
-                                ? styles.outStock
-                                : styles.pending
-                            }`}
-                          >
-                            {med.status === "em_estoque"
-                              ? "Disponível"
-                              : med.status === "indisponivel"
-                              ? "Indisponível"
-                              : "Pendente"}
-                          </span>
-                        </td>
-                        <td>
-                          {new Date(med.ultimaAtualizacao).toLocaleDateString(
-                            "pt-BR",
-                             {timeZone: 'UTC'}
-                          )}
-                        </td>
-                      </tr>
-                    ))
+            ) : (
+              <>
+                {/* Grid de Medicamentos */}
+                <div className={styles.grid}>
+                  {currentItems.length > 0 ? (
+                    currentItems
+                      .sort((a, b) => b.favoritacoes - a.favoritacoes)
+                      .map((med, index) => (
+                        <div className={styles.card} key={med.id}>
+                          <div className={styles.cardHeader}>
+                            <div className={styles.cardUserInfo}>
+                              <div className={styles.userAvatar}>
+                                <span>#{indexOfFirstItem + index + 1}</span>
+                              </div>
+                              <div>
+                                <h2>{med.nome}</h2>
+                                <p>{med.fabricante}</p>
+                                <span className={styles.favoriteDate}>
+                                  {med.favoritacoes} favoritações
+                                </span>
+                              </div>
+                            </div>
+                          </div>
+                          <div className={styles.medList}>
+                            <div className={styles.medItem}>
+                              <div className={styles.medInfo}>
+                                <strong>Dosagem</strong>
+                                <span className={styles.dosagem}>{med.dosagem}</span>
+                              </div>
+                              <span className={`${styles.badge} ${med.status === "em_estoque" ? styles.inStock : med.status === "indisponivel" ? styles.outStock : styles.pending}`}>
+                                {med.status === "em_estoque" ? "Disponível" : med.status === "indisponivel" ? "Indisponível" : "Pendente"}
+                              </span>
+                            </div>
+                            <div className={styles.medItem}>
+                              <div className={styles.medInfo}>
+                                <strong>Última atualização</strong>
+                                <span className={styles.dosagem}>
+                                  {new Date(med.ultimaAtualizacao).toLocaleDateString('pt-BR')}
+                                </span>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      ))
                   ) : (
-                    <tr>
-                      <td colSpan="6" className={styles.emptyState}>
-                        <h3>Nenhum medicamento encontrado</h3>
-                        <p>Nenhum medicamento corresponde aos filtros selecionados.</p>
-                      </td>
-                    </tr>
+                    <div className={styles.emptyState}>
+                      <span className={styles.emptyIcon}>⭐</span>
+                      <h3>Nenhum medicamento favoritado</h3>
+                      <p>Os medicamentos favoritados pelos clientes aparecerão aqui.</p>
+                    </div>
                   )}
-                </tbody>
-              </table>
-              
-              <div className={styles.reportSummary}>
-                <h2>Resumo do Relatório</h2>
-                <div className={styles.summaryGrid}>
-                  <div className={styles.summaryItem}>
-                    <span className={styles.summaryLabel}>
-                      Total de Medicamentos
-                    </span>
-                    <span className={styles.summaryValue}>
-                      {filteredMedicamentos.length}
-                    </span>
-                  </div>
-                  <div className={styles.summaryItem}>
-                    <span className={styles.summaryLabel}>
-                      Total de Favoritações
-                    </span>
-                    <span className={styles.summaryValue}>
-                      {filteredMedicamentos.reduce(
-                        (sum, med) => sum + med.favoritacoes,
-                        0
-                      )}
-                    </span>
-                  </div>
-                  <div className={styles.summaryItem}>
-                    <span className={styles.summaryLabel}>
-                      Média de Favoritações
-                    </span>
-                    <span className={styles.summaryValue}>
-                      {filteredMedicamentos.length > 0
-                        ? Math.round(
-                            filteredMedicamentos.reduce(
-                              (sum, med) => sum + med.favoritacoes,
-                              0
-                            ) / filteredMedicamentos.length
-                          )
-                        : 0}
-                    </span>
-                  </div>
-                  <div className={styles.summaryItem}>
-                    <span className={styles.summaryLabel}>
-                      Medicamento Mais Favoritado
-                    </span>
-                    <span className={styles.summaryValue}>
-                      {filteredMedicamentos.length > 0
-                        ? [...filteredMedicamentos].sort(
-                            (a, b) => b.favoritacoes - a.favoritacoes
-                          )[0].nome
-                        : "N/A"}
-                    </span>
-                  </div>
                 </div>
-              </div>
-              
-              <div className={styles.reportFooter}>
-                <p>Relatório gerado em: {new Date().toLocaleString("pt-BR")}</p>
-                <p>PharmaX - Sistema de Gestão Farmacêutica</p>
-              </div>
-            </div>
 
-            {totalPages > 1 && !reportGenerated && (
-              <div className={styles.paginationControls}>
-                <button
-                  className={`${styles.paginationBtn} ${
-                    currentPage === 1 ? styles.disabled : ""
-                  }`}
-                  onClick={() => paginate(currentPage - 1)}
-                  disabled={currentPage === 1}
-                >
-                  ← Anterior
-                </button>
-                <div className={styles.paginationNumbers}>
-                  {Array.from({ length: totalPages }, (_, i) => i + 1).map(
-                    (number) => (
-                      <button
-                        key={number}
-                        className={`${styles.paginationNumber} ${
-                          currentPage === number ? styles.active : ""
-                        }`}
-                        onClick={() => paginate(number)}
-                      >
-                        {number}
-                      </button>
-                    )
-                  )}
-                </div>
-                <button
-                  className={`${styles.paginationBtn} ${
-                    currentPage === totalPages ? styles.disabled : ""
-                  }`}
-                  onClick={() => paginate(currentPage + 1)}
-                  disabled={currentPage === totalPages}
-                >
-                  Próxima →
-                </button>
-              </div>
+                {/* Controles de Paginação */}
+                {totalPages > 1 && (
+                  <div className={styles.paginationControls}>
+                    <button
+                      className={`${styles.paginationBtn} ${currentPage === 1 ? styles.disabled : ''}`}
+                      onClick={() => paginate(currentPage - 1)}
+                      disabled={currentPage === 1}
+                    >
+                      ← Anterior
+                    </button>
+                    <div className={styles.paginationNumbers}>
+                      {Array.from({ length: totalPages }, (_, i) => i + 1).map(number => (
+                        <button
+                          key={number}
+                          className={`${styles.paginationNumber} ${currentPage === number ? styles.active : ''}`}
+                          onClick={() => paginate(number)}
+                        >
+                          {number}
+                        </button>
+                      ))}
+                    </div>
+                    <button
+                      className={`${styles.paginationBtn} ${currentPage === totalPages ? styles.disabled : ''}`}
+                      onClick={() => paginate(currentPage + 1)}
+                      disabled={currentPage === totalPages}
+                    >
+                      Próxima →
+                    </button>
+                  </div>
+                )}
+              </>
             )}
           </main>
         </div>

@@ -103,28 +103,47 @@ export default function CadastroMedicamentoPage() {
 
     setLoading(true);
 
-    const dadosParaApi = {
-        med_nome: form.nome,
-        med_dosagem: form.dosagem,
-        med_quantidade: parseInt(form.quantidade),
-        med_descricao: form.descricao,
-        med_preco: parseFloat(form.preco),
-        med_imagem: form.imagem,
-        med_cod_barras: form.codigoBarras,
-        tipo_id: tipoMap[form.tipo],
-        forma_id: formaMap[form.forma],
-        lab_id: laboratorioMap[form.laboratorio],
-        farmacia_id: 1
-    };
-
     try {
-        const response = await api.post('/medicamentos', dadosParaApi);
-        if (response.data.sucesso) {
-            alert("Medicamento cadastrado com sucesso!");
-            router.push("/farmacias/produtos/medicamentos");
-        } else {
-            alert(`Erro ao cadastrar: ${response.data.mensagem}`);
-        }
+      // NOVO: Obter os dados do usuário do localStorage para pegar o ID da farmácia.
+      const userDataString = localStorage.getItem("userData");
+      if (!userDataString) {
+        alert("Erro: Usuário não autenticado. Faça o login novamente.");
+        setLoading(false);
+        return;
+      }
+      
+      const userData = JSON.parse(userDataString);
+      // Assumindo que a chave correta é 'id', conforme nossa última conversa.
+      const farmaciaId = userData.farm_id; 
+
+      if (!farmaciaId) {
+        alert("Erro: ID da farmácia não encontrado nos dados do usuário.");
+        setLoading(false);
+        return;
+      }
+
+      // ALTERADO: O farmacia_id agora é dinâmico.
+      const dadosParaApi = {
+          med_nome: form.nome,
+          med_dosagem: form.dosagem,
+          med_quantidade: parseInt(form.quantidade),
+          med_descricao: form.descricao,
+          med_preco: parseFloat(form.preco),
+          med_imagem: form.imagem,
+          med_cod_barras: form.codigoBarras,
+          tipo_id: tipoMap[form.tipo],
+          forma_id: formaMap[form.forma],
+          lab_id: laboratorioMap[form.laboratorio],
+          farmacia_id: farmaciaId // <-- CORREÇÃO APLICADA AQUI
+      };
+      
+      const response = await api.post('/medicamentos', dadosParaApi);
+      if (response.data.sucesso) {
+          alert("Medicamento cadastrado com sucesso!");
+          router.push("/farmacias/produtos/medicamentos");
+      } else {
+          alert(`Erro ao cadastrar: ${response.data.mensagem}`);
+      }
     } catch (error) {
         if (error.response) {
             alert(error.response.data.mensagem + '\n' + (error.response.data.dados || ''));

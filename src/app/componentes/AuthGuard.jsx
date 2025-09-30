@@ -11,14 +11,15 @@ export default function AuthGuard({ children, requiredRole = null }) {
   useEffect(() => {
     const checkAuth = () => {
       try {
-        const userData = localStorage.getItem("usuario");
+        // CORREÇÃO: Alterado de "usuario" para "userData" para corresponder ao que é salvo no login.
+        const userDataString = localStorage.getItem("userData");
         
-        if (!userData) {
+        if (!userDataString) {
           router.push("/login");
           return;
         }
 
-        const user = JSON.parse(userData);
+        const user = JSON.parse(userDataString);
         setIsAuthenticated(true);
 
         if (requiredRole && user.tipo !== requiredRole) {
@@ -29,6 +30,8 @@ export default function AuthGuard({ children, requiredRole = null }) {
         setIsLoading(false);
       } catch (error) {
         console.error("Erro ao verificar autenticação:", error);
+        // Em caso de erro (ex: JSON inválido), limpa o storage e redireciona para o login.
+        localStorage.removeItem("userData");
         router.push("/login");
       }
     };
@@ -80,7 +83,7 @@ export default function AuthGuard({ children, requiredRole = null }) {
   }
 
   if (!isAuthenticated) {
-    return null;
+    return null; // Evita renderizar o conteúdo da página antes do redirecionamento.
   }
 
   return children;

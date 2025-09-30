@@ -45,7 +45,22 @@ function ListagemMedicamentos() {
     const fetchMedicamentos = async () => {
       setErroApi("");
       try {
-        const response = await api.get('/medicamentos');
+        // NOVO: Obter os dados do usuário do localStorage para pegar o farmacia_id
+        const userDataString = localStorage.getItem("userData");
+        if (!userDataString) {
+          throw new Error("Usuário não autenticado. Faça o login novamente.");
+        }
+        
+        const userData = JSON.parse(userDataString);
+        // Garanta que o objeto salvo no login contenha a chave 'farmacia_id'
+        const farmaciaId = userData.farm_id;
+
+        if (!farmaciaId) {
+          throw new Error("ID da farmácia não encontrado nos dados do usuário.");
+        }
+
+        // ALTERADO: A chamada da API agora envia o farmacia_id como um parâmetro de query
+        const response = await api.get(`/medicamentos?farmacia_id=${farmaciaId}`);
 
         if (response.data.sucesso) {
           const processedMedicamentos = response.data.dados.map(med => ({
@@ -74,8 +89,8 @@ function ListagemMedicamentos() {
           setErroApi(response.data.mensagem);
         }
       } catch (error) {
-        console.error("Falha ao conectar com a API:", error);
-        const mensagem = error.response?.data?.mensagem || "Não foi possível conectar ao servidor. Tente novamente mais tarde.";
+        console.error("Falha ao conectar com a API ou processar dados:", error);
+        const mensagem = error.response?.data?.mensagem || error.message || "Não foi possível conectar ao servidor.";
         setErroApi(mensagem);
       } finally {
         setLoading(false);

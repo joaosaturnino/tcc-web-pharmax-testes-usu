@@ -1,45 +1,50 @@
-// É necessário marcar o componente como um Client Component para usar Hooks como useState e useEffect
-'use client' 
+// É necessário marcar o componente como um Client Component para usar Hooks
+'use client'
 
-// Passo 1: Importar o que será usado
+import { useState, useEffect } from 'react';
+import { useRouter } from 'next/navigation'; // Hook para redirecionamento
 import Image from "next/image";
-import { useState, useEffect } from 'react'; // [cite: 122]
-import api from '../services/api'; // Importando a instância do Axios [cite: 129]
+import api from '../services/api';
 import style from "./page.module.css";
 import Slider from "../componentes/slider";
+import CardProduto from "../componentes/CardProduto";
 
 export default function PaginaInicial() {
+  const router = useRouter(); // Instancia o hook de roteamento
   const imagens = ["/LogoEscrita.png", "/LogoEscrita.png", "/LogoEscrita.png"];
 
-  // Passo 2: Criar o estado para armazenar os medicamentos
-  const [medicamentos, setMedicamentos] = useState([]); 
+  const [medicamentosDestaque, setMedicamentosDestaque] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [termoBusca, setTermoBusca] = useState(''); // Estado para controlar o input de busca
 
-  // Passo 3: Criar a função para buscar os dados da API
-  async function fetchMedicamentos() { 
+  // Busca apenas alguns medicamentos para exibir como destaque
+  async function fetchDestaques() {
+    setLoading(true);
     try {
-      // Faz a requisição GET para a rota definida no back-end (medicamentos.js)
-      const response = await api.get('/medicamentos'); 
-      
-      // Verifica se a requisição foi bem-sucedida e atualiza o estado
-      if (response.data.sucesso) { 
-        setMedicamentos(response.data.dados); // 'dados' é o array de medicamentos na sua API [cite: 139]
-      } else {
-        console.error("Erro ao buscar medicamentos:", response.data.mensagem);
+      const response = await api.get('/medicamentos');
+      if (response.data.sucesso) {
+        // Pega apenas os 4 primeiros como "destaques"
+        setMedicamentosDestaque(response.data.dados.slice(0, 4));
       }
-    } catch (error) { 
-      // Trata possíveis erros de rede ou da API
-      if (error.response) { 
-        alert(error.response.data.mensagem + '\n' + error.response.data.dados); 
-      } else {
-        alert('Erro na conexão com o servidor.' + '\n' + error); 
-      }
+    } catch (error) {
+      console.error("Falha ao buscar destaques:", error);
+    } finally {
+      setLoading(false);
     }
   };
 
-  // Passo 4: Chamar a função de busca quando o componente carregar
-  useEffect(() => { 
-    fetchMedicamentos(); 
-  }, []); // O array vazio garante que isso execute apenas uma vez [cite: 185]
+  useEffect(() => {
+    fetchDestaques();
+  }, []);
+
+  // Função para lidar com o envio da busca
+  const handleSearchSubmit = (event) => {
+    event.preventDefault(); // Previne o recarregamento da página
+    if (!termoBusca.trim()) return; // Não faz nada se a busca estiver vazia
+
+    // Redireciona para a página de busca com o termo como query param
+    router.push(`/busca?q=${encodeURIComponent(termoBusca)}`);
+  };
 
   return (
     <div className={style.container}>
@@ -49,10 +54,16 @@ export default function PaginaInicial() {
           <p>
             Encontre os medicamentos que precisa com praticidade e confiança
           </p>
-          <div className={style.caixaBusca}>
-            <input type="text" placeholder="Buscar medicamentos..." />
-            <button>Buscar</button>
-          </div>
+          {/* Formulário de busca que agora redireciona */}
+          <form className={style.caixaBusca} onSubmit={handleSearchSubmit}>
+            <input
+              type="text"
+              placeholder="Buscar medicamentos..."
+              value={termoBusca}
+              onChange={(e) => setTermoBusca(e.target.value)}
+            />
+            <button type="submit">Buscar</button>
+          </form>
         </div>
       </section>
 
@@ -61,32 +72,16 @@ export default function PaginaInicial() {
       <section className={style.produtos}>
         <h3>Destaques</h3>
         <div className={style.gradeProdutos}>
-          {/* Passo 5: Mapear o estado 'medicamentos' para renderizar os produtos dinamicamente */}
-          {medicamentos.length > 0 ? (
-            medicamentos.map((medicamento) => (
-              <div className={style.cartaoProduto} key={medicamento.med_id}>
-                <div className={style.containerImagemProduto}>
-                  <Image
-                    // Assumindo que 'med_imagem' contém o caminho da imagem
-                    src={medicamento.med_imagem || "/paracetamol.jpg"} // Usa uma imagem padrão se não houver
-                    width={200}
-                    height={200}
-                    alt={medicamento.med_nome}
-                    className={style.imagemProduto}
-                  />
-                </div>
-                <h4>{medicamento.med_nome}</h4>
-                <p>{medicamento.med_descricao || 'Descrição não disponível'}</p>
-                {/* Formatando o preço para o padrão brasileiro */}
-                <span className={style.preco}>
-                  {new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(medicamento.medp_preco)}
-                </span>
-                <button>Adicionar ao Carrinho</button>
-              </div>
-            ))
+          {loading ? (
+            <p>Carregando...</p>
           ) : (
-            // Mensagem exibida enquanto os dados não são carregados ou se não houver produtos [cite: 190]
-            <p>Carregando medicamentos...</p>
+            medicamentosDestaque.map((medicamento) => (
+              <CardProduto
+                key={medicamento.med_id}
+                medicamento={medicamento}
+                onAddToCart={() => alert(`${medicamento.med_nome} adicionado!`)}
+              />
+            ))
           )}
         </div>
       </section>

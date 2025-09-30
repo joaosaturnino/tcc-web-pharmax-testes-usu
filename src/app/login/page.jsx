@@ -11,16 +11,10 @@ export default function Login() {
   const [senha, setSenha] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
-
-  // Estados para o modal de recuperação de senha
-  const [showForgotPassword, setShowForgotPassword] = useState(false);
-  const [recoveryEmail, setRecoveryEmail] = useState("");
-  const [recoveryStep, setRecoveryStep] = useState(1);
-  const [recoveryCode, setRecoveryCode] = useState("");
-  const [newPassword, setNewPassword] = useState("");
-  const [confirmPassword, setConfirmPassword] = useState("");
   const [rememberMe, setRememberMe] = useState(false);
 
+  // Estados para o modal (não implementado aqui para simplicidade)
+  const [showForgotPassword, setShowForgotPassword] = useState(false);
 
   useEffect(() => {
     const savedCredentials = localStorage.getItem("rememberedCredentials");
@@ -61,7 +55,7 @@ export default function Login() {
       }
 
       if (data.sucesso) {
-        // Padronizando as chaves para "userData" e "authToken"
+        // Salva os dados da farmácia e o token no localStorage
         localStorage.setItem("userData", JSON.stringify(data.dados));
         localStorage.setItem("authToken", data.token);
 
@@ -83,27 +77,6 @@ export default function Login() {
     } finally {
       setIsLoading(false);
     }
-  };
-
-  // Lógica do Modal de Recuperação de Senha
-  const handleForgotPassword = async (e) => {
-    e.preventDefault();
-    // ... (lógica do modal)
-  };
-
-  const verifyRecoveryCode = async (e) => {
-    e.preventDefault();
-    // ... (lógica do modal)
-  };
-
-  const resetPassword = async (e) => {
-    e.preventDefault();
-    // ... (lógica do modal)
-  };
-
-  const closeRecoveryModal = () => {
-    setShowForgotPassword(false);
-    // ... (lógica do modal)
   };
 
   return (
@@ -191,9 +164,6 @@ export default function Login() {
           </p>
         </form>
       </div>
-
-      {/* O JSX do modal de recuperação de senha continua aqui... */}
-      
     </div>
   );
 }

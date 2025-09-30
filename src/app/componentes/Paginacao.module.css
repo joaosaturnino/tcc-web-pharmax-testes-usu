@@ -1,0 +1,33 @@
+/* componentes/Paginacao.module.css */
+.paginacao {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 0.5rem;
+  margin-top: 2rem;
+}
+
+.paginacao button {
+  padding: 0.5rem 1rem;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  background-color: #fff;
+  cursor: pointer;
+  transition: background-color 0.2s, color 0.2s;
+}
+
+.paginacao button:hover:not(:disabled) {
+  background-color: #f0f0f0;
+}
+
+.paginacao button:disabled {
+  cursor: not-allowed;
+  opacity: 0.5;
+}
+
+.paginacao button.active {
+  background-color: #458B00;
+  color: white;
+  border-color: #458B00;
+  font-weight: bold;
+}
