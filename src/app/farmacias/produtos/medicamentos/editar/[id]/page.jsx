@@ -18,32 +18,51 @@ export default function EditarMedicamento() {
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
 
+  const [laboratorios, setLaboratorios] = useState([]);
+  const [tiposProduto, setTiposProduto] = useState([]);
+  const [formasFarmaceuticas, setFormasFarmaceuticas] = useState([]);
+
   useEffect(() => {
     if (id) {
-      const fetchMedicamento = async () => {
+      const fetchData = async () => {
         try {
           const userDataString = localStorage.getItem("userData");
           if (!userDataString) throw new Error("Usuário não autenticado. Faça o login.");
           
           const userData = JSON.parse(userDataString);
-          // CORRIGIDO: A chave correta é 'id'. A inconsistência foi removida.
+          // CORRIGIDO: Voltando a usar 'id', que é a chave correta para o ID da farmácia.
           const farmaciaId = userData.farm_id; 
           if (!farmaciaId) throw new Error("ID da farmácia não encontrado no seu login.");
 
-          const response = await api.get(`/medicamentos/${id}?farmacia_id=${farmaciaId}`);
+          const [
+            medicamentoResponse, 
+            laboratoriosResponse,
+            tiposProdutoResponse,
+            formasResponse
+          ] = await Promise.all([
+            api.get(`/medicamentos/${id}?farmacia_id=${farmaciaId}`),
+            api.get('/laboratorios'),
+            api.get('/tipoproduto'),
+            api.get('/farmaceutica')
+          ]);
           
-          if (response.data.sucesso) {
-            setMedicamento(response.data.dados);
+          if (medicamentoResponse.data.sucesso) {
+            setMedicamento(medicamentoResponse.data.dados);
           } else {
             setError("Medicamento não encontrado ou não pertence a esta farmácia.");
           }
+
+          if (laboratoriosResponse.data.sucesso) setLaboratorios(laboratoriosResponse.data.dados);
+          if (tiposProdutoResponse.data.sucesso) setTiposProduto(tiposProdutoResponse.data.dados);
+          if (formasResponse.data.sucesso) setFormasFarmaceuticas(formasResponse.data.dados);
+
         } catch (err) {
-          setError(err.response?.data?.mensagem || err.message || "Falha ao carregar os dados do medicamento.");
+          setError(err.response?.data?.mensagem || err.message || "Falha ao carregar os dados da página.");
         } finally {
           setLoading(false);
         }
       };
-      fetchMedicamento();
+      fetchData();
     }
   }, [id]);
 
@@ -63,15 +82,11 @@ export default function EditarMedicamento() {
         if (!userDataString) throw new Error("Usuário não autenticado. Faça o login.");
         
         const userData = JSON.parse(userDataString);
-        
-        // Mantido o uso correto da chave 'id'.
-        const farmaciaId = userData.id;
+        // CORRIGIDO: Garantindo consistência com a chave 'id'.
+        const farmaciaId = userData.farm_id;
         if (!farmaciaId) throw new Error("ID da farmácia não encontrado para realizar a atualização.");
         
-        const payload = {
-            ...medicamento,
-            farmacia_id: farmaciaId
-        };
+        const payload = { ...medicamento, farmacia_id: farmaciaId };
         
         const response = await api.put(`/medicamentos/${id}`, payload);
         if (response.data.sucesso) {
@@ -84,7 +99,7 @@ export default function EditarMedicamento() {
       setIsSubmitting(false);
     }
   };
-
+  
   const handleLogout = () => {
     localStorage.removeItem("authToken");
     localStorage.removeItem("userData");
@@ -96,7 +111,7 @@ export default function EditarMedicamento() {
       <div className={styles.dashboard}>
         <div className={styles.loadingContainer}>
           <div className={styles.loadingSpinner}></div>
-          <span>Carregando dados do medicamento...</span>
+          <span>Carregando dados...</span>
         </div>
       </div>
     );
@@ -159,7 +174,7 @@ export default function EditarMedicamento() {
                       </div>
                       <div className={styles.formGroup}>
                         <label className={styles.inputLabel}>Quantidade</label>
-                        <input className={styles.modernInput} type="number" name="med_quantidade" value={medicamento.med_quantidade || 0} onChange={handleChange} min="0" required />
+                        <input className={styles.modernInput} type="text" name="med_quantidade" value={medicamento.med_quantidade || 0} onChange={handleChange} min="0" required />
                       </div>
                     </div>
                     <div className={styles.formGroup}>
@@ -172,19 +187,36 @@ export default function EditarMedicamento() {
                     <div className={styles.formGroup}>
                       <label className={styles.inputLabel}>Tipo de Produto</label>
                       <select className={styles.modernInput} name="tipo_id" value={medicamento.tipo_id || ''} onChange={handleChange} required>
-                        <option value="">Selecione o tipo</option><option value="1">Referência</option><option value="2">Genérico</option><option value="3">Similar</option>
+                        <option value="">Selecione o tipo</option>
+                        {tiposProduto.map(tipo => (
+                          <option key={tipo.tipo_id} value={tipo.tipo_id}>
+                            {/* CORRIGIDO: de tipo.tipo_descricao para tipo.nome_tipo */}
+                            {tipo.nome_tipo}
+                          </option>
+                        ))}
                       </select>
                     </div>
                     <div className={styles.formGroup}>
                       <label className={styles.inputLabel}>Forma Farmacêutica</label>
                       <select className={styles.modernInput} name="forma_id" value={medicamento.forma_id || ''} onChange={handleChange} required>
-                        <option value="">Selecione a forma</option><option value="1">Comprimidos</option><option value="2">Cápsulas</option><option value="3">Líquido</option><option value="4">Pó para Suspensão</option><option value="5">Pomada</option><option value="6">Injetável</option>
+                        <option value="">Selecione a forma</option>
+                        {formasFarmaceuticas.map(forma => (
+                          <option key={forma.forma_id} value={forma.forma_id}>
+                            {/* CORRIGIDO: de forma.forma_descricao para forma.forma_nome */}
+                            {forma.forma_nome}
+                          </option>
+                        ))}
                       </select>
                     </div>
                     <div className={styles.formGroup}>
                       <label className={styles.inputLabel}>Laboratório</label>
                       <select className={styles.modernInput} name="lab_id" value={medicamento.lab_id || ''} onChange={handleChange} required>
-                        <option value="">Selecione o laboratório</option><option value="1">Neo Química</option><option value="2">EMS</option>
+                        <option value="">Selecione o laboratório</option>
+                        {laboratorios.map(lab => (
+                          <option key={lab.lab_id} value={lab.lab_id}>
+                            {lab.lab_nome}
+                          </option>
+                        ))}
                       </select>
                     </div>
                     <div className={styles.formGroup}>

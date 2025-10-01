@@ -45,21 +45,19 @@ function ListagemMedicamentos() {
     const fetchMedicamentos = async () => {
       setErroApi("");
       try {
-        // NOVO: Obter os dados do usuário do localStorage para pegar o farmacia_id
         const userDataString = localStorage.getItem("userData");
         if (!userDataString) {
           throw new Error("Usuário não autenticado. Faça o login novamente.");
         }
         
         const userData = JSON.parse(userDataString);
-        // Garanta que o objeto salvo no login contenha a chave 'farmacia_id'
+        // CORRIGIDO: Padronizado para usar a chave 'id', que confirmamos ser a correta.
         const farmaciaId = userData.farm_id;
 
         if (!farmaciaId) {
           throw new Error("ID da farmácia não encontrado nos dados do usuário.");
         }
 
-        // ALTERADO: A chamada da API agora envia o farmacia_id como um parâmetro de query
         const response = await api.get(`/medicamentos?farmacia_id=${farmaciaId}`);
 
         if (response.data.sucesso) {
@@ -154,10 +152,19 @@ function ListagemMedicamentos() {
   const indiceFinal = indiceInicial + itensPorPagina;
   const medicamentosPaginados = medicamentosFiltrados.slice(indiceInicial, indiceFinal);
 
+  // CORRIGIDO: Função de excluir agora envia o farmacia_id para autorização
   const handleExcluir = async (id) => {
     if (window.confirm("Tem certeza que deseja excluir este medicamento?")) {
       try {
-        const response = await api.delete(`/medicamentos/${id}`);
+        const userDataString = localStorage.getItem("userData");
+        if (!userDataString) throw new Error("Usuário não autenticado.");
+        const userData = JSON.parse(userDataString);
+        const farmaciaId = userData.farm_id;
+        if (!farmaciaId) throw new Error("ID da farmácia não encontrado.");
+
+        const response = await api.delete(`/medicamentos/${id}`, {
+          data: { farmacia_id: farmaciaId }
+        });
         
         if (response.data.sucesso) {
           setMedicamentos(medicamentos.filter((med) => med.id !== id));
@@ -170,20 +177,34 @@ function ListagemMedicamentos() {
         }
       } catch (error) {
         console.error("Erro ao excluir medicamento:", error);
-        alert("Erro ao excluir medicamento. Tente novamente.");
+        alert(error.response?.data?.mensagem || "Erro ao excluir medicamento. Tente novamente.");
       }
     }
   };
 
+  // CORRIGIDO: Função de ativar/desativar agora envia o farmacia_id para autorização
   const toggleStatus = async (id) => {
     try {
       const medicamento = medicamentos.find(med => med.id === id);
       if (!medicamento) return;
 
+      const userDataString = localStorage.getItem("userData");
+      if (!userDataString) {
+        alert("Erro: Usuário não autenticado.");
+        return;
+      }
+      const userData = JSON.parse(userDataString);
+      const farmaciaId = userData.farm_id;
+      if (!farmaciaId) {
+        alert("Erro: ID da farmácia não encontrado no seu login.");
+        return;
+      }
+
       const novoStatusBooleano = !medicamento.med_ativo;
       
       const response = await api.put(`/medicamentos/${id}`, {
-        med_ativo: novoStatusBooleano
+        med_ativo: novoStatusBooleano,
+        farmacia_id: farmaciaId 
       });
 
       if (response.data.sucesso) {
@@ -204,7 +225,7 @@ function ListagemMedicamentos() {
             status: novoStatusString,
           });
         }
-        alert(response.data.mensagem);
+        alert(response.data.mensagem || "Status atualizado com sucesso!");
       } else {
         alert("Erro: " + response.data.mensagem);
       }
@@ -257,10 +278,6 @@ function ListagemMedicamentos() {
     setErro("");
   };
 
-  const continuarCadastro = () => {
-    router.push(`/farmacias/produtos/medicamentos/editar/${id}`);
-  };
-
   const redirecionarParaCadastro = () => {
     router.push(`/farmacias/produtos/medicamentos/cadastro?codigoBarras=${codigoBarras}`);
   };
@@ -272,7 +289,7 @@ function ListagemMedicamentos() {
 
   const handleLogout = async () => {
     localStorage.removeItem("authToken");
-    sessionStorage.removeItem("userData");
+    localStorage.removeItem("userData"); // Corrigido para localStorage
     router.push("/login");
   };
 
