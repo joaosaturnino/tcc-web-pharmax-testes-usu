@@ -11,6 +11,7 @@ export default function PerfilUsuarioPage() {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [editing, setEditing] = useState(false);
   const [formData, setFormData] = useState({});
+  const [logoFile, setLogoFile] = useState(null); // NOVO: Estado para a nova logo (arquivo)
   const [showPasswordModal, setShowPasswordModal] = useState(false);
   const [passwordData, setPasswordData] = useState({
     currentPassword: "",
@@ -26,9 +27,30 @@ export default function PerfilUsuarioPage() {
   useEffect(() => {
     const fetchUserData = async () => {
       try {
-        // Supondo que o ID da farmácia logada esteja salvo (usando '1' como exemplo)
-        const farmaciaId = 1; 
-        const response = await api.get(`/farmacias/${farmaciaId}`); // Chamada GET para a API
+        // ### INÍCIO DA ALTERAÇÃO: Validação e autenticação do ID ###
+        
+        // 1. Pega os dados do usuário do localStorage.
+        const userDataString = localStorage.getItem("userData");
+        if (!userDataString) {
+          alert("Sua sessão expirou. Por favor, faça o login novamente.");
+          router.push("/login");
+          return;
+        }
+        
+        // 2. Converte os dados para objeto e extrai o ID.
+        const userDataFromStorage = JSON.parse(userDataString);
+        const farmaciaId = userDataFromStorage.farm_id; // Supondo que o ID está salvo como 'farm_id'
+
+        if (!farmaciaId) {
+          alert("Não foi possível identificar sua farmácia. Por favor, faça o login novamente.");
+          localStorage.clear(); // Limpa dados inválidos
+          router.push("/login");
+          return;
+        }
+        
+        // 3. Usa o ID validado para fazer a chamada à API.
+        const response = await api.get(`/farmacias/${farmaciaId}`); 
+        // ### FIM DA ALTERAÇÃO ###
 
         if (response.data.sucesso) {
           const apiData = response.data.dados;
@@ -37,22 +59,22 @@ export default function PerfilUsuarioPage() {
               id: apiData.farm_id,
               nome: apiData.farm_nome,
               email: apiData.farm_email,
-              avatar: "👤", // Pode ser substituído pelo `farm_logo_url`
-              cargo: "Supervisor", // Este campo pode vir da API se existir
+              avatar: apiData.farm_logo_url || apiData.farm_logo, // Prioriza a URL se a API retornar, senão usa o nome do arquivo
+              //cargo: "Supervisor", // Mantive comentado como no original
               telefone: apiData.farm_telefone,
-              dataNascimento: "1985-05-15", // Adicionar se existir na API
+              dataNascimento: "1985-05-15",
               cpf: apiData.farm_cnpj, // Adaptando CNPJ para o campo CPF
               endereco: {
                   rua: apiData.farm_endereco,
-                  numero: "", // Adicionar se existir
-                  complemento: "", // Adicionar se existir
-                  bairro: "", // Adicionar se existir
-                  cidade: "", // Adicionar se existir (pode usar `farm_cidade_id`)
-                  estado: "", // Adicionar se existir
-                  cep: "", // Adicionar se existir
+                  numero: "", 
+                  complemento: "",
+                  bairro: "",
+                  cidade: "",
+                  estado: "",
+                  cep: "",
               },
-              dataCadastro: "2023-01-10T08:30:00Z", // Adicionar se existir na API
-              ultimoAcesso: "2023-08-20T14:25:00Z", // Adicionar se existir na API
+              dataCadastro: "2023-01-10T08:30:00Z",
+              ultimoAcesso: "2023-08-20T14:25:00Z",
           };
           setUserData(formattedData);
           setFormData(formattedData);
@@ -66,59 +88,70 @@ export default function PerfilUsuarioPage() {
     };
 
     fetchUserData();
-  }, []);
+  }, [router]); // Adicionado router como dependência do useEffect
 
   const handleLogout = async () => {
-    try {
-      localStorage.removeItem("authToken");
-      sessionStorage.removeItem("userData");
-      router.push("../../home");
-    } catch (error) {
-      console.error("Erro ao fazer logout:", error);
-      router.push("../../home");
-    }
+    localStorage.removeItem("authToken");
+    localStorage.removeItem("userData");
+    router.push("/home");
   };
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
+    // ATUALIZADO: Lógica para campos de texto (o arquivo é tratado em handleFileChange)
     setFormData((prev) => ({
       ...prev,
       [name]: value,
     }));
   };
 
-  // Função para salvar os dados atualizados via API
-  // Função para salvar os dados atualizados via API
-const handleSave = async () => {
-  try {
-    // Objeto com os dados a serem enviados para a API
-    // Os nomes das chaves (farm_nome) devem corresponder às colunas do banco
-    const updatedData = {
-        farm_nome: formData.nome,
-        farm_email: formData.email,
-        farm_telefone: formData.telefone,
-        farm_cnpj: formData.cpf,
-        farm_endereco: formData.endereco.rua
-        // O back-end agora ignora campos não enviados, então não precisamos mais
-        // nos preocupar em enviar todos os dados ou a senha aqui.
-    };
+  // NOVO: Função para lidar com a seleção do arquivo de logo
+  const handleFileChange = (e) => {
+    setLogoFile(e.target.files[0]);
+  };
 
-    // Chamada PUT para a rota de edição
-    const response = await api.put(`/farmacias/${userData.id}`, updatedData); 
+  const handleSave = async () => {
+    try {
+      // ATUALIZADO: Uso de FormData para suportar upload de arquivo
+      const payload = new FormData();
+      payload.append("farm_nome", formData.nome);
+      payload.append("farm_email", formData.email);
+      payload.append("farm_telefone", formData.telefone);
+      payload.append("farm_cnpj", formData.cpf);
+      payload.append("farm_endereco", formData.endereco.rua);
+      
+      // Adiciona o arquivo da logo se um novo foi selecionado
+      if (logoFile) {
+        // 'farm_logo' é o nome que a API deve esperar para o arquivo
+        payload.append("farm_logo", logoFile); 
+      }
 
-    if (response.data.sucesso) {
-        alert("Perfil atualizado com sucesso!");
-        // Atualiza o estado local com os novos dados do formulário
-        setUserData(prevUserData => ({ ...prevUserData, ...formData }));
-        setEditing(false);
-    } else {
-        alert("Erro ao atualizar o perfil: " + response.data.mensagem);
+      // O Axios/Navegador lida com o Content-Type: multipart/form-data automaticamente
+      const response = await api.put(`/farmacias/${userData.id}`, payload); 
+
+      if (response.data.sucesso) {
+          alert("Perfil atualizado com sucesso!");
+          
+          // Atualiza os dados locais, incluindo a nova URL da logo, se retornada
+          const updatedUserData = { ...userData, ...formData };
+          // NOVO: Verifica se a API retornou o campo 'farm_logo_url' ou 'farm_logo'
+          if (response.data.dados && (response.data.dados.farm_logo_url || response.data.dados.farm_logo)) {
+              // Usa farm_logo_url se existir, senão usa farm_logo (caminho/nome)
+              updatedUserData.avatar = response.data.dados.farm_logo_url || response.data.dados.farm_logo;
+          }
+          
+          setUserData(updatedUserData);
+          setFormData(updatedUserData); // Garante que o formData também reflita o avatar atualizado
+          setEditing(false);
+          setLogoFile(null); // Limpa o arquivo após o sucesso
+      } else {
+          alert("Erro ao atualizar o perfil: " + response.data.mensagem);
+      }
+    } catch (error) {
+        console.error("Erro ao salvar os dados:", error);
+        alert("Erro ao salvar: " + (error.response?.data?.mensagem || error.message));
     }
-  } catch (error) {
-      console.error("Erro ao salvar os dados:", error);
-      alert("Erro ao salvar: " + (error.response?.data?.mensagem || error.message));
-  }
-};
+  };
 
   const handleCancel = () => {
     setFormData({
@@ -126,15 +159,11 @@ const handleSave = async () => {
       email: userData.email,
       telefone: userData.telefone,
       dataNascimento: userData.dataNascimento,
-      rua: userData.endereco.rua,
-      numero: userData.endereco.numero,
-      complemento: userData.endereco.complemento,
-      bairro: userData.endereco.bairro,
-      cidade: userData.endereco.cidade,
-      estado: userData.endereco.estado,
-      cep: userData.endereco.cep,
+      cpf: userData.cpf, // Corrigido
+      endereco: userData.endereco, // Corrigido
     });
     setEditing(false);
+    setLogoFile(null); // NOVO: Limpa o arquivo ao cancelar
   };
 
   const handlePasswordChange = (e) => {
@@ -176,8 +205,9 @@ const handleSave = async () => {
     setPasswordErrors({});
 
     try {
-      // Idealmente, a API deveria validar a senha atual.
-      // Aqui, estamos enviando a nova senha para a rota de edição.
+      // NOTE: Para alteração de senha, o endpoint PUT `/farmacias/${userData.id}` 
+      // deve ser configurado no backend para aceitar o campo 'farm_senha' e atualizar
+      // apenas a senha.
       const response = await api.put(`/farmacias/${userData.id}`, {
         farm_senha: passwordData.newPassword,
       });
@@ -223,11 +253,12 @@ const handleSave = async () => {
     );
   }
   
-  // Se não houver dados após o carregamento, exibe uma mensagem
   if (!userData) {
       return (
           <div className={styles.dashboard}>
-              <p>Não foi possível carregar os dados do perfil. Tente novamente mais tarde.</p>
+              <div className={styles.loaderContainer}>
+                <p>Não foi possível carregar os dados do perfil. Redirecionando para o login...</p>
+              </div>
           </div>
       )
   }
@@ -337,8 +368,42 @@ const handleSave = async () => {
           <div className={styles.profileHeader}>
             <div className={styles.avatarSection}>
               <div className={styles.avatarLarge}>
-                <span>{userData.avatar}</span>
+                {/* ATUALIZADO: Renderiza a imagem atual ou preview da nova logo */}
+                {editing && logoFile ? (
+                    <img 
+                        src={URL.createObjectURL(logoFile)} 
+                        alt="Nova Logo Preview" 
+                        className={styles.avatarImage} 
+                    />
+                ) : (
+                    // Se userData.avatar tiver um valor (URL ou nome do arquivo), mostra a imagem.
+                    userData.avatar ? (
+                        <img 
+                            src={userData.avatar} 
+                            alt="Logo da Farmácia" 
+                            className={styles.avatarImage} 
+                        />
+                    ) : (
+                        <span>{userData.nome ? userData.nome[0] : 'U'}</span> // Fallback para a primeira letra do nome
+                    )
+                )}
               </div>
+              
+              {/* NOVO: Input e botão para alterar a imagem */}
+              {editing && (
+                  <label htmlFor="logo-upload" className={styles.changeAvatarBtn}>
+                      Trocar Logo
+                      <input
+                          type="file"
+                          id="logo-upload"
+                          name="logoFile"
+                          accept="image/*"
+                          onChange={handleFileChange} // Usa a função de file
+                          style={{ display: 'none' }} // Esconde o input original
+                      />
+                  </label>
+              )}
+
               <h2>{userData.nome}</h2>
               <p>{userData.cargo}</p>
             </div>
@@ -423,7 +488,6 @@ const handleSave = async () => {
                 )}
               </div>
               
-              {/* ... (outros campos do formulário, como Data de Nascimento, etc.) */}
             </div>
 
             <div className={styles.sectionHeader}>
@@ -437,14 +501,16 @@ const handleSave = async () => {
                   <input
                     type="text"
                     name="rua"
-                    value={formData.rua || ''}
-                    onChange={handleInputChange}
+                    value={formData.endereco.rua || ''} // Corrigido para acessar via formData.endereco.rua
+                    onChange={(e) => setFormData(prev => ({ 
+                        ...prev, 
+                        endereco: { ...prev.endereco, rua: e.target.value } 
+                    }))} // Tratamento específico para sub-objeto endereco
                   />
                 ) : (
                   <p>{userData.endereco.rua}</p>
                 )}
               </div>
-              {/* ... (outros campos de endereço) */}
             </div>
 
             <div className={styles.sectionHeader}>
@@ -459,7 +525,6 @@ const handleSave = async () => {
         </main>
       </div>
 
-      {/* Modal de Alteração de Senha */}
       {showPasswordModal && (
         <div className={styles.modalOverlay}>
           <div className={styles.modal}>

@@ -110,10 +110,9 @@ export default function ListaFuncionariosPage() {
   };
 
   const handleLogout = async () => {
-    // CORRIGIDO: Usa localStorage consistentemente
     localStorage.removeItem("authToken");
     localStorage.removeItem("userData");
-    router.push("/login");
+    router.push("/home");
   };
 
   const funcionariosFiltrados = funcionarios.filter(

@@ -5,6 +5,7 @@ import { useRouter, useParams } from "next/navigation";
 import Link from 'next/link';
 import styles from "./edita.module.css";
 import api from "../../../../../services/api";
+import { MdUploadFile } from "react-icons/md"; // Ícone para o botão de upload
 
 export default function EditarMedicamento() {
   const router = useRouter();
@@ -22,6 +23,11 @@ export default function EditarMedicamento() {
   const [tiposProduto, setTiposProduto] = useState([]);
   const [formasFarmaceuticas, setFormasFarmaceuticas] = useState([]);
 
+  // Estados para gerenciar o upload da imagem
+  const [imagemFile, setImagemFile] = useState(null); // Armazena o novo arquivo de imagem
+  const [fileName, setFileName] = useState(""); // Nome do novo arquivo para exibição
+  const [existingImageUrl, setExistingImageUrl] = useState(""); // URL da imagem atual
+
   useEffect(() => {
     if (id) {
       const fetchData = async () => {
@@ -30,7 +36,6 @@ export default function EditarMedicamento() {
           if (!userDataString) throw new Error("Usuário não autenticado. Faça o login.");
           
           const userData = JSON.parse(userDataString);
-          // CORRIGIDO: Voltando a usar 'id', que é a chave correta para o ID da farmácia.
           const farmaciaId = userData.farm_id; 
           if (!farmaciaId) throw new Error("ID da farmácia não encontrado no seu login.");
 
@@ -47,7 +52,11 @@ export default function EditarMedicamento() {
           ]);
           
           if (medicamentoResponse.data.sucesso) {
-            setMedicamento(medicamentoResponse.data.dados);
+            const medData = medicamentoResponse.data.dados;
+            setMedicamento(medData);
+            if (medData.med_imagem) {
+              setExistingImageUrl(medData.med_imagem); // Armazena a URL da imagem existente
+            }
           } else {
             setError("Medicamento não encontrado ou não pertence a esta farmácia.");
           }
@@ -67,8 +76,14 @@ export default function EditarMedicamento() {
   }, [id]);
 
   const handleChange = (e) => {
-    const { name, value } = e.target;
-    setMedicamento(prevState => ({ ...prevState, [name]: value }));
+    const { name, value, files } = e.target;
+    if (name === "med_imagem" && files) {
+      const file = files[0];
+      setImagemFile(file);
+      setFileName(file ? file.name : "Nenhum arquivo selecionado");
+    } else {
+      setMedicamento(prevState => ({ ...prevState, [name]: value }));
+    }
   };
 
   const handleSubmit = async (e) => {
@@ -78,21 +93,44 @@ export default function EditarMedicamento() {
     setSuccess("");
 
     try {
-        const userDataString = localStorage.getItem("userData");
-        if (!userDataString) throw new Error("Usuário não autenticado. Faça o login.");
-        
-        const userData = JSON.parse(userDataString);
-        // CORRIGIDO: Garantindo consistência com a chave 'id'.
-        const farmaciaId = userData.farm_id;
-        if (!farmaciaId) throw new Error("ID da farmácia não encontrado para realizar a atualização.");
-        
-        const payload = { ...medicamento, farmacia_id: farmaciaId };
-        
-        const response = await api.put(`/medicamentos/${id}`, payload);
-        if (response.data.sucesso) {
-            setSuccess("Medicamento atualizado com sucesso!");
-            setTimeout(() => router.push("/farmacias/produtos/medicamentos"), 1500);
+      const userDataString = localStorage.getItem("userData");
+      if (!userDataString) throw new Error("Usuário não autenticado. Faça o login.");
+      
+      const userData = JSON.parse(userDataString);
+      const farmaciaId = userData.farm_id;
+      if (!farmaciaId) throw new Error("ID da farmácia não encontrado para realizar a atualização.");
+      
+      const formData = new FormData();
+      
+      // Adiciona todos os campos do formulário ao FormData
+      Object.keys(medicamento).forEach(key => {
+        // Ignora chaves que não devem ser enviadas diretamente ou que serão tratadas separadamente.
+        if (key !== 'med_imagem' && key !== 'farmacia_id' && medicamento[key] !== null) {
+          formData.append(key, medicamento[key]);
         }
+      });
+
+      // Adiciona o farmacia_id correto a partir dos dados do usuário logado
+      formData.append('farmacia_id', farmaciaId);
+
+      // Se um novo arquivo de imagem foi selecionado, adicione-o
+      if (imagemFile) {
+        formData.append('med_imagem', imagemFile);
+      }
+      
+      // O método POST é usado para enviar FormData para a rota de edição, que agora aceita POST
+      const response = await api.post(`/medicamentos/${id}`, formData, {
+        headers: {
+          'Content-Type': 'multipart/form-data',
+        },
+      });
+
+      if (response.data.sucesso) {
+          setSuccess("Medicamento atualizado com sucesso!");
+          setTimeout(() => router.push("/farmacias/produtos/medicamentos"), 1500);
+      } else {
+        throw new Error(response.data.mensagem || "A API indicou uma falha.");
+      }
     } catch (err) {
       setError(err.response?.data?.mensagem || "Erro ao conectar com o servidor.");
     } finally {
@@ -100,10 +138,10 @@ export default function EditarMedicamento() {
     }
   };
   
-  const handleLogout = () => {
+  const handleLogout = async () => {
     localStorage.removeItem("authToken");
     localStorage.removeItem("userData");
-    router.push("/login");
+    router.push("/home");
   };
 
   if (loading) {
@@ -154,10 +192,6 @@ export default function EditarMedicamento() {
         {sidebarOpen && <div className={styles.overlay} onClick={() => setSidebarOpen(false)} />}
         <main className={styles.mainContent}>
           <div className={styles.formContainer}>
-            <div className={styles.formHeader}>
-              <h2>Editar Medicamento</h2>
-              <p>Atualize os dados do medicamento</p>
-            </div>
             {medicamento && (
               <form onSubmit={handleSubmit} className={styles.form}>
                 <div className={styles.formGrid}>
@@ -190,7 +224,6 @@ export default function EditarMedicamento() {
                         <option value="">Selecione o tipo</option>
                         {tiposProduto.map(tipo => (
                           <option key={tipo.tipo_id} value={tipo.tipo_id}>
-                            {/* CORRIGIDO: de tipo.tipo_descricao para tipo.nome_tipo */}
                             {tipo.nome_tipo}
                           </option>
                         ))}
@@ -202,7 +235,6 @@ export default function EditarMedicamento() {
                         <option value="">Selecione a forma</option>
                         {formasFarmaceuticas.map(forma => (
                           <option key={forma.forma_id} value={forma.forma_id}>
-                            {/* CORRIGIDO: de forma.forma_descricao para forma.forma_nome */}
                             {forma.forma_nome}
                           </option>
                         ))}
@@ -219,15 +251,44 @@ export default function EditarMedicamento() {
                         ))}
                       </select>
                     </div>
-                    <div className={styles.formGroup}>
-                      <label className={styles.inputLabel}>Imagem (URL)</label>
-                      <input className={styles.modernInput} type="text" name="med_imagem" value={medicamento.med_imagem || ''} onChange={handleChange} />
-                    </div>
                   </div>
                 </div>
                 <div className={styles.formSection}>
-                  <h3 className={styles.sectionTitle}>Descrição</h3>
-                  <div className={styles.formGroup}>
+                  <h3 className={styles.sectionTitle}>Imagem e Descrição</h3>
+                  <div className={styles.imageUploadSection}>
+                    <div className={styles.imagePreviewContainer}>
+                        <label className={styles.inputLabel}>Imagem Atual</label>
+                        {existingImageUrl ? (
+                            // --- CORREÇÃO APLICADA AQUI ---
+                            // Monta a URL completa para a imagem, apontando para o servidor da API.
+                            // Também substitui barras invertidas (\) por barras normais (/) para garantir compatibilidade.
+                            <img 
+                                src={`${api.defaults.baseURL}/${existingImageUrl.replace(/\\/g, '/')}`} 
+                                alt="Imagem atual do medicamento" 
+                                className={styles.currentImage} 
+                            />
+                        ) : (
+                            <p className={styles.noImageText}>Nenhuma imagem cadastrada.</p>
+                        )}
+                    </div>
+                    <div className={styles.formGroup}>
+                      <label className={styles.inputLabel}>Trocar Imagem</label>
+                      <input 
+                        id="file-upload"
+                        className={styles.fileInput}
+                        type="file" 
+                        name="med_imagem" 
+                        onChange={handleChange} 
+                        accept="image/png, image/jpeg, image/webp, image/gif"
+                      />
+                       <label htmlFor="file-upload" className={styles.fileInputLabel}>
+                        <MdUploadFile />
+                        <span>{fileName || "Escolher novo arquivo"}</span>
+                      </label>
+                    </div>
+                  </div>
+
+                  <div className={styles.formGroup} style={{marginTop: '2.4rem'}}>
                     <label className={styles.inputLabel}>Descrição</label>
                     <textarea className={styles.modernTextarea} name="med_descricao" value={medicamento.med_descricao || ''} onChange={handleChange} rows="4" required></textarea>
                   </div>

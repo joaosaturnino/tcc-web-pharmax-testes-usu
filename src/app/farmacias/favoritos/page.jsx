@@ -16,7 +16,7 @@ export default function FavoritosFarmaciaPage() {
   const router = useRouter();
 
   // --- FUNÇÃO DE LOGOUT ---
-  const handleLogout = () => {
+  const handleLogout = async () => {
     localStorage.removeItem("authToken");
     localStorage.removeItem("userData");
     router.push("/home");

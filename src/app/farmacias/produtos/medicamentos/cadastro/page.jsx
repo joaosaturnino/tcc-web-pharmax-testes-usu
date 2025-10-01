@@ -1,20 +1,22 @@
 "use client";
 
-import { useState } from "react";
-import { useRouter } from "next/navigation";
+import { useState, useEffect } from "react"; // Adicionado useEffect
+import { useRouter, useSearchParams } from "next/navigation"; // Adicionado useSearchParams
 import styles from "./cadastro.module.css";
 import api from "../../../../services/api";
 
-import { MdCheckCircle, MdError } from "react-icons/md";
+import { MdCheckCircle, MdError, MdUploadFile } from "react-icons/md";
 
 export default function CadastroMedicamentoPage() {
   const router = useRouter();
+  const searchParams = useSearchParams(); // Hook para ler a URL
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [loading, setLoading] = useState(false);
   
   const [form, setForm] = useState({
     nome: "", dosagem: "", quantidade: "", tipo: "", forma: "",
-    descricao: "", preco: "", laboratorio: "", imagem: "", codigoBarras: "",
+    descricao: "", preco: "", laboratorio: "", imagem: null,
+    codigoBarras: "",
   });
 
   const [errors, setErrors] = useState({
@@ -23,16 +25,44 @@ export default function CadastroMedicamentoPage() {
   });
 
   const [touched, setTouched] = useState({});
+  const [fileName, setFileName] = useState("");
+
+  // ### INÍCIO DA ALTERAÇÃO ###
+  // Este useEffect é executado quando o componente é montado
+  useEffect(() => {
+    // Pega o valor de 'codigoBarras' da URL
+    const codigoBarrasUrl = searchParams.get('codigoBarras');
+    
+    // Se encontrou um código de barras na URL
+    if (codigoBarrasUrl) {
+      // Atualiza o estado do formulário com o valor, preenchendo o input
+      setForm(prevForm => ({ ...prevForm, codigoBarras: codigoBarrasUrl }));
+      // Marca o campo como "tocado" para que a validação seja exibida
+      setTouched(prevTouched => ({ ...prevTouched, codigoBarras: true }));
+      // Executa a validação para o campo
+      validateField('codigoBarras', codigoBarrasUrl);
+    }
+  }, []); // O array vazio [] garante que isso rode apenas uma vez
+  // ### FIM DA ALTERAÇÃO ###
 
   const handleBlur = (e) => {
     const { name } = e.target;
     setTouched({ ...touched, [name]: true });
-    validateField(name, form[name]);
+    if (name !== 'imagem') {
+      validateField(name, form[name]);
+    }
   };
 
   const handleChange = (e) => {
-    const { name, value } = e.target;
-    setForm({ ...form, [name]: value });
+    const { name, value, files } = e.target;
+    if (name === "imagem" && files) {
+      const file = files[0] || null;
+      setForm({ ...form, imagem: file });
+      setFileName(file ? file.name : "");
+      validateField(name, file);
+    } else {
+      setForm({ ...form, [name]: value });
+    }
   };
 
   const validateField = (name, value) => {
@@ -48,8 +78,9 @@ export default function CadastroMedicamentoPage() {
         break;
       case 'quantidade':
         if (!value) fieldErrors.push('A quantidade é obrigatória');
-        else if (parseInt(value) <= 0) fieldErrors.push('A quantidade deve ser maior que zero');
-        else if (parseInt(value) > 1000) fieldErrors.push('A quantidade não pode ser superior a 1000');
+        else if (!/^\d+\s+[a-zA-Z]+(s)?$/i.test(value)) {
+            fieldErrors.push('Formato inválido. Use número seguido da unidade (ex: 30 comprimidos, 100 ml)');
+        }
         break;
       case 'tipo':
         if (!value) fieldErrors.push('Selecione o tipo de produto');
@@ -70,7 +101,17 @@ export default function CadastroMedicamentoPage() {
         if (!value) fieldErrors.push('Selecione o laboratório');
         break;
       case 'imagem':
-        if (value && !/^(https?:\/\/.*\.(?:png|jpg|jpeg|gif|webp))$/i.test(value)) fieldErrors.push('URL de imagem inválida');
+        if (value) {
+          const allowedTypes = ['image/jpeg', 'image/png', 'image/webp', 'image/gif'];
+          const maxSize = 5 * 1024 * 1024; // 5MB
+
+          if (!allowedTypes.includes(value.type)) {
+            fieldErrors.push('Tipo de arquivo inválido. Use JPG, PNG, WEBP ou GIF.');
+          }
+          if (value.size > maxSize) {
+            fieldErrors.push('A imagem não pode ter mais de 5MB.');
+          }
+        }
         break;
       case 'codigoBarras':
         if (!value) fieldErrors.push('O código de barras é obrigatório');
@@ -89,12 +130,13 @@ export default function CadastroMedicamentoPage() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     let isFormValid = true;
+    setTouched(Object.keys(form).reduce((acc, key) => ({ ...acc, [key]: true }), {}));
+    
     for (const field in form) {
       if (!validateField(field, form[field])) {
         isFormValid = false;
       }
     }
-    setTouched(Object.keys(form).reduce((acc, key) => ({ ...acc, [key]: true }), {}));
 
     if (!isFormValid) {
       alert("Por favor, corrija os erros no formulário.");
@@ -104,7 +146,6 @@ export default function CadastroMedicamentoPage() {
     setLoading(true);
 
     try {
-      // NOVO: Obter os dados do usuário do localStorage para pegar o ID da farmácia.
       const userDataString = localStorage.getItem("userData");
       if (!userDataString) {
         alert("Erro: Usuário não autenticado. Faça o login novamente.");
@@ -113,7 +154,6 @@ export default function CadastroMedicamentoPage() {
       }
       
       const userData = JSON.parse(userDataString);
-      // Assumindo que a chave correta é 'id', conforme nossa última conversa.
       const farmaciaId = userData.farm_id; 
 
       if (!farmaciaId) {
@@ -121,23 +161,29 @@ export default function CadastroMedicamentoPage() {
         setLoading(false);
         return;
       }
-
-      // ALTERADO: O farmacia_id agora é dinâmico.
-      const dadosParaApi = {
-          med_nome: form.nome,
-          med_dosagem: form.dosagem,
-          med_quantidade: parseInt(form.quantidade),
-          med_descricao: form.descricao,
-          med_preco: parseFloat(form.preco),
-          med_imagem: form.imagem,
-          med_cod_barras: form.codigoBarras,
-          tipo_id: tipoMap[form.tipo],
-          forma_id: formaMap[form.forma],
-          lab_id: laboratorioMap[form.laboratorio],
-          farmacia_id: farmaciaId // <-- CORREÇÃO APLICADA AQUI
-      };
       
-      const response = await api.post('/medicamentos', dadosParaApi);
+      const formData = new FormData();
+      formData.append('med_nome', form.nome);
+      formData.append('med_dosagem', form.dosagem);
+      formData.append('med_quantidade', form.quantidade);
+      formData.append('med_descricao', form.descricao);
+      formData.append('med_preco', parseFloat(form.preco));
+      formData.append('med_cod_barras', form.codigoBarras);
+      formData.append('tipo_id', tipoMap[form.tipo]);
+      formData.append('forma_id', formaMap[form.forma]);
+      formData.append('lab_id', laboratorioMap[form.laboratorio]);
+      formData.append('farmacia_id', farmaciaId);
+
+      if (form.imagem) {
+        formData.append('med_imagem', form.imagem);
+      }
+      
+      const response = await api.post('/medicamentos', formData, {
+        headers: {
+            'Content-Type': 'multipart/form-data',
+        },
+      });
+
       if (response.data.sucesso) {
           alert("Medicamento cadastrado com sucesso!");
           router.push("/farmacias/produtos/medicamentos");
@@ -157,14 +203,9 @@ export default function CadastroMedicamentoPage() {
   };
   
   const handleLogout = async () => {
-    try {
-      localStorage.removeItem("authToken");
-      sessionStorage.removeItem("userData");
-      router.push("/login");
-    } catch (error) {
-      console.error("Erro ao fazer logout:", error);
-      router.push("/home");
-    }
+    localStorage.removeItem("authToken");
+    localStorage.removeItem("userData");
+    router.push("/home");
   };
 
   const getValidationClass = (fieldName) => {
@@ -228,7 +269,7 @@ export default function CadastroMedicamentoPage() {
                     <div className={getValidationClass('quantidade')}>
                       <label className={styles.inputLabel}>Quantidade</label>
                       <div className={styles.divInput}>
-                        <input className={styles.modernInput} type="number" name="quantidade" value={form.quantidade} onChange={handleChange} onBlur={handleBlur} min="1" placeholder="Quantidade" required />
+                        <input className={styles.modernInput} type="text" name="quantidade" value={form.quantidade} onChange={handleChange} onBlur={handleBlur} placeholder="Ex: 30 comprimidos" required />
                         <MdCheckCircle className={styles.sucesso} />
                         <MdError className={styles.erro} />
                       </div>
@@ -261,43 +302,49 @@ export default function CadastroMedicamentoPage() {
                   <div className={getValidationClass('tipo')}>
                     <label className={styles.inputLabel}>Tipo de Produto</label>
                     <div className={styles.divInput}>
-                      <select className={styles.modernInput} name="tipo" value={form.tipo} onChange={handleChange} onBlur={handleBlur} required>
+                      <select className={styles.modernSelect} name="tipo" value={form.tipo} onChange={handleChange} onBlur={handleBlur} required>
                         <option value="">Selecione o tipo</option>
                         {Object.keys(tipoMap).map(tipo => <option key={tipo} value={tipo}>{tipo}</option>)}
                       </select>
-                      <MdCheckCircle className={styles.sucesso} />
-                      <MdError className={styles.erro} />
                     </div>
                     {touched.tipo && errors.tipo.map(msg => <small key={msg} className={styles.small}>{msg}</small>)}
                   </div>
                   <div className={getValidationClass('forma')}>
                     <label className={styles.inputLabel}>Forma Farmacêutica</label>
                     <div className={styles.divInput}>
-                      <select className={styles.modernInput} name="forma" value={form.forma} onChange={handleChange} onBlur={handleBlur} required>
+                      <select className={styles.modernSelect} name="forma" value={form.forma} onChange={handleChange} onBlur={handleBlur} required>
                         <option value="">Selecione a forma</option>
                         {Object.keys(formaMap).map(forma => <option key={forma} value={forma}>{forma}</option>)}
                       </select>
-                      <MdCheckCircle className={styles.sucesso} />
-                      <MdError className={styles.erro} />
                     </div>
                     {touched.forma && errors.forma.map(msg => <small key={msg} className={styles.small}>{msg}</small>)}
                   </div>
                   <div className={getValidationClass('laboratorio')}>
                     <label className={styles.inputLabel}>Laboratório</label>
                     <div className={styles.divInput}>
-                      <select className={styles.modernInput} name="laboratorio" value={form.laboratorio} onChange={handleChange} onBlur={handleBlur} required>
+                      <select className={styles.modernSelect} name="laboratorio" value={form.laboratorio} onChange={handleChange} onBlur={handleBlur} required>
                         <option value="">Selecione o laboratório</option>
                         {Object.keys(laboratorioMap).map(lab => <option key={lab} value={lab}>{lab}</option>)}
                       </select>
-                      <MdCheckCircle className={styles.sucesso} />
-                      <MdError className={styles.erro} />
                     </div>
                     {touched.laboratorio && errors.laboratorio.map(msg => <small key={msg} className={styles.small}>{msg}</small>)}
                   </div>
                   <div className={getValidationClass('imagem')}>
-                    <label className={styles.inputLabel}>Imagem (URL)</label>
+                    <label className={styles.inputLabel}>Imagem do Produto</label>
                     <div className={styles.divInput}>
-                      <input className={styles.modernInput} type="text" name="imagem" value={form.imagem} onChange={handleChange} onBlur={handleBlur} placeholder="Cole a URL da imagem" />
+                      <input 
+                        id="file-upload" 
+                        className={styles.fileInput} 
+                        type="file" 
+                        name="imagem" 
+                        onChange={handleChange} 
+                        onBlur={handleBlur} 
+                        accept="image/png, image/jpeg, image/webp, image/gif"
+                      />
+                      <label htmlFor="file-upload" className={styles.fileInputLabel}>
+                        <MdUploadFile />
+                        <span>{fileName || "Escolher arquivo (Opcional)"}</span>
+                      </label>
                       <MdCheckCircle className={styles.sucesso} />
                       <MdError className={styles.erro} />
                     </div>
@@ -311,8 +358,6 @@ export default function CadastroMedicamentoPage() {
                   <label className={styles.inputLabel}>Descrição</label>
                   <div className={styles.divInput}>
                     <textarea className={styles.modernTextarea} name="descricao" value={form.descricao} onChange={handleChange} onBlur={handleBlur} rows="4" placeholder="Digite uma descrição para o medicamento" required></textarea>
-                    <MdCheckCircle className={styles.sucesso} />
-                    <MdError className={styles.erro} />
                   </div>
                   {touched.descricao && errors.descricao.map(msg => <small key={msg} className={styles.small}>{msg}</small>)}
                 </div>

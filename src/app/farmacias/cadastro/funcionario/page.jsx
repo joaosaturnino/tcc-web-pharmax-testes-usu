@@ -23,7 +23,7 @@ export default function CadastroFuncionarioPage() {
     usuario: "",
     senha: "",
     confirmarSenha: "",
-    // nivelAcesso: "Funcionário",
+    nivelAcesso: "Funcionário",
   });
 
   const valDefault = styles.formControl;
@@ -188,25 +188,20 @@ export default function CadastroFuncionarioPage() {
     return objTemp.mensagem.length === 0 ? 1 : 0;
   }
 
-  // function validaNivelAcesso() {
-  //   let objTemp = { validado: valSucesso, mensagem: [] };
-  //   if (form.nivelAcesso === '') {
-  //     objTemp.validado = valErro;
-  //     objTemp.mensagem.push('Selecione o nível de acesso');
-  //   }
-  //   setValida(prev => ({ ...prev, nivelAcesso: objTemp }));
-  //   return objTemp.mensagem.length === 0 ? 1 : 0;
-  // }
+  function validaNivelAcesso() {
+    let objTemp = { validado: valSucesso, mensagem: [] };
+    if (form.nivelAcesso === '') {
+      objTemp.validado = valErro;
+      objTemp.mensagem.push('Selecione o nível de acesso');
+    }
+    setValida(prev => ({ ...prev, nivelAcesso: objTemp }));
+    return objTemp.mensagem.length === 0 ? 1 : 0;
+  }
 
   const handleLogout = async () => {
-    try {
-      localStorage.removeItem("authToken");
-      localStorage.removeItem("userData");
-      router.push("/login");
-    } catch (error) {
-      console.error("Erro ao fazer logout:", error);
-      router.push("/home");
-    }
+    localStorage.removeItem("authToken");
+    localStorage.removeItem("userData");
+    router.push("/home");
   };
 
   const handleSubmit = async (e) => {
@@ -406,19 +401,19 @@ export default function CadastroFuncionarioPage() {
                     </div>
                     {valida.confirmarSenha.mensagem.map(mens => <small key={mens} className={styles.small}>{mens}</small>)}
                   </div>
-                  {/* <div className={valida.nivelAcesso.validado}>
+                  <div className={valida.nivelAcesso.validado}>
                     <label className={styles.inputLabel}>Nível de Acesso *</label>
                     <div className={styles.divInput}>
-                      <select className={styles.modernInput} name="nivelAcesso" value={form.nivelAcesso} onChange={handleChange} onBlur={validaNivelAcesso} required >
-                        <option value="Funcionário">Funcionário</option>
-                        <option value="Supervisor">Supervisor</option>
-                        <option value="Gerente">Gerente</option>
-                        <option value="Administrador">Administrador</option>
-                      </select>
+                      <select className={styles.modernInput} name="func_nivel" value={form.func_nivel} onChange={handleChange} required >
+                      <option value="">Selecione</option>
+                      <option value="1">Funcionário</option>
+                        <option value="2">Farmacêutico</option>
+                        <option value="3">Administrador</option>
+                    </select>
                       <MdCheckCircle className={styles.sucesso} /><MdError className={styles.erro} />
                     </div>
                     {valida.nivelAcesso.mensagem.map(mens => <small key={mens} className={styles.small}>{mens}</small>)}
-                  </div> */}
+                  </div>
                 </div>
               </div>
               <div className={styles.formActions}>

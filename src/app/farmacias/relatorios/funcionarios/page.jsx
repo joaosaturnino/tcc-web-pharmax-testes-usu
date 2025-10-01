@@ -114,14 +114,9 @@ export default function RelatorioFuncionariosPage() {
     return sortOrder === "asc" ? "↑" : "↓";
   };
   const handleLogout = async () => {
-    try {
-      localStorage.removeItem("authToken");
-      localStorage.removeItem("userData"); // Corrigido para localStorage
-      router.push("/login");
-    } catch (error) {
-      console.error("Erro ao fazer logout:", error);
-      router.push("/home");
-    }
+    localStorage.removeItem("authToken");
+    localStorage.removeItem("userData");
+    router.push("/home");
   };
   
   if (loading) {

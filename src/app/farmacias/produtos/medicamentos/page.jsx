@@ -41,6 +41,14 @@ function ListagemMedicamentos() {
   const [itensPorPagina, setItensPorPagina] = useState(10);
   const router = useRouter();
 
+  const getImageUrl = (imagePath) => {
+    if (!imagePath) {
+      return imagemPadrao;
+    }
+    const baseUrl = api.defaults.baseURL;
+    return `${baseUrl}/${imagePath.replace(/\\/g, '/')}`;
+  };
+
   useEffect(() => {
     const fetchMedicamentos = async () => {
       setErroApi("");
@@ -51,7 +59,6 @@ function ListagemMedicamentos() {
         }
         
         const userData = JSON.parse(userDataString);
-        // CORRIGIDO: Padronizado para usar a chave 'id', que confirmamos ser a correta.
         const farmaciaId = userData.farm_id;
 
         if (!farmaciaId) {
@@ -66,8 +73,8 @@ function ListagemMedicamentos() {
             nome: med.med_nome,
             dosagem: med.med_dosagem,
             quantidade: med.med_quantidade || 0,
-            tipo: tiposMedicamento[med.tipo_id] || "Não especificado",
-            forma: formasMedicamento[med.forma_id] || "Não especificada",
+            tipo: med.tipo_nome || tiposMedicamento[med.tipo_id] || "Não especificado",
+            forma: med.forma_nome || formasMedicamento[med.forma_id] || "Não especificada",
             descricao: med.med_descricao || "Sem descrição disponível.",
             laboratorio: med.lab_nome || "Não especificado",
             preco: med.medp_preco || 0,
@@ -152,7 +159,6 @@ function ListagemMedicamentos() {
   const indiceFinal = indiceInicial + itensPorPagina;
   const medicamentosPaginados = medicamentosFiltrados.slice(indiceInicial, indiceFinal);
 
-  // CORRIGIDO: Função de excluir agora envia o farmacia_id para autorização
   const handleExcluir = async (id) => {
     if (window.confirm("Tem certeza que deseja excluir este medicamento?")) {
       try {
@@ -182,7 +188,6 @@ function ListagemMedicamentos() {
     }
   };
 
-  // CORRIGIDO: Função de ativar/desativar agora envia o farmacia_id para autorização
   const toggleStatus = async (id) => {
     try {
       const medicamento = medicamentos.find(med => med.id === id);
@@ -278,9 +283,14 @@ function ListagemMedicamentos() {
     setErro("");
   };
 
+  // ### INÍCIO DA ALTERAÇÃO ###
   const redirecionarParaCadastro = () => {
+    // Primeiro, fecha o modal para garantir uma desmontagem limpa do componente
+    fecharModal();
+    // Em seguida, navega para a página de cadastro
     router.push(`/farmacias/produtos/medicamentos/cadastro?codigoBarras=${codigoBarras}`);
   };
+  // ### FIM DA ALTERAÇÃO ###
 
   const handleItensPorPaginaChange = (e) => {
     setItensPorPagina(Number(e.target.value));
@@ -289,8 +299,8 @@ function ListagemMedicamentos() {
 
   const handleLogout = async () => {
     localStorage.removeItem("authToken");
-    localStorage.removeItem("userData"); // Corrigido para localStorage
-    router.push("/login");
+    localStorage.removeItem("userData");
+    router.push("/home");
   };
 
   if (loading) {
@@ -472,6 +482,8 @@ function ListagemMedicamentos() {
                       <th>Nome</th>
                       <th>Dosagem</th>
                       <th>Conteúdo</th>
+                      <th>Forma</th>
+                      <th>Tipo</th>
                       <th>Laboratório</th>
                       <th>Preço</th>
                       <th>Status</th>
@@ -482,7 +494,7 @@ function ListagemMedicamentos() {
                     {medicamentosPaginados.map((med) => (
                       <tr key={med.id} className={`${styles.tableRow} ${med.status === "inativo" ? styles.inativo : ""}`}>
                         <td>
-                          <img src={med.imagem || imagemPadrao} alt={med.nome} className={styles.medicamentoImagem} onError={(e) => { e.target.src = imagemPadrao; }} />
+                          <img src={getImageUrl(med.imagem)} alt={med.nome} className={styles.medicamentoImagem} onError={(e) => { e.target.src = imagemPadrao; }} />
                         </td>
                         <td>
                           <div className={styles.nomeContainer}>
@@ -492,8 +504,10 @@ function ListagemMedicamentos() {
                         </td>
                         <td>{med.dosagem}</td>
                         <td>
-                          <span className={styles.quantidade}>{`${med.quantidade} ${med.forma}`}</span>
+                          <span className={styles.quantidade}>{med.quantidade}</span>
                         </td>
+                        <td>{med.forma}</td>
+                        <td>{med.tipo}</td>
                         <td>{med.laboratorio}</td>
                         <td>{currency.format(med.preco)}</td>
                         <td>
@@ -517,7 +531,7 @@ function ListagemMedicamentos() {
                   {medicamentosPaginados.map((med) => (
                     <div key={med.id} className={`${styles.medicamentoCard} ${med.status === "inativo" ? styles.inativo : ""}`}>
                       <div className={styles.cardHeader}>
-                        <img src={med.imagem || imagemPadrao} alt={med.nome} className={styles.cardImagem} onError={(e) => { e.target.src = imagemPadrao; }} />
+                        <img src={getImageUrl(med.imagem)} alt={med.nome} className={styles.cardImagem} onError={(e) => { e.target.src = imagemPadrao; }} />
                         <span className={`${styles.cardStatus} ${med.status === "ativo" ? styles.statusAtivo : styles.statusInativo}`}>
                           {med.status === "ativo" ? "Ativo" : "Inativo"}
                         </span>
@@ -530,7 +544,7 @@ function ListagemMedicamentos() {
                         <div className={styles.cardInfo}>
                           <div className={styles.infoItem}>
                             <span className={styles.infoLabel}>Conteúdo:</span>
-                            <span className={styles.infoValue}>{`${med.quantidade} ${med.forma}`}</span>
+                            <span className={styles.infoValue}>{`${med.quantidade}`}</span>
                           </div>
                           <div className={styles.infoItem}>
                             <span className={styles.infoLabel}>Preço:</span>
@@ -616,7 +630,7 @@ function ListagemMedicamentos() {
                   <div className={styles.medicamentoExistente}>
                     <h3>Medicamento já cadastrado no sistema</h3>
                     <div className={styles.existenteInfo}>
-                      <img src={medicamentoExistente.imagem || imagemPadrao} alt={medicamentoExistente.nome} className={styles.existenteImagem} />
+                      <img src={getImageUrl(medicamentoExistente.imagem)} alt={medicamentoExistente.nome} className={styles.existenteImagem} onError={(e) => { e.target.src = imagemPadrao; }} />
                       <div className={styles.existenteDetalhes}>
                         <p><strong>Nome:</strong> {medicamentoExistente.nome}</p>
                         <p><strong>Dosagem:</strong> {medicamentoExistente.dosagem}</p>
@@ -664,13 +678,13 @@ function ListagemMedicamentos() {
               <div className={styles.modalContent}>
                 <div className={styles.detalhesContainer}>
                   <div className={styles.detalhesImagem}>
-                    <img src={medicamentoSelecionado.imagem || imagemPadrao} alt={medicamentoSelecionado.nome} className={styles.detalhesImg} onError={(e) => { e.target.src = imagemPadrao; }} />
+                    <img src={getImageUrl(medicamentoSelecionado.imagem)} alt={medicamentoSelecionado.nome} className={styles.detalhesImg} onError={(e) => { e.target.src = imagemPadrao; }} />
                   </div>
                   <div className={styles.detalhesInfo}>
                     <h3>{medicamentoSelecionado.nome}</h3>
                     <div className={styles.infoGrid}>
                       <div className={styles.infoItem}><span className={styles.infoLabel}>Dosagem:</span><span className={styles.infoValue}>{medicamentoSelecionado.dosagem}</span></div>
-                      <div className={styles.infoItem}><span className={styles.infoLabel}>Conteúdo:</span><span className={styles.infoValue}>{`${medicamentoSelecionado.quantidade} ${medicamentoSelecionado.forma}`}</span></div>
+                      <div className={styles.infoItem}><span className={styles.infoLabel}>Conteúdo:</span><span className={styles.infoValue}>{`${medicamentoSelecionado.quantidade}`}</span></div>
                       <div className={styles.infoItem}><span className={styles.infoLabel}>Tipo:</span><span className={styles.infoValue}>{medicamentoSelecionado.tipo}</span></div>
                       <div className={styles.infoItem}><span className={styles.infoLabel}>Forma:</span><span className={styles.infoValue}>{medicamentoSelecionado.forma}</span></div>
                       <div className={styles.infoItem}><span className={styles.infoLabel}>Laboratório:</span><span className={styles.infoValue}>{medicamentoSelecionado.laboratorio}</span></div>
@@ -698,7 +712,7 @@ function ListagemMedicamentos() {
                     Editar
                   </button>
                   <button onClick={() => toggleStatus(medicamentoSelecionado.id)} className={styles.botaoSecundario}>
-                    {medicamentoSelecionado.status === "ativo" ? " Desativar" : " Inativo"}
+                    {medicamentoSelecionado.status === "ativo" ? " Desativar" : " Ativar"}
                   </button>
                   <button onClick={() => handleExcluir(medicamentoSelecionado.id)} className={styles.botaoPerigo}>
                     Excluir

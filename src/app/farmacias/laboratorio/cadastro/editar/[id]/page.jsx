@@ -134,14 +134,9 @@ export default function EditarLaboratorioPage() {
   }
 
   const handleLogout = async () => {
-    try {
-      localStorage.removeItem("authToken");
-      sessionStorage.removeItem("userData");
-      router.push("/login");
-    } catch (error) {
-      console.error("Erro ao fazer logout:", error);
-      router.push("/home");
-    }
+    localStorage.removeItem("authToken");
+    localStorage.removeItem("userData");
+    router.push("/home");
   };
 
   return (

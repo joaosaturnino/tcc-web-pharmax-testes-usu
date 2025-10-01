@@ -80,7 +80,7 @@ export default function RelatorioFavoritosPage() {
     }, 500);
   };
 
-  const handleLogout = () => {
+  const handleLogout = async () => {
     localStorage.removeItem("authToken");
     localStorage.removeItem("userData");
     router.push("/home");
@@ -110,16 +110,87 @@ export default function RelatorioFavoritosPage() {
 
         <div className={styles.contentWrapper}>
           <aside className={`${styles.sidebar} ${sidebarOpen ? styles.sidebarOpen : ""}`}>
-            {/* ... Seu menu sidebar aqui, igual ao outro arquivo ... */}
-             <nav className={styles.nav}>
+            <div className={styles.sidebarHeader}>
+              <div className={styles.logo}>
+                <span className={styles.logoText}>PharmaX</span>
+              </div>
+              <button
+                className={styles.sidebarClose}
+                onClick={() => setSidebarOpen(false)}
+              >
+                ×
+              </button>
+            </div>
+
+            <nav className={styles.nav}>
               <div className={styles.navSection}>
                 <p className={styles.navLabel}>Principal</p>
-                <Link href="/farmacias/favoritos" className={`${styles.navLink} ${styles.active}`}><span className={styles.navText}>Favoritos</span></Link>
-                <Link href="/farmacias/produtos/medicamentos" className={styles.navLink}><span className={styles.navText}>Medicamentos</span></Link>
+                <a
+                  href="/farmacias/favoritos"
+                  className={styles.navLink}
+                >
+                  <span className={styles.navText}>Favoritos</span>
+                </a>
+                <a
+                  href="/farmacias/produtos/medicamentos"
+                  className={styles.navLink}
+                >
+                  <span className={styles.navText}>Medicamentos</span>
+                </a>
               </div>
-              <div className={styles.navSection}><p className={styles.navLabel}>Gestão</p><Link href="/farmacias/cadastro/funcionario/lista" className={styles.navLink}><span className={styles.navText}>Funcionários</span></Link><Link href="/farmacias/laboratorio/lista" className={styles.navLink}><span className={styles.navText}>Laboratórios</span></Link></div>
-              <div className={styles.navSection}><p className={styles.navLabel}>Relatórios</p><Link href="/farmacias/relatorios/favoritos" className={styles.navLink}><span className={styles.navText}>Medicamentos Favoritos</span></Link><Link href="/farmacias/relatorios/funcionarios" className={styles.navLink}><span className={styles.navText}>Relatório de Funcionarios</span></Link><Link href="/farmacias/relatorios/laboratorios" className={styles.navLink}><span className={styles.navText}>Relatório de Laboratorios</span></Link></div>
-              <div className={styles.navSection}><p className={styles.navLabel}>Conta</p><Link href="/farmacias/perfil" className={styles.navLink}><span className={styles.navText}>Meu Perfil</span></Link><button onClick={handleLogout} className={styles.navLink} style={{ background: 'none', border: 'none', width: '100%', textAlign: 'left', cursor: 'pointer' }}><span className={styles.navText}>Sair</span></button></div>
+
+              <div className={styles.navSection}>
+                <p className={styles.navLabel}>Gestão</p>
+                <a
+                  href="/farmacias/cadastro/funcionario/lista"
+                  className={styles.navLink}
+                >
+                  <span className={styles.navText}>Funcionários</span>
+                </a>
+                <a href="/farmacias/laboratorio/lista" className={styles.navLink}>
+                  <span className={styles.navText}>Laboratórios</span>
+                </a>
+              </div>
+
+              <div className={styles.navSection}>
+                <p className={styles.navLabel}>Relatórios</p>
+                <a
+                  href="/farmacias/relatorios/favoritos"
+                   className={`${styles.navLink} ${styles.active}`}
+                  
+                >
+                  <span className={styles.navText}>Medicamentos Favoritos</span>
+                </a>
+                <a
+                  href="/farmacias/relatorios/funcionarios"
+                  className={styles.navLink}
+                >
+                  <span className={styles.navText}>Relatório de Funcionarios</span>
+                </a>
+                <a
+                  href="/farmacias/relatorios/laboratorios"
+                 className={styles.navLink}
+                >
+                  <span className={styles.navText}>Relatório de Laboratorios</span>
+                </a>
+              </div>
+
+              <div className={styles.navSection}>
+                <p className={styles.navLabel}>Conta</p>
+                <a
+                  href="/farmacias/perfil"
+                  className={styles.navLink}
+                >
+                  <span className={styles.navText}>Meu Perfil</span>
+                </a>
+                <button
+                  onClick={handleLogout}
+                  className={styles.navLink}
+                  style={{ background: 'none', border: 'none', width: '100%', textAlign: 'left', cursor: 'pointer' }}
+                >
+                  <span className={styles.navText}>Sair</span>
+                </button>
+              </div>
             </nav>
           </aside>
           {sidebarOpen && (<div className={styles.overlay} onClick={() => setSidebarOpen(false)} />)}

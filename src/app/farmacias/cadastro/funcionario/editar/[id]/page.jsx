@@ -86,13 +86,9 @@ export default function EditarFuncionarioPage() {
   };
 
   const handleLogout = async () => {
-    try {
-      localStorage.removeItem("authToken");
-      localStorage.removeItem("userData");
-      router.push("/login");
-    } catch (error) {
-      console.error("Erro ao fazer logout:", error);
-    }
+    localStorage.removeItem("authToken");
+    localStorage.removeItem("userData");
+    router.push("/home");
   };
 
   // ALTERADO: A função agora envia uma requisição de ATUALIZAÇÃO (PATCH ou PUT)
@@ -218,11 +214,9 @@ export default function EditarFuncionarioPage() {
                     <label className={styles.inputLabel}>Nível de Acesso *</label>
                     <select className={styles.modernInput} name="func_nivel" value={form.func_nivel} onChange={handleChange} required >
                       <option value="">Selecione</option>
-                      <option value="Administrador">Administrador</option>
-                      <option value="Gerente">Gerente</option>
-                      <option value="Supervisor">Supervisor</option>
-                      <option value="Funcionário">Funcionário</option>
-                      <option value="Visitante">Visitante</option>
+                      <option value="1">Funcionário</option>
+                        <option value="2">Farmacêutico</option>
+                        <option value="3">Administrador</option>
                     </select>
                   </div>
                 </div>

@@ -292,6 +292,58 @@
   background-repeat: no-repeat;
   background-position: right 16px center;
   background-size: 16px;
+  padding-right: 40px; /* Garante que o texto não sobreponha a seta */
+}
+
+/* === NOVOS ESTILOS PARA UPLOAD DE ARQUIVO === */
+.fileInput {
+  width: 0.1px;
+  height: 0.1px;
+  opacity: 0;
+  overflow: hidden;
+  position: absolute;
+  z-index: -1;
+}
+
+.fileInputLabel {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+  padding: 12px 16px;
+  border: 2px dashed #d1d5db; /* Borda tracejada para indicar área de upload */
+  border-radius: 8px;
+  font-size: 14px;
+  color: #64748b;
+  background-color: #f8fafc;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.fileInputLabel:hover {
+  border-color: #458B00;
+  background-color: #f1f5f9;
+  color: #191970;
+}
+
+.fileInputLabel span {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  flex-grow: 1;
+}
+
+/* Ajusta a cor da borda no estado de sucesso e erro */
+.success .fileInputLabel {
+  border-style: solid;
+  border-color: #458B00;
+  background-color: #f6fff7;
+}
+
+.error .fileInputLabel {
+  border-style: solid;
+  border-color: #d32f2f;
+  background-color: #fff8f8;
 }
 
 /* Ícones de Validação */
@@ -299,6 +351,8 @@
 .erro {
   position: absolute;
   right: 16px;
+  top: 50%;
+  transform: translateY(-50%);
   font-size: 20px;
   opacity: 0;
   transition: opacity 0.3s ease;

@@ -90,11 +90,12 @@ export default function Contact() {
     return Object.keys(newErrors).length === 0;
   };
 
+  // page.jsx
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     
     if (!validateForm()) {
-      // Animação de shake para indicar erro
       const form = e.target;
       form.classList.add('shake');
       setTimeout(() => form.classList.remove('shake'), 500);
@@ -104,14 +105,20 @@ export default function Contact() {
     setIsSubmitting(true);
     setSubmitStatus(null);
     
+    // ### INÍCIO DA CORREÇÃO ###
     try {
-      // Simulação de envio com delay
-      await new Promise(resolve => setTimeout(resolve, 2000));
-      
-      // Simular sucesso 90% das vezes para demonstração
-      const success = Math.random() > 0.1;
-      
-      if (success) {
+      // Faz a chamada real para a nossa API, usando 'fetch' e a rota correta: '/api/contact'
+      const response = await fetch('page/api/contact.js', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(formData),
+      });
+
+      const data = await response.json();
+
+      if (response.ok && data.success) {
         setSubmitStatus('success');
         setFormData({ 
           name: '', 
@@ -123,14 +130,17 @@ export default function Contact() {
         });
         setCharCount(0);
       } else {
-        setSubmitStatus('error');
+        // Usa a mensagem de erro da API se disponível
+        throw new Error(data.message || 'Erro ao enviar a mensagem.');
       }
       
     } catch (error) {
+      console.error('Falha no envio do formulário:', error);
       setSubmitStatus('error');
     } finally {
       setIsSubmitting(false);
     }
+    // ### FIM DA CORREÇÃO ###
   };
 
   const toggleDarkMode = () => {
