@@ -94,7 +94,7 @@ export default function PaginaInicial() {
 
   const [paginaAtual, setPaginaAtual] = useState(1);
   const [totalPaginas, setTotalPaginas] = useState(1);
-  const ITENS_POR_PAGINA = 10;
+  const ITENS_POR_PAGINA =12;
 
   const fetchDestaques = useCallback(async (pagina) => {
     setLoading(true);

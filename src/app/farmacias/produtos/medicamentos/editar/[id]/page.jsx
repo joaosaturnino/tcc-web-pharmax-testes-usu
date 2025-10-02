@@ -118,8 +118,8 @@ export default function EditarMedicamento() {
         formData.append('med_imagem', imagemFile);
       }
       
-      // O método POST é usado para enviar FormData para a rota de edição, que agora aceita POST
-      const response = await api.post(`/medicamentos/${id}`, formData, {
+      // *** CORREÇÃO APLICADA AQUI: Trocando POST para PUT para seguir o padrão RESTful para edição. ***
+      const response = await api.put(`/medicamentos/${id}`, formData, {
         headers: {
           'Content-Type': 'multipart/form-data',
         },
@@ -132,7 +132,8 @@ export default function EditarMedicamento() {
         throw new Error(response.data.mensagem || "A API indicou uma falha.");
       }
     } catch (err) {
-      setError(err.response?.data?.mensagem || "Erro ao conectar com o servidor.");
+      // Melhor tratamento de erro para exibir a mensagem do servidor
+      setError(err.response?.data?.mensagem || err.message || "Erro ao conectar com o servidor. Verifique a conexão.");
     } finally {
       setIsSubmitting(false);
     }
@@ -259,9 +260,7 @@ export default function EditarMedicamento() {
                     <div className={styles.imagePreviewContainer}>
                         <label className={styles.inputLabel}>Imagem Atual</label>
                         {existingImageUrl ? (
-                            // --- CORREÇÃO APLICADA AQUI ---
-                            // Monta a URL completa para a imagem, apontando para o servidor da API.
-                            // Também substitui barras invertidas (\) por barras normais (/) para garantir compatibilidade.
+                            // Monta a URL completa para a imagem e trata barras invertidas
                             <img 
                                 src={`${api.defaults.baseURL}/${existingImageUrl.replace(/\\/g, '/')}`} 
                                 alt="Imagem atual do medicamento" 
