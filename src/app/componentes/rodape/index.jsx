@@ -23,7 +23,7 @@ export default function Rodape() {
             <Link href="/sobre" className={styles.link}>
               <span>Sobre</span>
             </Link>
-            <Link href="/contato" className={styles.link}>
+            <Link href="/contact" className={styles.link}>
               <span>Fale Conosco</span>
             </Link>
           </div>

@@ -1,5 +1,5 @@
 "use client"
-// pages/contact.js
+// Arquivo: app/contact/page.jsx
 import { useState, useEffect } from 'react';
 import Head from 'next/head';
 
@@ -90,8 +90,6 @@ export default function Contact() {
     return Object.keys(newErrors).length === 0;
   };
 
-  // page.jsx
-
   const handleSubmit = async (e) => {
     e.preventDefault();
     
@@ -105,10 +103,9 @@ export default function Contact() {
     setIsSubmitting(true);
     setSubmitStatus(null);
     
-    // ### INÍCIO DA CORREÇÃO ###
     try {
-      // Faz a chamada real para a nossa API, usando 'fetch' e a rota correta: '/api/contact'
-      const response = await fetch('page/api/contact.js', {
+      // Faz a chamada para a nossa API na rota correta: '/api/contact'
+      const response = await fetch('/api/contact', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -140,7 +137,6 @@ export default function Contact() {
     } finally {
       setIsSubmitting(false);
     }
-    // ### FIM DA CORREÇÃO ###
   };
 
   const toggleDarkMode = () => {
@@ -582,10 +578,18 @@ export default function Contact() {
           color: #22543d;
         }
 
+        .dark .status-message.success {
+          color: #c6f6d5;
+        }
+
         .status-message.error {
           background: var(--error-bg);
           border: 1px solid var(--error-border);
           color: #742a2a;
+        }
+        
+        .dark .status-message.error {
+          color: #fed7d7;
         }
 
         .status-icon {
@@ -612,6 +616,7 @@ export default function Contact() {
           cursor: pointer;
           opacity: 0.7;
           transition: opacity 0.2s ease;
+          color: inherit;
         }
 
         .close-btn:hover {

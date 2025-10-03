@@ -55,7 +55,7 @@ export default function SobrePage() {
       avatar: "/avatars/joao-r.jpg",
       bio: "Liderando a equipe e transformando ideias em interfaces funcionais e responsivas para a plataforma.",
       linkedin: "https://linkedin.com/in/joaorafael",
-      github: "https://github.com/joaorafael",
+      github: "https://github.com/JoaoRafaelSanches",
     }
   ];
 

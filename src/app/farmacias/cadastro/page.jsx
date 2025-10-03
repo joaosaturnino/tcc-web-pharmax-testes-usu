@@ -1,43 +1,44 @@
 "use client";
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import styles from "./farmacia.module.css";
 
 // Ícones para validação
 import { MdCheckCircle, MdError } from "react-icons/md";
 
-// Importação da instância do Axios configurada no arquivo /src/services/api.js
-// Certifique-se de que o caminho para o arquivo api.js está correto
+// Importação da instância do Axios configurada
 import api from "../../services/api";
 
 export default function CadastroFarmacia() {
   const router = useRouter();
   const fileInputRef = useRef(null);
 
-  // Lista de cidades com IDs correspondentes ao banco de dados
-  // É crucial que estes IDs estejam corretos
-  const cidades = [
-    { id: 1, nome: "São Paulo" },
-    { id: 2, nome: "Rio de Janeiro" },
-    { id: 3, nome: "Belo Horizonte" },
-    { id: 4, nome: "Brasília" },
-    { id: 5, nome: "Salvador" },
-    { id: 6, nome: "Fortaleza" },
-    { id: 7, nome: "Recife" },
-    { id: 8, nome: "Porto Alegre" },
-    { id: 9, nome: "Curitiba" },
-    { id: 10, nome: "Goiânia" },
-    { id: 11, nome: "Manaus" },
-    { id: 12, nome: "Belém" },
-    { id: 13, nome: "Florianópolis" },
-    { id: 14, nome: "Vitória" },
-    { id: 15, nome: "Natal" },
-    { id: 16, nome: "João Pessoa" },
-    { id: 17, nome: "Maceió" },
-    { id: 18, nome: "Campo Grande" },
-    { id: 19, nome: "Cuiabá" },
-    { id: 20, nome: "Teresina" }
-  ];
+  const [apiCidades, setApiCidades] = useState([]);
+  const [loadingCidades, setLoadingCidades] = useState(true);
+  const [cidadesError, setCidadesError] = useState(null);
+
+  // Efeito para buscar as cidades da API
+  useEffect(() => {
+    const fetchCidades = async () => {
+      try {
+        // Rota assumida: /cidades
+        const response = await api.get('/cidades');
+        // A API retorna um objeto com a chave "dados" contendo o array de cidades
+        if (response.data.sucesso && Array.isArray(response.data.dados)) {
+          setApiCidades(response.data.dados); // Armazena o array de cidades no estado
+        } else {
+          console.error("Estrutura de dados de cidades inválida:", response.data);
+          setCidadesError("Estrutura de cidades inválida da API.");
+        }
+      } catch (error) {
+        console.error("Erro ao buscar cidades:", error);
+        setCidadesError("Falha ao carregar a lista de cidades do servidor.");
+      } finally {
+        setLoadingCidades(false);
+      }
+    };
+    fetchCidades();
+  }, []);
 
   const [farmacia, setFarmacia] = useState({
     nome: "",
@@ -73,6 +74,14 @@ export default function CadastroFarmacia() {
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFarmacia({ ...farmacia, [name]: value });
+
+    if (name === 'cidade') {
+        if (value !== "") {
+            setValida(prev => ({ ...prev, [name]: { validado: valSucesso, mensagem: [] } }));
+        } else {
+            setValida(prev => ({ ...prev, [name]: { validado: valErro, mensagem: ["Selecione uma cidade."] } }));
+        }
+    }
   };
 
   const handleFileChange = (e) => {
@@ -113,12 +122,17 @@ export default function CadastroFarmacia() {
   function validaTelefone() { const tel = farmacia.telefone.replace(/\D/g, ''); return tel.length >= 10 && tel.length <= 11 ? 1 : 0; }
   function validaEmail() { const emailRegex = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/; return emailRegex.test(farmacia.email) ? 1 : 0; }
   function validaSenha() { return farmacia.senha.length >= 6 ? 1 : 0; }
-  function validaLogo() { return 1; } // Logo é opcional
+  function validaLogo() { return 1; }
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    
-    // 1. Validação dos campos antes do envio
+
+    // 1. Validação de carregamento e campos
+    if (loadingCidades) {
+        alert("Aguarde o carregamento das cidades.");
+        return;
+    }
+
     if (validaNome() + validaCNPJ() + validaEndereco() + validaCidade() + validaTelefone() + validaEmail() + validaSenha() + validaLogo() !== 8) {
       alert("Por favor, corrija os erros no formulário antes de continuar.");
       return;
@@ -126,15 +140,7 @@ export default function CadastroFarmacia() {
 
     setIsSubmitting(true);
 
-    // 2. Converte o nome da cidade para o ID correspondente
-    const cidadeSelecionada = cidades.find(c => c.nome === farmacia.cidade);
-    if (!cidadeSelecionada) {
-        alert("Cidade inválida selecionada!");
-        setIsSubmitting(false);
-        return;
-    }
-
-    // 3. Cria um objeto FormData para enviar os dados, incluindo o arquivo
+    // 2. Cria um objeto FormData para enviar os dados
     const formData = new FormData();
 
     // Adiciona os campos ao FormData com os nomes esperados pela API
@@ -144,14 +150,14 @@ export default function CadastroFarmacia() {
     formData.append('farm_telefone', farmacia.telefone.replace(/\D/g, ''));
     formData.append('farm_email', farmacia.email);
     formData.append('farm_senha', farmacia.senha);
-    formData.append('farm_cidade_id', cidadeSelecionada.id);
-    
+    formData.append('farm_cidade_id', farmacia.cidade);
+
     // Adiciona o arquivo de logo apenas se ele tiver sido selecionado
     if (farmacia.logo) {
       formData.append('farm_logo', farmacia.logo);
     }
-    
-    // 4. Bloco try/catch para fazer a chamada à API e tratar a resposta
+
+    // 3. Bloco try/catch para fazer a chamada à API e tratar a resposta
     try {
       const response = await api.post('/farmacias', formData, {
         headers: {
@@ -161,21 +167,18 @@ export default function CadastroFarmacia() {
 
       if (response.data.sucesso) {
         alert("Farmácia cadastrada com sucesso!");
-        router.push("/farmacias/favoritos"); // Redireciona em caso de sucesso
+        router.push("/login");
       } else {
         alert(`Erro ao cadastrar: ${response.data.mensagem}`);
       }
     } catch (error) {
       console.error("Erro na requisição:", error);
       if (error.response) {
-        // Exibe o erro específico retornado pela API
-        alert(`Erro do servidor: ${error.response.data.mensagem}`);
+        alert(`Erro do servidor: ${error.response.data.mensagem || error.response.statusText}`);
       } else {
-        // Exibe um erro genérico de falha na conexão
         alert("Não foi possível conectar-se ao servidor. Tente novamente mais tarde.");
       }
     } finally {
-      // Garante que o estado de "submitting" seja desativado ao final
       setIsSubmitting(false);
     }
   };
@@ -197,6 +200,8 @@ export default function CadastroFarmacia() {
         <div className={styles.formContainer}>
           <form onSubmit={handleSubmit} className={styles.form}>
             <div className={styles.formGrid}>
+
+              {/* Nome */}
               <div className={valida.nome.validado}>
                 <label className={styles.label}>Nome da Farmácia</label>
                 <div className={styles.divInput}>
@@ -205,6 +210,7 @@ export default function CadastroFarmacia() {
                 </div>
               </div>
 
+              {/* CNPJ */}
               <div className={valida.cnpj.validado}>
                 <label className={styles.label}>CNPJ</label>
                 <div className={styles.divInput}>
@@ -213,6 +219,7 @@ export default function CadastroFarmacia() {
                 </div>
               </div>
 
+              {/* Endereço */}
               <div className={valida.endereco.validado}>
                 <label className={styles.label}>Endereço Completo</label>
                 <div className={styles.divInput}>
@@ -221,19 +228,30 @@ export default function CadastroFarmacia() {
                 </div>
               </div>
 
+              {/* Cidade */}
               <div className={valida.cidade.validado}>
                 <label className={styles.label}>Cidade</label>
                 <div className={styles.divInput}>
-                  <select className={styles.select} name="cidade" value={farmacia.cidade} onChange={handleChange} required>
-                    <option value="">Selecione uma cidade</option>
-                    {cidades.map((cidade) => (
-                      <option key={cidade.id} value={cidade.nome}>{cidade.nome}</option>
+                  {cidadesError && <p className={styles.small} style={{marginBottom: '5px', color: 'red'}}>Erro: {cidadesError}</p>}
+                  <select className={styles.select} name="cidade" value={farmacia.cidade} onChange={handleChange} required disabled={loadingCidades || cidadesError}>
+                    <option key="placeholder-cidade" value="">
+                      {loadingCidades ? 'Carregando cidades...' : 'Selecione uma cidade'}
+                    </option>
+                    {/* ===== CÓDIGO CORRIGIDO ===== */}
+                    {/* Mapeia o array de cidades, usando as chaves corretas do objeto: "cidade_id", "nome_cidade" e "uf_sigla" */}
+                    {apiCidades.map((cidade) => (
+                      <option key={cidade.cidade_id} value={cidade.cidade_id}>
+                        {cidade.nome_cidade} - {cidade.uf_sigla}
+                      </option>
                     ))}
+                    {/* ===== FIM DO CÓDIGO CORRIGIDO ===== */}
                   </select>
                   <MdCheckCircle className={styles.sucesso} /><MdError className={styles.erro} />
+                  {valida.cidade.mensagem.length > 0 && <span className={styles.small}>{valida.cidade.mensagem[0]}</span>}
                 </div>
               </div>
 
+              {/* Telefone */}
               <div className={valida.telefone.validado}>
                 <label className={styles.label}>Telefone</label>
                 <div className={styles.divInput}>
@@ -242,6 +260,7 @@ export default function CadastroFarmacia() {
                 </div>
               </div>
 
+              {/* E-mail */}
               <div className={valida.email.validado}>
                 <label className={styles.label}>E-mail</label>
                 <div className={styles.divInput}>
@@ -250,15 +269,16 @@ export default function CadastroFarmacia() {
                 </div>
               </div>
 
+              {/* Senha */}
               <div className={valida.senha.validado}>
                 <label className={styles.label}>Senha</label>
                 <div className={styles.divInput}>
                   <input className={styles.input} type="password" name="senha" value={farmacia.senha} onChange={handleChange} placeholder="Mínimo 6 caracteres" minLength="6" required />
                   <MdCheckCircle className={styles.sucesso} /><MdError className={styles.erro} />
                 </div>
-                {/* Opcional: manter o indicador de força da senha */}
               </div>
 
+              {/* Logo */}
               <div className={valida.logo.validado}>
                 <label className={`${styles.label} ${styles.optional}`}>Logo da Farmácia (opcional)</label>
                 <div className={`${styles.fileUploadContainer} ${isDragging ? styles.dragging : ""} ${preview ? styles.hasPreview : ""}`} onDragOver={handleDragOver} onDragLeave={handleDragLeave} onDrop={handleDrop} onClick={triggerFileInput}>
@@ -279,7 +299,7 @@ export default function CadastroFarmacia() {
 
             <div className={styles.formActions}>
               <button type="button" className={styles.cancelButton} onClick={() => router.back()} disabled={isSubmitting}>Cancelar</button>
-              <button type="submit" className={styles.submitButton} disabled={isSubmitting}>
+              <button type="submit" className={styles.submitButton} disabled={isSubmitting || loadingCidades || cidadesError}>
                 {isSubmitting ? (<><span className={styles.spinner}></span>Cadastrando...</>) : (<>✓ Cadastrar Farmácia</>)}
               </button>
             </div>
