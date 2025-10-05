@@ -1,0 +1,714 @@
+/* Layout Principal */
+.dashboard {
+  min-height: 100vh;
+  background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+  display: flex;
+  flex-direction: column;
+}
+
+/* Header */
+.header {
+  background: linear-gradient(135deg, #ffffff 0%, #fafbfc 100%);
+  padding: 1.5rem 3rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  box-shadow: 0 0.2rem 0.4rem rgba(0, 0, 0, 0.1);
+  position: sticky;
+  top: 0;
+  z-index: 100;
+}
+
+.headerLeft {
+  display: flex;
+  align-items: center;
+  gap: 1.6rem;
+}
+
+.menuToggle {
+  background: none;
+  border: none;
+  font-size: 2rem;
+  cursor: pointer;
+  padding: 0.8rem;
+  border-radius: 0.6rem;
+  transition: background 0.3s ease;
+  display: none;
+  color: #458B00;
+}
+
+.menuToggle:hover {
+  background: #f1f5f9;
+}
+
+.title {
+  font-size: 2.8rem;
+  font-weight: 600;
+  color: #1e293b;
+  margin: 0;
+  background: linear-gradient(135deg, #191970 0%, #458B00 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.headerActions {
+  display: flex;
+  align-items: center;
+  gap: 1.6rem;
+}
+
+.connectionStatus {
+  padding: 0.4rem 0.8rem;
+  border-radius: 1.2rem;
+  font-size: 1.2rem;
+  font-weight: 500;
+  background: #458B00;
+  color: white;
+}
+
+/* Wrapper de Conteúdo */
+.contentWrapper {
+  display: flex;
+  flex: 1;
+  position: relative;
+}
+
+/* Sidebar - Estilo melhorado */
+.sidebar {
+  width: 30rem;
+  background: linear-gradient(180deg, #191970 0%, #0f1440 100%);
+  color: #CDC1C5;
+  display: flex;
+  flex-direction: column;
+  transition: transform 0.3s ease;
+  box-shadow: 0.2rem 0 1rem rgba(0, 0, 0, 0.1);
+  z-index: 90;
+  flex-shrink: 0;
+  height: calc(100vh - 80px); /* Ajuste de altura */
+  position: sticky;
+  top: 80px; /* Alinha com a parte inferior do header */
+  overflow-y: auto;
+}
+
+.sidebarHeader {
+  padding: 2rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: rgba(25, 25, 112, 0.95);
+  position: sticky;
+  top: 0;
+  z-index: 10;
+}
+
+.logo {
+  font-size: 2.2rem;
+  font-weight: bold;
+  color: #fff;
+}
+
+.logoText {
+  font-size: 2.5rem;
+  font-weight: 600;
+  color: #fff;
+}
+
+.sidebarClose {
+  background: none;
+  border: none;
+  font-size: 2.2rem;
+  color: #fff;
+  cursor: pointer;
+  border-radius: 0.6rem;
+  padding: 0.4rem 0.8rem;
+  transition: background 0.2s;
+  display: none;
+}
+
+.sidebarClose:hover {
+  background: #222266;
+}
+
+.nav {
+  flex: 1;
+  padding: 0 1.0rem 2.0rem 1.0rem;
+  overflow-y: auto;
+  overflow: hidden;
+}
+
+.navSection {
+  margin-bottom: 1.8rem;
+}
+
+.navLabel {
+  font-size: 1.3rem;
+  color: #b0b0b0;
+  margin-bottom: 0.6rem;
+  margin-top: 1rem;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.navLink {
+  display: flex;
+  align-items: center;
+  padding: 1rem 1.2rem;
+  color: #CDC1C5;
+  text-decoration: none;
+  border-radius: 0.6rem;
+  margin-bottom: 0.4rem;
+  transition: all 0.3s ease;
+  font-size: 1.5rem;
+  border-left: 4px solid transparent;
+  gap: 1rem;
+}
+
+.navLink:hover {
+  background: rgba(69, 139, 0, 0.15);
+  color: #fff;
+  border-left-color: #458B00;
+  transform: translateX(5px);
+}
+
+.navLink.active {
+  background: linear-gradient(135deg, #458B00 0%, #2e7d32 100%);
+  color: #fff;
+  border-left-color: #fff;
+  box-shadow: 0 4px 12px rgba(69, 139, 0, 0.3);
+}
+
+.navText {
+  margin-left: 0.6rem;
+  font-family: "Montserrat";
+}
+
+.navIcon {
+  font-size: 1.6rem;
+  width: 20px;
+  text-align: center;
+}
+
+/* Conteúdo Principal */
+.mainContent {
+  flex: 1;
+  padding: 3.2rem 2.4rem;
+  background: #f8fafc;
+  min-height: 100vh;
+  overflow-y: auto;
+}
+
+/* Filtros e Controles (Usado pelo formulário de contato) */
+.controlsContainer {
+  background: #ffffff;
+  padding: 2.5rem;
+  border-radius: 16px;
+  margin-bottom: 2.5rem;
+  box-shadow: 0 0.2rem 0.8px rgba(0,0,0,0.04);
+  border: 1px solid #e5e7eb;
+}
+
+.controlsRow {
+  display: flex;
+  gap: 1.5rem;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.searchBox {
+  flex: 1;
+  min-width: 300px;
+  position: relative;
+}
+
+.searchInput {
+  width: 100%;
+  padding: 1.2rem 1.2rem 1.2rem 4rem;
+  border: 1px solid #e2e8f0;
+  border-radius: 12px;
+  font-size: 1.4rem;
+  background: #f8fafc;
+  transition: all 0.3s ease;
+}
+
+.searchInput:focus {
+  outline: none;
+  border-color: #458B00;
+  box-shadow: 0 0 0 3px rgba(69, 139, 0, 0.1);
+}
+
+.searchIcon {
+  position: absolute;
+  left: 1.5rem;
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: 1.6rem;
+  color: #64748b;
+}
+
+.filterGroup {
+  display: flex;
+  gap: 1rem;
+  align-items: center;
+}
+
+.filterSelect {
+  padding: 1.2rem 1.5rem;
+  border: 1px solid #e2e8f0;
+  border-radius: 12px;
+  background: #ffffff;
+  font-size: 1.4rem;
+  min-width: 180px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  width: 100%; /* Garante que o select ocupe o espaço do grupo */
+}
+
+.filterSelect:focus {
+  outline: none;
+  border-color: #458B00;
+}
+
+/* Grid de Favoritos */
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(400px, 1fr));
+  gap: 2.4rem;
+  margin-bottom: 2.4rem;
+}
+
+.card {
+  background: linear-gradient(135deg, #ffffff 0%, #fafbfc 100%);
+  border-radius: 12px;
+  box-shadow: 0 0.2rem 0.8px rgba(0,0,0,0.04);
+  padding: 2.4rem;
+  transition: all 0.3s ease;
+  border: 1px solid #e5e7eb;
+  position: relative;
+  overflow: hidden;
+}
+
+.card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 4px;
+  background: linear-gradient(90deg, #458B00, #191970);
+}
+
+.card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 0.8rem 2.5rem rgba(0, 0, 0, 0.1);
+}
+
+.cardHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 2rem;
+  padding-bottom: 2rem;
+  border-bottom: 0.1rem solid #e5e7eb;
+}
+
+.cardUserInfo {
+  display: flex;
+  align-items: flex-start;
+  gap: 1.2rem;
+}
+
+.userAvatar {
+  width: 5rem;
+  height: 5rem;
+  border-radius: 12px;
+  background: linear-gradient(135deg, #458B00 0%, #191970 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 2rem;
+  color: white;
+  flex-shrink: 0;
+  font-weight: bold;
+}
+
+.cardUserInfo h2 {
+  font-size: 1.8rem;
+  font-weight: 600;
+  color: #191970;
+  margin: 0 0 0.4rem 0;
+}
+
+.cardUserInfo p {
+  font-size: 1.4rem;
+  color: #64748b;
+  margin: 0 0 0.8rem 0;
+}
+
+.favoriteDate {
+  font-size: 1.2rem;
+  color: #94a3b8;
+}
+
+/* Lista de Medicamentos */
+.medList {
+  display: flex;
+  flex-direction: column;
+  gap: 1.2rem;
+}
+
+.medItem {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1.2rem;
+  background: #f8fafc;
+  border-radius: 8px;
+  border: 0.1rem solid #e5e7eb;
+}
+
+.medInfo {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+}
+
+.medInfo strong {
+  font-size: 1.6rem;
+  font-weight: 600;
+  color: #1e293b;
+}
+
+.dosagem {
+  font-size: 1.3rem;
+  color: #64748b;
+}
+
+/* Badges */
+.badge {
+  padding: 0.6rem 1.2rem;
+  border-radius: 1.2rem;
+  font-size: 1.3rem;
+  font-weight: 600;
+  text-align: center;
+  border: 1px solid;
+}
+
+.inStock {
+  background: #f0fff4;
+  color: #065f46;
+  border-color: #10b981;
+}
+
+.outStock {
+  background: #fef2f2;
+  color: #991b1b;
+  border-color: #ef4444;
+}
+
+.pending {
+  background: #fffbeb;
+  color: #92400e;
+  border-color: #f59e0b;
+}
+
+/* Empty State */
+.emptyState {
+  text-align: center;
+  padding: 6rem 3rem;
+  background: white;
+  border-radius: 1.6rem;
+  margin: 3rem;
+  box-shadow: 0 0.2rem 0.8rem rgba(0,0,0,0.04);
+}
+
+.emptyIcon {
+  font-size: 6.4rem;
+  margin-bottom: 2rem;
+  opacity: 0.5;
+  color: #458B00;
+}
+
+.emptyState h3 {
+  font-size: 2rem;
+  color: #191970;
+  margin: 0 0 0.8rem 0;
+  font-weight: 600;
+}
+
+.emptyState p {
+  color: #64748b;
+  margin: 0;
+  font-size: 1.5rem;
+}
+
+/* Loader */
+.loaderContainer {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 30rem;
+  color: #458B00;
+}
+
+.spinner {
+  width: 3.8rem;
+  height: 3.8rem;
+  border: 0.4rem solid #e6f7e6;
+  border-top: 0.4rem solid #458B00;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+  margin-bottom: 1.2rem;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+/* Overlay para mobile */
+.overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.15);
+  z-index: 80;
+  display: none;
+}
+
+/* Controles de paginação */
+.paginationControls {
+  display: flex;
+  align-items: center;
+  gap: 1.2rem;
+  justify-content: center;
+  margin-bottom: 1.8rem;
+}
+
+.paginationBtn {
+  padding: 1rem 1.5rem;
+  border: none;
+  border-radius: 0.6rem;
+  background: #458B00;
+  color: white;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  font-size: 1.3rem;
+}
+
+.paginationBtn:hover:not(.disabled) {
+  background: #2e7d32;
+  transform: translateY(-1px);
+}
+
+.paginationBtn:disabled {
+  background: #d1d5db;
+  color: #888;
+  cursor: not-allowed;
+}
+
+.paginationNumbers {
+  display: flex;
+  gap: 0.4rem;
+}
+
+.paginationNumber {
+  padding: 1rem 1.2rem;
+  border: none;
+  border-radius: 0.6rem;
+  background: #f1f5f9;
+  color: #191970;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  min-width: 45px;
+  text-align: center;
+  font-size: 1.3rem;
+}
+
+.paginationNumber:hover {
+  background: #e6f7e6;
+  transform: translateY(-1px);
+}
+
+.paginationNumber.active {
+  background: #458B00;
+  color: #fff;
+  transform: scale(1.05);
+}
+
+/* --- Estilos para o Formulário de Contato --- */
+.contactForm {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+}
+
+.formGrid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 2rem;
+}
+
+.formGroup {
+  display: flex;
+  flex-direction: column;
+  gap: 0.8rem;
+}
+
+.formLabel {
+  font-weight: 600;
+  color: #334155;
+  font-size: 1.4rem;
+}
+
+.formTextarea {
+  min-height: 120px;
+  resize: vertical;
+  padding: 1.2rem 1.5rem !important; /* Sobrescreve o padding com ícone */
+}
+
+/* Estilo para inputs com erro */
+.inputError {
+  border-color: #ef4444; /* Vermelho para erro */
+  box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.1);
+}
+
+.errorMessage {
+  color: #b91c1c; /* Vermelho escuro para o texto do erro */
+  font-size: 1.2rem;
+  font-weight: 500;
+}
+
+/* Estilo para o campo de grid que ocupa a largura total */
+.fullWidth {
+  grid-column: 1 / -1;
+}
+
+/* Mensagens de Status (Sucesso/Erro) */
+.statusMessage {
+  margin-top: 2rem;
+  padding: 1.5rem;
+  border-radius: 8px;
+  font-size: 1.4rem;
+  font-weight: 500;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.statusMessage.success {
+  background-color: #f0fff4;
+  color: #065f46;
+  border: 1px solid #10b981;
+}
+
+.statusMessage.error {
+  background-color: #fef2f2;
+  color: #991b1b;
+  border: 1px solid #ef4444;
+}
+
+.statusMessage button {
+  background: none;
+  border: none;
+  font-size: 2rem;
+  cursor: pointer;
+  color: inherit;
+  opacity: 0.7;
+}
+
+.statusMessage button:hover {
+  opacity: 1;
+}
+
+/* Responsividade */
+@media (max-width: 64rem) { /* 1024px */
+  .mainContent {
+    padding: 2.4rem 0.8rem;
+  }
+  .sidebar {
+    width: 25rem;
+  }
+  .grid {
+    grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+  }
+}
+
+@media (max-width: 48rem) { /* 768px */
+  .sidebar {
+    position: fixed;
+    left: 0;
+    top: 0;
+    height: 100vh;
+    transform: translateX(-100%);
+    transition: transform 0.3s;
+    z-index: 100;
+  }
+  .sidebar.sidebarOpen {
+    transform: translateX(0);
+  }
+  .menuToggle {
+    display: block;
+  }
+  .sidebarClose {
+    display: block;
+  }
+  .overlay {
+    display: block;
+  }
+  .mainContent {
+    padding: 1.6rem 2rem;
+  }
+  .grid {
+    grid-template-columns: 1fr;
+    padding: 1rem;
+  }
+  .card {
+    padding: 1.6rem;
+  }
+  .controlsRow {
+    flex-direction: column;
+    gap: 1rem;
+  }
+  .searchBox {
+    min-width: 100%;
+  }
+  /* Ajuste do formulário para telas menores */
+  .formGrid {
+    grid-template-columns: 1fr;
+    gap: 1.5rem;
+  }
+}
+
+@media (max-width: 30rem) { /* 480px */
+  .header {
+    flex-direction: column;
+    gap: 1.6rem;
+    align-items: flex-start;
+    padding: 1.6rem 2rem;
+  }
+  .grid {
+    padding: 0.8rem;
+  }
+  .card {
+    padding: 1.2rem;
+  }
+  .cardHeader {
+    flex-direction: column;
+    gap: 1.2rem;
+    align-items: flex-start;
+  }
+  .paginationNumbers {
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+  .paginationNumber {
+    padding: 0.4rem 0.8rem;
+  }
+  .medItem {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.5rem;
+  }
+}

@@ -30,7 +30,7 @@ export default function SobrePage() {
       role: "Desenvolvedora Full-Stack",
       avatar: "/avatars/emily.jpg", // Sugestão de caminho para imagem
       bio: "Apaixonada por criar soluções completas, desde o banco de dados até a interface final do usuário.",
-      linkedin: "https://linkedin.com/in/emilymartins",
+      linkedin: "https://www.linkedin.com/in/emilydmartins?utm_source=share&utm_campaign=share_via&utm_content=profile&utm_medium=android_app",
       github: "https://github.com/emilymartins",
     },
     {
@@ -38,16 +38,16 @@ export default function SobrePage() {
       role: "Especialista em UI/UX",
       avatar: "/avatars/guilherme.jpg",
       bio: "Focado em projetar experiências intuitivas e agradáveis, garantindo que o PharmaX seja fácil e eficiente de usar.",
-      linkedin: "https://www.linkedin.com/in/guilhermeoliveirasousa-dev?utm_source=share&utm_campaign=share_via&utm_content=profile&utm_medium=android_app",
-      github: "https://www.linkedin.com/in/guilhermeoliveirasousa-dev",
+      linkedin: "https://www.linkedin.com/in/guilhermeoliveirasousa-dev",
+      github: "https://github.com/GuiOliveiraSousa",
     },
     {
       name: "João Henrique",
       role: "Arquiteto de Backend",
       avatar: "/avatars/joao-h.jpg",
       bio: "Responsável pela performance, segurança e escalabilidade do sistema, garantindo que tudo funcione perfeitamente.",
-      linkedin: "https://linkedin.com/in/joaohenrique",
-      github: "https://github.com/joaohenrique",
+      linkedin: "https://www.linkedin.com/in/jo%C3%A3o-henrique-00288621a/",
+      github: "https://github.com/joaosaturnino",
     },
     {
       name: "João Rafael",
