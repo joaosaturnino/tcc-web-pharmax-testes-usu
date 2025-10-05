@@ -1,8 +1,8 @@
 "use client";
 import Link from "next/link";
-import { useEffect, useState, useRef } from "react";
+import { useEffect, useState, useRef, useMemo } from "react"; // Importado o useMemo
 import { useRouter } from "next/navigation";
-import styles from "./page.module.css"; // Reutilizando o estilo, ajuste se necessário
+import styles from "./page.module.css";
 import AuthGuard from "../../../componentes/AuthGuard";
 import api from "../../../services/api";
 
@@ -11,9 +11,15 @@ export default function RelatorioFavoritosPage() {
   const [loading, setLoading] = useState(true);
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [reportGenerated, setReportGenerated] = useState(false);
-  const [dateRange, setDateRange] = useState({
-    start: new Date(Date.now() - 365 * 24 * 60 * 60 * 1000).toISOString().split("T")[0], // 1 ano atrás
-    end: new Date().toISOString().split("T")[0],
+  // Otimizado o estado inicial das datas
+  const [dateRange, setDateRange] = useState(() => {
+    const endDate = new Date();
+    const startDate = new Date();
+    startDate.setFullYear(endDate.getFullYear() - 1);
+    return {
+      start: startDate.toISOString().split("T")[0],
+      end: endDate.toISOString().split("T")[0],
+    };
   });
   const [error, setError] = useState("");
   const reportRef = useRef(null);
@@ -24,33 +30,38 @@ export default function RelatorioFavoritosPage() {
       setLoading(true);
       setError("");
       try {
-        // 1. AUTENTICAÇÃO: Busca o ID da farmácia logada
         const userDataString = localStorage.getItem("userData");
         if (!userDataString) {
           throw new Error("Usuário não autenticado. Faça o login novamente.");
         }
-        const userData = JSON.parse(userDataString);
-        const idDaFarmacia = userData.farm_id; // Usando a chave 'farm_id' conforme o seu código
+        
+        // Adicionado try-catch para parsing de JSON
+        let userData;
+        try {
+          userData = JSON.parse(userDataString);
+        } catch (e) {
+          throw new Error("Sessão inválida. Faça o login novamente.");
+        }
 
+        const idDaFarmacia = userData?.farm_id;
         if (!idDaFarmacia) {
           throw new Error("Não foi possível identificar sua farmácia. Faça o login novamente.");
         }
         
-        // 2. VALIDAÇÃO: Chama a rota correta usando o ID da farmácia
         const response = await api.get(`/favoritos/${idDaFarmacia}/favoritos`);
         
         if (response.data.sucesso) {
-          const processedData = response.data.dados.map(med => ({
+          // A transformação dos dados foi movida para dentro do `setMedicamentos`
+          setMedicamentos(response.data.dados.map(med => ({
             id: med.med_id,
             nome: med.med_nome,
             fabricante: med.fabricante_nome,
             dosagem: med.med_dosagem,
             favoritacoes: med.favoritacoes_count,
-            dataFavorito: med.med_data_atualizacao, // Usando data_atualizacao como referência
-          }));
-          setMedicamentos(processedData);
+            dataFavorito: med.med_data_atualizacao,
+          })));
         } else {
-          throw new Error(response.data.mensagem);
+          throw new Error(response.data.mensagem || "A API retornou um erro, mas sem detalhes.");
         }
       } catch (err) {
         console.error("Falha na chamada à API de favoritos:", err);
@@ -63,14 +74,18 @@ export default function RelatorioFavoritosPage() {
     fetchFavoritos();
   }, []);
 
-  const filteredMedicamentos = medicamentos.filter((med) => {
-    const dataFavorito = new Date(med.dataFavorito);
+  // `useMemo` otimiza a performance, evitando recálculos desnecessários
+  const sortedMedicamentos = useMemo(() => {
     const startDate = new Date(dateRange.start);
     const endDate = new Date(dateRange.end);
-    return dataFavorito >= startDate && dataFavorito <= endDate;
-  });
-  
-  const sortedMedicamentos = [...filteredMedicamentos].sort((a, b) => b.favoritacoes - a.favoritacoes);
+    
+    const filtered = medicamentos.filter((med) => {
+      const dataFavorito = new Date(med.dataFavorito);
+      return dataFavorito >= startDate && dataFavorito <= endDate;
+    });
+
+    return [...filtered].sort((a, b) => b.favoritacoes - a.favoritacoes);
+  }, [medicamentos, dateRange]);
 
   const generateReport = () => {
     setReportGenerated(true);
@@ -125,62 +140,37 @@ export default function RelatorioFavoritosPage() {
             <nav className={styles.nav}>
               <div className={styles.navSection}>
                 <p className={styles.navLabel}>Principal</p>
-                <a
-                  href="/farmacias/favoritos"
-                  className={styles.navLink}
-                >
+                <a href="/farmacias/favoritos" className={styles.navLink}>
                   <span className={styles.navText}>Favoritos</span>
                 </a>
-                <a
-                  href="/farmacias/produtos/medicamentos"
-                  className={styles.navLink}
-                >
+                <a href="/farmacias/produtos/medicamentos" className={styles.navLink}>
                   <span className={styles.navText}>Medicamentos</span>
                 </a>
               </div>
-
               <div className={styles.navSection}>
                 <p className={styles.navLabel}>Gestão</p>
-                <a
-                  href="/farmacias/cadastro/funcionario/lista"
-                  className={styles.navLink}
-                >
+                <a href="/farmacias/cadastro/funcionario/lista" className={styles.navLink}>
                   <span className={styles.navText}>Funcionários</span>
                 </a>
                 <a href="/farmacias/laboratorio/lista" className={styles.navLink}>
                   <span className={styles.navText}>Laboratórios</span>
                 </a>
               </div>
-
               <div className={styles.navSection}>
                 <p className={styles.navLabel}>Relatórios</p>
-                <a
-                  href="/farmacias/relatorios/favoritos"
-                   className={`${styles.navLink} ${styles.active}`}
-                  
-                >
+                <a href="/farmacias/relatorios/favoritos" className={`${styles.navLink} ${styles.active}`}>
                   <span className={styles.navText}>Medicamentos Favoritos</span>
                 </a>
-                <a
-                  href="/farmacias/relatorios/funcionarios"
-                  className={styles.navLink}
-                >
+                <a href="/farmacias/relatorios/funcionarios" className={styles.navLink}>
                   <span className={styles.navText}>Relatório de Funcionarios</span>
                 </a>
-                <a
-                  href="/farmacias/relatorios/laboratorios"
-                 className={styles.navLink}
-                >
+                <a href="/farmacias/relatorios/laboratorios" className={styles.navLink}>
                   <span className={styles.navText}>Relatório de Laboratorios</span>
                 </a>
               </div>
-
               <div className={styles.navSection}>
                 <p className={styles.navLabel}>Conta</p>
-                <a
-                  href="/farmacias/perfil"
-                  className={styles.navLink}
-                >
+                <a href="/farmacias/perfil" className={styles.navLink}>
                   <span className={styles.navText}>Meu Perfil</span>
                 </a>
                 <button

@@ -23,10 +23,10 @@ export default function EditarMedicamento() {
   const [tiposProduto, setTiposProduto] = useState([]);
   const [formasFarmaceuticas, setFormasFarmaceuticas] = useState([]);
 
-  // Estados para gerenciar o upload da imagem
-  const [imagemFile, setImagemFile] = useState(null); // Armazena o novo arquivo de imagem
-  const [fileName, setFileName] = useState(""); // Nome do novo arquivo para exibição
-  const [existingImageUrl, setExistingImageUrl] = useState(""); // URL da imagem atual
+  const [imagemFile, setImagemFile] = useState(null);
+  const [fileName, setFileName] = useState("");
+  const [existingImageUrl, setExistingImageUrl] = useState("");
+  const [imagePreviewUrl, setImagePreviewUrl] = useState(null);
 
   useEffect(() => {
     if (id) {
@@ -55,7 +55,7 @@ export default function EditarMedicamento() {
             const medData = medicamentoResponse.data.dados;
             setMedicamento(medData);
             if (medData.med_imagem) {
-              setExistingImageUrl(medData.med_imagem); // Armazena a URL da imagem existente
+              setExistingImageUrl(medData.med_imagem);
             }
           } else {
             setError("Medicamento não encontrado ou não pertence a esta farmácia.");
@@ -73,7 +73,12 @@ export default function EditarMedicamento() {
       };
       fetchData();
     }
-  }, [id]);
+     return () => {
+      if (imagePreviewUrl) {
+        URL.revokeObjectURL(imagePreviewUrl);
+      }
+    };
+  }, [id, imagePreviewUrl]);
 
   const handleChange = (e) => {
     const { name, value, files } = e.target;
@@ -81,6 +86,15 @@ export default function EditarMedicamento() {
       const file = files[0];
       setImagemFile(file);
       setFileName(file ? file.name : "Nenhum arquivo selecionado");
+      
+      if (imagePreviewUrl) {
+        URL.revokeObjectURL(imagePreviewUrl);
+      }
+      if (file) {
+        setImagePreviewUrl(URL.createObjectURL(file));
+      } else {
+        setImagePreviewUrl(null);
+      }
     } else {
       setMedicamento(prevState => ({ ...prevState, [name]: value }));
     }
@@ -102,28 +116,22 @@ export default function EditarMedicamento() {
       
       const formData = new FormData();
       
-      // Adiciona todos os campos do formulário ao FormData
       Object.keys(medicamento).forEach(key => {
-        // Ignora chaves que não devem ser enviadas diretamente ou que serão tratadas separadamente.
         if (key !== 'med_imagem' && key !== 'farmacia_id' && medicamento[key] !== null) {
           formData.append(key, medicamento[key]);
         }
       });
 
-      // Adiciona o farmacia_id correto a partir dos dados do usuário logado
       formData.append('farmacia_id', farmaciaId);
 
-      // Se um novo arquivo de imagem foi selecionado, adicione-o
       if (imagemFile) {
         formData.append('med_imagem', imagemFile);
       }
       
-      // *** CORREÇÃO APLICADA AQUI: Trocando POST para PUT para seguir o padrão RESTful para edição. ***
-      const response = await api.put(`/medicamentos/${id}`, formData, {
-        headers: {
-          'Content-Type': 'multipart/form-data',
-        },
-      });
+      // --- CORREÇÃO APLICADA AQUI ---
+      // O objeto de configuração de headers foi removido.
+      // O Axios irá configurar o Content-Type e o boundary automaticamente.
+      const response = await api.put(`/medicamentos/${id}`, formData);
 
       if (response.data.sucesso) {
           setSuccess("Medicamento atualizado com sucesso!");
@@ -132,8 +140,7 @@ export default function EditarMedicamento() {
         throw new Error(response.data.mensagem || "A API indicou uma falha.");
       }
     } catch (err) {
-      // Melhor tratamento de erro para exibir a mensagem do servidor
-      setError(err.response?.data?.mensagem || err.message || "Erro ao conectar com o servidor. Verifique a conexão.");
+      setError(err.response?.data?.mensagem || err.message || "Erro ao conectar com o servidor.");
     } finally {
       setIsSubmitting(false);
     }
@@ -258,14 +265,11 @@ export default function EditarMedicamento() {
                   <h3 className={styles.sectionTitle}>Imagem e Descrição</h3>
                   <div className={styles.imageUploadSection}>
                     <div className={styles.imagePreviewContainer}>
-                        <label className={styles.inputLabel}>Imagem Atual</label>
-                        {existingImageUrl ? (
-                            // Monta a URL completa para a imagem e trata barras invertidas
-                            <img 
-                                src={`${api.defaults.baseURL}/${existingImageUrl.replace(/\\/g, '/')}`} 
-                                alt="Imagem atual do medicamento" 
-                                className={styles.currentImage} 
-                            />
+                        <label className={styles.inputLabel}>Imagem</label>
+                        {imagePreviewUrl ? (
+                            <img src={imagePreviewUrl} alt="Preview da nova imagem" className={styles.currentImage} />
+                        ) : existingImageUrl ? (
+                            <img src={existingImageUrl} alt="Imagem atual do medicamento" className={styles.currentImage} />
                         ) : (
                             <p className={styles.noImageText}>Nenhuma imagem cadastrada.</p>
                         )}

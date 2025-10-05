@@ -35,7 +35,7 @@ export default function ListaLaboratorios() {
           status: lab.lab_ativo ? "Ativo" : "Inativo",
           dataCadastro: lab.lab_data_cadastro,
           cnpj: lab.lab_cnpj,
-          logo: lab.lab_logo
+          logoUrl: lab.lab_logo_url // CORRIGIDO: Usar a URL completa da imagem
         }));
         setLaboratorios(labsFormatados);
       } else {
@@ -66,6 +66,7 @@ export default function ListaLaboratorios() {
         email: "contato@labvida.com",
         status: "Ativo",
         dataCadastro: "2023-01-15",
+        logoUrl: null, // Sem logo no mock
       },
       {
         id: 2,
@@ -75,33 +76,7 @@ export default function ListaLaboratorios() {
         email: "vendas@biopharma.com",
         status: "Ativo",
         dataCadastro: "2023-02-20",
-      },
-      {
-        id: 3,
-        nome: "PharmaTech",
-        endereco: "Rua C, 789",
-        telefone: "(31) 9777-7777",
-        email: "info@pharmatech.com",
-        status: "Inativo",
-        dataCadastro: "2023-03-10",
-      },
-      {
-        id: 4,
-        nome: "MedLab",
-        endereco: "Av. D, 101",
-        telefone: "(41) 9666-6666",
-        email: "suporte@medlab.com",
-        status: "Ativo",
-        dataCadastro: "2023-04-15",
-      },
-      {
-        id: 5,
-        nome: "HealthSolutions",
-        endereco: "Rua E, 202",
-        telefone: "(51) 9555-5555",
-        email: "contato@healthsolutions.com",
-        status: "Ativo",
-        dataCadastro: "2023-05-22",
+        logoUrl: null,
       },
     ];
     setLaboratorios(mockLabs);
@@ -305,9 +280,18 @@ export default function ListaLaboratorios() {
                           <tr key={lab.id}>
                             <td>
                               <div className={styles.labInfo}>
-                                <div className={styles.labAvatar}>
-                                  {lab.nome.charAt(0)}
-                                </div>
+                                {/* CORRIGIDO: Renderiza a imagem se a URL existir, senão, mostra a inicial */}
+                                {lab.logoUrl ? (
+                                  <img
+                                    src={lab.logoUrl}
+                                    alt={`Logo do ${lab.nome}`}
+                                    className={styles.labAvatar}
+                                  />
+                                ) : (
+                                  <div className={styles.labAvatar}>
+                                    {lab.nome.charAt(0)}
+                                  </div>
+                                )}
                                 <div>
                                   <div className={styles.labNome}>{lab.nome}</div>
                                   <div className={styles.labEmail}>{lab.email}</div>
