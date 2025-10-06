@@ -48,7 +48,6 @@ export default function PerfilUsuarioPage() {
         if (response.data.sucesso) {
           const apiData = response.data.dados;
           
-          // CORREÇÃO: Constrói a URL completa da imagem para que o navegador possa exibi-la.
           let fullAvatarUrl = apiData.farm_logo_url || apiData.farm_logo;
           if (fullAvatarUrl && !fullAvatarUrl.startsWith('http')) {
             const baseUrl = api.defaults.baseURL.endsWith('/') ? api.defaults.baseURL.slice(0, -1) : api.defaults.baseURL;
@@ -60,7 +59,7 @@ export default function PerfilUsuarioPage() {
               id: apiData.farm_id,
               nome: apiData.farm_nome,
               email: apiData.farm_email,
-              avatar: fullAvatarUrl, // Usa a URL completa construída
+              avatar: fullAvatarUrl,
               telefone: apiData.farm_telefone,
               dataNascimento: "1985-05-15",
               cpf: apiData.farm_cnpj,
@@ -126,7 +125,6 @@ export default function PerfilUsuarioPage() {
           const updatedUserData = { ...userData, ...formData };
           if (response.data.dados && (response.data.dados.farm_logo_url || response.data.dados.farm_logo)) {
               let newAvatarUrl = response.data.dados.farm_logo_url || response.data.dados.farm_logo;
-              // CORREÇÃO: Garante que a nova imagem também tenha a URL completa após o upload.
               if (newAvatarUrl && !newAvatarUrl.startsWith('http')) {
                 const baseUrl = api.defaults.baseURL.endsWith('/') ? api.defaults.baseURL.slice(0, -1) : api.defaults.baseURL;
                 const avatarPath = newAvatarUrl.startsWith('/') ? newAvatarUrl : `/${newAvatarUrl}`;
@@ -134,6 +132,10 @@ export default function PerfilUsuarioPage() {
               }
               updatedUserData.avatar = newAvatarUrl;
           }
+
+          const storedData = JSON.parse(localStorage.getItem("userData") || "{}");
+          const newStoredData = { ...storedData, farm_nome: updatedUserData.nome, farm_logo_url: updatedUserData.avatar };
+          localStorage.setItem("userData", JSON.stringify(newStoredData));
           
           setUserData(updatedUserData);
           setFormData(updatedUserData);
@@ -149,7 +151,7 @@ export default function PerfilUsuarioPage() {
   };
 
   const handleCancel = () => {
-    setFormData(userData); // Restaura todos os dados originais
+    setFormData(userData);
     setEditing(false);
     setLogoFile(null);
   };
@@ -214,7 +216,15 @@ export default function PerfilUsuarioPage() {
       </header>
       <div className={styles.contentWrapper}>
         <aside className={`${styles.sidebar} ${sidebarOpen ? styles.sidebarOpen : ""}`}>
-            <div className={styles.sidebarHeader}><div className={styles.logo}><span className={styles.logoText}>PharmaX</span></div><button className={styles.sidebarClose} onClick={() => setSidebarOpen(false)}>×</button></div>
+            {/* INÍCIO DA MODIFICAÇÃO */}
+            <div className={styles.sidebarHeader}>
+              <div className={styles.logo}>
+                {userData.avatar && <img src={userData.avatar} alt="Logo" className={styles.sidebarAvatar} />}
+                <span className={styles.logoText}>{userData.nome}</span>
+              </div>
+              <button className={styles.sidebarClose} onClick={() => setSidebarOpen(false)}>×</button>
+            </div>
+            {/* FIM DA MODIFICAÇÃO */}
             <nav className={styles.nav}><div className={styles.navSection}><p className={styles.navLabel}>Principal</p><a href="/farmacias/favoritos" className={styles.navLink}><span className={styles.navText}>Favoritos</span></a><a href="/farmacias/produtos/medicamentos" className={styles.navLink}><span className={styles.navText}>Medicamentos</span></a></div><div className={styles.navSection}><p className={styles.navLabel}>Gestão</p><a href="/farmacias/cadastro/funcionario/lista" className={styles.navLink}><span className={styles.navText}>Funcionários</span></a><a href="/farmacias/laboratorio/lista" className={styles.navLink}><span className={styles.navText}>Laboratórios</span></a></div><div className={styles.navSection}><p className={styles.navLabel}>Relatórios</p><a href="/farmacias/relatorios/favoritos" className={styles.navLink}><span className={styles.navText}>Medicamentos Favoritos</span></a><a href="/farmacias/relatorios/funcionarios" className={styles.navLink}><span className={styles.navText}>Relatório de Funcionarios</span></a><a href="/farmacias/relatorios/laboratorios" className={styles.navLink}><span className={styles.navText}>Relatório de Laboratorios</span></a></div><div className={styles.navSection}><p className={styles.navLabel}>Conta</p><a href="/farmacias/perfil" className={`${styles.navLink} ${styles.active}`}><span className={styles.navText}>Meu Perfil</span></a><button onClick={handleLogout} className={styles.navLink} style={{ background: 'none', border: 'none', width: '100%', textAlign: 'left', cursor: 'pointer' }}><span className={styles.navText}>Sair</span></button></div></nav>
         </aside>
         {sidebarOpen && (<div className={styles.overlay} onClick={() => setSidebarOpen(false)} />)}

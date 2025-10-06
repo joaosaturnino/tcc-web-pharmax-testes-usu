@@ -1,6 +1,6 @@
 "use client";
 import Link from "next/link";
-import { useEffect, useState, useRef, useMemo } from "react"; // Importado o useMemo
+import { useEffect, useState, useRef, useMemo } from "react";
 import { useRouter } from "next/navigation";
 import styles from "./page.module.css";
 import AuthGuard from "../../../componentes/AuthGuard";
@@ -11,7 +11,8 @@ export default function RelatorioFavoritosPage() {
   const [loading, setLoading] = useState(true);
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [reportGenerated, setReportGenerated] = useState(false);
-  // Otimizado o estado inicial das datas
+  // ADICIONADO: Estado para guardar informações do usuário/farmácia
+  const [userInfo, setUserInfo] = useState(null); 
   const [dateRange, setDateRange] = useState(() => {
     const endDate = new Date();
     const startDate = new Date();
@@ -35,10 +36,11 @@ export default function RelatorioFavoritosPage() {
           throw new Error("Usuário não autenticado. Faça o login novamente.");
         }
         
-        // Adicionado try-catch para parsing de JSON
         let userData;
         try {
           userData = JSON.parse(userDataString);
+          // ADICIONADO: Seta as informações do usuário no estado
+          setUserInfo(userData); 
         } catch (e) {
           throw new Error("Sessão inválida. Faça o login novamente.");
         }
@@ -51,7 +53,6 @@ export default function RelatorioFavoritosPage() {
         const response = await api.get(`/favoritos/${idDaFarmacia}/favoritos`);
         
         if (response.data.sucesso) {
-          // A transformação dos dados foi movida para dentro do `setMedicamentos`
           setMedicamentos(response.data.dados.map(med => ({
             id: med.med_id,
             nome: med.med_nome,
@@ -74,7 +75,6 @@ export default function RelatorioFavoritosPage() {
     fetchFavoritos();
   }, []);
 
-  // `useMemo` otimiza a performance, evitando recálculos desnecessários
   const sortedMedicamentos = useMemo(() => {
     const startDate = new Date(dateRange.start);
     const endDate = new Date(dateRange.end);
@@ -101,7 +101,7 @@ export default function RelatorioFavoritosPage() {
     router.push("/home");
   };
 
-  if (loading) {
+  if (loading && !userInfo) { // Modificado para aguardar userInfo também
     return (
       <div className={styles.loaderContainer}>
         <div className={styles.spinner}></div>
@@ -125,9 +125,11 @@ export default function RelatorioFavoritosPage() {
 
         <div className={styles.contentWrapper}>
           <aside className={`${styles.sidebar} ${sidebarOpen ? styles.sidebarOpen : ""}`}>
+            {/* INÍCIO DA MODIFICAÇÃO */}
             <div className={styles.sidebarHeader}>
               <div className={styles.logo}>
-                <span className={styles.logoText}>PharmaX</span>
+                {userInfo?.farm_logo_url && <img src={userInfo.farm_logo_url} alt="Logo" className={styles.sidebarAvatar} />}
+                <span className={styles.logoText}>{userInfo?.farm_nome || "PharmaX"}</span>
               </div>
               <button
                 className={styles.sidebarClose}
@@ -136,6 +138,7 @@ export default function RelatorioFavoritosPage() {
                 ×
               </button>
             </div>
+            {/* FIM DA MODIFICAÇÃO */}
 
             <nav className={styles.nav}>
               <div className={styles.navSection}>
@@ -186,6 +189,7 @@ export default function RelatorioFavoritosPage() {
           {sidebarOpen && (<div className={styles.overlay} onClick={() => setSidebarOpen(false)} />)}
 
           <main className={styles.mainContent}>
+            {/* O restante do código permanece o mesmo */}
             {error && (<div className={styles.errorMessage}><span>{error}</span></div>)}
             {!reportGenerated && (
               <div className={styles.controls}>

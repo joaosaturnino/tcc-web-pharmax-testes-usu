@@ -137,11 +137,28 @@
   z-index: 10;
 }
 
+/* INÍCIO DAS CLASSES ADICIONADAS */
 .logo {
   font-size: 2.2rem;
   font-weight: bold;
   color: #fff;
+  display: flex;
+  align-items: center;
 }
+
+.logoContainer {
+  display: flex;
+  align-items: center;
+  gap: 1.2rem;
+}
+
+.logoImage {
+  height: 40px;
+  width: 40px;
+  border-radius: 8px;
+  object-fit: cover;
+}
+/* FIM DAS CLASSES ADICIONADAS */
 
 .logoText {
   font-size: 1.8rem;
@@ -224,7 +241,7 @@
   text-align: center;
 }
 
-/* Conteúdo Principal - Mantido igual ao da tela de favoritos */
+/* Conteúdo Principal */
 .mainContent {
   flex: 1;
   padding: 32px 24px;
@@ -232,7 +249,6 @@
   min-height: 100vh;
 }
 
-/* Cabeçalho da página de laboratórios - Estilo similar ao da tela de favoritos */
 .listaHeader {
   margin-bottom: 32px;
 }
@@ -250,7 +266,6 @@
   font-size: 16px;
 }
 
-/* Container da tabela - Estilo de card similar aos da tela de favoritos */
 .tableContainer {
   background: white;
   border-radius: 12px;
@@ -265,7 +280,6 @@
   box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
 }
 
-/* Tabela de laboratórios */
 .laboratoriosTable {
   width: 100%;
   border-collapse: collapse;
@@ -304,7 +318,7 @@
   justify-content: center;
   font-weight: 600;
   font-size: 16px;
-  object-fit: cover; /* ADICIONADO: Garante que a imagem não se distorça */
+  object-fit: cover;
 }
 
 .labNome {
@@ -318,7 +332,6 @@
   color: #64748b;
 }
 
-/* Badges - Estilo similar ao da tela de favoritos */
 .statusBadge {
   padding: 6px 12px;
   border-radius: 12px;
@@ -337,7 +350,6 @@
   color: #d32f2f;
 }
 
-/* Botões de ação - Estilo similar aos da tela de favoritos */
 .acoes {
   display: flex;
   gap: 8px;
@@ -379,7 +391,6 @@
   transform: translateY(-1px);
 }
 
-/* Estado vazio - Estilo similar ao da tela de favoritos */
 .semRegistros {
   text-align: center;
   padding: 60px 30px;
@@ -388,7 +399,6 @@
   font-size: 16px;
 }
 
-/* Rodapé da lista - Estilo similar ao da tela de favoritos */
 .listaFooter {
   display: flex;
   justify-content: space-between;
@@ -405,7 +415,6 @@
   font-weight: 600;
 }
 
-/* Overlay para mobile - Mantido igual ao da tela de favoritos */
 .overlay {
   position: fixed;
   inset: 0;
@@ -414,7 +423,6 @@
   display: none;
 }
 
-/* Responsividade - Mantido igual ao da tela de favoritos com ajustes específicos */
 @media (max-width: 1024px) {
   .mainContent {
     padding: 24px 8px;

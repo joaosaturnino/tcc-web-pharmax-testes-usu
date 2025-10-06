@@ -11,14 +11,15 @@ export default function ListaFuncionariosPage() {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [funcionarios, setFuncionarios] = useState([]);
   const [filtro, setFiltro] = useState("");
-  const [loading, setLoading] = useState(true); // Inicia como true para carregar dados
+  const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
+  // ADICIONADO: Estado para armazenar os dados da farmácia
+  const [farmaciaInfo, setFarmaciaInfo] = useState(null);
 
   useEffect(() => {
     listarFuncionarios();
   }, []);
 
-  // CORRIGIDO: A função agora busca o farmacia_id e o envia para a API.
   const listarFuncionarios = async () => {
     setLoading(true);
     setError("");
@@ -28,13 +29,15 @@ export default function ListaFuncionariosPage() {
         throw new Error("Usuário não autenticado. Faça o login.");
       }
       const userData = JSON.parse(userDataString);
-      const farmaciaId = userData.farm_id; // Usando a chave 'id' que já confirmamos
+      // ADICIONADO: Salva os dados da farmácia no estado
+      setFarmaciaInfo(userData);
+      
+      const farmaciaId = userData.farm_id;
 
       if (!farmaciaId) {
         throw new Error("ID da farmácia não encontrado no seu login.");
       }
 
-      // Envia o ID da farmácia como parâmetro de query
       const response = await api.get(`/funcionario?farmacia_id=${farmaciaId}`);
       
       if (response.data.sucesso) {
@@ -48,7 +51,6 @@ export default function ListaFuncionariosPage() {
           endereco: func.func_endereco,
           usuario: func.func_usuario,
           nivelAcesso: func.func_nivel,
-          // Garante que a data de cadastro seja um valor válido
           dataCadastro: func.func_data_cadastro ? new Date(func.func_data_cadastro).toISOString().split('T')[0] : 'N/A'
         }));
         
@@ -72,7 +74,6 @@ export default function ListaFuncionariosPage() {
     router.push("/farmacias/cadastro/funcionario");
   };
 
-  // CORRIGIDO: A função agora envia o farmacia_id no corpo da requisição DELETE.
   const handleExcluir = async (funcionario) => {
     if (funcionario.nivelAcesso === "Administrador") {
       alert("Não é possível excluir um usuário com nível de acesso Administrador.");
@@ -90,7 +91,6 @@ export default function ListaFuncionariosPage() {
         if (!farmaciaId) throw new Error("ID da farmácia não encontrado.");
 
         const response = await api.delete(`/funcionario/${funcionario.id}`, {
-          // Envia o farmacia_id no corpo da requisição para validação no backend
           data: { farmacia_id: farmaciaId }
         });
         
@@ -140,15 +140,26 @@ export default function ListaFuncionariosPage() {
         </div>
       </header>
       <div className={styles.contentWrapper}>
+        {/* INÍCIO DA MODIFICAÇÃO DO SIDEBAR */}
         <aside className={`${styles.sidebar} ${sidebarOpen ? styles.sidebarOpen : ""}`}>
             <div className={styles.sidebarHeader}>
               <div className={styles.logo}>
-                <span className={styles.logoText}>PharmaX</span>
+                {farmaciaInfo ? (
+                  <div className={styles.logoContainer}>
+                    {farmaciaInfo.farm_logo_url && (
+                      <img src={farmaciaInfo.farm_logo_url} alt={`Logo de ${farmaciaInfo.farm_nome}`} className={styles.logoImage} />
+                    )}
+                    <span className={styles.logoText}>{farmaciaInfo.farm_nome}</span>
+                  </div>
+                ) : (
+                  <span className={styles.logoText}>PharmaX</span>
+                )}
               </div>
               <button className={styles.sidebarClose} onClick={() => setSidebarOpen(false)}>
                 ×
               </button>
             </div>
+            {/* FIM DA MODIFICAÇÃO DO SIDEBAR HEADER */}
             <nav className={styles.nav}>
               <div className={styles.navSection}>
                 <p className={styles.navLabel}>Principal</p>

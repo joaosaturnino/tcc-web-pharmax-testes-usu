@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react"; // ADICIONADO: useEffect
 import { useRouter } from "next/navigation";
 import styles from "./funcionario.module.css";
 import api from "../../../services/api"; 
@@ -12,6 +12,8 @@ export default function CadastroFuncionarioPage() {
   const router = useRouter();
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [loading, setLoading] = useState(false);
+  // ADICIONADO: Estado para armazenar os dados da farmácia
+  const [farmaciaInfo, setFarmaciaInfo] = useState(null);
 
   const [form, setForm] = useState({
     nome: "",
@@ -42,6 +44,14 @@ export default function CadastroFuncionarioPage() {
     confirmarSenha: { validado: valDefault, mensagem: [] },
     nivelAcesso: { validado: valDefault, mensagem: [] }
   });
+
+  // ADICIONADO: useEffect para carregar dados da farmácia ao montar a página
+  useEffect(() => {
+    const userDataString = localStorage.getItem("userData");
+    if (userDataString) {
+      setFarmaciaInfo(JSON.parse(userDataString));
+    }
+  }, []);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -233,7 +243,6 @@ export default function CadastroFuncionarioPage() {
       }
       const userData = JSON.parse(userDataString);
       
-      // ALTERADO: Conforme solicitado, usando a chave 'farm_id' e a variável 'idDaFarmacia'.
       const idDaFarmacia = userData.farm_id; 
       if (!idDaFarmacia) {
         throw new Error("ID da farmácia (farm_id) não encontrado nos dados do usuário logado.");
@@ -246,7 +255,7 @@ export default function CadastroFuncionarioPage() {
         func_cpf: form.cpf,
         func_dtnasc: form.dataNascimento,
         func_endereco: form.endereco,
-        farmacia_id: idDaFarmacia, // ALTERADO: Usando a nova variável.
+        farmacia_id: idDaFarmacia,
         func_usuario: form.usuario,
         func_senha: form.senha,
         // func_nivel: form.nivelAcesso,
@@ -282,13 +291,24 @@ export default function CadastroFuncionarioPage() {
         </div>
       </header>
       <div className={styles.contentWrapper}>
+        {/* INÍCIO DA MODIFICAÇÃO DO SIDEBAR */}
         <aside className={`${styles.sidebar} ${sidebarOpen ? styles.sidebarOpen : ""}`}>
             <div className={styles.sidebarHeader}>
               <div className={styles.logo}>
-                <span className={styles.logoText}>PharmaX</span>
+                {farmaciaInfo ? (
+                  <div className={styles.logoContainer}>
+                    {farmaciaInfo.farm_logo_url && (
+                      <img src={farmaciaInfo.farm_logo_url} alt={`Logo de ${farmaciaInfo.farm_nome}`} className={styles.logoImage} />
+                    )}
+                    <span className={styles.logoText}>{farmaciaInfo.farm_nome}</span>
+                  </div>
+                ) : (
+                  <span className={styles.logoText}>PharmaX</span>
+                )}
               </div>
               <button className={styles.sidebarClose} onClick={() => setSidebarOpen(false)}>×</button>
             </div>
+            {/* FIM DA MODIFICAÇÃO DO SIDEBAR HEADER */}
             <nav className={styles.nav}>
               <div className={styles.navSection}>
                 <p className={styles.navLabel}>Principal</p>

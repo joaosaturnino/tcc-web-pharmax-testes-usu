@@ -5,7 +5,7 @@ import { useRouter, useParams } from "next/navigation";
 import Link from 'next/link';
 import styles from "./edita.module.css";
 import api from "../../../../../services/api";
-import { MdUploadFile } from "react-icons/md"; // Ícone para o botão de upload
+import { MdUploadFile } from "react-icons/md";
 
 export default function EditarMedicamento() {
   const router = useRouter();
@@ -18,6 +18,9 @@ export default function EditarMedicamento() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
+  
+  // ADICIONADO: Estado para armazenar os dados da farmácia
+  const [farmaciaInfo, setFarmaciaInfo] = useState(null);
 
   const [laboratorios, setLaboratorios] = useState([]);
   const [tiposProduto, setTiposProduto] = useState([]);
@@ -36,6 +39,8 @@ export default function EditarMedicamento() {
           if (!userDataString) throw new Error("Usuário não autenticado. Faça o login.");
           
           const userData = JSON.parse(userDataString);
+          // ADICIONADO: Salva os dados da farmácia no estado
+          setFarmaciaInfo(userData);
           const farmaciaId = userData.farm_id; 
           if (!farmaciaId) throw new Error("ID da farmácia não encontrado no seu login.");
 
@@ -128,9 +133,6 @@ export default function EditarMedicamento() {
         formData.append('med_imagem', imagemFile);
       }
       
-      // --- CORREÇÃO APLICADA AQUI ---
-      // O objeto de configuração de headers foi removido.
-      // O Axios irá configurar o Content-Type e o boundary automaticamente.
       const response = await api.put(`/medicamentos/${id}`, formData);
 
       if (response.data.sucesso) {
@@ -185,17 +187,30 @@ export default function EditarMedicamento() {
         </div>
       </header>
       <div className={styles.contentWrapper}>
+        {/* INÍCIO DA MODIFICAÇÃO DO SIDEBAR */}
         <aside className={`${styles.sidebar} ${sidebarOpen ? styles.sidebarOpen : ""}`}>
-          <div className={styles.sidebarHeader}>
-            <div className={styles.logo}><span className={styles.logoText}>PharmaX</span></div>
-            <button className={styles.sidebarClose} onClick={() => setSidebarOpen(false)}>×</button>
-          </div>
-          <nav className={styles.nav}>
-            <div className={styles.navSection}><p className={styles.navLabel}>Principal</p><Link href="/farmacias/favoritos" className={styles.navLink}><span className={styles.navText}>Favoritos</span></Link><Link href="/farmacias/produtos/medicamentos" className={`${styles.navLink} ${styles.active}`}><span className={styles.navText}>Medicamentos</span></Link></div>
-            <div className={styles.navSection}><p className={styles.navLabel}>Gestão</p><Link href="/farmacias/cadastro/funcionario/lista" className={styles.navLink}><span className={styles.navText}>Funcionários</span></Link><Link href="/farmacias/laboratorio/lista" className={styles.navLink}><span className={styles.navText}>Laboratórios</span></Link></div>
-            <div className={styles.navSection}><p className={styles.navLabel}>Relatórios</p><Link href="/farmacias/relatorios/favoritos" className={styles.navLink}><span className={styles.navText}>Medicamentos Favoritos</span></Link><Link href="/farmacias/relatorios/funcionarios" className={styles.navLink}><span className={styles.navText}>Relatório de Funcionarios</span></Link><Link href="/farmacias/relatorios/laboratorios" className={styles.navLink}><span className={styles.navText}>Relatório de Laboratorios</span></Link></div>
-            <div className={styles.navSection}><p className={styles.navLabel}>Conta</p><Link href="/farmacias/perfil" className={styles.navLink}><span className={styles.navText}>Meu Perfil</span></Link><button onClick={handleLogout} className={styles.navLink} style={{ background: 'none', border: 'none', width: '100%', textAlign: 'left', cursor: 'pointer' }}><span className={styles.navText}>Sair</span></button></div>
-          </nav>
+            <div className={styles.sidebarHeader}>
+                <div className={styles.logo}>
+                    {farmaciaInfo ? (
+                        <div className={styles.logoContainer}>
+                            {farmaciaInfo.farm_logo_url && (
+                                <img src={farmaciaInfo.farm_logo_url} alt={`Logo de ${farmaciaInfo.farm_nome}`} className={styles.logoImage} />
+                            )}
+                            <span className={styles.logoText}>{farmaciaInfo.farm_nome}</span>
+                        </div>
+                    ) : (
+                        <span className={styles.logoText}>PharmaX</span>
+                    )}
+                </div>
+                <button className={styles.sidebarClose} onClick={() => setSidebarOpen(false)}>×</button>
+            </div>
+            {/* FIM DA MODIFICAÇÃO DO SIDEBAR HEADER */}
+            <nav className={styles.nav}>
+                <div className={styles.navSection}><p className={styles.navLabel}>Principal</p><Link href="/farmacias/favoritos" className={styles.navLink}><span className={styles.navText}>Favoritos</span></Link><Link href="/farmacias/produtos/medicamentos" className={`${styles.navLink} ${styles.active}`}><span className={styles.navText}>Medicamentos</span></Link></div>
+                <div className={styles.navSection}><p className={styles.navLabel}>Gestão</p><Link href="/farmacias/cadastro/funcionario/lista" className={styles.navLink}><span className={styles.navText}>Funcionários</span></Link><Link href="/farmacias/laboratorio/lista" className={styles.navLink}><span className={styles.navText}>Laboratórios</span></Link></div>
+                <div className={styles.navSection}><p className={styles.navLabel}>Relatórios</p><Link href="/farmacias/relatorios/favoritos" className={styles.navLink}><span className={styles.navText}>Medicamentos Favoritos</span></Link><Link href="/farmacias/relatorios/funcionarios" className={styles.navLink}><span className={styles.navText}>Relatório de Funcionarios</span></Link><Link href="/farmacias/relatorios/laboratorios" className={styles.navLink}><span className={styles.navText}>Relatório de Laboratorios</span></Link></div>
+                <div className={styles.navSection}><p className={styles.navLabel}>Conta</p><Link href="/farmacias/perfil" className={styles.navLink}><span className={styles.navText}>Meu Perfil</span></Link><button onClick={handleLogout} className={styles.navLink} style={{ background: 'none', border: 'none', width: '100%', textAlign: 'left', cursor: 'pointer' }}><span className={styles.navText}>Sair</span></button></div>
+            </nav>
         </aside>
         {sidebarOpen && <div className={styles.overlay} onClick={() => setSidebarOpen(false)} />}
         <main className={styles.mainContent}>

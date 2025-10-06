@@ -106,10 +106,27 @@
   font-size: 2.2rem;
   font-weight: bold;
   color: #fff;
+  /* Adicionado para alinhar imagem e texto */
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.logoContainer {
+  display: flex;
+  align-items: center;
+  gap: 1.2rem; /* Espaçamento entre a imagem e o nome */
+}
+
+.logoImage {
+   width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  object-fit: cover;
 }
 
 .logoText {
-  font-size: 2.5rem;
+  font-size: 1.8rem;
   font-weight: 600;
   color: #fff;
 }

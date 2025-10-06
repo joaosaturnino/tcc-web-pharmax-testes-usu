@@ -11,9 +11,20 @@ export default function ListaLaboratorios() {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [filtro, setFiltro] = useState("");
   const [loading, setLoading] = useState(true);
+  // ADICIONADO: Estado para armazenar os dados da farmácia
+  const [farmaciaInfo, setFarmaciaInfo] = useState(null); 
   const router = useRouter();
 
   useEffect(() => {
+    // ADICIONADO: Função para carregar dados do usuário/farmácia
+    const carregarInfoFarmacia = () => {
+      const userDataString = localStorage.getItem("userData");
+      if (userDataString) {
+        setFarmaciaInfo(JSON.parse(userDataString));
+      }
+    };
+    
+    carregarInfoFarmacia();
     listarLaboratorios();
   }, []);
 
@@ -25,7 +36,6 @@ export default function ListaLaboratorios() {
       
       if (response.data.sucesso === true) {
         const labsApi = response.data.dados;
-        // Mapear os dados da API para o formato usado no frontend
         const labsFormatados = labsApi.map(lab => ({
           id: lab.lab_id,
           nome: lab.lab_nome,
@@ -35,7 +45,7 @@ export default function ListaLaboratorios() {
           status: lab.lab_ativo ? "Ativo" : "Inativo",
           dataCadastro: lab.lab_data_cadastro,
           cnpj: lab.lab_cnpj,
-          logoUrl: lab.lab_logo_url // CORRIGIDO: Usar a URL completa da imagem
+          logoUrl: lab.lab_logo_url
         }));
         setLaboratorios(labsFormatados);
       } else {
@@ -48,39 +58,10 @@ export default function ListaLaboratorios() {
       } else {
         alert('Erro no front-end: ' + error.message);
       }
-      // Fallback para dados mock em caso de erro
-      carregarDadosMock();
     } finally {
       setLoading(false);
     }
   }
-
-  // Fallback com dados mock (mantido para caso a API não esteja disponível)
-  const carregarDadosMock = () => {
-    const mockLabs = [
-      {
-        id: 1,
-        nome: "LabVida",
-        endereco: "Rua A, 123",
-        telefone: "(11) 9999-9999",
-        email: "contato@labvida.com",
-        status: "Ativo",
-        dataCadastro: "2023-01-15",
-        logoUrl: null, // Sem logo no mock
-      },
-      {
-        id: 2,
-        nome: "BioPharma",
-        endereco: "Av. B, 456",
-        telefone: "(21) 9888-8888",
-        email: "vendas@biopharma.com",
-        status: "Ativo",
-        dataCadastro: "2023-02-20",
-        logoUrl: null,
-      },
-    ];
-    setLaboratorios(mockLabs);
-  };
 
   // Função para excluir laboratório
   const handleExcluir = async (id, nome) => {
@@ -90,7 +71,6 @@ export default function ListaLaboratorios() {
         
         if (response.data.sucesso === true) {
           alert(`Laboratório ${nome} excluído com sucesso!`);
-          // Atualiza a lista após exclusão
           listarLaboratorios();
         } else {
           alert('Erro: ' + response.data.mensagem);
@@ -124,31 +104,15 @@ export default function ListaLaboratorios() {
       {/* Header */}
       <header className={styles.header}>
         <div className={styles.headerLeft}>
-          <button
-            className={styles.menuToggle}
-            onClick={() => setSidebarOpen(!sidebarOpen)}
-          >
-            ☰
-          </button>
+          <button className={styles.menuToggle} onClick={() => setSidebarOpen(!sidebarOpen)}>☰</button>
           <h1 className={styles.title}> Laboratórios</h1>
         </div>
         <div className={styles.headerActions}>
-          {/* Barra de pesquisa adicionada */}
           <div className={styles.searchBox}>
-            <input
-              type="text"
-              placeholder="Pesquisar laboratórios..."
-              className={styles.searchInput}
-              value={filtro}
-              onChange={(e) => setFiltro(e.target.value)}
-            />
+            <input type="text" placeholder="Pesquisar laboratórios..." className={styles.searchInput} value={filtro} onChange={(e) => setFiltro(e.target.value)} />
             <span className={styles.searchIcon}>🔍</span>
           </div>
-          
-          <Link
-            href="/farmacias/laboratorio/cadastro"
-            className={styles.submitButton}
-          >
+          <Link href="/farmacias/laboratorio/cadastro" className={styles.submitButton}>
             <span className={styles.buttonIcon}>➕</span>
             Novo Laboratório
           </Link>
@@ -156,97 +120,35 @@ export default function ListaLaboratorios() {
       </header>
 
       <div className={styles.contentWrapper}>
-        {/* Sidebar Não Fixa - CÓDIGO ORIGINAL MANTIDO */}
+        {/* INÍCIO DA MODIFICAÇÃO DO SIDEBAR */}
         <aside className={`${styles.sidebar} ${sidebarOpen ? styles.sidebarOpen : ""}`}>
             <div className={styles.sidebarHeader}>
               <div className={styles.logo}>
-                <span className={styles.logoText}>PharmaX</span>
+                {farmaciaInfo ? (
+                  <div className={styles.logoContainer}>
+                    {farmaciaInfo.farm_logo_url && (
+                      <img src={farmaciaInfo.farm_logo_url} alt={`Logo de ${farmaciaInfo.farm_nome}`} className={styles.logoImage} />
+                    )}
+                    <span className={styles.logoText}>{farmaciaInfo.farm_nome}</span>
+                  </div>
+                ) : (
+                  <span className={styles.logoText}>PharmaX</span>
+                )}
               </div>
-              <button
-                className={styles.sidebarClose}
-                onClick={() => setSidebarOpen(false)}
-              >
-                ×
-              </button>
+              <button className={styles.sidebarClose} onClick={() => setSidebarOpen(false)}>×</button>
             </div>
+            {/* FIM DA MODIFICAÇÃO DO SIDEBAR HEADER */}
 
             <nav className={styles.nav}>
-              <div className={styles.navSection}>
-                <p className={styles.navLabel}>Principal</p>
-                <a
-                  href="/farmacias/favoritos"
-                  className={styles.navLink}
-                >
-                  <span className={styles.navText}>Favoritos</span>
-                </a>
-                <a
-                  href="/farmacias/produtos/medicamentos"
-                  className={styles.navLink}
-                >
-                  <span className={styles.navText}>Medicamentos</span>
-                </a>
-              </div>
-
-              <div className={styles.navSection}>
-                <p className={styles.navLabel}>Gestão</p>
-                <a
-                  href="/farmacias/cadastro/funcionario/lista"
-                  className={styles.navLink}
-                >
-                  <span className={styles.navText}>Funcionários</span>
-                </a>
-                <a href="/farmacias/laboratorio/lista" className={`${styles.navLink} ${styles.active}`}>
-                  <span className={styles.navText}>Laboratórios</span>
-                </a>
-              </div>
-
-              <div className={styles.navSection}>
-                <p className={styles.navLabel}>Relatórios</p>
-                <a
-                  href="/farmacias/relatorios/favoritos"
-                  className={styles.navLink}
-                >
-                  <span className={styles.navText}>Medicamentos Favoritos</span>
-                </a>
-                <a
-                  href="/farmacias/relatorios/funcionarios"
-                  className={styles.navLink}
-                >
-                  <span className={styles.navText}>Relatório de Funcionarios</span>
-                </a>
-                <a
-                  href="/farmacias/relatorios/laboratorios"
-                  className={styles.navLink}
-                >
-                  <span className={styles.navText}>Relatório de Laboratorios</span>
-                </a>
-              </div>
-
-              <div className={styles.navSection}>
-                <p className={styles.navLabel}>Conta</p>
-                <a
-                  href="/farmacias/perfil"
-                  className={styles.navLink}
-                >
-                  <span className={styles.navText}>Meu Perfil</span>
-                </a>
-                <button
-                  onClick={handleLogout}
-                  className={styles.navLink}
-                  style={{ background: 'none', border: 'none', width: '100%', textAlign: 'left', cursor: 'pointer' }}
-                >
-                  <span className={styles.navText}>Sair</span>
-                </button>
-              </div>
+              <div className={styles.navSection}><p className={styles.navLabel}>Principal</p><a href="/farmacias/favoritos" className={styles.navLink}><span className={styles.navText}>Favoritos</span></a><a href="/farmacias/produtos/medicamentos" className={styles.navLink}><span className={styles.navText}>Medicamentos</span></a></div>
+              <div className={styles.navSection}><p className={styles.navLabel}>Gestão</p><a href="/farmacias/cadastro/funcionario/lista" className={styles.navLink}><span className={styles.navText}>Funcionários</span></a><a href="/farmacias/laboratorio/lista" className={`${styles.navLink} ${styles.active}`}><span className={styles.navText}>Laboratórios</span></a></div>
+              <div className={styles.navSection}><p className={styles.navLabel}>Relatórios</p><a href="/farmacias/relatorios/favoritos" className={styles.navLink}><span className={styles.navText}>Medicamentos Favoritos</span></a><a href="/farmacias/relatorios/funcionarios" className={styles.navLink}><span className={styles.navText}>Relatório de Funcionarios</span></a><a href="/farmacias/relatorios/laboratorios" className={styles.navLink}><span className={styles.navText}>Relatório de Laboratorios</span></a></div>
+              <div className={styles.navSection}><p className={styles.navLabel}>Conta</p><a href="/farmacias/perfil" className={styles.navLink}><span className={styles.navText}>Meu Perfil</span></a><button onClick={handleLogout} className={styles.navLink} style={{ background: 'none', border: 'none', width: '100%', textAlign: 'left', cursor: 'pointer' }}><span className={styles.navText}>Sair</span></button></div>
             </nav>
           </aside>
 
-          {/* Overlay para mobile */}
-          {sidebarOpen && (
-            <div className={styles.overlay} onClick={() => setSidebarOpen(false)} />
-          )}
+          {sidebarOpen && (<div className={styles.overlay} onClick={() => setSidebarOpen(false)} />)}
 
-        {/* Conteúdo Principal */}
         <main className={styles.mainContent}>
           <div className={styles.formContainer}>
             <div className={styles.listaHeader}>
@@ -280,18 +182,7 @@ export default function ListaLaboratorios() {
                           <tr key={lab.id}>
                             <td>
                               <div className={styles.labInfo}>
-                                {/* CORRIGIDO: Renderiza a imagem se a URL existir, senão, mostra a inicial */}
-                                {lab.logoUrl ? (
-                                  <img
-                                    src={lab.logoUrl}
-                                    alt={`Logo do ${lab.nome}`}
-                                    className={styles.labAvatar}
-                                  />
-                                ) : (
-                                  <div className={styles.labAvatar}>
-                                    {lab.nome.charAt(0)}
-                                  </div>
-                                )}
+                                {lab.logoUrl ? (<img src={lab.logoUrl} alt={`Logo do ${lab.nome}`} className={styles.labAvatar} />) : (<div className={styles.labAvatar}>{lab.nome.charAt(0)}</div>)}
                                 <div>
                                   <div className={styles.labNome}>{lab.nome}</div>
                                   <div className={styles.labEmail}>{lab.email}</div>
@@ -300,36 +191,12 @@ export default function ListaLaboratorios() {
                             </td>
                             <td>{lab.endereco}</td>
                             <td>{lab.telefone}</td>
-                            <td>
-                              <span
-                                className={`${styles.statusBadge} ${
-                                  styles[lab.status.toLowerCase()]
-                                }`}
-                              >
-                                {lab.status}
-                              </span>
-                            </td>
-                            <td>
-                              {new Date(lab.dataCadastro).toLocaleDateString(
-                                "pt-BR"
-                              )}
-                            </td>
+                            <td><span className={`${styles.statusBadge} ${styles[lab.status.toLowerCase()]}`}>{lab.status}</span></td>
+                            <td>{new Date(lab.dataCadastro).toLocaleDateString("pt-BR")}</td>
                             <td>
                               <div className={styles.acoes}>
-                                <Link
-                                  href={`/farmacias/laboratorio/cadastro/editar/${lab.id}`}
-                                  className={styles.editarButton}
-                                  title="Editar laboratório"
-                                >
-                                  ✏️
-                                </Link>
-                                <button
-                                  className={styles.excluirButton}
-                                  onClick={() => handleExcluir(lab.id, lab.nome)}
-                                  title="Excluir laboratório"
-                                >
-                                  🗑️
-                                </button>
+                                <Link href={`/farmacias/laboratorio/cadastro/editar/${lab.id}`} className={styles.editarButton} title="Editar laboratório">✏️</Link>
+                                <button className={styles.excluirButton} onClick={() => handleExcluir(lab.id, lab.nome)} title="Excluir laboratório">🗑️</button>
                               </div>
                             </td>
                           </tr>
@@ -337,9 +204,7 @@ export default function ListaLaboratorios() {
                       ) : (
                         <tr>
                           <td colSpan="6" className={styles.semRegistros}>
-                            {filtro
-                              ? "Nenhum laboratório encontrado com o filtro aplicado"
-                              : "Nenhum laboratório cadastrado"}
+                            {filtro ? "Nenhum laboratório encontrado com o filtro aplicado" : "Nenhum laboratório cadastrado"}
                           </td>
                         </tr>
                       )}
@@ -348,9 +213,7 @@ export default function ListaLaboratorios() {
                 </div>
 
                 <div className={styles.listaFooter}>
-                  <div className={styles.totalRegistros}>
-                    Total: {laboratoriosFiltrados.length} laboratório(s)
-                  </div>
+                  <div className={styles.totalRegistros}>Total: {laboratoriosFiltrados.length} laboratório(s)</div>
                 </div>
               </>
             )}

@@ -6,10 +6,6 @@ import styles from "./cadastro.module.css";
 import AuthGuard from "../../../componentes/AuthGuard";
 import api from "../../../services/api";
 
-// REMOVIDO: A constante de imagem padrão não é mais necessária no frontend.
-// const imagemPadrao =
-//   "https://www.institutoaron.com.br/static/img/large/c28a030a59bae1283321c340cdc846df.webp";
-
 const currency =
   typeof Intl !== "undefined"
     ? new Intl.NumberFormat("pt-BR", { style: "currency", currency: "BRL" })
@@ -24,6 +20,8 @@ function ListagemMedicamentos() {
   const [medicamentos, setMedicamentos] = useState([]);
   const [loading, setLoading] = useState(true);
   const [sidebarOpen, setSidebarOpen] = useState(false);
+  // ADICIONADO: Estado para armazenar os dados da farmácia
+  const [farmaciaInfo, setFarmaciaInfo] = useState(null);
   const [modalAberto, setModalAberto] = useState(false);
   const [modalDetalhesAberto, setModalDetalhesAberto] = useState(false);
   const [medicamentoSelecionado, setMedicamentoSelecionado] = useState(null);
@@ -42,9 +40,6 @@ function ListagemMedicamentos() {
   const [itensPorPagina, setItensPorPagina] = useState(10);
   const router = useRouter();
 
-  // REMOVIDO: A função getImageUrl não é mais necessária.
-  // O frontend agora confia que o backend sempre enviará uma URL válida.
-
   useEffect(() => {
     const fetchMedicamentos = async () => {
       setErroApi("");
@@ -55,6 +50,8 @@ function ListagemMedicamentos() {
         }
         
         const userData = JSON.parse(userDataString);
+        // ADICIONADO: Salva os dados da farmácia no estado
+        setFarmaciaInfo(userData);
         const farmaciaId = userData.farm_id;
 
         if (!farmaciaId) {
@@ -74,7 +71,6 @@ function ListagemMedicamentos() {
             descricao: med.med_descricao || "Sem descrição disponível.",
             laboratorio: med.lab_nome || "Não especificado",
             preco: med.medp_preco || 0,
-            // CORRIGIDO: O campo 'imagem' agora contém a URL completa (real ou padrão) vinda do backend.
             imagem: med.med_imagem, 
             codigoBarras: med.med_cod_barras || "",
             med_ativo: med.med_ativo,
@@ -347,15 +343,26 @@ function ListagemMedicamentos() {
         </header>
 
         <div className={styles.contentWrapper}>
+          {/* INÍCIO DA MODIFICAÇÃO DO SIDEBAR */}
           <aside className={`${styles.sidebar} ${sidebarOpen ? styles.sidebarOpen : ""}`}>
             <div className={styles.sidebarHeader}>
               <div className={styles.logo}>
-                <span className={styles.logoText}>PharmaX</span>
+                {farmaciaInfo ? (
+                  <div className={styles.logoContainer}>
+                    {farmaciaInfo.farm_logo_url && (
+                      <img src={farmaciaInfo.farm_logo_url} alt={`Logo de ${farmaciaInfo.farm_nome}`} className={styles.logoImage} />
+                    )}
+                    <span className={styles.logoText}>{farmaciaInfo.farm_nome}</span>
+                  </div>
+                ) : (
+                  <span className={styles.logoText}>PharmaX</span>
+                )}
               </div>
               <button className={styles.sidebarClose} onClick={() => setSidebarOpen(false)}>
                 ×
               </button>
             </div>
+            {/* FIM DA MODIFICAÇÃO DO SIDEBAR HEADER */}
             <nav className={styles.nav}>
               <div className={styles.navSection}>
                 <p className={styles.navLabel}>Principal</p>
@@ -487,7 +494,6 @@ function ListagemMedicamentos() {
                     {medicamentosPaginados.map((med) => (
                       <tr key={med.id} className={`${styles.tableRow} ${med.status === "inativo" ? styles.inativo : ""}`}>
                         <td>
-                          {/* CORRIGIDO: Usa a URL diretamente da API */}
                           <img src={med.imagem} alt={med.nome} className={styles.medicamentoImagem} />
                         </td>
                         <td>
@@ -525,7 +531,6 @@ function ListagemMedicamentos() {
                   {medicamentosPaginados.map((med) => (
                     <div key={med.id} className={`${styles.medicamentoCard} ${med.status === "inativo" ? styles.inativo : ""}`}>
                       <div className={styles.cardHeader}>
-                        {/* CORRIGIDO: Usa a URL diretamente da API */}
                         <img src={med.imagem} alt={med.nome} className={styles.cardImagem} />
                         <span className={`${styles.cardStatus} ${med.status === "ativo" ? styles.statusAtivo : styles.statusInativo}`}>
                           {med.status === "ativo" ? "Ativo" : "Inativo"}
@@ -625,7 +630,6 @@ function ListagemMedicamentos() {
                   <div className={styles.medicamentoExistente}>
                     <h3>Medicamento já cadastrado no sistema</h3>
                     <div className={styles.existenteInfo}>
-                      {/* CORRIGIDO: Usa a URL diretamente da API */}
                       <img src={medicamentoExistente.imagem} alt={medicamentoExistente.nome} className={styles.existenteImagem} />
                       <div className={styles.existenteDetalhes}>
                         <p><strong>Nome:</strong> {medicamentoExistente.nome}</p>
@@ -674,7 +678,6 @@ function ListagemMedicamentos() {
               <div className={styles.modalContent}>
                 <div className={styles.detalhesContainer}>
                   <div className={styles.detalhesImagem}>
-                    {/* CORRIGIDO: Usa a URL diretamente da API */}
                     <img src={medicamentoSelecionado.imagem} alt={medicamentoSelecionado.nome} className={styles.detalhesImg} />
                   </div>
                   <div className={styles.detalhesInfo}>

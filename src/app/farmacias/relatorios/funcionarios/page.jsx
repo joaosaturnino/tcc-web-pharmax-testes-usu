@@ -9,6 +9,8 @@ export default function RelatorioFuncionariosPage() {
   const [funcionarios, setFuncionarios] = useState([]);
   const [loading, setLoading] = useState(true);
   const [sidebarOpen, setSidebarOpen] = useState(false);
+  // ADICIONADO: Estado para armazenar os dados da farmácia
+  const [farmaciaInfo, setFarmaciaInfo] = useState(null);
   const [currentPage, setCurrentPage] = useState(1);
   const [itemsPerPage] = useState(10);
   const [reportGenerated, setReportGenerated] = useState(false);
@@ -28,23 +30,23 @@ export default function RelatorioFuncionariosPage() {
     listarFuncionarios();
   }, []);
 
-  // CORRIGIDO: Validação e autenticação do ID da farmácia logada adicionada
   const listarFuncionarios = async () => {
     setLoading(true);
     setError("");
     try {
-      // 1. AUTENTICAÇÃO: Busca o ID da farmácia logada
       const userDataString = localStorage.getItem("userData");
       if (!userDataString) {
         throw new Error("Usuário não autenticado.");
       }
       const userData = JSON.parse(userDataString);
+      // ADICIONADO: Salva os dados da farmácia no estado
+      setFarmaciaInfo(userData);
+
       const idDaFarmacia = userData.farm_id;
       if (!idDaFarmacia) {
         throw new Error("ID da farmácia não encontrado.");
       }
       
-      // 2. VALIDAÇÃO: Envia o ID da farmácia para o backend
       const response = await api.get(`/funcionario?farmacia_id=${idDaFarmacia}`);
 
       if (response.data.sucesso) {
@@ -58,7 +60,7 @@ export default function RelatorioFuncionariosPage() {
           endereco: func.func_endereco,
           usuario: func.func_usuario,
           nivelAcesso: func.func_nivel,
-          status: func.func_ativo ? "ativo" : "inativo", // Usando o status real da API se existir
+          status: func.func_ativo ? "ativo" : "inativo",
           dataCadastro: func.func_dtcad ? new Date(func.func_dtcad).toISOString().split('T')[0] : new Date().toISOString().split('T')[0]
         }));
         setFuncionarios(funcionariosFormatados);
@@ -73,7 +75,6 @@ export default function RelatorioFuncionariosPage() {
     }
   };
 
-  // ... (O restante do seu código, como filtros, paginação, etc., permanece igual)
   const filteredFuncionarios = funcionarios.filter((func) => {
     const dataCadastro = new Date(func.dataCadastro);
     const startDate = new Date(dateRange.start);
@@ -130,7 +131,6 @@ export default function RelatorioFuncionariosPage() {
 
   return (
     <div className={styles.dashboard}>
-      {/* ... (O restante do seu JSX permanece igual) ... */}
        <header className={styles.header}>
         <div className={styles.headerLeft}>
           <button className={styles.menuToggle} onClick={() => setSidebarOpen(!sidebarOpen)}>☰</button>
@@ -142,8 +142,24 @@ export default function RelatorioFuncionariosPage() {
       </header>
 
       <div className={styles.contentWrapper}>
+        {/* INÍCIO DA MODIFICAÇÃO DO SIDEBAR */}
         <aside className={`${styles.sidebar} ${sidebarOpen ? styles.sidebarOpen : ""}`}>
-          <div className={styles.sidebarHeader}><div className={styles.logo}><span className={styles.logoText}>PharmaX</span></div><button className={styles.sidebarClose} onClick={() => setSidebarOpen(false)}>×</button></div>
+          <div className={styles.sidebarHeader}>
+            <div className={styles.logo}>
+              {farmaciaInfo ? (
+                <div className={styles.logoContainer}>
+                  {farmaciaInfo.farm_logo_url && (
+                    <img src={farmaciaInfo.farm_logo_url} alt={`Logo de ${farmaciaInfo.farm_nome}`} className={styles.logoImage} />
+                  )}
+                  <span className={styles.logoText}>{farmaciaInfo.farm_nome}</span>
+                </div>
+              ) : (
+                <span className={styles.logoText}>PharmaX</span>
+              )}
+            </div>
+            <button className={styles.sidebarClose} onClick={() => setSidebarOpen(false)}>×</button>
+          </div>
+          {/* FIM DA MODIFICAÇÃO DO SIDEBAR HEADER */}
           <nav className={styles.nav}>
             <div className={styles.navSection}><p className={styles.navLabel}>Principal</p><a href="/farmacias/favoritos" className={styles.navLink}><span className={styles.navText}>Favoritos</span></a><a href="/farmacias/produtos/medicamentos" className={styles.navLink}><span className={styles.navText}>Medicamentos</span></a></div>
             <div className={styles.navSection}><p className={styles.navLabel}>Gestão</p><a href="/farmacias/cadastro/funcionario/lista" className={styles.navLink}><span className={styles.navText}>Funcionários</span></a><a href="/farmacias/laboratorio/lista" className={styles.navLink}><span className={styles.navText}>Laboratórios</span></a></div>
@@ -172,7 +188,7 @@ export default function RelatorioFuncionariosPage() {
               <thead><tr><th className={styles.sortableHeader} onClick={() => handleSort("nome")}>Nome {getSortIcon("nome")}</th><th>E-mail</th><th>Telefone</th><th>CPF</th><th>Usuário</th><th className={styles.sortableHeader} onClick={() => handleSort("nivelAcesso")}>Nível {getSortIcon("nivelAcesso")}</th><th className={styles.sortableHeader} onClick={() => handleSort("status")}>Status {getSortIcon("status")}</th><th className={styles.sortableHeader} onClick={() => handleSort("dataCadastro")}>Cadastro {getSortIcon("dataCadastro")}</th></tr></thead>
               <tbody>
                 {(reportGenerated ? sortedFuncionarios : currentItems).map((funcionario) => (
-                  <tr key={funcionario.id}><td className={styles.medName}>{funcionario.nome}</td><td>{funcionario.email}</td><td>{funcionario.telefone}</td><td>{funcionario.cpf}</td><td>{funcionario.usuario}</td><td><span className={`${styles.statusBadge} ${styles[funcionario.nivelAcesso.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "")]}`}>{funcionario.nivelAcesso}</span></td><td><span className={`${styles.statusBadge} ${funcionario.status === "ativo" ? styles.inStock : styles.outStock}`}>{funcionario.status === "ativo" ? "Ativo" : "Inativo"}</span></td><td>{new Date(funcionario.dataCadastro).toLocaleDateString("pt-BR", { timeZone: 'UTC' })}</td></tr>
+                  <tr key={funcionario.id}><td className={styles.medName}>{funcionario.nome}</td><td>{funcionario.email}</td><td>{funcionario.telefone}</td><td>{funcionario.cpf}</td><td>{funcionario.usuario}</td><td><span className={`${styles.statusBadge} ${styles[(funcionario.nivelAcesso || '').toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "")]}`}>{funcionario.nivelAcesso}</span></td><td><span className={`${styles.statusBadge} ${funcionario.status === "ativo" ? styles.inStock : styles.outStock}`}>{funcionario.status === "ativo" ? "Ativo" : "Inativo"}</span></td><td>{new Date(funcionario.dataCadastro).toLocaleDateString("pt-BR", { timeZone: 'UTC' })}</td></tr>
                 ))}
               </tbody>
             </table>

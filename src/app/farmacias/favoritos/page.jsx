@@ -13,6 +13,7 @@ export default function FavoritosFarmaciaPage() {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
   const [itemsPerPage] = useState(10);
+  const [farmaciaInfo, setFarmaciaInfo] = useState(null); // Estado para dados da farmácia
   const router = useRouter();
 
   // --- FUNÇÃO DE LOGOUT ---
@@ -36,6 +37,8 @@ export default function FavoritosFarmaciaPage() {
 
         // Passo 2: Extrair o ID da farmácia.
         const userData = JSON.parse(userDataString);
+        setFarmaciaInfo(userData); // Salva os dados do usuário/farmácia no estado
+
         // IMPORTANTE: Confirme se a propriedade do ID no objeto userData é 'farm_id'.
         const idDaFarmacia = userData.farm_id;
 
@@ -45,8 +48,7 @@ export default function FavoritosFarmaciaPage() {
           return; // Interrompe a execução se o ID não for encontrado
         }
         
-        // ALTERAÇÃO: A chamada à API agora usa o ID da farmácia para buscar dados específicos.
-        // A URL foi alterada de '/favoritos' para um endpoint dinâmico.
+        // A chamada à API agora usa o ID da farmácia para buscar dados específicos.
         const response = await api.get(`/favoritos/${idDaFarmacia}/favoritos`);
         
         if (response.data.sucesso) {
@@ -116,7 +118,23 @@ export default function FavoritosFarmaciaPage() {
           <aside className={`${styles.sidebar} ${sidebarOpen ? styles.sidebarOpen : ""}`}>
             <div className={styles.sidebarHeader}>
               <div className={styles.logo}>
-                <span className={styles.logoText}>PharmaX</span>
+                {/* Lógica atualizada para exibir a imagem E o nome */}
+                {farmaciaInfo ? (
+                  <div className={styles.logoContainer}>
+                    {farmaciaInfo.farm_logo_url && (
+                      <img
+                        src={farmaciaInfo.farm_logo_url}
+                        alt={`Logo de ${farmaciaInfo.farm_nome}`}
+                        className={styles.logoImage} 
+                      />
+                    )}
+                    <span className={styles.logoText}>
+                      {farmaciaInfo.farm_nome}
+                    </span>
+                  </div>
+                ) : (
+                  <span className={styles.logoText}>PharmaX</span>
+                )}
               </div>
               <button className={styles.sidebarClose} onClick={() => setSidebarOpen(false)}>
                 ×

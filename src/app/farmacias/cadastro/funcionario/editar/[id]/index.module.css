@@ -43,7 +43,7 @@
 .title {
  font-size: 2.8rem;
   font-weight: 600;
-  color: #1e293b;
+  color: #1e2gch
   margin: 0;
   background: linear-gradient(135deg, #191970 0%, #458B00 100%);
   -webkit-background-clip: text;
@@ -115,11 +115,28 @@
   z-index: 10;
 }
 
+/* INÍCIO DAS MODIFICAÇÕES */
 .logo {
   font-size: 2.2rem;
   font-weight: bold;
   color: #fff;
+  display: flex;
+  align-items: center;
 }
+
+.logoContainer {
+    display: flex;
+    align-items: center;
+    gap: 1.2rem;
+}
+
+.logoImage {
+    height: 40px;
+    width: 40px;
+    border-radius: 8px;
+    object-fit: cover;
+}
+/* FIM DAS MODIFICAÇÕES */
 
 .logoText {
   font-size: 1.8rem;

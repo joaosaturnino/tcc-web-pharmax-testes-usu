@@ -112,11 +112,25 @@
   z-index: 10;
 }
 
+/* INÍCIO DA MODIFICAÇÃO */
 .logo {
   font-size: 2.2rem;
   font-weight: bold;
   color: #fff;
+  /* Adicionado para alinhar imagem e texto */
+  display: flex;
+  align-items: center;
+  gap: 12px;
 }
+
+/* NOVO: Estilo para a imagem da logo no menu lateral */
+.sidebarAvatar {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  object-fit: cover;
+}
+/* FIM DA MODIFICAÇÃO */
 
 .logoText {
   font-size: 1.8rem;
@@ -199,7 +213,7 @@
   text-align: center;
 }
 
-/* Conteúdo Principal */
+/* O restante do CSS permanece o mesmo */
 .mainContent {
   flex: 1;
   padding: 3.2rem 2.4rem;
@@ -207,7 +221,6 @@
   min-height: 100vh;
 }
 
-/* Cabeçalho do relatório */
 .reportHeader {
   display: flex;
   align-items: center;
@@ -237,7 +250,6 @@
   font-size: 1.6rem;
 }
 
-/* Informações do relatório */
 .reportInfo {
   margin-bottom: 1.8rem;
   color: #444;
@@ -249,7 +261,6 @@
   margin: 0 0 0.4rem 0;
 }
 
-/* Controles */
 .controls {
   margin-bottom: 1.8rem;
 }
@@ -286,7 +297,6 @@
   font-size: 1.8rem;
 }
 
-/* Container do relatório */
 .reportContainer {
   background: #fff;
   border-radius: 1.2rem;
@@ -296,7 +306,6 @@
   overflow-x: auto;
 }
 
-/* Tabela de relatório */
 .reportTable {
   width: 100%;
   border-collapse: collapse;
@@ -341,7 +350,6 @@
   color: #191970;
 }
 
-/* Badges de status */
 .statusBadge {
   display: inline-block;
   padding: 0.4rem 1rem;
@@ -366,7 +374,6 @@
   color: #ff9800;
 }
 
-/* Badges específicas para níveis de acesso */
 .administrador {
   background: #e6f7e6;
   color: #458B00;
@@ -388,7 +395,6 @@
   color: #555;
 }
 
-/* Resumo do relatório */
 .reportSummary {
   margin-top: 1.2rem;
 }
@@ -427,7 +433,6 @@
   color: #458B00;
 }
 
-/* Empty State */
 .emptyState {
   text-align: center;
   padding: 4rem 0;
@@ -444,7 +449,6 @@
   font-size: 1.5rem;
 }
 
-/* Loader */
 .loaderContainer {
   display: flex;
   flex-direction: column;
@@ -468,7 +472,6 @@
   to { transform: rotate(360deg); }
 }
 
-/* Overlay para mobile */
 .overlay {
   position: fixed;
   inset: 0;
@@ -476,14 +479,12 @@
   z-index: 80;
 }
 
-/* Informações de paginação */
 .paginationInfo {
   margin-bottom: 0.8rem;
   color: #555;
   font-size: 1.4rem;
 }
 
-/* Controles de paginação */
 .paginationControls {
   display: flex;
   align-items: center;
@@ -538,7 +539,6 @@
   color: #fff;
 }
 
-/* Rodapé do relatório (visível apenas na impressão) */
 .reportFooter {
   display: none;
   margin-top: 2.4rem;
@@ -547,19 +547,16 @@
   font-size: 1.4rem;
 }
 
-/* Esconde o botão de fechar em telas grandes */
 .sidebarClose {
   display: none;
 }
 
-/* Mostra o botão de fechar apenas em telas pequenas */
 @media (max-width: 9rem) {
   .sidebarClose {
     display: block;
   }
 }
 
-/* Melhorias para impressão */
 @media print {
   body * {
     visibility: hidden !important;
@@ -588,7 +585,6 @@
   }
 }
 
-/* Responsividade */
 @media (max-width: 64rem) {
   .mainContent {
     padding: 2.4rem 0.8rem;
@@ -639,7 +635,6 @@
   }
 }
 
-/* Estilo para o modo de impressão ativo */
 @media screen {
   .reportMode .reportHeader,
   .reportMode .reportTable,

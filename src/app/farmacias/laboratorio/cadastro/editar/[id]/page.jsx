@@ -3,15 +3,17 @@
 import { useState, useEffect } from "react";
 import { useRouter, useParams } from "next/navigation";
 import styles from "./edita.module.css";
-import api from "../../../../../services/api"; // Ajuste o caminho conforme sua estrutura
+import api from "../../../../../services/api";
 
 export default function EditarLaboratorioPage() {
   const router = useRouter();
-  const params = useParams(); // Hook para pegar parâmetros da URL, como o ID
-  const { id: lab_id } = params; // Renomeando id para lab_id para clareza
+  const params = useParams();
+  const { id: lab_id } = params;
 
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [loading, setLoading] = useState(true);
+  // ADICIONADO: Estado para armazenar os dados da farmácia
+  const [farmaciaInfo, setFarmaciaInfo] = useState(null);
   
   const [form, setForm] = useState({
     lab_nome: "",
@@ -19,24 +21,28 @@ export default function EditarLaboratorioPage() {
     lab_endereco: "",
     lab_telefone: "",
     lab_email: "",
-    lab_ativo: 1, // Assumindo 1 como 'ativo'
+    lab_ativo: 1,
   });
-  const [logoFile, setLogoFile] = useState(null); // Estado separado para o arquivo do logo
-  const [preview, setPreview] = useState(null); // Estado para a pré-visualização do logo
+  const [logoFile, setLogoFile] = useState(null);
+  const [preview, setPreview] = useState(null);
   const [dataCadastro, setDataCadastro] = useState("");
 
-  // Carrega os dados da API ao inicializar o componente
   useEffect(() => {
+    // ADICIONADO: Lógica para carregar informações da farmácia do localStorage
+    const userDataString = localStorage.getItem("userData");
+    if (userDataString) {
+      setFarmaciaInfo(JSON.parse(userDataString));
+    }
+
     if (lab_id) {
       const fetchLaboratorio = async () => {
         setLoading(true);
         try {
-          const response = await api.get("/laboratorios");
-          const laboratorioData = response.data.dados.find(
-            (lab) => lab.lab_id == lab_id
-          );
-
-          if (laboratorioData) {
+          // MODIFICADO: Busca o laboratório específico em vez da lista completa
+          const response = await api.get(`/laboratorios/${lab_id}`);
+          
+          if (response.data.sucesso) {
+            const laboratorioData = response.data.dados;
             setForm({
               lab_nome: laboratorioData.lab_nome || "",
               lab_cnpj: laboratorioData.lab_cnpj || "",
@@ -46,14 +52,18 @@ export default function EditarLaboratorioPage() {
               lab_ativo: laboratorioData.lab_ativo,
             });
             
-            // Formata e define a data de cadastro
             const data = new Date(laboratorioData.lab_data_cadastro);
             setDataCadastro(data.toISOString().split('T')[0]);
 
+            // Lógica para construir a URL completa da imagem vinda da API
             if (laboratorioData.lab_logo) {
-              const apiUrl = process.env.NEXT_PUBLIC_API_URL;
-              const apiPorta = process.env.NEXT_PUBLIC_API_PORTA;
-              setPreview(`${apiUrl}:${apiPorta}${laboratorioData.lab_logo}`);
+              let logoUrl = laboratorioData.lab_logo;
+              if (!logoUrl.startsWith('http')) {
+                const baseUrl = api.defaults.baseURL.endsWith('/') ? api.defaults.baseURL.slice(0, -1) : api.defaults.baseURL;
+                const logoPath = logoUrl.startsWith('/') ? logoUrl : `/${logoUrl}`;
+                logoUrl = `${baseUrl}${logoPath}`;
+              }
+              setPreview(logoUrl);
             }
           } else {
             alert("Laboratório não encontrado!");
@@ -97,6 +107,7 @@ export default function EditarLaboratorioPage() {
     }
 
     try {
+      // Usando PUT para atualização
       await api.put(`/laboratorios/${lab_id}`, formData, {
         headers: {
           "Content-Type": "multipart/form-data",
@@ -111,17 +122,10 @@ export default function EditarLaboratorioPage() {
     }
   };
 
-  const handleDelete = async () => {
-    if (confirm("Tem certeza que deseja excluir este laboratório?")) {
-      try {
-        await api.delete(`/laboratorios/${lab_id}`);
-        alert("Laboratório excluído com sucesso!");
-        router.push("/farmacias/laboratorio/lista");
-      } catch (error) {
-        console.error("Erro ao excluir o laboratório:", error);
-        alert("Não foi possível excluir o laboratório.");
-      }
-    }
+  const handleLogout = async () => {
+    localStorage.removeItem("authToken");
+    localStorage.removeItem("userData");
+    router.push("/home");
   };
 
   if (loading) {
@@ -133,21 +137,11 @@ export default function EditarLaboratorioPage() {
     );
   }
 
-  const handleLogout = async () => {
-    localStorage.removeItem("authToken");
-    localStorage.removeItem("userData");
-    router.push("/home");
-  };
-
   return (
     <div className={styles.dashboard}>
-      {/* Header */}
       <header className={styles.header}>
         <div className={styles.headerLeft}>
-          <button
-            className={styles.menuToggle}
-            onClick={() => setSidebarOpen(!sidebarOpen)}
-          >
+          <button className={styles.menuToggle} onClick={() => setSidebarOpen(!sidebarOpen)}>
             ☰
           </button>
           <h1 className={styles.title}> Editar Laboratório</h1>
@@ -155,41 +149,39 @@ export default function EditarLaboratorioPage() {
       </header>
 
       <div className={styles.contentWrapper}>
-        {/* Sidebar Não Fixa */}
+        {/* INÍCIO DA MODIFICAÇÃO DO SIDEBAR */}
         <aside className={`${styles.sidebar} ${sidebarOpen ? styles.sidebarOpen : ""}`}>
             <div className={styles.sidebarHeader}>
               <div className={styles.logo}>
-                <span className={styles.logoText}>PharmaX</span>
+                {farmaciaInfo ? (
+                  <div className={styles.logoContainer}>
+                    {farmaciaInfo.farm_logo_url && (
+                      <img src={farmaciaInfo.farm_logo_url} alt={`Logo de ${farmaciaInfo.farm_nome}`} className={styles.logoImage} />
+                    )}
+                    <span className={styles.logoText}>{farmaciaInfo.farm_nome}</span>
+                  </div>
+                ) : (
+                  <span className={styles.logoText}>PharmaX</span>
+                )}
               </div>
-              <button
-                className={styles.sidebarClose}
-                onClick={() => setSidebarOpen(false)}
-              >
+              <button className={styles.sidebarClose} onClick={() => setSidebarOpen(false)}>
                 ×
               </button>
             </div>
+            {/* Links de navegação completos para consistência */}
             <nav className={styles.nav}>
-              {/* Seus links de navegação aqui */}
-              <a href="/farmacias/laboratorio/lista" className={`${styles.navLink} ${styles.active}`}>
-                <span className={styles.navText}>Laboratórios</span>
-              </a>
-              {/* ...outros links... */}
-              <button
-                  onClick={handleLogout}
-                  className={styles.navLink}
-                  style={{ background: 'none', border: 'none', width: '100%', textAlign: 'left', cursor: 'pointer' }}
-                >
-                  <span className={styles.navText}>Sair</span>
-                </button>
+              <div className={styles.navSection}><p className={styles.navLabel}>Principal</p><a href="/farmacias/favoritos" className={styles.navLink}><span className={styles.navText}>Favoritos</span></a><a href="/farmacias/produtos/medicamentos" className={styles.navLink}><span className={styles.navText}>Medicamentos</span></a></div>
+              <div className={styles.navSection}><p className={styles.navLabel}>Gestão</p><a href="/farmacias/cadastro/funcionario/lista" className={styles.navLink}><span className={styles.navText}>Funcionários</span></a><a href="/farmacias/laboratorio/lista" className={`${styles.navLink} ${styles.active}`}><span className={styles.navText}>Laboratórios</span></a></div>
+              <div className={styles.navSection}><p className={styles.navLabel}>Relatórios</p><a href="/farmacias/relatorios/favoritos" className={styles.navLink}><span className={styles.navText}>Medicamentos Favoritos</span></a><a href="/farmacias/relatorios/funcionarios" className={styles.navLink}><span className={styles.navText}>Relatório de Funcionarios</span></a><a href="/farmacias/relatorios/laboratorios" className={styles.navLink}><span className={styles.navText}>Relatório de Laboratorios</span></a></div>
+              <div className={styles.navSection}><p className={styles.navLabel}>Conta</p><a href="/farmacias/perfil" className={styles.navLink}><span className={styles.navText}>Meu Perfil</span></a><button onClick={handleLogout} className={styles.navLink} style={{ background: 'none', border: 'none', width: '100%', textAlign: 'left', cursor: 'pointer' }}><span className={styles.navText}>Sair</span></button></div>
             </nav>
-          </aside>
+        </aside>
+        {/* FIM DA MODIFICAÇÃO DO SIDEBAR */}
 
-          {/* Overlay para mobile */}
           {sidebarOpen && (
             <div className={styles.overlay} onClick={() => setSidebarOpen(false)} />
           )}
 
-        {/* Conteúdo Principal */}
         <main className={styles.mainContent}>
           <div className={styles.formContainer}>
             <div className={styles.formHeader}>
@@ -199,7 +191,6 @@ export default function EditarLaboratorioPage() {
 
             <form onSubmit={handleSubmit} className={styles.form}>
               <div className={styles.formGrid}>
-                {/* Informações do Laboratório */}
                 <div className={styles.formSection}>
                   <h3 className={styles.sectionTitle}>
                     Informações do Laboratório
@@ -207,70 +198,32 @@ export default function EditarLaboratorioPage() {
 
                   <div className={styles.formGroup}>
                     <label className={styles.inputLabel}>Nome do Laboratório *</label>
-                    <input
-                      className={styles.modernInput}
-                      type="text"
-                      name="lab_nome"
-                      value={form.lab_nome}
-                      onChange={handleChange}
-                      placeholder="Digite o nome do laboratório"
-                      required
-                    />
+                    <input className={styles.modernInput} type="text" name="lab_nome" value={form.lab_nome} onChange={handleChange} placeholder="Digite o nome do laboratório" required />
                   </div>
 
                   <div className={styles.formRow}>
                     <div className={styles.formGroup}>
                       <label className={styles.inputLabel}>CNPJ *</label>
-                      <input
-                        className={styles.modernInput}
-                        type="text"
-                        name="lab_cnpj"
-                        value={form.lab_cnpj}
-                        onChange={handleChange}
-                        placeholder="00.000.000/0000-00"
-                        required
-                      />
+                      <input className={styles.modernInput} type="text" name="lab_cnpj" value={form.lab_cnpj} onChange={handleChange} placeholder="00.000.000/0000-00" required />
                     </div>
 
                     <div className={styles.formGroup}>
                       <label className={styles.inputLabel}>Data de Cadastro</label>
-                      <input
-                        className={styles.modernInput}
-                        type="date"
-                        name="dataCadastro"
-                        value={dataCadastro}
-                        disabled
-                      />
+                      <input className={styles.modernInput} type="date" name="dataCadastro" value={dataCadastro} disabled />
                     </div>
                   </div>
 
                   <div className={styles.formGroup}>
                     <label className={styles.inputLabel}>E-mail *</label>
-                    <input
-                      className={styles.modernInput}
-                      type="email"
-                      name="lab_email"
-                      value={form.lab_email}
-                      onChange={handleChange}
-                      placeholder="contato@laboratorio.com"
-                      required
-                    />
+                    <input className={styles.modernInput} type="email" name="lab_email" value={form.lab_email} onChange={handleChange} placeholder="contato@laboratorio.com" required />
                   </div>
 
                   <div className={styles.formGroup}>
                     <label className={styles.inputLabel}>Telefone</label>
-                    <input
-                      className={styles.modernInput}
-                      type="tel"
-                      name="lab_telefone"
-                      value={form.lab_telefone}
-                      onChange={handleChange}
-                      placeholder="(00) 00000-0000"
-                    />
+                    <input className={styles.modernInput} type="tel" name="lab_telefone" value={form.lab_telefone} onChange={handleChange} placeholder="(00) 00000-0000" />
                   </div>
                 </div>
 
-                {/* Endereço e Logo */}
                 <div className={styles.formSection}>
                   <h3 className={styles.sectionTitle}>
                     Localização e Identidade Visual
@@ -278,28 +231,13 @@ export default function EditarLaboratorioPage() {
 
                   <div className={styles.formGroup}>
                     <label className={styles.inputLabel}>Endereço Completo *</label>
-                    <input
-                      className={styles.modernInput}
-                      type="text"
-                      name="lab_endereco"
-                      value={form.lab_endereco}
-                      onChange={handleChange}
-                      placeholder="Endereço completo"
-                      required
-                    />
+                    <input className={styles.modernInput} type="text" name="lab_endereco" value={form.lab_endereco} onChange={handleChange} placeholder="Endereço completo" required />
                   </div>
 
                   <div className={styles.formGroup}>
                     <label className={styles.inputLabel}>Logo do Laboratório</label>
                     <div className={styles.fileUploadGroup}>
-                      <input
-                        type="file"
-                        name="logo"
-                        onChange={handleChange}
-                        className={styles.fileInput}
-                        id="logo-upload"
-                        accept="image/*"
-                      />
+                      <input type="file" name="logo" onChange={handleChange} className={styles.fileInput} id="logo-upload" accept="image/*" />
                       <label htmlFor="logo-upload" className={styles.fileLabel}>
                         {logoFile ? "Alterar arquivo" : "Selecionar arquivo"}
                       </label>
@@ -315,11 +253,7 @@ export default function EditarLaboratorioPage() {
                     <div className={styles.formGroup}>
                       <label className={styles.inputLabel}>Pré-visualização</label>
                       <div className={styles.imagePreview}>
-                        <img
-                          src={preview}
-                          alt="Pré-visualização do logo"
-                          className={styles.previewImage}
-                        />
+                        <img src={preview} alt="Pré-visualização do logo" className={styles.previewImage} />
                       </div>
                     </div>
                   )}
@@ -327,11 +261,7 @@ export default function EditarLaboratorioPage() {
               </div>
 
               <div className={styles.formActions}>
-                <button
-                  type="button"
-                  className={styles.cancelButton}
-                  onClick={() => router.push("/farmacias/laboratorio/lista")}
-                >
+                <button type="button" className={styles.cancelButton} onClick={() => router.push("/farmacias/laboratorio/lista")}>
                   Cancelar
                 </button>
                 <button type="submit" className={styles.submitButton}>

@@ -1,7 +1,7 @@
 "use client";
 
-import { useState, useEffect } from "react"; // Adicionado useEffect
-import { useRouter, useSearchParams } from "next/navigation"; // Adicionado useSearchParams
+import { useState, useEffect } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
 import styles from "./cadastro.module.css";
 import api from "../../../../services/api";
 
@@ -9,10 +9,13 @@ import { MdCheckCircle, MdError, MdUploadFile } from "react-icons/md";
 
 export default function CadastroMedicamentoPage() {
   const router = useRouter();
-  const searchParams = useSearchParams(); // Hook para ler a URL
+  const searchParams = useSearchParams();
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [loading, setLoading] = useState(false);
   
+  // ADICIONADO: Estado para armazenar os dados da farmácia
+  const [farmaciaInfo, setFarmaciaInfo] = useState(null);
+
   const [form, setForm] = useState({
     nome: "", dosagem: "", quantidade: "", tipo: "", forma: "",
     descricao: "", preco: "", laboratorio: "", imagem: null,
@@ -27,23 +30,22 @@ export default function CadastroMedicamentoPage() {
   const [touched, setTouched] = useState({});
   const [fileName, setFileName] = useState("");
 
-  // ### INÍCIO DA ALTERAÇÃO ###
-  // Este useEffect é executado quando o componente é montado
+  // useEffect para carregar dados da farmácia e código de barras da URL
   useEffect(() => {
-    // Pega o valor de 'codigoBarras' da URL
+    // ADICIONADO: Carrega informações da farmácia do localStorage
+    const userDataString = localStorage.getItem("userData");
+    if (userDataString) {
+      setFarmaciaInfo(JSON.parse(userDataString));
+    }
+
     const codigoBarrasUrl = searchParams.get('codigoBarras');
     
-    // Se encontrou um código de barras na URL
     if (codigoBarrasUrl) {
-      // Atualiza o estado do formulário com o valor, preenchendo o input
       setForm(prevForm => ({ ...prevForm, codigoBarras: codigoBarrasUrl }));
-      // Marca o campo como "tocado" para que a validação seja exibida
       setTouched(prevTouched => ({ ...prevTouched, codigoBarras: true }));
-      // Executa a validação para o campo
       validateField('codigoBarras', codigoBarrasUrl);
     }
-  }, []); // O array vazio [] garante que isso rode apenas uma vez
-  // ### FIM DA ALTERAÇÃO ###
+  }, [searchParams]); // Dependência atualizada para searchParams
 
   const handleBlur = (e) => {
     const { name } = e.target;
@@ -224,11 +226,24 @@ export default function CadastroMedicamentoPage() {
         </div>
       </header>
       <div className={styles.contentWrapper}>
+          {/* INÍCIO DA MODIFICAÇÃO DO SIDEBAR */}
           <aside className={`${styles.sidebar} ${sidebarOpen ? styles.sidebarOpen : ""}`}>
             <div className={styles.sidebarHeader}>
-              <div className={styles.logo}><span className={styles.logoText}>PharmaX</span></div>
-              <button className={styles.sidebarClose} onClick={() => setSidebarOpen(false)}>×</button>
+                <div className={styles.logo}>
+                    {farmaciaInfo ? (
+                        <div className={styles.logoContainer}>
+                            {farmaciaInfo.farm_logo_url && (
+                                <img src={farmaciaInfo.farm_logo_url} alt={`Logo de ${farmaciaInfo.farm_nome}`} className={styles.logoImage} />
+                            )}
+                            <span className={styles.logoText}>{farmaciaInfo.farm_nome}</span>
+                        </div>
+                    ) : (
+                        <span className={styles.logoText}>PharmaX</span>
+                    )}
+                </div>
+                <button className={styles.sidebarClose} onClick={() => setSidebarOpen(false)}>×</button>
             </div>
+            {/* FIM DA MODIFICAÇÃO DO SIDEBAR HEADER */}
             <nav className={styles.nav}>
               <div className={styles.navSection}><p className={styles.navLabel}>Principal</p><a href="/farmacias/favoritos" className={styles.navLink}><span className={styles.navText}>Favoritos</span></a><a href="/farmacias/produtos/medicamentos" className={`${styles.navLink} ${styles.active}`}><span className={styles.navText}>Medicamentos</span></a></div>
               <div className={styles.navSection}><p className={styles.navLabel}>Gestão</p><a href="/farmacias/cadastro/funcionario/lista" className={styles.navLink}><span className={styles.navText}>Funcionários</span></a><a href="/farmacias/laboratorio/lista" className={styles.navLink}><span className={styles.navText}>Laboratórios</span></a></div>

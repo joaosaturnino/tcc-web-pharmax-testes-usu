@@ -1,9 +1,9 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react"; // ADICIONADO: useEffect
 import { useRouter } from "next/navigation";
 import styles from "./laboratorio.module.css";
-import api from "../../../services/api"; // Importa a instância configurada do axios
+import api from "../../../services/api";
 
 // Ícones para validação
 import { MdCheckCircle, MdError } from "react-icons/md";
@@ -11,6 +11,8 @@ import { MdCheckCircle, MdError } from "react-icons/md";
 export default function CadastroLaboratorioPage() {
   const router = useRouter();
   const [sidebarOpen, setSidebarOpen] = useState(false);
+  // ADICIONADO: Estado para armazenar os dados da farmácia
+  const [farmaciaInfo, setFarmaciaInfo] = useState(null);
 
   const [form, setForm] = useState({
     nome: "",
@@ -23,7 +25,6 @@ export default function CadastroLaboratorioPage() {
 
   const [preview, setPreview] = useState(null);
 
-  // Estados para validação
   const valDefault = styles.formControl;
   const valSucesso = `${styles.formControl} ${styles.success}`;
   const valErro = `${styles.formControl} ${styles.error}`;
@@ -36,6 +37,15 @@ export default function CadastroLaboratorioPage() {
     email: { validado: valDefault, mensagem: [] },
     logo: { validado: valDefault, mensagem: [] },
   });
+
+  // ADICIONADO: useEffect para carregar dados da farmácia ao montar a página
+  useEffect(() => {
+    const userDataString = localStorage.getItem("userData");
+    if (userDataString) {
+      setFarmaciaInfo(JSON.parse(userDataString));
+    }
+  }, []);
+
 
   const handleChange = (e) => {
     const { name, value, type, files } = e.target;
@@ -186,7 +196,6 @@ export default function CadastroLaboratorioPage() {
       return;
     }
 
-    // Cria um objeto FormData para enviar dados de formulário, incluindo arquivos
     const formData = new FormData();
     formData.append('lab_nome', form.nome);
     formData.append('lab_cnpj', form.cnpj.replace(/\D/g, ''));
@@ -201,7 +210,6 @@ export default function CadastroLaboratorioPage() {
     formData.append('lab_ativo', 1);
 
     try {
-      // CORREÇÃO APLICADA AQUI: O endpoint foi alterado para '/laboratorios' (plural)
       const response = await api.post('/laboratorios', formData, {
         headers: {
           'Content-Type': 'multipart/form-data',
@@ -215,7 +223,6 @@ export default function CadastroLaboratorioPage() {
         alert('Erro ao cadastrar: ' + response.data.mensagem);
       }
     } catch (error) {
-      // Trata possíveis erros na requisição
       if (error.response) {
         alert(error.response.data.mensagem + '\n' + error.response.data.dados);
       } else {
@@ -245,18 +252,24 @@ export default function CadastroLaboratorioPage() {
       </header>
 
       <div className={styles.contentWrapper}>
+        {/* INÍCIO DA MODIFICAÇÃO DO SIDEBAR */}
         <aside className={`${styles.sidebar} ${sidebarOpen ? styles.sidebarOpen : ""}`}>
             <div className={styles.sidebarHeader}>
-              <div className={styles.logo}>
-                <span className={styles.logoText}>PharmaX</span>
-              </div>
-              <button
-                className={styles.sidebarClose}
-                onClick={() => setSidebarOpen(false)}
-              >
-                ×
-              </button>
+                <div className={styles.logo}>
+                    {farmaciaInfo ? (
+                        <div className={styles.logoContainer}>
+                            {farmaciaInfo.farm_logo_url && (
+                                <img src={farmaciaInfo.farm_logo_url} alt={`Logo de ${farmaciaInfo.farm_nome}`} className={styles.logoImage} />
+                            )}
+                            <span className={styles.logoText}>{farmaciaInfo.farm_nome}</span>
+                        </div>
+                    ) : (
+                        <span className={styles.logoText}>PharmaX</span>
+                    )}
+                </div>
+                <button className={styles.sidebarClose} onClick={() => setSidebarOpen(false)}>×</button>
             </div>
+            {/* FIM DA MODIFICAÇÃO DO SIDEBAR HEADER */}
             <nav className={styles.nav}>
               <div className={styles.navSection}>
                 <p className={styles.navLabel}>Principal</p>

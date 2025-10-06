@@ -117,11 +117,26 @@
   z-index: 10;
 }
 
+/* INÍCIO DA MODIFICAÇÃO */
 .logo {
   font-size: 2.2rem;
   font-weight: bold;
   color: #fff;
+  /* Adicionado para alinhar imagem e texto */
+  display: flex;
+  align-items: center;
+  gap: 12px;
 }
+
+/* NOVO: Estilo para a imagem da logo no menu lateral */
+.sidebarAvatar {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  object-fit: cover;
+}
+/* FIM DA MODIFICAÇÃO */
+
 
 .logoText {
   font-size: 1.8rem;
@@ -241,11 +256,9 @@
   justify-content: center;
   font-size: 50px;
   margin-bottom: 15px;
-  /* CORREÇÃO: Permite que a imagem preencha sem sair do container */
   overflow: hidden; 
 }
 
-/* NOVO: Estilo para a imagem dentro do avatarLarge */
 .avatarImage { 
   width: 100%;
   height: 100%;
@@ -253,7 +266,6 @@
   border-radius: 50%; 
 }
 
-/* NOVO: Estilo para o botão de troca de avatar (label) */
 .changeAvatarBtn { 
   padding: 8px 15px;
   background: #191970;
