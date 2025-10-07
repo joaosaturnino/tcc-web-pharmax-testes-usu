@@ -24,8 +24,15 @@ const nextConfig = {
       },
 
       {
+        protocol: 'http',
+        hostname: 'localhost',
+        port: '3334',
+        pathname: '/public/medicamentos/**',
+      },
+
+      {
         protocol: 'http', // Use 'http' se não estiver usando HTTPS
-        hostname: '192.168.56.1', // O IP do seu servidor backend
+        hostname: 'localhost', // O IP do seu servidor backend
         port: '3334', // A porta do seu servidor backend
         pathname: '/**', // Permite qualquer caminho dentro desse host/porta
       },
