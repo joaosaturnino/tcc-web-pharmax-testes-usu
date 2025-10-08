@@ -1,22 +1,20 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import Link from "next/link";
+import Link from "next/link"; // CORREÇÃO: Importado para navegação SPA
 import { useRouter } from "next/navigation";
 import styles from "./laboratorio.module.css";
-import api from "../../../services/api"; // Ajuste o caminho conforme sua estrutura
+import api from "../../../services/api";
 
 export default function ListaLaboratorios() {
   const [laboratorios, setLaboratorios] = useState([]);
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [filtro, setFiltro] = useState("");
   const [loading, setLoading] = useState(true);
-  // ADICIONADO: Estado para armazenar os dados da farmácia
-  const [farmaciaInfo, setFarmaciaInfo] = useState(null); 
+  const [farmaciaInfo, setFarmaciaInfo] = useState(null);
   const router = useRouter();
 
   useEffect(() => {
-    // ADICIONADO: Função para carregar dados do usuário/farmácia
     const carregarInfoFarmacia = () => {
       const userDataString = localStorage.getItem("userData");
       if (userDataString) {
@@ -28,15 +26,13 @@ export default function ListaLaboratorios() {
     listarLaboratorios();
   }, []);
 
-  // Função para listar laboratórios da API
   async function listarLaboratorios() {
     try {
       setLoading(true);
       const response = await api.get('/laboratorios');
       
       if (response.data.sucesso === true) {
-        const labsApi = response.data.dados;
-        const labsFormatados = labsApi.map(lab => ({
+        const labsFormatados = response.data.dados.map(lab => ({
           id: lab.lab_id,
           nome: lab.lab_nome,
           endereco: lab.lab_endereco,
@@ -49,44 +45,36 @@ export default function ListaLaboratorios() {
         }));
         setLaboratorios(labsFormatados);
       } else {
-        alert('Erro: ' + response.data.mensagem);
+        alert('Erro ao carregar laboratórios: ' + response.data.mensagem);
       }
     } catch (error) {
       console.error('Erro ao carregar laboratórios:', error);
-      if (error.response) {
-        alert('Erro: ' + error.response.data.mensagem + '\n' + error.response.data.dados);
-      } else {
-        alert('Erro no front-end: ' + error.message);
-      }
+      alert('Não foi possível carregar os dados. Verifique sua conexão.');
     } finally {
       setLoading(false);
     }
   }
 
-  // Função para excluir laboratório
   const handleExcluir = async (id, nome) => {
-    if (confirm(`Tem certeza que deseja excluir o laboratório ${nome}?`)) {
+    if (window.confirm(`Tem certeza que deseja excluir o laboratório ${nome}?`)) {
       try {
         const response = await api.delete(`/laboratorios/${id}`);
         
         if (response.data.sucesso === true) {
           alert(`Laboratório ${nome} excluído com sucesso!`);
-          listarLaboratorios();
+          // Atualiza a lista removendo o item excluído sem precisar de uma nova chamada à API
+          setLaboratorios(laboratorios.filter(lab => lab.id !== id));
         } else {
-          alert('Erro: ' + response.data.mensagem);
+          alert('Erro ao excluir: ' + response.data.mensagem);
         }
       } catch (error) {
         console.error('Erro ao excluir laboratório:', error);
-        if (error.response) {
-          alert('Erro: ' + error.response.data.mensagem + '\n' + error.response.data.dados);
-        } else {
-          alert('Erro no front-end: ' + error.message);
-        }
+        alert('Não foi possível excluir o laboratório. Tente novamente.');
       }
     }
   };
 
-  const handleLogout = async () => {
+  const handleLogout = () => {
     localStorage.removeItem("authToken");
     localStorage.removeItem("userData");
     router.push("/home");
@@ -96,16 +84,21 @@ export default function ListaLaboratorios() {
     (lab) =>
       lab.nome.toLowerCase().includes(filtro.toLowerCase()) ||
       lab.email.toLowerCase().includes(filtro.toLowerCase()) ||
-      lab.endereco.toLowerCase().includes(filtro.toLowerCase())
+      (lab.endereco && lab.endereco.toLowerCase().includes(filtro.toLowerCase()))
   );
 
   return (
     <div className={styles.dashboard}>
-      {/* Header */}
       <header className={styles.header}>
         <div className={styles.headerLeft}>
-          <button className={styles.menuToggle} onClick={() => setSidebarOpen(!sidebarOpen)}>☰</button>
-          <h1 className={styles.title}> Laboratórios</h1>
+          <button 
+            className={styles.menuToggle} 
+            onClick={() => setSidebarOpen(!sidebarOpen)}
+            aria-label="Abrir menu" // NOVO: Acessibilidade
+          >
+            ☰
+          </button>
+          <h1 className={styles.title}>Laboratórios</h1>
         </div>
         <div className={styles.headerActions}>
           <div className={styles.searchBox}>
@@ -120,7 +113,6 @@ export default function ListaLaboratorios() {
       </header>
 
       <div className={styles.contentWrapper}>
-        {/* INÍCIO DA MODIFICAÇÃO DO SIDEBAR */}
         <aside className={`${styles.sidebar} ${sidebarOpen ? styles.sidebarOpen : ""}`}>
             <div className={styles.sidebarHeader}>
               <div className={styles.logo}>
@@ -132,34 +124,39 @@ export default function ListaLaboratorios() {
                     <span className={styles.logoText}>{farmaciaInfo.farm_nome}</span>
                   </div>
                 ) : (
-                  <span className={styles.logoText}>PharmaX</span>
+                  <span className={styles.logoText}>Pharma-X</span>
                 )}
               </div>
-              <button className={styles.sidebarClose} onClick={() => setSidebarOpen(false)}>×</button>
+              <button 
+                className={styles.sidebarClose} 
+                onClick={() => setSidebarOpen(false)}
+                aria-label="Fechar menu" // NOVO: Acessibilidade
+              >
+                ×
+              </button>
             </div>
-            {/* FIM DA MODIFICAÇÃO DO SIDEBAR HEADER */}
-
+            
+            {/* CORREÇÃO: Trocados <a> por <Link> para navegação mais rápida */}
             <nav className={styles.nav}>
-              <div className={styles.navSection}><p className={styles.navLabel}>Principal</p><a href="/farmacias/favoritos" className={styles.navLink}><span className={styles.navText}>Favoritos</span></a><a href="/farmacias/produtos/medicamentos" className={styles.navLink}><span className={styles.navText}>Medicamentos</span></a></div>
-              <div className={styles.navSection}><p className={styles.navLabel}>Gestão</p><a href="/farmacias/cadastro/funcionario/lista" className={styles.navLink}><span className={styles.navText}>Funcionários</span></a><a href="/farmacias/laboratorio/lista" className={`${styles.navLink} ${styles.active}`}><span className={styles.navText}>Laboratórios</span></a></div>
-              <div className={styles.navSection}><p className={styles.navLabel}>Relatórios</p><a href="/farmacias/relatorios/favoritos" className={styles.navLink}><span className={styles.navText}>Medicamentos Favoritos</span></a><a href="/farmacias/relatorios/funcionarios" className={styles.navLink}><span className={styles.navText}>Relatório de Funcionarios</span></a><a href="/farmacias/relatorios/laboratorios" className={styles.navLink}><span className={styles.navText}>Relatório de Laboratorios</span></a></div>
-              <div className={styles.navSection}><p className={styles.navLabel}>Conta</p><a href="/farmacias/perfil" className={styles.navLink}><span className={styles.navText}>Meu Perfil</span></a><button onClick={handleLogout} className={styles.navLink} style={{ background: 'none', border: 'none', width: '100%', textAlign: 'left', cursor: 'pointer' }}><span className={styles.navText}>Sair</span></button></div>
+              <div className={styles.navSection}><p className={styles.navLabel}>Principal</p><Link href="/farmacias/favoritos" className={styles.navLink}><span className={styles.navText}>Favoritos</span></Link><Link href="/farmacias/produtos/medicamentos" className={styles.navLink}><span className={styles.navText}>Medicamentos</span></Link></div>
+              <div className={styles.navSection}><p className={styles.navLabel}>Gestão</p><Link href="/farmacias/cadastro/funcionario/lista" className={styles.navLink}><span className={styles.navText}>Funcionários</span></Link><Link href="/farmacias/laboratorio/lista" className={`${styles.navLink} ${styles.active}`}><span className={styles.navText}>Laboratórios</span></Link></div>
+              <div className={styles.navSection}><p className={styles.navLabel}>Relatórios</p><Link href="/farmacias/relatorios/favoritos" className={styles.navLink}><span className={styles.navText}>Medicamentos Favoritos</span></Link><Link href="/farmacias/relatorios/funcionarios" className={styles.navLink}><span className={styles.navText}>Relatório de Funcionarios</span></Link><Link href="/farmacias/relatorios/laboratorios" className={styles.navLink}><span className={styles.navText}>Relatório de Laboratorios</span></Link></div>
+              <div className={styles.navSection}><p className={styles.navLabel}>Conta</p><Link href="/farmacias/perfil" className={styles.navLink}><span className={styles.navText}>Meu Perfil</span></Link><button onClick={handleLogout} className={styles.navLink} style={{ background: 'none', border: 'none', width: '100%', textAlign: 'left', cursor: 'pointer' }}><span className={styles.navText}>Sair</span></button></div>
             </nav>
-          </aside>
+        </aside>
 
-          {sidebarOpen && (<div className={styles.overlay} onClick={() => setSidebarOpen(false)} />)}
+        {sidebarOpen && (<div className={styles.overlay} onClick={() => setSidebarOpen(false)} />)}
 
         <main className={styles.mainContent}>
-          <div className={styles.formContainer}>
             <div className={styles.listaHeader}>
-              <div>
                 <h2>Laboratórios Cadastrados</h2>
-                <p>Gerencie os laboratórios parceiros</p>
-              </div>
+                <p>Gerencie os laboratórios parceiros da sua farmácia</p>
             </div>
 
             {loading ? (
-              <div className={styles.loading}>
+              // MELHORIA: Spinner de carregamento visual
+              <div className={styles.loaderContainer}>
+                <div className={styles.spinner}></div>
                 <p>Carregando laboratórios...</p>
               </div>
             ) : (
@@ -204,7 +201,7 @@ export default function ListaLaboratorios() {
                       ) : (
                         <tr>
                           <td colSpan="6" className={styles.semRegistros}>
-                            {filtro ? "Nenhum laboratório encontrado com o filtro aplicado" : "Nenhum laboratório cadastrado"}
+                            {filtro ? "Nenhum laboratório encontrado com o filtro aplicado." : "Nenhum laboratório cadastrado."}
                           </td>
                         </tr>
                       )}
@@ -217,7 +214,6 @@ export default function ListaLaboratorios() {
                 </div>
               </>
             )}
-          </div>
         </main>
       </div>
     </div>

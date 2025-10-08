@@ -1,449 +1,94 @@
-/*
- * ==========================
- * ESTILOS GERAIS DA PÁGINA
- * ==========================
- */
-.container {
-  min-height: 100vh;
-  display: flex;
-  flex-direction: column;
-}
+/* ========================== ESTILOS GERAIS DA PÁGINA ========================== */
+.container { min-height: 100vh; display: flex; flex-direction: column; }
 
-/*
- * ==========================
- * CABEÇALHO
- * ==========================
- */
-.header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 1rem 2rem;
-  background-color: #fff;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-}
+/* ========================== CABEÇALHO ========================== */
+.header { display: flex; justify-content: space-between; align-items: center; padding: 1rem 2rem; background-color: #fff; box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); }
+.logo h1 { color: #458B00; margin: 0; }
+.nav { display: flex; gap: 1.5rem; align-items: center; }
+.nav a { text-decoration: none; color: #333; font-weight: 500; transition: color 0.3s; }
+.nav a:hover { color: #458B00; }
+.active { color: #458B00 !important; font-weight: 600; }
+.userBtn { background-color: #458B00; color: white !important; padding: 0.5rem 1rem; border-radius: 4px; }
 
-.logo h1 {
-  color: #458B00;
-  margin: 0;
-}
+/* ========================== SEÇÃO PRINCIPAL (HERO) ========================== */
+.principal { background: linear-gradient(135deg, #458B00 0%, #A2CD5A 100%); color: white; padding: 4rem 2rem; text-align: center; }
+.principal h2 { font-size: 3.3rem; margin-bottom: 1rem; }
+.principal p { font-size: 1.7rem; margin-bottom: 2rem; opacity: 0.9; }
+.caixaBusca { display: flex; max-width: 500px; margin: 0 auto; }
+.caixaBusca input { flex: 1; padding: 0.8rem; border: none; border-radius: 4px 0 0 4px; font-size: 1.5rem; }
+.caixaBusca input:focus-visible { outline: 3px solid #FF9F43; outline-offset: 2px; }
+.caixaBusca button { background-color: #FF9F43; color: white; border: none; padding: 0 1.5rem; border-radius: 0 4px 4px 0; cursor: pointer; font-weight: 600; font-size: 1.5rem; }
 
-.nav {
-  display: flex;
-  gap: 1.5rem;
-  align-items: center;
-}
+/* ========================== SEÇÃO DE PRODUTOS ========================== */
+.produtos { padding: 4rem 2rem; text-align: center; }
+.produtos h3 { font-size: 2.7rem; margin-bottom: 3rem; color: #333; }
+.gradeProdutos { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 2rem; max-width: 1200px; margin: 0 auto; transition: opacity 0.3s ease-in-out; }
+.gradeProdutosCarregando { opacity: 0.5; pointer-events: none; }
+.cartaoProduto { background: white; border-radius: 8px; overflow: hidden; box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); transition: transform 0.3s; display: flex; flex-direction: column; text-align: left; }
+.cartaoProduto:hover { transform: translateY(-5px); }
+.containerImagemProduto { height: 200px; background-color: #fff; }
+.imagemProduto { object-fit: scale-down; width: 100%; height: 100%; }
+.infoProduto { padding: 0 1rem; flex-grow: 1; display: flex; flex-direction: column; }
+.infoProduto h4 { font-size: 1.2rem; margin: 1rem 0 0.5rem; color: #333; }
+.infoProduto p { color: #666; margin-bottom: 1rem; flex-grow: 1; }
+.preco { display: block; font-size: 1.3rem; font-weight: 600; color: #458B00; margin-bottom: 1rem; }
+.cartaoProduto button { width: 100%; padding: 0.8rem; background-color: #458B00; color: white; border: none; font-weight: 600; cursor: pointer; transition: background-color 0.3s; margin-top: auto; }
+.cartaoProduto button:hover { background-color: #A2CD5A; }
+.cartaoProduto button:focus-visible { outline: 3px solid #458B00; outline-offset: -3px; }
 
-.nav a {
-  text-decoration: none;
-  color: #333;
-  font-weight: 500;
-  transition: color 0.3s;
-}
+/* ========================== ESTILOS DE UX (MENSAGENS, LOADERS) ========================== */
+.mensagemAviso { background-color: #e3f2fd; color: #1565c0; border: 1px solid #bbdefb; padding: 1rem 1.5rem; border-radius: 8px; font-size: 1.1rem; }
+@keyframes shimmer { 0% { background-position: -1000px 0; } 100% { background-position: 1000px 0; } }
+.skeleton > div { background: linear-gradient(to right, #e0e0e0 8%, #f0f0f0 18%, #e0e0e0 33%); background-size: 1000px 100%; animation: shimmer 1.5s linear infinite; }
+.skeleton .containerImagemProduto { background-color: #e0e0e0; }
+.skeleton .skeletonText { height: 20px; background-color: #e0e0e0; border-radius: 4px; margin: 1rem 1rem 0 1rem; width: 90%; }
+.skeleton .skeletonText:last-child { width: 60%; }
 
-.nav a:hover {
-  color: #458B00;
-}
+/* ========================== PAGINAÇÃO ========================== */
+.paginacao { display: flex; justify-content: center; align-items: center; gap: 1rem; margin-top: 2.5rem; padding-bottom: 2rem; }
+.paginacao button { padding: 0.5rem 1rem; border: 1px solid #ccc; border-radius: 4px; background-color: #fff; cursor: pointer; font-weight: 600; transition: all 0.3s; }
+.paginacao button:hover:not(:disabled) { background-color: #458B00; border-color: #458B00; color: white; }
+.paginacao button:disabled { cursor: not-allowed; opacity: 0.5; }
+.paginaAtiva { background-color: #458B00 !important; border-color: #458B00 !important; color: white; font-weight: bold; }
+.ellipsis { padding: 0.5rem 0.2rem; color: #666; cursor: default; }
 
-.active {
-  color: #458B00 !important;
-  font-weight: 600;
-}
+/* ========================== ESTILOS PARA O MODAL DE DETALHES ========================== */
+.modalOverlay { position: fixed; inset: 0; background-color: rgba(0, 0, 0, 0.6); display: flex; align-items: center; justify-content: center; z-index: 1000; padding: 1rem; animation: fadeIn 0.3s ease; }
+@keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+.modal { background: white; border-radius: 12px; width: 100%; max-width: 900px; max-height: 90vh; display: flex; flex-direction: column; box-shadow: 0 10px 30px rgba(0,0,0,0.2); animation: scaleIn 0.3s ease; }
+@keyframes scaleIn { from { transform: scale(0.95); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+.modalHeader { display: flex; justify-content: space-between; align-items: center; padding: 1.5rem 2rem; border-bottom: 1px solid #eee; }
+.modalHeader h2 { font-size: 1.8rem; color: #333; margin: 0; }
+.modalClose { background: none; border: none; font-size: 2rem; cursor: pointer; color: #999; transition: color 0.2s; }
+.modalClose:hover { color: #333; }
+.modalContent { padding: 2rem; overflow-y: auto; }
+.detalhesContainer { display: grid; grid-template-columns: 1fr 1.5fr; gap: 2.5rem; }
+.infoMedicamento h4, .listaFarmacias h4 { font-size: 1.3rem; color: #458B00; margin-top: 0; margin-bottom: 1rem; padding-bottom: 0.5rem; border-bottom: 2px solid #f0f0f0; }
+.imagemModal { width: 100%; max-height: 300px; object-fit: contain; border-radius: 8px; margin-bottom: 1.5rem; border: 1px solid #eee; }
+.infoMedicamento p { line-height: 1.6; color: #555; font-size: 1.5rem; }
+.listaFarmacias { border-left: 1px solid #eee; padding-left: 2.5rem; }
+.farmaciaItem { display: flex; justify-content: space-between; align-items: center; padding: 1.2rem 0; border-bottom: 1px solid #f0f0f0; }
+.farmaciaItem:last-child { border-bottom: none; }
+.farmaciaInfo h5 { margin: 0 0 0.3rem 0; font-size: 1.5rem; color: #333; }
+.farmaciaInfo p { margin: 0; font-size: 1.3rem; color: #777; }
+.farmaciaPreco { font-size: 1.6rem; font-weight: 700; color: #458B00; white-space: nowrap; padding-left: 1rem; }
+.modalLoader { display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 4rem 0; gap: 1rem; color: #555; }
+.spinner { width: 40px; height: 40px; border: 4px solid #f0f0f0; border-top-color: #458B00; border-radius: 50%; animation: spin 1s linear infinite; }
+@keyframes spin { to { transform: rotate(360deg); } }
 
-.userBtn {
-  background-color: #458B00;
-  color: white !important;
-  padding: 0.5rem 1rem;
-  border-radius: 4px;
-}
-
-/*
- * ==========================
- * SEÇÃO PRINCIPAL (HERO)
- * ==========================
- */
-.principal {
-  background: linear-gradient(135deg, #458B00 0%, #A2CD5A 100%);
-  color: white;
-  padding: 4rem 2rem;
-  text-align: center;
-}
-
-.principal h2 {
-  font-size: 3.3rem;
-  margin-bottom: 1rem;
-}
-
-.principal p {
-  font-size: 1.7rem;
-  margin-bottom: 2rem;
-  opacity: 0.9;
-}
-
-/* Caixa de Busca */
-.caixaBusca {
-  display: flex;
-  max-width: 500px;
-  margin: 0 auto;
-}
-
-.caixaBusca input {
-  flex: 1;
-  padding: 0.8rem;
-  border: none;
-  border-radius: 4px 0 0 4px; /* Raio apenas à esquerda */
-  font-size: 1.5rem;
-}
-
-.caixaBusca input:focus-visible {
-  outline: 3px solid #FF9F43;
-  outline-offset: 2px;
-}
-
-.caixaBusca button {
-  background-color: #FF9F43;
-  color: white;
-  border: none;
-  padding: 0 1.5rem;
-  border-radius: 0 4px 4px 0; /* Raio apenas à direita */
-  cursor: pointer;
-  font-weight: 600;
-  font-size: 1.5rem;
-}
-
-/*
- * ==========================
- * SEÇÃO DE RECURSOS
- * ==========================
- */
-.recursos {
-  padding: 4rem 2rem;
-  text-align: center;
-  background-color: #f8f9fa;
-}
-
-.recursos h3 {
-  font-size: 2rem;
-  margin-bottom: 3rem;
-  color: #333;
-}
-
-.gradeRecursos {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-  gap: 2rem;
-  max-width: 1200px;
-  margin: 0 auto;
-}
-
-.cartaoRecurso {
-  background: white;
-  padding: 2rem;
-  border-radius: 8px;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-  transition: transform 0.3s;
-}
-
-.cartaoRecurso:hover {
-  transform: translateY(-5px);
-}
-
-.iconeRecurso {
-  font-size: 2.5rem;
-  margin-bottom: 1rem;
-}
-
-.cartaoRecurso h4 {
-  font-size: 1.2rem;
-  margin-bottom: 0.5rem;
-  color: #333;
-}
-
-.cartaoRecurso p {
-  color: #666;
-  line-height: 1.6;
-}
-
-/*
- * ==========================
- * SEÇÃO DE PRODUTOS
- * ==========================
- */
-.produtos {
-  padding: 4rem 2rem;
-  text-align: center;
-}
-
-.produtos h3 {
-  font-size: 2.7rem;
-  margin-bottom: 3rem;
-  color: #333;
-}
-
-/* Filtros */
-.areaFiltros {
-  display: flex;
-  justify-content: center;
-  gap: 2rem;
-  margin-bottom: 3rem;
-  flex-wrap: wrap;
-}
-
-.grupoFiltro {
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-}
-
-.grupoFiltro label {
-  font-size: 0.9rem;
-  font-weight: 500;
-  color: #555;
-  margin-bottom: 0.5rem;
-}
-
-.grupoFiltro select {
-  padding: 0.5rem;
-  border: 1px solid #ccc;
-  border-radius: 4px;
-  font-size: 1rem;
-  background-color: #fff;
-}
-
-/* Grid dos produtos */
-.gradeProdutos {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-  gap: 2rem;
-  max-width: 1200px;
-  margin: 0 auto;
-  transition: opacity 0.3s ease-in-out;
-}
-
-.gradeProdutosCarregando {
-  opacity: 0.5;
-  pointer-events: none; /* Impede cliques na área enquanto carrega */
-}
-
-/* Card de produto */
-.cartaoProduto {
-  background: white;
-  border-radius: 8px;
-  overflow: hidden;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-  transition: transform 0.3s;
-  display: flex;
-  flex-direction: column;
-  text-align: left;
-}
-
-.cartaoProduto:hover {
-  transform: translateY(-5px);
-}
-
-.containerImagemProduto {
-  height: 200px;
-  background-color: #fff;
-}
-
-.imagemProduto {
-  object-fit: scale-down;
-  width: 100%;
-  height: 100%;
-}
-
-.infoProduto {
-  padding: 0 1rem;
-  flex-grow: 1;
-  display: flex;
-  flex-direction: column;
-}
-
-.infoProduto h4 {
-  font-size: 1.2rem;
-  margin: 1rem 0 0.5rem;
-  color: #333;
-}
-
-.infoProduto p {
-  color: #666;
-  margin-bottom: 1rem;
-  flex-grow: 1;
-}
-
-.preco {
-  display: block;
-  font-size: 1.3rem;
-  font-weight: 600;
-  color: #458B00;
-  margin-bottom: 1rem;
-}
-
-.cartaoProduto button {
-  width: 100%;
-  padding: 0.8rem;
-  background-color: #458B00;
-  color: white;
-  border: none;
-  font-weight: 600;
-  cursor: pointer;
-  transition: background-color 0.3s;
-  margin-top: auto;
-}
-
-.cartaoProduto button:hover {
-  background-color: #A2CD5A;
-}
-
-.cartaoProduto button:focus-visible {
-  outline: 3px solid #458B00;
-  outline-offset: -3px;
-}
-
-/*
- * ==========================
- * ESTILOS DE UX (MENSAGENS, LOADERS)
- * ==========================
- */
-
-/* Mensagens de erro e aviso */
-.mensagemErro, .mensagemAviso {
-  grid-column: 1 / -1;
-  padding: 1rem 1.5rem;
-  border-radius: 8px;
-  font-size: 1.1rem;
-}
-
-.mensagemErro {
-  background-color: #ffebee;
-  color: #c62828;
-  border: 1px solid #ffcdd2;
-}
-
-.mensagemAviso {
-  background-color: #e3f2fd;
-  color: #1565c0;
-  border: 1px solid #bbdefb;
-}
-
-/* Skeleton Loader */
-@keyframes shimmer {
-  0% { background-position: -1000px 0; }
-  100% { background-position: 1000px 0; }
-}
-
-.skeleton > div {
-  background: linear-gradient(to right, #e0e0e0 8%, #f0f0f0 18%, #e0e0e0 33%);
-  background-size: 1000px 100%;
-  animation: shimmer 1.5s linear infinite;
-}
-
-.skeleton .containerImagemProduto {
-  background-color: #e0e0e0;
-}
-
-.skeleton .skeletonText {
-  height: 20px;
-  background-color: #e0e0e0;
-  border-radius: 4px;
-  margin: 1rem 1rem 0 1rem;
-  width: 90%;
-}
-
-.skeleton .skeletonText:last-child {
-  width: 60%;
-}
-
-/* Adicione estas classes ao final da sua seção de PAGINAÇÃO */
-
-/* Estilo para o botão da página ativa */
-.paginaAtiva {
-  background-color: #458B00 !important;
-  border-color: #458B00 !important;
-  color: white;
-  font-weight: bold;
-}
-
-/* Estilo para o "..." (ellipsis) */
-.ellipsis {
-  padding: 0.5rem 0.2rem;
-  color: #666;
-  cursor: default;
-}
-
-/*
- * ==========================
- * RESPONSIVIDADE
- * ==========================
- */
+/* ========================== RESPONSIVIDADE ========================== */
 @media (max-width: 768px) {
-  .header {
-    flex-direction: column;
-    padding: 1rem;
-  }
-
-  .nav {
-    margin-top: 1rem;
-    flex-wrap: wrap;
-    justify-content: center;
-  }
-
-  .principal h2 {
-    font-size: 2rem;
-  }
-
-  .caixaBusca {
-    flex-direction: column;
-  }
-
-  .caixaBusca input {
-    border-radius: 4px;
-    margin-bottom: 0.5rem;
-  }
-
-  .caixaBusca button {
-    border-radius: 4px;
-    padding: 0.8rem;
-  }
+  .header { flex-direction: column; padding: 1.5rem; gap: 1.5rem; }
+  .principal h2 { font-size: 2.5rem; }
+  .detalhesContainer { grid-template-columns: 1fr; }
+  .listaFarmacias { border-left: none; padding-left: 0; margin-top: 2rem; border-top: 1px solid #eee; padding-top: 2rem; }
+  .modalHeader h2 { font-size: 1.4rem; }
 }
-
-/*
- * ================================
- * CORREÇÃO: ESTILOS PARA PAGINAÇÃO
- * ================================
- */
-.paginacao {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  gap: 1rem;
-  margin-top: 2.5rem;
-  padding-bottom: 2rem;
-}
-
-.paginacao button {
-  padding: 0.5rem 1rem;
-  border: 1px solid #ccc;
-  border-radius: 4px;
-  background-color: #fff;
-  cursor: pointer;
-  font-weight: 600;
-  transition: background-color 0.3s, color 0.3s, border-color 0.3s;
-}
-
-.paginacao button:hover:not(:disabled) {
-  background-color: #458B00;
-  border-color: #458B00;
-  color: white;
-}
-
-.paginacao button:disabled {
-  cursor: not-allowed;
-  opacity: 0.5;
-}
-
-.paginacao span {
-  font-size: 1rem;
-  font-weight: 500;
-  color: #333;
+@media (max-width: 480px) {
+  .nav { gap: 1rem; flex-wrap: wrap; justify-content: center; }
+  .nav a { font-size: 1.4rem; }
+  .userBtn { padding: 0.6rem 1.2rem; }
+  .caixaBusca { flex-direction: column; }
+  .caixaBusca input { border-radius: 8px; margin-bottom: 0.8rem; }
+  .caixaBusca button { border-radius: 8px; padding: 1rem; }
 }

@@ -5,11 +5,9 @@ import { useRouter } from "next/navigation";
 import styles from "./cadastro.module.css";
 import AuthGuard from "../../../componentes/AuthGuard";
 import api from "../../../services/api";
+import { BsUpcScan, BsFillPatchCheckFill, BsFillPatchQuestionFill } from "react-icons/bs";
 
-const currency =
-  typeof Intl !== "undefined"
-    ? new Intl.NumberFormat("pt-BR", { style: "currency", currency: "BRL" })
-    : { format: (v) => `R$ ${Number(v).toFixed(2)}` };
+const currency = new Intl.NumberFormat("pt-BR", { style: "currency", currency: "BRL" });
 
 // Mapeamentos
 const tiposMedicamento = { 1: "Referência", 2: "Genérico", 3: "Similar" };
@@ -20,7 +18,6 @@ function ListagemMedicamentos() {
   const [medicamentos, setMedicamentos] = useState([]);
   const [loading, setLoading] = useState(true);
   const [sidebarOpen, setSidebarOpen] = useState(false);
-  // ADICIONADO: Estado para armazenar os dados da farmácia
   const [farmaciaInfo, setFarmaciaInfo] = useState(null);
   const [modalAberto, setModalAberto] = useState(false);
   const [modalDetalhesAberto, setModalDetalhesAberto] = useState(false);
@@ -30,6 +27,7 @@ function ListagemMedicamentos() {
   const [produtoNaoEncontrado, setProdutoNaoEncontrado] = useState(false);
   const [erro, setErro] = useState("");
   const [erroApi, setErroApi] = useState("");
+  const [verificandoCodigo, setVerificandoCodigo] = useState(false);
   const [termoPesquisa, setTermoPesquisa] = useState("");
   const [filtroStatus, setFiltroStatus] = useState("todos");
   const [filtroCategoria, setFiltroCategoria] = useState("todos");
@@ -45,18 +43,12 @@ function ListagemMedicamentos() {
       setErroApi("");
       try {
         const userDataString = localStorage.getItem("userData");
-        if (!userDataString) {
-          throw new Error("Usuário não autenticado. Faça o login novamente.");
-        }
+        if (!userDataString) throw new Error("Usuário não autenticado.");
         
         const userData = JSON.parse(userDataString);
-        // ADICIONADO: Salva os dados da farmácia no estado
         setFarmaciaInfo(userData);
         const farmaciaId = userData.farm_id;
-
-        if (!farmaciaId) {
-          throw new Error("ID da farmácia não encontrado nos dados do usuário.");
-        }
+        if (!farmaciaId) throw new Error("ID da farmácia não encontrado.");
 
         const response = await api.get(`/medicamentos?farmacia_id=${farmaciaId}`);
 
@@ -66,10 +58,10 @@ function ListagemMedicamentos() {
             nome: med.med_nome,
             dosagem: med.med_dosagem,
             quantidade: med.med_quantidade || 0,
-            tipo: med.tipo_nome || tiposMedicamento[med.tipo_id] || "Não especificado",
-            forma: med.forma_nome || formasMedicamento[med.forma_id] || "Não especificada",
-            descricao: med.med_descricao || "Sem descrição disponível.",
-            laboratorio: med.lab_nome || "Não especificado",
+            tipo: med.tipo_nome || tiposMedicamento[med.tipo_id] || "N/A",
+            forma: med.forma_nome || formasMedicamento[med.forma_id] || "N/A",
+            descricao: med.med_descricao || "Sem descrição.",
+            laboratorio: med.lab_nome || "N/A",
             preco: med.medp_preco || 0,
             imagem: med.med_imagem, 
             codigoBarras: med.med_cod_barras || "",
@@ -80,14 +72,11 @@ function ListagemMedicamentos() {
             dataCadastro: med.med_data_cadastro,
             dataAtualizacao: med.med_data_atualizacao
           }));
-          
           setMedicamentos(processedMedicamentos);
         } else {
-          console.error("Erro ao buscar os medicamentos:", response.data.mensagem);
           setErroApi(response.data.mensagem);
         }
       } catch (error) {
-        console.error("Falha ao conectar com a API ou processar dados:", error);
         const mensagem = error.response?.data?.mensagem || error.message || "Não foi possível conectar ao servidor.";
         setErroApi(mensagem);
       } finally {
@@ -105,9 +94,7 @@ function ListagemMedicamentos() {
 
   useEffect(() => {
     setCarregandoFiltro(true);
-    const timer = setTimeout(() => {
-      setCarregandoFiltro(false);
-    }, 300);
+    const timer = setTimeout(() => setCarregandoFiltro(false), 300);
     return () => clearTimeout(timer);
   }, [termoPesquisa, filtroStatus, filtroCategoria, ordenacao]);
 
@@ -146,11 +133,10 @@ function ListagemMedicamentos() {
     
     return resultado;
   }, [medicamentos, termoPesquisa, filtroStatus, filtroCategoria, ordenacao]);
-
+  
   const totalPaginas = Math.ceil(medicamentosFiltrados.length / itensPorPagina);
   const indiceInicial = (paginaAtual - 1) * itensPorPagina;
-  const indiceFinal = indiceInicial + itensPorPagina;
-  const medicamentosPaginados = medicamentosFiltrados.slice(indiceInicial, indiceFinal);
+  const medicamentosPaginados = medicamentosFiltrados.slice(indiceInicial, indiceInicial + itensPorPagina);
 
   const handleExcluir = async (id) => {
     if (window.confirm("Tem certeza que deseja excluir este medicamento?")) {
@@ -175,8 +161,7 @@ function ListagemMedicamentos() {
           alert("Erro ao excluir medicamento: " + response.data.mensagem);
         }
       } catch (error) {
-        console.error("Erro ao excluir medicamento:", error);
-        alert(error.response?.data?.mensagem || "Erro ao excluir medicamento. Tente novamente.");
+        alert(error.response?.data?.mensagem || "Erro ao excluir medicamento.");
       }
     }
   };
@@ -187,16 +172,10 @@ function ListagemMedicamentos() {
       if (!medicamento) return;
 
       const userDataString = localStorage.getItem("userData");
-      if (!userDataString) {
-        alert("Erro: Usuário não autenticado.");
-        return;
-      }
+      if (!userDataString) throw new Error("Usuário não autenticado.");
       const userData = JSON.parse(userDataString);
       const farmaciaId = userData.farm_id;
-      if (!farmaciaId) {
-        alert("Erro: ID da farmácia não encontrado no seu login.");
-        return;
-      }
+      if (!farmaciaId) throw new Error("ID da farmácia não encontrado.");
 
       const novoStatusBooleano = !medicamento.med_ativo;
       
@@ -207,202 +186,84 @@ function ListagemMedicamentos() {
 
       if (response.data.sucesso) {
         const novoStatusString = novoStatusBooleano ? "ativo" : "inativo";
-        
-        setMedicamentos(
-          medicamentos.map((med) =>
-            med.id === id
-              ? { ...med, med_ativo: novoStatusBooleano, status: novoStatusString }
-              : med
-          )
-        );
-        
-        if (medicamentoSelecionado && medicamentoSelecionado.id === id) {
-          setMedicamentoSelecionado({
-            ...medicamentoSelecionado,
-            med_ativo: novoStatusBooleano,
-            status: novoStatusString,
-          });
+        setMedicamentos(medicamentos.map((med) => med.id === id ? { ...med, med_ativo: novoStatusBooleano, status: novoStatusString } : med));
+        if (medicamentoSelecionado?.id === id) {
+          setMedicamentoSelecionado({ ...medicamentoSelecionado, med_ativo: novoStatusBooleano, status: novoStatusString });
         }
-        alert(response.data.mensagem || "Status atualizado com sucesso!");
+        alert(response.data.mensagem || "Status atualizado!");
       } else {
         alert("Erro: " + response.data.mensagem);
       }
     } catch (error) {
-      console.error("Erro ao alterar status:", error);
-      const mensagemErro = error.response?.data?.mensagem || "Não foi possível alterar o status. Tente novamente.";
-      alert(mensagemErro);
+      alert(error.response?.data?.mensagem || "Não foi possível alterar o status.");
     }
   };
 
-  const handleEditar = (id) => {
-    router.push(`/farmacias/produtos/medicamentos/editar/${id}`);
-  };
-
-  const abrirDetalhes = (medicamento) => {
-    setMedicamentoSelecionado(medicamento);
-    setModalDetalhesAberto(true);
-  };
-
-  const abrirModal = () => {
-    setModalAberto(true);
-    setCodigoBarras("");
-    setMedicamentoExistente(null);
-    setProdutoNaoEncontrado(false);
-    setErro("");
-  };
-
-  const fecharModal = () => {
-    setModalAberto(false);
-  };
-
-  const fecharModalDetalhes = () => {
-    setModalDetalhesAberto(false);
-    setMedicamentoSelecionado(null);
-  };
-
+  const handleEditar = (id) => router.push(`/farmacias/produtos/medicamentos/editar/${id}`);
+  const abrirDetalhes = (medicamento) => { setMedicamentoSelecionado(medicamento); setModalDetalhesAberto(true); };
+  const abrirModal = () => { setModalAberto(true); setCodigoBarras(""); setMedicamentoExistente(null); setProdutoNaoEncontrado(false); setErro(""); };
+  const fecharModal = () => setModalAberto(false);
+  const fecharModalDetalhes = () => { setModalDetalhesAberto(false); setMedicamentoSelecionado(null); };
+  
   const verificarCodigoBarras = () => {
     if (!codigoBarras.trim()) {
-      setErro("Por favor, digite um código de barras válido.");
+      setErro("Digite um código de barras válido.");
       return;
     }
-    const medicamento = medicamentos.find((med) => med.codigoBarras === codigoBarras);
-    if (medicamento) {
-      setMedicamentoExistente(medicamento);
-      setProdutoNaoEncontrado(false);
-    } else {
-      setProdutoNaoEncontrado(true);
-      setMedicamentoExistente(null);
-    }
+    setVerificandoCodigo(true);
     setErro("");
+
+    setTimeout(() => {
+      const medicamento = medicamentos.find((med) => med.codigoBarras === codigoBarras);
+      if (medicamento) {
+        setMedicamentoExistente(medicamento);
+        setProdutoNaoEncontrado(false);
+      } else {
+        setProdutoNaoEncontrado(true);
+        setMedicamentoExistente(null);
+      }
+      setVerificandoCodigo(false);
+    }, 500);
   };
 
-  const redirecionarParaCadastro = () => {
-    fecharModal();
-    router.push(`/farmacias/produtos/medicamentos/cadastro?codigoBarras=${codigoBarras}`);
-  };
+  const redirecionarParaCadastro = () => { fecharModal(); router.push(`/farmacias/produtos/medicamentos/cadastro?codigoBarras=${codigoBarras}`); };
+  const handleItensPorPaginaChange = (e) => { setItensPorPagina(Number(e.target.value)); setPaginaAtual(1); };
+  const handleLogout = () => { localStorage.clear(); router.push("/home"); };
 
-  const handleItensPorPaginaChange = (e) => {
-    setItensPorPagina(Number(e.target.value));
-    setPaginaAtual(1);
-  };
-
-  const handleLogout = async () => {
-    localStorage.removeItem("authToken");
-    localStorage.removeItem("userData");
-    router.push("/home");
-  };
-
-  if (loading) {
-    return (
-      <div className={styles.dashboard}>
-        <div className={styles.loaderContainer}>
-          <div className={styles.spinner}></div>
-          <p>Carregando medicamentos...</p>
-        </div>
-      </div>
-    );
-  }
-
-  if (erroApi) {
-    return (
-      <div className={styles.dashboard}>
-        <div className={styles.erroContainer}>
-          <h2>Ocorreu um erro</h2>
-          <p>{erroApi}</p>
-          <button onClick={() => window.location.reload()} className={styles.botaoPrincipal}>
-            Tentar Novamente
-          </button>
-        </div>
-      </div>
-    );
-  }
+  if (loading) { return (<div className={styles.loaderContainer}><div className={styles.spinner}></div><p>Carregando...</p></div>); }
+  if (erroApi) { return (<div className={styles.erroContainer}><h2>Ocorreu um erro</h2><p>{erroApi}</p><button onClick={() => window.location.reload()} className={styles.actionButton}>Tentar Novamente</button></div>); }
 
   return (
     <AuthGuard>
       <div className={styles.dashboard}>
         <header className={styles.header}>
           <div className={styles.headerLeft}>
-            <button className={styles.menuToggle} onClick={() => setSidebarOpen(!sidebarOpen)} aria-label="Alternar menu">
-              ☰
-            </button>
+            <button className={styles.menuToggle} onClick={() => setSidebarOpen(!sidebarOpen)} aria-label="Abrir menu">☰</button>
             <h1 className={styles.titulo}>Gestão de Medicamentos</h1>
           </div>
           <div className={styles.headerActions}>
             <div className={styles.searchBox}>
-              <input type="text" className={styles.searchInput} placeholder="Pesquisar medicamentos..." value={termoPesquisa} onChange={(e) => setTermoPesquisa(e.target.value)} />
-              {termoPesquisa && (
-                <button className={styles.limparPesquisa} onClick={() => setTermoPesquisa("")} aria-label="Limpar pesquisa">
-                  ×
-                </button>
-              )}
+              <input type="text" className={styles.searchInput} placeholder="Pesquisar..." value={termoPesquisa} onChange={(e) => setTermoPesquisa(e.target.value)} />
+              {termoPesquisa && (<button className={styles.limparPesquisa} onClick={() => setTermoPesquisa("")} aria-label="Limpar pesquisa">×</button>)}
             </div>
-            <button onClick={abrirModal} className={styles.botaoPrincipal}>
-              Novo Medicamento
-            </button>
+            <button onClick={abrirModal} className={styles.actionButton}>+ Novo Medicamento</button>
           </div>
         </header>
 
         <div className={styles.contentWrapper}>
-          {/* INÍCIO DA MODIFICAÇÃO DO SIDEBAR */}
           <aside className={`${styles.sidebar} ${sidebarOpen ? styles.sidebarOpen : ""}`}>
             <div className={styles.sidebarHeader}>
-              <div className={styles.logo}>
-                {farmaciaInfo ? (
-                  <div className={styles.logoContainer}>
-                    {farmaciaInfo.farm_logo_url && (
-                      <img src={farmaciaInfo.farm_logo_url} alt={`Logo de ${farmaciaInfo.farm_nome}`} className={styles.logoImage} />
-                    )}
-                    <span className={styles.logoText}>{farmaciaInfo.farm_nome}</span>
-                  </div>
-                ) : (
-                  <span className={styles.logoText}>PharmaX</span>
-                )}
+              <div className={styles.logoContainer}>
+                {farmaciaInfo?.farm_logo_url && (<img src={farmaciaInfo.farm_logo_url} alt={`Logo de ${farmaciaInfo.farm_nome}`} className={styles.logoImage} />)}
+                <span className={styles.logoText}>{farmaciaInfo?.farm_nome || "PharmaX"}</span>
               </div>
-              <button className={styles.sidebarClose} onClick={() => setSidebarOpen(false)}>
-                ×
-              </button>
+              <button className={styles.sidebarClose} onClick={() => setSidebarOpen(false)} aria-label="Fechar menu">×</button>
             </div>
-            {/* FIM DA MODIFICAÇÃO DO SIDEBAR HEADER */}
             <nav className={styles.nav}>
-              <div className={styles.navSection}>
-                <p className={styles.navLabel}>Principal</p>
-                <Link href="/farmacias/favoritos" className={styles.navLink}>
-                  <span className={styles.navText}>Favoritos</span>
-                </Link>
-                <Link href="/farmacias/produtos/medicamentos" className={`${styles.navLink} ${styles.active}`}>
-                  <span className={styles.navText}>Medicamentos</span>
-                </Link>
-              </div>
-              <div className={styles.navSection}>
-                <p className={styles.navLabel}>Gestão</p>
-                <Link href="/farmacias/cadastro/funcionario/lista" className={styles.navLink}>
-                  <span className={styles.navText}>Funcionários</span>
-                </Link>
-                <Link href="/farmacias/laboratorio/lista" className={styles.navLink}>
-                  <span className={styles.navText}>Laboratórios</span>
-                </Link>
-              </div>
-              <div className={styles.navSection}>
-                <p className={styles.navLabel}>Relatórios</p>
-                <Link href="/farmacias/relatorios/favoritos" className={styles.navLink}>
-                  <span className={styles.navText}>Medicamentos Favoritos</span>
-                </Link>
-                <Link href="/farmacias/relatorios/funcionarios" className={styles.navLink}>
-                  <span className={styles.navText}>Relatório de Funcionarios</span>
-                </Link>
-                <Link href="/farmacias/relatorios/laboratorios" className={styles.navLink}>
-                  <span className={styles.navText}>Relatório de Laboratorios</span>
-                </Link>
-              </div>
-              <div className={styles.navSection}>
-                <p className={styles.navLabel}>Conta</p>
-                <Link href="/farmacias/perfil" className={styles.navLink}>
-                  <span className={styles.navText}>Meu Perfil</span>
-                </Link>
-                <button onClick={handleLogout} className={styles.navLink} style={{ background: 'none', border: 'none', width: '100%', textAlign: 'left', cursor: 'pointer' }}>
-                  <span className={styles.navText}>Sair</span>
-                </button>
-              </div>
+              <div className={styles.navSection}><p className={styles.navLabel}>Principal</p><Link href="/farmacias/favoritos" className={styles.navLink}><span className={styles.navText}>Favoritos</span></Link><Link href="/farmacias/produtos/medicamentos" className={`${styles.navLink} ${styles.active}`}><span className={styles.navText}>Medicamentos</span></Link></div>
+              <div className={styles.navSection}><p className={styles.navLabel}>Gestão</p><Link href="/farmacias/cadastro/funcionario/lista" className={styles.navLink}><span className={styles.navText}>Funcionários</span></Link><Link href="/farmacias/laboratorio/lista" className={styles.navLink}><span className={styles.navText}>Laboratórios</span></Link></div>
+              <div className={styles.navSection}><p className={styles.navLabel}>Relatórios</p><Link href="/farmacias/relatorios/favoritos" className={styles.navLink}><span className={styles.navText}>Medicamentos Favoritos</span></Link><Link href="/farmacias/relatorios/funcionarios" className={styles.navLink}><span className={styles.navText}>Relatório de Funcionarios</span></Link><Link href="/farmacias/relatorios/laboratorios" className={styles.navLink}><span className={styles.navText}>Relatório de Laboratorios</span></Link></div>
+              <div className={styles.navSection}><p className={styles.navLabel}>Conta</p><Link href="/farmacias/perfil" className={styles.navLink}><span className={styles.navText}>Meu Perfil</span></Link><button onClick={handleLogout} className={styles.navLink} style={{ all: 'unset', cursor: 'pointer', width: '100%' }}><span className={styles.navText}>Sair</span></button></div>
             </nav>
           </aside>
 
@@ -411,253 +272,72 @@ function ListagemMedicamentos() {
           <main className={styles.mainContent}>
             <div className={styles.controles}>
               <div className={styles.filtros}>
-                <div className={styles.viewToggle}>
-                  <button className={`${styles.viewButton} ${visualizacao === "tabela" ? styles.active : ""}`} onClick={() => setVisualizacao("tabela")} title="Visualização em tabela" aria-label="Visualização em tabela">
-                    ≡
-                  </button>
-                  <button className={`${styles.viewButton} ${visualizacao === "grade" ? styles.active : ""}`} onClick={() => setVisualizacao("grade")} title="Visualização em grade" aria-label="Visualização em grade">
-                    ◼︎
-                  </button>
-                </div>
-                <div className={styles.filtroGroup}>
-                  <label>Status:</label>
-                  <select value={filtroStatus} onChange={(e) => setFiltroStatus(e.target.value)} className={styles.selectFiltro}>
-                    <option value="todos">Todos</option>
-                    <option value="ativo">Ativos</option>
-                    <option value="inativo">Inativos</option>
-                  </select>
-                </div>
-                <div className={styles.filtroGroup}>
-                  <label>Categoria:</label>
-                  <select value={filtroCategoria} onChange={(e) => setFiltroCategoria(e.target.value)} className={styles.selectFiltro}>
-                    {categorias.map((cat) => (
-                      <option key={cat} value={cat}>
-                        {cat === "todos" ? "Todas" : cat}
-                      </option>
-                    ))}
-                  </select>
-                </div>
-                <div className={styles.filtroGroup}>
-                  <label>Ordenar por:</label>
-                  <select value={ordenacao} onChange={(e) => setOrdenacao(e.target.value)} className={styles.selectFiltro}>
-                    <option value="nome">Nome</option>
-                    <option value="quantidade">Conteúdo</option>
-                    <option value="preco">Preço</option>
-                    <option value="laboratorio">Laboratório</option>
-                  </select>
-                </div>
-                <div className={styles.filtroGroup}>
-                  <label>Itens por página:</label>
-                  <select value={itensPorPagina} onChange={handleItensPorPaginaChange} className={styles.selectFiltro}>
-                    <option value="5">5</option>
-                    <option value="10">10</option>
-                    <option value="20">20</option>
-                    <option value="50">50</option>
-                  </select>
-                </div>
+                <div className={styles.viewToggle}><button className={`${styles.viewButton} ${visualizacao === "tabela" ? styles.active : ""}`} onClick={() => setVisualizacao("tabela")} title="Tabela">≡</button><button className={`${styles.viewButton} ${visualizacao === "grade" ? styles.active : ""}`} onClick={() => setVisualizacao("grade")} title="Grade">◼︎</button></div>
+                <div className={styles.filtroGroup}><label>Status:</label><select value={filtroStatus} onChange={(e) => setFiltroStatus(e.target.value)} className={styles.selectFiltro}><option value="todos">Todos</option><option value="ativo">Ativos</option><option value="inativo">Inativos</option></select></div>
+                <div className={styles.filtroGroup}><label>Categoria:</label><select value={filtroCategoria} onChange={(e) => setFiltroCategoria(e.target.value)} className={styles.selectFiltro}>{categorias.map((cat) => (<option key={cat} value={cat}>{cat === "todos" ? "Todas" : cat}</option>))}</select></div>
+                <div className={styles.filtroGroup}><label>Ordenar por:</label><select value={ordenacao} onChange={(e) => setOrdenacao(e.target.value)} className={styles.selectFiltro}><option value="nome">Nome</option><option value="quantidade">Conteúdo</option><option value="preco">Preço</option><option value="laboratorio">Laboratório</option></select></div>
+                <div className={styles.filtroGroup}><label>Itens:</label><select value={itensPorPagina} onChange={handleItensPorPaginaChange} className={styles.selectFiltro}><option value="5">5</option><option value="10">10</option><option value="20">20</option><option value="50">50</option></select></div>
               </div>
-              <div className={styles.infoResultados}>
-                Exibindo {medicamentosPaginados.length} de {medicamentosFiltrados.length} medicamentos
-              </div>
+              <div className={styles.infoResultados}>Exibindo {medicamentosPaginados.length} de {medicamentosFiltrados.length}</div>
             </div>
-
+            
             <div className={styles.tableContainer}>
-              {carregandoFiltro ? (
-                <div className={styles.carregando}>
-                  <div className={styles.loadingSpinner}></div>
-                  <p>Carregando medicamentos...</p>
-                </div>
-              ) : medicamentosPaginados.length === 0 ? (
-                <div className={styles.semResultados}>
-                  <p>Nenhum medicamento encontrado.</p>
-                  <button onClick={abrirModal} className={styles.botaoPrincipal}>
-                    ➕ Adicionar Primeiro Medicamento
-                  </button>
-                </div>
-              ) : visualizacao === "tabela" ? (
-                <table className={styles.tabela}>
-                  <thead>
-                    <tr>
-                      <th>Imagem</th>
-                      <th>Nome</th>
-                      <th>Dosagem</th>
-                      <th>Conteúdo</th>
-                      <th>Forma</th>
-                      <th>Tipo</th>
-                      <th>Laboratório</th>
-                      <th>Preço</th>
-                      <th>Status</th>
-                      <th>Ações</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {medicamentosPaginados.map((med) => (
-                      <tr key={med.id} className={`${styles.tableRow} ${med.status === "inativo" ? styles.inativo : ""}`}>
-                        <td>
-                          <img src={med.imagem} alt={med.nome} className={styles.medicamentoImagem} />
-                        </td>
-                        <td>
-                          <div className={styles.nomeContainer}>
-                            <span className={styles.nome}>{med.nome}</span>
-                            <span className={styles.categoria}>{med.categoria}</span>
-                          </div>
-                        </td>
-                        <td>{med.dosagem}</td>
-                        <td>
-                          <span className={styles.quantidade}>{med.quantidade}</span>
-                        </td>
-                        <td>{med.forma}</td>
-                        <td>{med.tipo}</td>
-                        <td>{med.laboratorio}</td>
-                        <td>{currency.format(med.preco)}</td>
-                        <td>
-                          <span className={`${styles.status} ${med.status === "ativo" ? styles.statusAtivo : styles.statusInativo}`}>
-                            {med.status === "ativo" ? "Ativo" : "Inativo"}
-                          </span>
-                        </td>
-                        <td>
-                          <div className={styles.acoes}>
-                            <button onClick={() => abrirDetalhes(med)} className={styles.botaoAcao} title="Ver detalhes" aria-label={`Ver detalhes de ${med.nome}`}>
-                              Detalhes
-                            </button>
-                          </div>
-                        </td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-              ) : (
-                <div className={styles.gradeContainer}>
-                  {medicamentosPaginados.map((med) => (
-                    <div key={med.id} className={`${styles.medicamentoCard} ${med.status === "inativo" ? styles.inativo : ""}`}>
-                      <div className={styles.cardHeader}>
-                        <img src={med.imagem} alt={med.nome} className={styles.cardImagem} />
-                        <span className={`${styles.cardStatus} ${med.status === "ativo" ? styles.statusAtivo : styles.statusInativo}`}>
-                          {med.status === "ativo" ? "Ativo" : "Inativo"}
-                        </span>
-                      </div>
-                      <div className={styles.cardContent}>
-                        <h3 className={styles.cardNome}>{med.nome}</h3>
-                        <p className={styles.cardDosagem}>{med.dosagem}</p>
-                        <p className={styles.cardLaboratorio}>{med.laboratorio}</p>
-                        <p className={styles.cardCategoria}>{med.categoria}</p>
-                        <div className={styles.cardInfo}>
-                          <div className={styles.infoItem}>
-                            <span className={styles.infoLabel}>Conteúdo:</span>
-                            <span className={styles.infoValue}>{`${med.quantidade}`}</span>
-                          </div>
-                          <div className={styles.infoItem}>
-                            <span className={styles.infoLabel}>Preço:</span>
-                            <span className={styles.infoValue}>{currency.format(med.preco)}</span>
-                          </div>
-                        </div>
-                      </div>
-                      <div className={styles.cardActions}>
-                        <button onClick={() => abrirDetalhes(med)} className={styles.botaoAcaoCard} title="Ver detalhes" aria-label={`Ver detalhes de ${med.nome}`}>
-                          Detalhes
-                        </button>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              )}
+              {carregandoFiltro ? (<div className={styles.carregando}><div className={styles.spinner}></div><p>Filtrando...</p></div>) : medicamentosPaginados.length === 0 ? (<div className={styles.semResultados}><p>Nenhum medicamento encontrado.</p><button onClick={abrirModal} className={styles.actionButton}>+ Adicionar Medicamento</button></div>) : visualizacao === "tabela" ? (<table className={styles.tabela}><thead><tr><th>Imagem</th><th>Nome</th><th>Dosagem</th><th>Conteúdo</th><th>Preço</th><th>Status</th><th>Ações</th></tr></thead><tbody>{medicamentosPaginados.map((med) => (<tr key={med.id} className={`${styles.tableRow} ${med.status === "inativo" ? styles.inativo : ""}`}><td><img src={med.imagem} alt={med.nome} className={styles.medicamentoImagem} /></td><td><div className={styles.nomeContainer}><span className={styles.nome}>{med.nome}</span><span className={styles.categoria}>{med.categoria}</span></div></td><td>{med.dosagem}</td><td><span className={styles.quantidade}>{med.quantidade}</span></td><td>{currency.format(med.preco)}</td><td><span className={`${styles.status} ${med.status === "ativo" ? styles.statusAtivo : styles.statusInativo}`}>{med.status}</span></td><td><div className={styles.acoes}><button onClick={() => abrirDetalhes(med)} className={styles.botaoAcao}>Detalhes</button></div></td></tr>))}</tbody></table>) : (<div className={styles.gradeContainer}>{medicamentosPaginados.map((med) => (<div key={med.id} className={`${styles.medicamentoCard} ${med.status === "inativo" ? styles.inativo : ""}`}><div className={styles.cardHeader}><img src={med.imagem} alt={med.nome} className={styles.cardImagem} /><span className={`${styles.cardStatus} ${med.status === "ativo" ? styles.statusAtivo : styles.statusInativo}`}>{med.status}</span></div><div className={styles.cardContent}><h3 className={styles.cardNome}>{med.nome}</h3><p className={styles.cardDosagem}>{med.dosagem}</p><div className={styles.cardInfo}><div className={styles.infoItem}><span className={styles.infoLabel}>Conteúdo:</span><span className={styles.infoValue}>{med.quantidade}</span></div><div className={styles.infoItem}><span className={styles.infoLabel}>Preço:</span><span className={styles.infoValue}>{currency.format(med.preco)}</span></div></div></div><div className={styles.cardActions}><button onClick={() => abrirDetalhes(med)} className={styles.botaoAcaoCard}>Detalhes</button></div></div>))}</div>)}
             </div>
-
-            {totalPaginas > 1 && (
-              <div className={styles.paginacao}>
-                <button onClick={() => setPaginaAtual(Math.max(1, paginaAtual - 1))} disabled={paginaAtual === 1} className={styles.botaoPaginacao}>
-                  ← Anterior
-                </button>
-                {Array.from({ length: Math.min(5, totalPaginas) }, (_, i) => {
-                  let pagina;
-                  if (totalPaginas <= 5) {
-                    pagina = i + 1;
-                  } else if (paginaAtual <= 3) {
-                    pagina = i + 1;
-                  } else if (paginaAtual >= totalPaginas - 2) {
-                    pagina = totalPaginas - 4 + i;
-                  } else {
-                    pagina = paginaAtual - 2 + i;
-                  }
-                  return (
-                    <button key={pagina} onClick={() => setPaginaAtual(pagina)} className={`${styles.botaoPaginacao} ${pagina === paginaAtual ? styles.paginaAtual : ""}`}>
-                      {pagina}
-                    </button>
-                  );
-                })}
-                {totalPaginas > 5 && paginaAtual < totalPaginas - 2 && <span className={styles.pontos}>...</span>}
-                {totalPaginas > 5 && paginaAtual < totalPaginas - 1 && (
-                  <button onClick={() => setPaginaAtual(totalPaginas)} className={styles.botaoPaginacao}>
-                    {totalPaginas}
-                  </button>
-                )}
-                <button onClick={() => setPaginaAtual(Math.min(totalPaginas, paginaAtual + 1))} disabled={paginaAtual === totalPaginas} className={styles.botaoPaginacao}>
-                  Próxima →
-                </button>
-              </div>
-            )}
+            
+            {totalPaginas > 1 && (<div className={styles.paginacao}><button onClick={() => setPaginaAtual(p => Math.max(1, p - 1))} disabled={paginaAtual === 1} className={styles.botaoPaginacao}>←</button>{Array.from({ length: totalPaginas }).map((_, i) => i + 1).map(p => (<button key={p} onClick={() => setPaginaAtual(p)} className={`${styles.botaoPaginacao} ${p === paginaAtual ? styles.paginaAtual : ""}`}>{p}</button>))}<button onClick={() => setPaginaAtual(p => Math.min(totalPaginas, p + 1))} disabled={paginaAtual === totalPaginas} className={styles.botaoPaginacao}>→</button></div>)}
           </main>
         </div>
-
+        
         {modalAberto && (
           <div className={styles.modalOverlay}>
             <div className={styles.modal}>
               <div className={styles.modalHeader}>
-                <h2>Cadastrar Novo Medicamento</h2>
-                <button onClick={fecharModal} className={styles.modalClose} aria-label="Fechar modal">
-                  ✕
-                </button>
+                <h2>Novo Medicamento</h2>
+                <button onClick={fecharModal} className={styles.modalClose} aria-label="Fechar">✕</button>
               </div>
               <div className={styles.modalContent}>
-                <p>Digite o código de barras do medicamento para verificar se já existe no sistema:</p>
-                <div className={styles.codigoBarrasInput}>
-                  <input 
-                    type="text" 
-                    placeholder="Digite o código de barras..." 
-                    value={codigoBarras} 
-                    onChange={(e) => setCodigoBarras(e.target.value)} 
-                    onKeyPress={(e) => { if (e.key === "Enter") verificarCodigoBarras(); }} 
-                    className={styles.input} 
-                  />
-                  <button onClick={verificarCodigoBarras} className={styles.botaoSecundario}>
-                    Verificar
-                  </button>
-                </div>
-                
-                {erro && <p className={styles.erro}>{erro}</p>}
-
+                {!medicamentoExistente && !produtoNaoEncontrado && (
+                  <div className={styles.barcodeModalContainer}>
+                    <BsUpcScan className={styles.barcodeIcon} />
+                    <h3>Verificar Código de Barras</h3>
+                    <p>Digite o código de barras do produto para verificar se ele já existe no sistema antes de prosseguir.</p>
+                    <div className={styles.codigoBarrasInput}>
+                      <input type="text" placeholder="Digite o código..." value={codigoBarras} onChange={(e) => setCodigoBarras(e.target.value)} onKeyPress={(e) => e.key === 'Enter' && verificarCodigoBarras()} className={styles.modernInput} />
+                      <button onClick={verificarCodigoBarras} className={styles.actionButton} disabled={verificandoCodigo}>
+                        {verificandoCodigo ? <span className={styles.buttonSpinner}></span> : "Verificar"}
+                      </button>
+                    </div>
+                    {erro && <p className={styles.errorMessage}>{erro}</p>}
+                  </div>
+                )}
                 {medicamentoExistente && (
-                  <div className={styles.medicamentoExistente}>
-                    <h3>Medicamento já cadastrado no sistema</h3>
+                  <div className={styles.barcodeModalContainer}>
+                    <BsFillPatchCheckFill className={`${styles.barcodeIcon} ${styles.successIcon}`} />
+                    <h3>Medicamento Encontrado!</h3>
+                    <p>Este produto já está cadastrado no seu sistema.</p>
                     <div className={styles.existenteInfo}>
                       <img src={medicamentoExistente.imagem} alt={medicamentoExistente.nome} className={styles.existenteImagem} />
                       <div className={styles.existenteDetalhes}>
                         <p><strong>Nome:</strong> {medicamentoExistente.nome}</p>
-                        <p><strong>Dosagem:</strong> {medicamentoExistente.dosagem}</p>
                         <p><strong>Laboratório:</strong> {medicamentoExistente.laboratorio}</p>
+                        <p><strong>Código:</strong> {medicamentoExistente.codigoBarras}</p>
                       </div>
                     </div>
-                    
-                    <div className={styles.modalActions}>
-                      
-                      <button onClick={fecharModal} className={styles.botaoSecundario}>
-                        Cancelar
-                      </button>
+                    <div className={styles.modalFooter}>
+                      <button onClick={abrirModal} className={styles.cancelButton}>Verificar Outro</button>
+                      <button onClick={() => abrirDetalhes(medicamentoExistente)} className={styles.actionButton}>Ver Detalhes</button>
                     </div>
                   </div>
                 )}
-
                 {produtoNaoEncontrado && (
-                  <div className={styles.produtoNaoEncontrado}>
-                    <h3>Produto não encontrado</h3>
-                    <p>Este código de barras não corresponde a nenhum medicamento cadastrado. Deseja iniciar um novo cadastro?</p>
-                    <div className={styles.modalActions}>
-                      <button onClick={redirecionarParaCadastro} className={styles.botaoPrincipal}>
-                        Cadastrar Novo Medicamento
-                      </button>
-                      <button onClick={fecharModal} className={styles.botaoSecundario}>
-                        Cancelar
-                      </button>
+                  <div className={styles.barcodeModalContainer}>
+                    <BsFillPatchQuestionFill className={`${styles.barcodeIcon} ${styles.warningIcon}`} />
+                    <h3>Produto não Encontrado</h3>
+                    <p>Nenhum medicamento corresponde ao código de barras <strong>{codigoBarras}</strong>. Deseja cadastrá-lo agora?</p>
+                    <div className={styles.modalFooter}>
+                       <button onClick={abrirModal} className={styles.cancelButton}>Cancelar</button>
+                       <button onClick={redirecionarParaCadastro} className={styles.actionButton}>Sim, Cadastrar Agora</button>
                     </div>
                   </div>
                 )}
@@ -665,15 +345,13 @@ function ListagemMedicamentos() {
             </div>
           </div>
         )}
-
+        
         {modalDetalhesAberto && medicamentoSelecionado && (
           <div className={styles.modalOverlay}>
             <div className={styles.modal}>
               <div className={styles.modalHeader}>
                 <h2>Detalhes do Medicamento</h2>
-                <button onClick={fecharModalDetalhes} className={styles.modalClose} aria-label="Fechar detalhes">
-                  ✕
-                </button>
+                <button onClick={fecharModalDetalhes} className={styles.modalClose} aria-label="Fechar">✕</button>
               </div>
               <div className={styles.modalContent}>
                 <div className={styles.detalhesContainer}>
@@ -684,40 +362,21 @@ function ListagemMedicamentos() {
                     <h3>{medicamentoSelecionado.nome}</h3>
                     <div className={styles.infoGrid}>
                       <div className={styles.infoItem}><span className={styles.infoLabel}>Dosagem:</span><span className={styles.infoValue}>{medicamentoSelecionado.dosagem}</span></div>
-                      <div className={styles.infoItem}><span className={styles.infoLabel}>Conteúdo:</span><span className={styles.infoValue}>{`${medicamentoSelecionado.quantidade}`}</span></div>
-                      <div className={styles.infoItem}><span className={styles.infoLabel}>Tipo:</span><span className={styles.infoValue}>{medicamentoSelecionado.tipo}</span></div>
-                      <div className={styles.infoItem}><span className={styles.infoLabel}>Forma:</span><span className={styles.infoValue}>{medicamentoSelecionado.forma}</span></div>
-                      <div className={styles.infoItem}><span className={styles.infoLabel}>Laboratório:</span><span className={styles.infoValue}>{medicamentoSelecionado.laboratorio}</span></div>
+                      <div className={styles.infoItem}><span className={styles.infoLabel}>Conteúdo:</span><span className={styles.infoValue}>{medicamentoSelecionado.quantidade}</span></div>
                       <div className={styles.infoItem}><span className={styles.infoLabel}>Preço:</span><span className={styles.infoValue}>{currency.format(medicamentoSelecionado.preco)}</span></div>
-                      <div className={styles.infoItem}><span className={styles.infoLabel}>Categoria:</span><span className={styles.infoValue}>{medicamentoSelecionado.categoria}</span></div>
-                      <div className={styles.infoItem}>
-                        <span className={styles.infoLabel}>Status:</span>
-                        <span className={`${styles.infoValue} ${medicamentoSelecionado.status === "ativo" ? styles.statusAtivo : styles.statusInativo}`}>
-                          {medicamentoSelecionado.status === "ativo" ? "Ativo" : "Inativo"}
-                        </span>
-                      </div>
-                      <div className={styles.infoItem}><span className={styles.infoLabel}>Data Cadastro:</span><span className={styles.infoValue}>{new Date(medicamentoSelecionado.dataCadastro).toLocaleDateString('pt-BR')}</span></div>
-                      <div className={styles.infoItem}><span className={styles.infoLabel}>Última Atualização:</span><span className={styles.infoValue}>{new Date(medicamentoSelecionado.dataAtualizacao).toLocaleDateString('pt-BR')}</span></div>
+                      <div className={styles.infoItem}><span className={styles.infoLabel}>Laboratório:</span><span className={styles.infoValue}>{medicamentoSelecionado.laboratorio}</span></div>
                     </div>
-                    {medicamentoSelecionado.descricao && (
-                      <div className={styles.descricao}>
-                        <span className={styles.infoLabel}>Descrição:</span>
-                        <p>{medicamentoSelecionado.descricao}</p>
-                      </div>
-                    )}
+                    <div className={styles.descricao}>
+                      <span className={styles.infoLabel}>Descrição:</span>
+                      <p>{medicamentoSelecionado.descricao}</p>
+                    </div>
                   </div>
                 </div>
-                <div className={styles.modalActions}>
-                  <button onClick={() => handleEditar(medicamentoSelecionado.id)} className={styles.botaoPrincipal}>
-                    Editar
-                  </button>
-                  <button onClick={() => toggleStatus(medicamentoSelecionado.id)} className={styles.botaoSecundario}>
-                    {medicamentoSelecionado.status === "ativo" ? " Desativar" : " Ativar"}
-                  </button>
-                  <button onClick={() => handleExcluir(medicamentoSelecionado.id)} className={styles.botaoPerigo}>
-                    Excluir
-                  </button>
-                </div>
+              </div>
+              <div className={styles.modalFooter}>
+                <button onClick={() => handleExcluir(medicamentoSelecionado.id)} className={styles.dangerButton}>Excluir</button>
+                <button onClick={() => toggleStatus(medicamentoSelecionado.id)} className={styles.cancelButton}>{medicamentoSelecionado.status === "ativo" ? "Desativar" : "Ativar"}</button>
+                <button onClick={() => handleEditar(medicamentoSelecionado.id)} className={styles.actionButton}>Editar</button>
               </div>
             </div>
           </div>

@@ -9,11 +9,11 @@ import api from "../../services/api"; // Seu arquivo de configuração da API
 export default function FavoritosFarmaciaPage() {
   // --- ESTADOS DO COMPONENTE ---
   const [medicamentos, setMedicamentos] = useState([]);
-  const [loadingData, setLoadingData] = useState(true); // Estado para o carregamento dos dados da API
+  const [loadingData, setLoadingData] = useState(true);
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
   const [itemsPerPage] = useState(10);
-  const [farmaciaInfo, setFarmaciaInfo] = useState(null); // Estado para dados da farmácia
+  const [farmaciaInfo, setFarmaciaInfo] = useState(null);
   const router = useRouter();
 
   // --- FUNÇÃO DE LOGOUT ---
@@ -26,33 +26,28 @@ export default function FavoritosFarmaciaPage() {
   // --- EFEITO PARA BUSCAR OS DADOS QUANDO O COMPONENTE É MONTADO ---
   useEffect(() => {
     const fetchMedicamentosFavoritos = async () => {
+      setLoadingData(true);
       try {
-        // Passo 1: Obter os dados da farmácia salvos no localStorage durante o login.
         const userDataString = localStorage.getItem("userData");
         if (!userDataString) {
           alert("Sua sessão não foi encontrada. Por favor, faça o login novamente.");
-          handleLogout(); // Reutiliza a função de logout
-          return; // Interrompe a execução
+          handleLogout();
+          return;
         }
 
-        // Passo 2: Extrair o ID da farmácia.
         const userData = JSON.parse(userDataString);
-        setFarmaciaInfo(userData); // Salva os dados do usuário/farmácia no estado
+        setFarmaciaInfo(userData);
 
-        // IMPORTANTE: Confirme se a propriedade do ID no objeto userData é 'farm_id'.
         const idDaFarmacia = userData.farm_id;
-
         if (!idDaFarmacia) {
           alert("Não foi possível identificar sua farmácia. Faça o login novamente.");
           handleLogout();
-          return; // Interrompe a execução se o ID não for encontrado
+          return;
         }
         
-        // A chamada à API agora usa o ID da farmácia para buscar dados específicos.
         const response = await api.get(`/favoritos/${idDaFarmacia}/favoritos`);
         
         if (response.data.sucesso) {
-          // Processa os dados recebidos para o formato esperado pelo frontend
           const processedMedicamentos = response.data.dados.map(med => ({
             ...med,
             id: med.med_id,
@@ -65,14 +60,18 @@ export default function FavoritosFarmaciaPage() {
               ? new Date(med.med_data_atualizacao).toISOString() 
               : new Date().toISOString(),
           }));
-          setMedicamentos(processedMedicamentos);
+
+          // CORREÇÃO CRÍTICA: Ordena a lista completa de medicamentos antes de salvá-la no estado.
+          // Isso garante que a paginação funcione corretamente sobre a lista já ordenada.
+          const sortedMedicamentos = processedMedicamentos.sort((a, b) => b.favoritacoes - a.favoritacoes);
+          setMedicamentos(sortedMedicamentos);
+
         } else {
           console.error("A API retornou um erro:", response.data.mensagem);
           alert("Não foi possível carregar os favoritos.");
         }
       } catch (error) {
         console.error("Falha na chamada à API:", error);
-        // Se o erro for 'Não Autorizado' (token inválido/expirado), desloga o usuário
         if (error.response?.status === 401) {
           alert("Sua sessão expirou. Por favor, faça o login novamente.");
           handleLogout();
@@ -80,7 +79,7 @@ export default function FavoritosFarmaciaPage() {
           alert("Não foi possível conectar ao servidor. Verifique sua conexão e se a API está online.");
         }
       } finally {
-        setLoadingData(false); // Finaliza o carregamento dos dados
+        setLoadingData(false);
       }
     };
 
@@ -90,6 +89,7 @@ export default function FavoritosFarmaciaPage() {
   // --- LÓGICA DE PAGINAÇÃO ---
   const indexOfLastItem = currentPage * itemsPerPage;
   const indexOfFirstItem = indexOfLastItem - itemsPerPage;
+  // Agora 'currentItems' é apenas uma "fatia" da lista já ordenada
   const currentItems = medicamentos.slice(indexOfFirstItem, indexOfLastItem);
   const totalPages = Math.ceil(medicamentos.length / itemsPerPage);
   const paginate = (pageNumber) => setCurrentPage(pageNumber);
@@ -97,15 +97,14 @@ export default function FavoritosFarmaciaPage() {
 
   // --- RENDERIZAÇÃO DO COMPONENTE ---
   return (
-    // AuthGuard protege todo o conteúdo da página
     <AuthGuard>
       <div className={styles.dashboard}>
-        {/* Header */}
         <header className={styles.header}>
           <div className={styles.headerLeft}>
             <button
               className={styles.menuToggle}
               onClick={() => setSidebarOpen(!sidebarOpen)}
+              aria-label="Abrir menu" // NOVO: Melhoria de acessibilidade
             >
               ☰
             </button>
@@ -114,11 +113,9 @@ export default function FavoritosFarmaciaPage() {
         </header>
 
         <div className={styles.contentWrapper}>
-          {/* Sidebar */}
           <aside className={`${styles.sidebar} ${sidebarOpen ? styles.sidebarOpen : ""}`}>
             <div className={styles.sidebarHeader}>
               <div className={styles.logo}>
-                {/* Lógica atualizada para exibir a imagem E o nome */}
                 {farmaciaInfo ? (
                   <div className={styles.logoContainer}>
                     {farmaciaInfo.farm_logo_url && (
@@ -136,11 +133,16 @@ export default function FavoritosFarmaciaPage() {
                   <span className={styles.logoText}>PharmaX</span>
                 )}
               </div>
-              <button className={styles.sidebarClose} onClick={() => setSidebarOpen(false)}>
+              <button 
+                className={styles.sidebarClose} 
+                onClick={() => setSidebarOpen(false)}
+                aria-label="Fechar menu" // NOVO: Melhoria de acessibilidade
+              >
                 ×
               </button>
             </div>
             <nav className={styles.nav}>
+              {/* Links de navegação permanecem os mesmos */}
               <div className={styles.navSection}>
                 <p className={styles.navLabel}>Principal</p>
                 <Link href="/farmacias/favoritos" className={`${styles.navLink} ${styles.active}`}>
@@ -183,12 +185,10 @@ export default function FavoritosFarmaciaPage() {
             </nav>
           </aside>
 
-          {/* Overlay para fechar a sidebar em telas menores */}
           {sidebarOpen && (
             <div className={styles.overlay} onClick={() => setSidebarOpen(false)} />
           )}
 
-          {/* Conteúdo Principal */}
           <main className={styles.mainContent}>
             {loadingData ? (
               <div className={styles.loaderContainer}>
@@ -197,16 +197,15 @@ export default function FavoritosFarmaciaPage() {
               </div>
             ) : (
               <>
-                {/* Grid de Medicamentos */}
                 <div className={styles.grid}>
                   {currentItems.length > 0 ? (
-                    currentItems
-                      .sort((a, b) => b.favoritacoes - a.favoritacoes)
-                      .map((med, index) => (
+                    // REMOVIDO: A ordenação (.sort) foi removida daqui pois agora é feita na busca dos dados.
+                    currentItems.map((med, index) => (
                         <div className={styles.card} key={med.id}>
                           <div className={styles.cardHeader}>
                             <div className={styles.cardUserInfo}>
                               <div className={styles.userAvatar}>
+                                {/* O ranking agora é calculado corretamente com base na lista completa */}
                                 <span>#{indexOfFirstItem + index + 1}</span>
                               </div>
                               <div>
@@ -248,7 +247,6 @@ export default function FavoritosFarmaciaPage() {
                   )}
                 </div>
 
-                {/* Controles de Paginação */}
                 {totalPages > 1 && (
                   <div className={styles.paginationControls}>
                     <button

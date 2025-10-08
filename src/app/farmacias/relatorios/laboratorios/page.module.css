@@ -1,4 +1,4 @@
-/* Layout Principal */
+/* Layout Principal e Componentes (Estrutura consistente com as outras telas) */
 .dashboard {
   min-height: 100vh;
   background-color: #f8fafc;
@@ -6,14 +6,13 @@
   flex-direction: column;
 }
 
-/* Header */
 .header {
   background: white;
-  padding: 1rem 3.0rem;
+  padding: 1.5rem 2.4rem;
   display: flex;
   justify-content: space-between;
   align-items: center;
-  box-shadow: 0 0.2rem 0.4rem rgba(0, 0, 0, 0.1);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
   position: sticky;
   top: 0;
   z-index: 100;
@@ -28,22 +27,18 @@
 .menuToggle {
   background: none;
   border: none;
-  font-size: 2rem;
+  font-size: 2.4rem;
   cursor: pointer;
   padding: 0.8rem;
   border-radius: 0.6rem;
   transition: background 0.3s ease;
   display: none;
-}
-
-.menuToggle:hover {
-  background: #f1f5f9;
+  color: #458B00;
 }
 
 .title {
-  font-size: 2.8rem;
+  font-size: clamp(2rem, 4vw, 2.8rem);
   font-weight: 600;
-  color: #1e293b;
   margin: 0;
   background: linear-gradient(135deg, #191970 0%, #458B00 100%);
   -webkit-background-clip: text;
@@ -51,53 +46,26 @@
   background-clip: text;
 }
 
-.headerActions {
-  display: flex;
-  align-items: center;
-  gap: 1.6rem;
-}
-
-.reportButton {
-  padding: 1rem 1.6rem;
-  border: none;
-  border-radius: 0.8rem;
-  background: #458b00;
-  color: white;
-  font-weight: 500;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  gap: 0.8rem;
-  transition: all 0.3s ease;
-}
-
-.reportButton:hover {
-  transform: translateY(-1px);
-  box-shadow: 0 0.4rem 1.2rem rgba(69, 139, 0, 0.3);
-}
-
-/* Wrapper de Conteúdo */
 .contentWrapper {
   display: flex;
   flex: 1;
   position: relative;
 }
 
-/* Sidebar NÃO FIXA */
 .sidebar {
-  width: 30rem;
+  width: 28rem;
   background: linear-gradient(180deg, #191970 0%, #0f1440 100%);
   color: #CDC1C5;
   display: flex;
   flex-direction: column;
-  transition: transform 0.3s ease;
+  transition: transform 0.3s ease-in-out;
   box-shadow: 0.2rem 0 1rem rgba(0, 0, 0, 0.1);
-  z-index: 90;
   flex-shrink: 0;
-  height: calc(100vh - 80px);
+  height: calc(100vh - 7.2rem);
   position: sticky;
-  top: 80px;
+  top: 7.2rem;
   overflow-y: auto;
+  z-index: 90;
 }
 
 .sidebarHeader {
@@ -111,31 +79,21 @@
   z-index: 10;
 }
 
-/* INÍCIO DAS MODIFICAÇÕES */
-.logo {
-  font-size: 2.2rem;
-  font-weight: bold;
-  color: #fff;
+.logoContainer {
   display: flex;
   align-items: center;
-}
-
-.logoContainer {
-    display: flex;
-    align-items: center;
-    gap: 1.2rem;
+  gap: 1.2rem;
 }
 
 .logoImage {
-    height: 40px;
-    width: 40px;
-    border-radius: 8px;
-    object-fit: cover;
+  height: 6rem;
+  width: 6rem;
+  border-radius: 5px;
+  object-fit: cover;
 }
-/* FIM DAS MODIFICAÇÕES */
 
 .logoText {
-  font-size: 1.8rem;
+  font-size: 2rem;
   font-weight: 600;
   color: #fff;
 }
@@ -143,24 +101,17 @@
 .sidebarClose {
   background: none;
   border: none;
-  font-size: 2.2rem;
+  font-size: 2.8rem;
   color: #fff;
   cursor: pointer;
   border-radius: 0.6rem;
   padding: 0.4rem 0.8rem;
-  transition: background 0.2s;
   display: none;
-}
-
-.sidebarClose:hover {
-  background: #222266;
 }
 
 .nav {
   flex: 1;
-  padding: 0 1.0rem 2.0rem 1.0rem;
-  overflow-y: auto;
-  overflow: hidden;
+  padding: 1rem;
 }
 
 .navSection {
@@ -170,8 +121,7 @@
 .navLabel {
   font-size: 1.3rem;
   color: #b0b0b0;
-  margin-bottom: 0.6rem;
-  margin-top: 1rem;
+  margin: 1rem 0 0.6rem 1rem;
   text-transform: uppercase;
   letter-spacing: 0.5px;
 }
@@ -179,93 +129,65 @@
 .navLink {
   display: flex;
   align-items: center;
-  padding: 1rem 1.2rem;
+  padding: 1.2rem 1.4rem;
   color: #CDC1C5;
   text-decoration: none;
   border-radius: 0.6rem;
   margin-bottom: 0.4rem;
   transition: all 0.3s ease;
   font-size: 1.5rem;
-  border-left: 4px solid transparent;
-  gap: 1rem;
+  gap: 1.2rem;
 }
 
 .navLink:hover {
   background: rgba(69, 139, 0, 0.15);
   color: #fff;
-  border-left-color: #458B00;
-  transform: translateX(5px);
 }
 
 .navLink.active {
   background: linear-gradient(135deg, #458B00 0%, #2e7d32 100%);
   color: #fff;
-  border-left-color: #fff;
-  box-shadow: 0 4px 12px rgba(69, 139, 0, 0.3);
 }
 
 .navText {
-  margin-left: 0.6rem;
-  font-family: "Montserrat";
+  font-family: "Montserrat", sans-serif;
 }
 
-.navIcon {
-  font-size: 1.6rem;
-  width: 20px;
-  text-align: center;
-}
-/* Conteúdo Principal */
+/* REESTRUTURADO: Conteúdo Principal e Relatório */
 .mainContent {
   flex: 1;
-  padding: 3.2rem 2.4rem;
+  padding: 3.2rem;
   background: #f8fafc;
-  min-height: 100vh;
 }
 
-/* Cabeçalho do relatório */
-.reportHeader {
+.reportButton {
+  padding: 1rem 2rem;
+  border-radius: 0.8rem;
+  font-weight: 600;
+  font-size: 1.4rem;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  border: 1px solid transparent;
   display: flex;
   align-items: center;
-  gap: 2.4rem;
-  margin-bottom: 1.8rem;
-  border-bottom: 1px solid #e5e7eb;
-  padding-bottom: 1.8rem;
+  justify-content: center;
+  gap: 0.8rem;
+  background: #458B00;
+  color: white;
 }
 
-.printLogo {
-  display: none;
-  height: 50px;
-  width: auto;
-  object-fit: contain;
+.reportButton:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(69, 139, 0, 0.3);
 }
 
-.reportTitle h1 {
-  font-size: 2.8rem;
-  font-weight: 700;
-  margin: 0 0 0.4rem 0;
-  color: #191970;
-}
-
-.reportTitle p {
-  margin: 0;
-  color: #555;
-  font-size: 1.6rem;
-}
-
-/* Informações do relatório */
-.reportInfo {
-  margin-bottom: 1.8rem;
-  color: #444;
-  font-size: 1.6rem;
-}
-
-.reportInfo p {
-  margin: 0 0 0.4rem 0;
-}
-
-/* Controles */
 .controls {
-  margin-bottom: 1.8rem;
+  background: white;
+  border-radius: 1.2rem;
+  padding: 2rem;
+  margin-bottom: 2.4rem;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+  border: 1px solid #e5e7eb;
 }
 
 .filters {
@@ -278,69 +200,90 @@
   display: flex;
   align-items: center;
   gap: 0.8rem;
-  font-size: 1.9rem;
 }
 
 .filterGroup label {
-  font-weight: 500;
+  font-weight: 600;
   color: #191970;
-  margin-right: 0.4rem;
-  font-size: 1.6rem;
+  font-size: 1.4rem;
 }
 
 .filterGroup input,
 .filterGroup select {
-  padding: 0.6rem 1rem;
-  border: 0.1rem solid #d1d5db;
-  border-radius: 6px;
-  font-size: 1.5rem;
-  background: #fff;
+  padding: 0.8rem 1.2rem;
+  border: 1px solid #d1d5db;
+  border-radius: 0.8rem;
+  font-size: 1.4rem;
+  background: #f9fafb;
+  color-scheme: light;
 }
 
-.filterGroup span {
-  color: #555;
-  font-size: 1.8rem;
-}
-
-/* Container do relatório */
+/* Container do Relatório */
 .reportContainer {
   background: #fff;
   border-radius: 1.2rem;
-  box-shadow: 0 0.2rem 0.8rem rgba(0, 0, 0, 0.04);
-  padding: 2.4rem;
-  margin-bottom: 2.4rem;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+  padding: 3.2rem;
+}
+
+.tableWrapper {
   overflow-x: auto;
 }
 
-/* Tabela de relatório */
+.reportHeader {
+  display: flex;
+  align-items: center;
+  gap: 2.4rem;
+  margin-bottom: 2.4rem;
+  border-bottom: 1px solid #e5e7eb;
+  padding-bottom: 2.4rem;
+}
+
+.printLogo {
+  display: none;
+  height: 6rem;
+  width: auto;
+  object-fit: contain;
+}
+
+.reportTitle h1 {
+  font-size: clamp(2.2rem, 4vw, 2.8rem);
+  font-weight: 700;
+  margin: 0 0 0.8rem 0;
+  color: #191970;
+}
+
+.reportTitle p {
+  margin: 0;
+  color: #64748b;
+  font-size: 1.4rem;
+}
+
 .reportTable {
   width: 100%;
+  min-width: 900px;
   border-collapse: collapse;
-  margin-bottom: 2.4rem;
+  margin-bottom: 3.2rem;
 }
 
 .reportTable th,
 .reportTable td {
-  padding: 1rem 1.2rem;
-  border-bottom: 0.1rem solid #e5e7eb;
+  padding: 1.2rem 1.6rem;
+  border-bottom: 1px solid #e5e7eb;
   text-align: left;
-  font-size: 1.6rem;
+  font-size: 1.4rem;
+  white-space: nowrap;
 }
 
 .reportTable th {
-  background: #f1f5f9;
+  background: #f8fafc;
   font-weight: 600;
-  color: #191970;
-  cursor: pointer;
+  color: #374151;
   user-select: none;
 }
 
-.reportTable tr:nth-child(even) {
-  background: #f8fafc;
-}
-
 .reportTable tr:hover {
-  background: #e6f7e6;
+  background: #f0fdf4;
 }
 
 .sortableHeader {
@@ -349,40 +292,17 @@
 }
 
 .sortableHeader:hover {
-  color: #458b00;
+  color: #458B00;
 }
 
 .medName {
-  font-weight: 500;
-  color: #191970;
+  font-weight: 600;
+  color: #1e293b;
 }
 
-/* Badges de status */
-.statusBadge {
-  display: inline-block;
-  padding: 0.4rem 1rem;
-  border-radius: 1.2rem;
-  font-size: 1.3rem;
-  font-weight: 500;
-  text-align: center;
-}
+/* REMOVIDO: Estilos de badges de status que não são mais usados */
 
-.statusBadge.inStock {
-  background: #e6f7e6;
-  color: #458b00;
-}
-
-.statusBadge.outStock {
-  background: #ffeaea;
-  color: #d32f2f;
-}
-
-.statusBadge.pending {
-  background: #fff7e6;
-  color: #ff9800;
-}
-
-/* Resumo do relatório */
+/* Resumo */
 .reportSummary {
   margin-top: 1.2rem;
 }
@@ -391,58 +311,51 @@
   font-size: 2rem;
   font-weight: 600;
   color: #191970;
-  margin-bottom: 1rem;
+  margin-bottom: 1.6rem;
+  padding-bottom: 1.6rem;
+  border-bottom: 1px solid #e5e7eb;
 }
 
 .summaryGrid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-  gap: 1.8rem;
+  grid-template-columns: repeat(auto-fit, minmax(18rem, 1fr));
+  gap: 2rem;
 }
 
 .summaryItem {
-  background: #f1f5f9;
+  background: #f8fafc;
+  border: 1px solid #e5e7eb;
   border-radius: 0.8rem;
-  padding: 1.4rem 1.8rem;
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
+  padding: 1.6rem;
 }
 
 .summaryLabel {
-  font-size: 1.7rem;
-  color: #555;
-  margin-bottom: 0.4rem;
+  font-size: 1.4rem;
+  color: #64748b;
+  margin-bottom: 0.8rem;
+  display: block;
 }
 
 .summaryValue {
-  font-size: 2rem;
+  font-size: 2.4rem;
   font-weight: 700;
-  color: #458b00;
+  color: #458B00;
 }
 
-/* Empty State */
-.emptyState {
-  text-align: center;
-  padding: 4rem 0;
-  color: #888;
-}
-
-/* Loader */
 .loaderContainer {
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  min-height: 30rem;
-  color: #458b00;
+  min-height: 100vh;
+  color: #458B00;
 }
 
 .spinner {
-  width: 3.8rem;
-  height: 3.8rem;
-  border: 0.4rem solid #e6f7e6;
-  border-top: 0.4rem solid #458b00;
+  width: 4rem;
+  height: 4rem;
+  border: 4px solid #e6f7e6;
+  border-top-color: #458B00;
   border-radius: 50%;
   animation: spin 1s linear infinite;
   margin-bottom: 1.2rem;
@@ -454,107 +367,136 @@
   }
 }
 
-/* Controles de Paginação */
+/* Overlay, Erro, Paginação e Footer */
+.overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.4);
+  z-index: 105;
+  display: none;
+  opacity: 0;
+}
+
+.sidebar.sidebarOpen~.overlay {
+  display: block;
+  opacity: 1;
+}
+
+.errorMessage {
+  background-color: #fef2f2;
+  color: #b91c1c;
+  border: 1px solid #fecaca;
+  border-radius: 0.8rem;
+  padding: 1.6rem;
+  margin-bottom: 2.4rem;
+  font-weight: 600;
+}
+
+.reportFooter {
+  display: none;
+}
+
 .paginationControls {
   display: flex;
   align-items: center;
   gap: 1.2rem;
   justify-content: center;
-  margin-top: 1.8rem;
+  margin-top: 2.4rem;
 }
+
 .paginationBtn {
-  padding: 0.6rem 1.4rem;
-  border: none;
-  border-radius: 0.6rem;
-  background: #458b00;
-  color: white;
-  font-weight: 500;
+  padding: 1rem 1.6rem;
+  border: 1px solid #d1d5db;
+  background: white;
+  color: #4b5563;
+  border-radius: 0.8rem;
   cursor: pointer;
-  transition: background 0.2s;
+  transition: all 0.3s ease;
 }
-.paginationBtn:hover:not(.disabled) {
-  background: #2e7d32;
+
+.paginationBtn:hover:not(:disabled) {
+  border-color: #458B00;
+  color: #458B00;
 }
-.paginationBtn.disabled {
-  background: #d1d5db;
-  color: #888;
+
+.paginationBtn:disabled {
+  opacity: 0.5;
   cursor: not-allowed;
 }
+
 .paginationNumbers {
-  display: flex;
-  gap: 0.4rem;
-}
-.paginationNumber {
-  padding: 0.6rem 1.2rem;
-  border: none;
-  border-radius: 0.6rem;
-  background: #f1f5f9;
-  color: #191970;
-  font-weight: 500;
-  cursor: pointer;
-  transition: background 0.2s;
-}
-.paginationNumber:hover {
-  background: #e6f7e6;
-}
-.paginationNumber.active {
-  background: #458b00;
-  color: #fff;
-}
-
-/* Rodapé do relatório (visível apenas na impressão) */
-.reportFooter {
-  display: none;
-  margin-top: 2.4rem;
-  text-align: center;
-  color: #888;
   font-size: 1.4rem;
+  font-weight: 600;
+  color: #475569;
 }
 
-/* Melhorias para impressão */
+.emptyState {
+  text-align: center;
+  padding: 6rem 2rem;
+  font-size: 1.6rem;
+  color: #64748b;
+}
+
+/* ESTILOS DE IMPRESSÃO */
 @media print {
+
+  body,
+  .dashboard {
+    background: #fff !important;
+  }
+
   body * {
     visibility: hidden !important;
   }
+
   .reportContainer,
   .reportContainer * {
     visibility: visible !important;
   }
+
   .reportContainer {
     position: absolute;
     left: 0;
     top: 0;
-    width: 100vw;
-    background: #fff;
+    width: 100%;
     box-shadow: none;
     padding: 2rem;
+    border: none;
   }
-  .reportFooter {
-    display: block !important;
-  }
+
   .sidebar,
   .header,
   .controls,
   .paginationControls,
-  .emptyState,
-  .reportInfo {
+  .errorMessage {
     display: none !important;
   }
+
   .printLogo {
     display: block !important;
   }
+
+  .reportTable {
+    font-size: 10pt;
+  }
+
+  .reportTable th,
+  .reportTable td {
+    padding: 0.8rem;
+  }
+
+  .reportFooter {
+    display: block !important;
+    text-align: center;
+    color: #666;
+    font-size: 9pt;
+    position: fixed;
+    bottom: 1rem;
+    width: 100%;
+  }
 }
 
-/* Responsividade */
-@media (max-width: 64rem) {
-  .mainContent {
-    padding: 2.4rem 0.8rem;
-  }
-  .sidebar {
-    width: 22rem;
-  }
-}
-
+/* RESPONSIVIDADE */
 @media (max-width: 48rem) {
   .sidebar {
     position: fixed;
@@ -562,23 +504,34 @@
     top: 0;
     height: 100vh;
     transform: translateX(-100%);
-    transition: transform 0.3s;
-    z-index: 100;
+    z-index: 110;
   }
+
   .sidebar.sidebarOpen {
     transform: translateX(0);
   }
-  .menuToggle {
+
+  .menuToggle,
+  .sidebarClose {
     display: block;
   }
+
   .mainContent {
     padding: 1.6rem;
   }
-  .reportContainer {
-    padding: 1rem;
+
+  .reportContainer,
+  .controls {
+    padding: 1.6rem;
   }
+
   .filters {
     flex-direction: column;
     gap: 1.2rem;
+    align-items: stretch;
+  }
+
+  .filterGroup {
+    justify-content: space-between;
   }
 }

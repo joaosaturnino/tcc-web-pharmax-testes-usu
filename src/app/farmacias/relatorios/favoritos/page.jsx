@@ -11,8 +11,7 @@ export default function RelatorioFavoritosPage() {
   const [loading, setLoading] = useState(true);
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [reportGenerated, setReportGenerated] = useState(false);
-  // ADICIONADO: Estado para guardar informações do usuário/farmácia
-  const [userInfo, setUserInfo] = useState(null); 
+  const [userInfo, setUserInfo] = useState(null);
   const [dateRange, setDateRange] = useState(() => {
     const endDate = new Date();
     const startDate = new Date();
@@ -36,14 +35,8 @@ export default function RelatorioFavoritosPage() {
           throw new Error("Usuário não autenticado. Faça o login novamente.");
         }
         
-        let userData;
-        try {
-          userData = JSON.parse(userDataString);
-          // ADICIONADO: Seta as informações do usuário no estado
-          setUserInfo(userData); 
-        } catch (e) {
-          throw new Error("Sessão inválida. Faça o login novamente.");
-        }
+        const userData = JSON.parse(userDataString);
+        setUserInfo(userData);
 
         const idDaFarmacia = userData?.farm_id;
         if (!idDaFarmacia) {
@@ -101,7 +94,7 @@ export default function RelatorioFavoritosPage() {
     router.push("/home");
   };
 
-  if (loading && !userInfo) { // Modificado para aguardar userInfo também
+  if (loading && !userInfo) {
     return (
       <div className={styles.loaderContainer}>
         <div className={styles.spinner}></div>
@@ -115,7 +108,7 @@ export default function RelatorioFavoritosPage() {
       <div className={styles.dashboard}>
         <header className={styles.header}>
           <div className={styles.headerLeft}>
-            <button className={styles.menuToggle} onClick={() => setSidebarOpen(!sidebarOpen)}>☰</button>
+            <button className={styles.menuToggle} onClick={() => setSidebarOpen(!sidebarOpen)} aria-label="Abrir menu">☰</button>
             <h1 className={styles.title}>Relatório de Medicamentos Favoritos</h1>
           </div>
           <div className={styles.headerActions}>
@@ -125,74 +118,28 @@ export default function RelatorioFavoritosPage() {
 
         <div className={styles.contentWrapper}>
           <aside className={`${styles.sidebar} ${sidebarOpen ? styles.sidebarOpen : ""}`}>
-            {/* INÍCIO DA MODIFICAÇÃO */}
             <div className={styles.sidebarHeader}>
-              <div className={styles.logo}>
+              <div className={styles.logoContainer}>
                 {userInfo?.farm_logo_url && <img src={userInfo.farm_logo_url} alt="Logo" className={styles.sidebarAvatar} />}
                 <span className={styles.logoText}>{userInfo?.farm_nome || "PharmaX"}</span>
               </div>
-              <button
-                className={styles.sidebarClose}
-                onClick={() => setSidebarOpen(false)}
-              >
+              <button className={styles.sidebarClose} onClick={() => setSidebarOpen(false)} aria-label="Fechar menu">
                 ×
               </button>
             </div>
-            {/* FIM DA MODIFICAÇÃO */}
-
+            {/* CORREÇÃO: Trocados <a> por <Link> para navegação mais rápida */}
             <nav className={styles.nav}>
-              <div className={styles.navSection}>
-                <p className={styles.navLabel}>Principal</p>
-                <a href="/farmacias/favoritos" className={styles.navLink}>
-                  <span className={styles.navText}>Favoritos</span>
-                </a>
-                <a href="/farmacias/produtos/medicamentos" className={styles.navLink}>
-                  <span className={styles.navText}>Medicamentos</span>
-                </a>
-              </div>
-              <div className={styles.navSection}>
-                <p className={styles.navLabel}>Gestão</p>
-                <a href="/farmacias/cadastro/funcionario/lista" className={styles.navLink}>
-                  <span className={styles.navText}>Funcionários</span>
-                </a>
-                <a href="/farmacias/laboratorio/lista" className={styles.navLink}>
-                  <span className={styles.navText}>Laboratórios</span>
-                </a>
-              </div>
-              <div className={styles.navSection}>
-                <p className={styles.navLabel}>Relatórios</p>
-                <a href="/farmacias/relatorios/favoritos" className={`${styles.navLink} ${styles.active}`}>
-                  <span className={styles.navText}>Medicamentos Favoritos</span>
-                </a>
-                <a href="/farmacias/relatorios/funcionarios" className={styles.navLink}>
-                  <span className={styles.navText}>Relatório de Funcionarios</span>
-                </a>
-                <a href="/farmacias/relatorios/laboratorios" className={styles.navLink}>
-                  <span className={styles.navText}>Relatório de Laboratorios</span>
-                </a>
-              </div>
-              <div className={styles.navSection}>
-                <p className={styles.navLabel}>Conta</p>
-                <a href="/farmacias/perfil" className={styles.navLink}>
-                  <span className={styles.navText}>Meu Perfil</span>
-                </a>
-                <button
-                  onClick={handleLogout}
-                  className={styles.navLink}
-                  style={{ background: 'none', border: 'none', width: '100%', textAlign: 'left', cursor: 'pointer' }}
-                >
-                  <span className={styles.navText}>Sair</span>
-                </button>
-              </div>
+              <div className={styles.navSection}><p className={styles.navLabel}>Principal</p><Link href="/farmacias/favoritos" className={styles.navLink}><span className={styles.navText}>Favoritos</span></Link><Link href="/farmacias/produtos/medicamentos" className={styles.navLink}><span className={styles.navText}>Medicamentos</span></Link></div>
+              <div className={styles.navSection}><p className={styles.navLabel}>Gestão</p><Link href="/farmacias/cadastro/funcionario/lista" className={styles.navLink}><span className={styles.navText}>Funcionários</span></Link><Link href="/farmacias/laboratorio/lista" className={styles.navLink}><span className={styles.navText}>Laboratórios</span></Link></div>
+              <div className={styles.navSection}><p className={styles.navLabel}>Relatórios</p><Link href="/farmacias/relatorios/favoritos" className={`${styles.navLink} ${styles.active}`}><span className={styles.navText}>Medicamentos Favoritos</span></Link><Link href="/farmacias/relatorios/funcionarios" className={styles.navLink}><span className={styles.navText}>Relatório de Funcionarios</span></Link><Link href="/farmacias/relatorios/laboratorios" className={styles.navLink}><span className={styles.navText}>Relatório de Laboratorios</span></Link></div>
+              <div className={styles.navSection}><p className={styles.navLabel}>Conta</p><Link href="/farmacias/perfil" className={styles.navLink}><span className={styles.navText}>Meu Perfil</span></Link><button onClick={handleLogout} className={styles.navLink} style={{ all: 'unset', cursor: 'pointer', width: '100%' }}><span className={styles.navText}>Sair</span></button></div>
             </nav>
           </aside>
           {sidebarOpen && (<div className={styles.overlay} onClick={() => setSidebarOpen(false)} />)}
 
           <main className={styles.mainContent}>
-            {/* O restante do código permanece o mesmo */}
             {error && (<div className={styles.errorMessage}><span>{error}</span></div>)}
-            {!reportGenerated && (
-              <div className={styles.controls}>
+            <div className={styles.controls}>
                 <div className={styles.filters}>
                   <div className={styles.filterGroup}>
                     <label>Período de Referência:</label>
@@ -201,11 +148,10 @@ export default function RelatorioFavoritosPage() {
                     <input type="date" value={dateRange.end} onChange={(e) => setDateRange({ ...dateRange, end: e.target.value })} />
                   </div>
                 </div>
-              </div>
-            )}
+            </div>
             <div ref={reportRef} className={`${styles.reportContainer} ${reportGenerated ? styles.reportMode : ""}`}>
               <div className={styles.reportHeader}>
-                <img src="../../../../../temp/LogoEscrita.png" alt="Logo PharmaX" className={styles.printLogo}/>
+                {userInfo?.farm_logo_url && <img src={userInfo.farm_logo_url} alt={`Logo de ${userInfo.farm_nome}`} className={styles.printLogo}/>}
                 <div className={styles.reportTitle}><h1>Relatório de Medicamentos Mais Favoritados</h1><p>Período: {new Date(dateRange.start).toLocaleDateString("pt-BR", { timeZone: 'UTC' })} a {new Date(dateRange.end).toLocaleDateString("pt-BR", { timeZone: 'UTC' })}</p><p>Data do relatório: {new Date().toLocaleDateString("pt-BR")}</p></div>
               </div>
               <table className={styles.reportTable}>
@@ -233,11 +179,8 @@ export default function RelatorioFavoritosPage() {
                   <div className={styles.summaryItem}><span className={styles.summaryLabel}>Total de Favoritações</span><span className={styles.summaryValue}>{sortedMedicamentos.reduce((acc, med) => acc + med.favoritacoes, 0)}</span></div>
                 </div>
               </div>
-              <div className={styles.reportFooter}><p>Relatório gerado em: {new Date().toLocaleString("pt-BR")}</p><p>PharmaX - Sistema de Gestão Farmacêutica</p></div>
+              <div className={styles.reportFooter}><p>Relatório gerado em: {new Date().toLocaleString("pt-BR")}</p><p>{userInfo?.farm_nome} - Sistema de Gestão PharmaX</p></div>
             </div>
-            {sortedMedicamentos.length === 0 && !loading && !error && (
-              <div className={styles.emptyState}><h3>Nenhum dado encontrado</h3><p>Nenhum medicamento foi favoritado no período selecionado.</p></div>
-            )}
           </main>
         </div>
       </div>
