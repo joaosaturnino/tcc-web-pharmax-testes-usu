@@ -1,14 +1,27 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react"; // Importa o useEffect
 import { useRouter } from "next/navigation";
 import styles from "./sobre.module.css";
-import { FaGithub, FaLinkedin } from "react-icons/fa"; // Usando ícones para redes sociais
+import { FaGithub, FaLinkedin } from "react-icons/fa";
 import Link from "next/link";
 
 export default function SobrePage() {
   const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [farmaciaInfo, setFarmaciaInfo] = useState(null); // Estado para dados da farmácia
   const router = useRouter();
+
+  // Efeito para buscar dados da farmácia ao carregar o componente
+  useEffect(() => {
+    try {
+      const userDataString = localStorage.getItem("userData");
+      if (userDataString) {
+        setFarmaciaInfo(JSON.parse(userDataString));
+      }
+    } catch (error) {
+      console.error("Falha ao buscar dados da farmácia:", error);
+    }
+  }, []); // Array vazio garante que rode apenas uma vez
 
   const handleLogout = async () => {
     try {
@@ -28,7 +41,7 @@ export default function SobrePage() {
     {
       name: "Emily Martins",
       role: "Desenvolvedora Full-Stack",
-      avatar: "/avatars/emily.jpg", // Sugestão de caminho para imagem
+      avatar: "/avatars/emily.jpg",
       bio: "Apaixonada por criar soluções completas, desde o banco de dados até a interface final do usuário.",
       linkedin: "https://www.linkedin.com/in/emilydmartins?utm_source=share&utm_campaign=share_via&utm_content=profile&utm_medium=android_app",
       github: "https://github.com/emilymartins",
@@ -75,14 +88,31 @@ export default function SobrePage() {
         {/* Sidebar */}
         <aside className={`${styles.sidebar} ${sidebarOpen ? styles.sidebarOpen : ""}`}>
             <div className={styles.sidebarHeader}>
+              {/* BLOCO ATUALIZADO PARA EXIBIR LOGO E NOME DA FARMÁCIA */}
               <div className={styles.logo}>
-                <span className={styles.logoText}>PharmaX</span>
+                {farmaciaInfo ? (
+                  <div className={styles.logoContainer}>
+                    {farmaciaInfo.farm_logo_url && (
+                      <img
+                        src={farmaciaInfo.farm_logo_url}
+                        alt={`Logo de ${farmaciaInfo.farm_nome}`}
+                        className={styles.logoImage} 
+                      />
+                    )}
+                    <span className={styles.logoText}>
+                      {farmaciaInfo.farm_nome}
+                    </span>
+                  </div>
+                ) : (
+                  <span className={styles.logoText}>PharmaX</span>
+                )}
               </div>
               <button className={styles.sidebarClose} onClick={() => setSidebarOpen(false)}>
                 ×
               </button>
             </div>
             <nav className={styles.nav}>
+              {/* Links de navegação permanecem os mesmos */}
               <div className={styles.navSection}>
                 <p className={styles.navLabel}>Principal</p>
                 <Link href="/farmacias/favoritos" className={styles.navLink}>
@@ -136,7 +166,6 @@ export default function SobrePage() {
               <p className={styles.pageSubtitle}>Inovação e transparência para o acesso à saúde.</p>
             </div>
             
-            {/* Seção Missão */}
             <div className={styles.card}>
               <div className={styles.cardHeader}>
                 <div className={styles.icon}>🎯</div>
@@ -147,7 +176,6 @@ export default function SobrePage() {
               </p>
             </div>
 
-            {/* Seção da Equipe */}
             <div className={styles.teamSection}>
               <h2 className={styles.sectionTitle}>Conheça Nossa Equipe</h2>
               <div className={styles.teamGrid}>
@@ -166,7 +194,6 @@ export default function SobrePage() {
               </div>
             </div>
 
-            {/* Seção de Recursos */}
             <div className={styles.features}>
               <h3 className={styles.featuresTitle}>Recursos Principais</h3>
               <div className={styles.featuresGrid}>

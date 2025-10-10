@@ -1,197 +1,207 @@
 // app/busca/page.jsx
-'use client'
 
-import { useState, useEffect, Suspense, useCallback } from 'react';
-import { useSearchParams, useRouter, usePathname } from 'next/navigation';
+'use client';
+
+import { useState, useEffect, useCallback, Suspense } from 'react';
+import { useRouter } from 'next/navigation';
+import { useSearchParams } from 'next/navigation';
+import Link from 'next/link'; // Importado
 import api from '../services/api';
-import style from './busca.module.css';
-import CardProduto from '../componentes/CardProduto';
-import Paginacao from '../componentes/Paginacao';
-import { useDebounce } from '../hooks/useDebounce';
+import style from "./page.module.css";
 
-// Componente Wrapper com Suspense para carregar os parâmetros da URL
-export default function PaginaBuscaWrapper() {
+// --- FUNÇÕES AUXILIARES ---
+const getImageUrl = (imagePath) => { 
+    const imagemPadrao = "https://www.institutoaron.com.br/static/img/large/c28a030a59bae1283321c340cdc846df.webp";
+    if (!imagePath) return imagemPadrao;
+    if (imagePath.startsWith('http')) return imagePath;
+    const baseUrl = api.defaults.baseURL.replace(/\/$/, '');
+    return `${baseUrl}/${imagePath.replace(/\\/g, '/')}`;
+};
+const formatarMoeda = (valor) => { 
+    return new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(valor || 0);
+};
+const gerarNumerosPaginacao = (paginaAtual, totalPaginas) => {
+    const vizinhos = 1;
+    const paginas = [];
+    if (totalPaginas <= 5) { for (let i = 1; i <= totalPaginas; i++) paginas.push(i); return paginas; }
+    const primeiro = 1;
+    const ultimo = totalPaginas;
+    const inicioVisivel = Math.max(primeiro + 1, paginaAtual - vizinhos);
+    const fimVisivel = Math.min(ultimo - 1, paginaAtual + vizinhos);
+    paginas.push(primeiro);
+    if (inicioVisivel > primeiro + 1) paginas.push('...');
+    for (let i = inicioVisivel; i <= fimVisivel; i++) paginas.push(i);
+    if (fimVisivel < ultimo - 1) paginas.push('...');
+    paginas.push(ultimo);
+    return paginas;
+};
+
+// --- COMPONENTES INTERNOS ---
+const CardProduto = ({ medicamento, onVerDetalhes }) => {
+    return (
+      <div className={style.cartaoProduto}>
+        <div className={style.containerImagemProduto}>
+          <img src={getImageUrl(medicamento.med_imagem)} alt={medicamento.med_nome} className={style.imagemProduto} />
+        </div>
+        <div className={style.infoProduto}>
+          <h4>{medicamento.med_nome}</h4>
+          <p>{medicamento.med_dosagem}</p>
+          <p className={style.farmaciaNome}>{medicamento.farm_nome}</p> 
+          <span className={style.preco}>{formatarMoeda(medicamento.medp_preco)}</span>
+        </div>
+        <button onClick={onVerDetalhes}>Ver Detalhes</button>
+      </div>
+    );
+};
+const SkeletonCard = () => {
+    return (
+        <div className={`${style.cartaoProduto} ${style.skeleton}`}>
+          <div className={style.containerImagemProduto}></div>
+          <div className={style.infoProduto}>
+            <div className={style.skeletonText}></div>
+            <div className={style.skeletonText} style={{ width: '60%' }}></div>
+          </div>
+        </div>
+    );
+};
+
+function SearchPageContent() {
+  const router = useRouter();
+  const searchParams = useSearchParams();
+  const query = searchParams.get('q') || '';
+
+  const [termoBuscaInput, setTermoBuscaInput] = useState(query);
+  const [resultados, setResultados] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [paginaAtual, setPaginaAtual] = useState(1);
+  const [totalPaginas, setTotalPaginas] = useState(1);
+  const ITENS_POR_PAGINA = 12;
+
+  const fetchResultados = useCallback(async () => {
+    if (!query) {
+      setResultados([]);
+      setLoading(false);
+      return;
+    }
+    setLoading(true);
+    try {
+      const params = new URLSearchParams({
+        page: paginaAtual.toString(),
+        limit: ITENS_POR_PAGINA.toString(),
+        search: query,
+        sort: 'preco_asc',
+      });
+      const response = await api.get(`/medicamentos/todos?${params.toString()}`);
+      if (response.data.sucesso) {
+        setResultados(response.data.dados);
+        setTotalPaginas(response.data.paginacao?.totalPaginas || 1);
+      } else {
+        setResultados([]);
+      }
+    } catch (error) {
+      console.error("Falha ao buscar resultados:", error);
+      setResultados([]);
+    } finally {
+      setLoading(false);
+    }
+  }, [paginaAtual, query]);
+
+  useEffect(() => {
+    fetchResultados();
+  }, [fetchResultados]);
+  
+  useEffect(() => {
+    setTermoBuscaInput(query);
+  }, [query]);
+  
+  useEffect(() => {
+    if (paginaAtual !== 1) {
+      setPaginaAtual(1);
+    }
+  }, [query]);
+
+  const handleNovaBuscaSubmit = (event) => {
+    event.preventDefault();
+    if (termoBuscaInput.trim() && termoBuscaInput.trim() !== query) {
+      router.push(`/busca?q=${encodeURIComponent(termoBuscaInput)}`);
+    }
+  };
+
+  const handlePaginaAnterior = () => setPaginaAtual(p => Math.max(p - 1, 1));
+  const handleProximaPagina = () => setPaginaAtual(p => Math.min(p + 1, totalPaginas));
+  const handleMudarPagina = (numeroPagina) => setPaginaAtual(numeroPagina);
+  const paginasParaMostrar = gerarNumerosPaginacao(paginaAtual, totalPaginas);
+  
   return (
-    <Suspense fallback={<div>Carregando busca...</div>}>
-      <PaginaBusca />
-    </Suspense>
+    <div className={style.container}>
+      <section className={style.principal}>
+        <h2>Sua saúde em primeiro lugar</h2>
+        <p>Faça uma nova busca</p>
+        <form className={style.caixaBusca} onSubmit={handleNovaBuscaSubmit}>
+          <input 
+            type="text" 
+            placeholder="Buscar medicamentos..." 
+            value={termoBuscaInput} 
+            onChange={(e) => setTermoBuscaInput(e.target.value)} 
+            aria-label="Buscar medicamentos"
+          />
+          <button type="submit" aria-label="Buscar">
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" viewBox="0 0 16 16">
+              <path d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001c.03.04.062.078.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1.007 1.007 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0z"/>
+            </svg>
+          </button>
+        </form>
+      </section>
+
+      <section className={style.produtos}>
+        <Link href="/" className={style.botaoVoltar}>
+          &larr; Voltar à pesquisa inicial
+        </Link>
+        
+        {loading ? (
+          <h3>Buscando...</h3>
+        ) : (
+          <h3>Resultados para "{query}"</h3>
+        )}
+
+        <div className={`${style.gradeProdutos} ${loading ? style.gradeProdutosCarregando : ''}`}>
+          {loading ? (
+            Array.from({ length: ITENS_POR_PAGINA }).map((_, index) => <SkeletonCard key={index} />)
+          ) : resultados.length > 0 ? (
+            resultados.map((medicamento) => (
+              <CardProduto
+                key={medicamento.medp_id}
+                medicamento={medicamento}
+                onVerDetalhes={() => alert(`Detalhes para ${medicamento.med_nome}`)}
+              />
+            ))
+          ) : (
+            <p className={style.mensagemAviso}>Nenhum resultado encontrado para sua busca.</p>
+          )}
+        </div>
+
+        {totalPaginas > 1 && !loading && (
+          <div className={style.paginacao}>
+            <button onClick={handlePaginaAnterior} disabled={paginaAtual === 1}>Anterior</button>
+            {paginasParaMostrar.map((numero, index) =>
+              typeof numero === 'number' ? (
+                <button key={index} onClick={() => handleMudarPagina(numero)} className={numero === paginaAtual ? style.paginaAtiva : ''}>
+                  {numero}
+                </button>
+              ) : ( <span key={index} className={style.ellipsis}>...</span> )
+            )}
+            <button onClick={handleProximaPagina} disabled={paginaAtual === totalPaginas}>Próximo</button>
+          </div>
+        )}
+      </section>
+    </div>
   );
 }
 
-const ITENS_POR_PAGINA = 12;
-
-function PaginaBusca() {
-  const router = useRouter();
-  const pathname = usePathname();
-  const searchParams = useSearchParams();
-
-  // Estados dos resultados
-  const [resultados, setResultados] = useState([]);
-  const [totalPaginas, setTotalPaginas] = useState(0);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
-
-  // Lê os filtros da URL ou usa valores padrão
-  const query = searchParams.get('q') || '';
-  const pagina = Number(searchParams.get('pagina')) || 1;
-  const categoria = searchParams.get('categoria') || 'todos';
-  const ordenacao = searchParams.get('ordenacao') || 'relevancia';
-  const precoMin = searchParams.get('precoMin') || '';
-  const precoMax = searchParams.get('precoMax') || '';
-
-  // Estados locais para os inputs, permitindo o debounce
-  const [precoMinInput, setPrecoMinInput] = useState(precoMin);
-  const [precoMaxInput, setPrecoMaxInput] = useState(precoMax);
-
-  // Aplica o debounce nos valores dos inputs de preço
-  const debouncedPrecoMin = useDebounce(precoMinInput, 500);
-  const debouncedPrecoMax = useDebounce(precoMaxInput, 500);
-
-  // Função para atualizar a URL com os novos filtros
-  const atualizarURL = useCallback((novosParams) => {
-    const params = new URLSearchParams(searchParams.toString());
-    Object.entries(novosParams).forEach(([key, value]) => {
-      if (value) {
-        params.set(key, value);
-      } else {
-        params.delete(key);
-      }
-    });
-    router.push(`${pathname}?${params.toString()}`);
-  }, [searchParams, pathname, router]);
-
-
-  // Efeito que busca os dados *simulando* uma chamada de API otimizada
-  useEffect(() => {
-    const buscarResultados = async () => {
-      setLoading(true);
-      setError(null);
-
-      // --- SIMULAÇÃO DE CHAMADA À API COM FILTROS ---
-      // Em uma aplicação real, estes parâmetros seriam enviados para o backend
-      const params = {
-        q: query,
-        pagina,
-        limite: ITENS_POR_PAGINA,
-        categoria,
-        ordenacao,
-        precoMin: debouncedPrecoMin,
-        precoMax: debouncedPrecoMax
-      };
-
-      console.log("Simulando chamada à API com:", params);
-
-      try {
-        // Na prática, a API faria isso: const response = await api.get('/medicamentos', { params });
-        // Como não temos backend, buscamos tudo e filtramos no cliente (aqui).
-        const response = await api.get('/medicamentos');
-        let dados = response.data.sucesso ? response.data.dados.map((med, index) => ({
-          ...med,
-          med_categoria: index % 3 === 0 ? 'Analgésico' : (index % 3 === 1 ? 'Vitamina' : 'Antibiótico')
-        })) : [];
-
-        // Lógica de filtro (que estaria no backend)
-        if (query) dados = dados.filter(m => m.med_nome.toLowerCase().includes(query.toLowerCase()));
-        if (categoria !== 'todos') dados = dados.filter(m => m.med_categoria === categoria);
-        if (debouncedPrecoMin) dados = dados.filter(m => m.medp_preco >= parseFloat(debouncedPrecoMin));
-        if (debouncedPrecoMax) dados = dados.filter(m => m.medp_preco <= parseFloat(debouncedPrecoMax));
-        
-        // Lógica de ordenação (que estaria no backend)
-        switch (ordenacao) {
-          case 'preco-asc': dados.sort((a, b) => a.medp_preco - b.medp_preco); break;
-          case 'preco-desc': dados.sort((a, b) => b.medp_preco - a.medp_preco); break;
-          case 'nome-asc': dados.sort((a, b) => a.med_nome.localeCompare(b.med_nome)); break;
-        }
-
-        const totalItens = dados.length;
-        setTotalPaginas(Math.ceil(totalItens / ITENS_POR_PAGINA));
-
-        // Lógica de paginação (que estaria no backend)
-        const inicio = (pagina - 1) * ITENS_POR_PAGINA;
-        const fim = inicio + ITENS_POR_PAGINA;
-        setResultados(dados.slice(inicio, fim));
-
-      } catch (err) {
-        setError("Erro de conexão ao buscar dados.");
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    buscarResultados();
-  }, [query, pagina, categoria, ordenacao, debouncedPrecoMin, debouncedPrecoMax]);
-
-  // Efeito para sincronizar os inputs de preço com a URL via debounce
-  useEffect(() => {
-    const paramsParaAtualizar = {};
-    if (debouncedPrecoMin !== precoMin) paramsParaAtualizar.precoMin = debouncedPrecoMin;
-    if (debouncedPrecoMax !== precoMax) paramsParaAtualizar.precoMax = debouncedPrecoMax;
-    
-    if (Object.keys(paramsParaAtualizar).length > 0) {
-      // Reseta a página para 1 ao aplicar um novo filtro de preço
-      paramsParaAtualizar.pagina = '1';
-      atualizarURL(paramsParaAtualizar);
-    }
-  }, [debouncedPrecoMin, debouncedPrecoMax, precoMin, precoMax, atualizarURL]);
-
-
-  const handleFilterChange = (key, value) => {
-    // Ao mudar um filtro, sempre volta para a primeira página
-    atualizarURL({ [key]: value, pagina: '1' });
-  };
-  
-  const handlePageChange = (novaPagina) => {
-    atualizarURL({ pagina: novaPagina });
-  };
-  
-  const categoriasUnicas = ['todos', 'Analgésico', 'Vitamina', 'Antibiótico']; // Exemplo
-
+export default function BuscaPage() {
   return (
-    <div className={style.paginaBusca}>
-      <aside className={style.sidebarFiltros}>
-        <h4>Filtros</h4>
-        <div className={style.grupoFiltro}>
-          <label htmlFor="categoria">Categoria</label>
-          <select id="categoria" value={categoria} onChange={e => handleFilterChange('categoria', e.target.value)}>
-            {categoriasUnicas.map(cat => <option key={cat} value={cat}>{cat === 'todos' ? 'Todas' : cat}</option>)}
-          </select>
-        </div>
-        <div className={style.grupoFiltro}>
-          <label>Faixa de Preço</label>
-          <div className={style.faixaPreco}>
-            <input type="number" placeholder="Mín" value={precoMinInput} onChange={e => setPrecoMinInput(e.target.value)} />
-            <span>-</span>
-            <input type="number" placeholder="Máx" value={precoMaxInput} onChange={e => setPrecoMaxInput(e.target.value)} />
-          </div>
-        </div>
-      </aside>
-
-      <main className={style.areaResultados}>
-        <div className={style.cabecalhoResultados}>
-          <h3>Resultados para: "{query}"</h3>
-          <div className={style.grupoFiltro}>
-            <label htmlFor="ordenacao">Ordenar por</label>
-            <select id="ordenacao" value={ordenacao} onChange={e => handleFilterChange('ordenacao', e.target.value)}>
-              <option value="relevancia">Relevância</option>
-              <option value="preco-asc">Menor Preço</option>
-              <option value="preco-desc">Maior Preço</option>
-              <option value="nome-asc">Nome (A-Z)</option>
-            </select>
-          </div>
-        </div>
-        
-        {loading && <div className={style.loadingOverlay}>Carregando...</div>}
-        {!loading && !error && resultados.length > 0 && (
-          <>
-            <div className={style.gradeProdutos}>
-              {resultados.map(medicamento => <CardProduto key={medicamento.med_id} medicamento={medicamento} />)}
-            </div>
-            <Paginacao paginaAtual={pagina} totalPaginas={totalPaginas} onPageChange={handlePageChange} />
-          </>
-        )}
-        {!loading && !error && resultados.length === 0 && <p>Nenhum resultado encontrado.</p>}
-        {error && <p className={style.mensagemErro}>{error}</p>}
-      </main>
-    </div>
+    <Suspense fallback={<div>Carregando...</div>}>
+      <SearchPageContent />
+    </Suspense>
   );
 }

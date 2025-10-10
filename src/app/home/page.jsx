@@ -4,23 +4,19 @@
 
 import { useState, useEffect, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
-import Link from 'next/link';
 import api from '../services/api';
 import style from "./page.module.css";
 import Slider from "../componentes/slider";
 
-// --- IMAGEM PADRÃO ---
-const imagemPadrao = "https://www.institutoaron.com.br/static/img/large/c28a030a59bae1283321c340cdc846df.webp";
-
-// --- FUNÇÃO AUXILIAR PARA GERAR A URL DA IMAGEM ---
+// --- FUNÇÕES AUXILIARES ---
 const getImageUrl = (imagePath) => {
+  const imagemPadrao = "https://www.institutoaron.com.br/static/img/large/c28a030a59bae1283321c340cdc846df.webp";
   if (!imagePath) return imagemPadrao;
   if (imagePath.startsWith('http')) return imagePath;
   const baseUrl = api.defaults.baseURL.replace(/\/$/, '');
   return `${baseUrl}/${imagePath.replace(/\\/g, '/')}`;
 };
 
-// --- FUNÇÃO AUXILIAR PARA FORMATAR MOEDA ---
 const formatarMoeda = (valor) => {
   return new Intl.NumberFormat('pt-BR', {
     style: 'currency',
@@ -28,7 +24,6 @@ const formatarMoeda = (valor) => {
   }).format(valor || 0);
 };
 
-// --- FUNÇÃO AUXILIAR PARA GERAR OS NÚMEROS DA PÁGINA ---
 const gerarNumerosPaginacao = (paginaAtual, totalPaginas) => {
   const vizinhos = 1;
   const paginas = [];
@@ -48,12 +43,12 @@ const gerarNumerosPaginacao = (paginaAtual, totalPaginas) => {
   return paginas;
 };
 
-// --- COMPONENTE DO CARD DO PRODUTO (INTEGRADO) ---
+// --- COMPONENTES INTERNOS ---
 const CardProduto = ({ medicamento, onVerDetalhes }) => {
   return (
     <div className={style.cartaoProduto}>
       <div className={style.containerImagemProduto}>
-        <img src={medicamento.med_imagem} alt={medicamento.med_nome} className={style.imagemProduto} />
+        <img src={getImageUrl(medicamento.med_imagem)} alt={medicamento.med_nome} className={style.imagemProduto} />
       </div>
       <div className={style.infoProduto}>
         <h4>{medicamento.med_nome}</h4>
@@ -65,7 +60,6 @@ const CardProduto = ({ medicamento, onVerDetalhes }) => {
   );
 };
 
-// --- COMPONENTE PARA O SKELETON LOADER ---
 const SkeletonCard = () => (
   <div className={`${style.cartaoProduto} ${style.skeleton}`}>
     <div className={style.containerImagemProduto}></div>
@@ -80,84 +74,95 @@ const SkeletonCard = () => (
 export default function PaginaInicial() {
   const router = useRouter();
   const imagens = ["/LogoEscrita.png", "/LogoEscrita.png", "/LogoEscrita.png"];
-  const [medicamentosDestaque, setMedicamentosDestaque] = useState([]);
+  
+  const [medicamentos, setMedicamentos] = useState([]);
   const [loading, setLoading] = useState(true);
+  
   const [termoBusca, setTermoBusca] = useState('');
+  const [laboratorioFiltro, setLaboratorioFiltro] = useState('');
+  const [ordenacao, setOrdenacao] = useState('');
+  const [laboratorios, setLaboratorios] = useState([]);
+
   const [paginaAtual, setPaginaAtual] = useState(1);
   const [totalPaginas, setTotalPaginas] = useState(1);
   const ITENS_POR_PAGINA = 12;
 
-  // Estados para o Modal de Detalhes
   const [modalAberto, setModalAberto] = useState(false);
   const [medicamentoSelecionado, setMedicamentoSelecionado] = useState(null);
   const [farmacias, setFarmacias] = useState([]);
   const [loadingModal, setLoadingModal] = useState(false);
 
-  const fetchDestaques = useCallback(async (pagina) => {
+  const fetchMedicamentos = useCallback(async () => {
     setLoading(true);
     try {
-      const response = await api.get(`/medicamentos/todos?page=${pagina}&limit=${ITENS_POR_PAGINA}`);
+      const params = new URLSearchParams({
+        page: paginaAtual.toString(),
+        limit: ITENS_POR_PAGINA.toString(),
+      });
+      if (laboratorioFiltro) params.append('lab', laboratorioFiltro);
+      if (ordenacao) params.append('sort', ordenacao);
+
+      const response = await api.get(`/medicamentos/todos?${params.toString()}`);
+      
       if (response.data.sucesso) {
-        setMedicamentosDestaque(response.data.dados);
-        if (response.data.paginacao) {
-          setTotalPaginas(response.data.paginacao.totalPaginas);
-        }
+        setMedicamentos(response.data.dados);
+        setTotalPaginas(response.data.paginacao?.totalPaginas || 1);
       }
     } catch (error) {
-      console.error("Falha ao buscar destaques:", error);
-      setMedicamentosDestaque([]);
-      setTotalPaginas(1);
+      console.error("Falha ao buscar medicamentos:", error);
     } finally {
       setLoading(false);
     }
+  }, [paginaAtual, laboratorioFiltro, ordenacao]);
+
+  useEffect(() => {
+    fetchMedicamentos();
+  }, [fetchMedicamentos]);
+
+  useEffect(() => {
+    const fetchLaboratorios = async () => {
+        try {
+            const response = await api.get('/laboratorios'); 
+            if (response.data.sucesso) {
+                setLaboratorios(response.data.dados);
+            }
+        } catch (error) {
+            console.error("Falha ao buscar laboratórios:", error);
+        }
+    };
+    fetchLaboratorios();
   }, []);
 
   useEffect(() => {
-    fetchDestaques(paginaAtual);
-  }, [paginaAtual, fetchDestaques]);
+    if (paginaAtual !== 1) {
+      setPaginaAtual(1);
+    }
+  }, [laboratorioFiltro, ordenacao]);
+
+  const handleBuscaSubmit = (event) => {
+    event.preventDefault();
+    if (termoBusca.trim()) {
+      router.push(`/busca?q=${encodeURIComponent(termoBusca)}`);
+    }
+  };
+
+  const handleLimparFiltros = () => {
+    setTermoBusca('');
+    setLaboratorioFiltro('');
+    setOrdenacao('');
+  };
 
   const handleAbrirDetalhes = async (medicamento) => {
     setMedicamentoSelecionado(medicamento);
     setModalAberto(true);
     setLoadingModal(true);
     setFarmacias([]);
-
     try {
       const response = await api.get(`/medicamentos/${medicamento.med_id}/farmacias`);
-      
-      let farmaciasEncontradas = [];
-      if (response.data.sucesso) {
-        farmaciasEncontradas = response.data.dados;
-      }
-      
-      if (farmaciasEncontradas.length < 5) {
-        const mockFarmacias = [
-          { farm_id: 101, farm_nome: 'Drogaria Exemplo SP', farm_endereco: 'Av. Paulista, 1000', preco: (medicamento.medp_preco || 20) * 1.05 },
-          { farm_id: 102, farm_nome: 'Pague Menos Exemplo', farm_endereco: 'Rua Augusta, 500', preco: (medicamento.medp_preco || 20) * 1.10 },
-          { farm_id: 103, farm_nome: 'Farmácia Popular Mock', farm_endereco: 'Av. Brasil, 200', preco: (medicamento.medp_preco || 20) * 1.12 },
-          { farm_id: 104, farm_nome: 'Droga Raia (Exemplo)', farm_endereco: 'Rua Oscar Freire, 300', preco: (medicamento.medp_preco || 20) * 1.15 },
-          { farm_id: 105, farm_nome: 'Farma Conde (Mock)', farm_endereco: 'Praça da Sé, 10', preco: (medicamento.medp_preco || 20) * 1.20 },
-        ];
-        mockFarmacias.forEach(mock => {
-          if (!farmaciasEncontradas.some(real => real.farm_id === mock.farm_id)) {
-            farmaciasEncontradas.push(mock);
-          }
-        });
-      }
-
-      const farmaciasOrdenadas = farmaciasEncontradas.sort((a, b) => a.preco - b.preco);
-      setFarmacias(farmaciasOrdenadas);
-
+      let farmaciasEncontradas = response.data.sucesso ? response.data.dados : [];
+      setFarmacias(farmaciasEncontradas.sort((a, b) => a.preco - b.preco));
     } catch (error) {
       console.error("Erro ao buscar farmácias:", error);
-      const mockFarmacias = [
-          { farm_id: 101, farm_nome: 'Drogaria Exemplo SP', farm_endereco: 'Av. Paulista, 1000', preco: (medicamento.medp_preco || 20) * 1.05 },
-          { farm_id: 102, farm_nome: 'Pague Menos Exemplo', farm_endereco: 'Rua Augusta, 500', preco: (medicamento.medp_preco || 20) * 1.10 },
-          { farm_id: 103, farm_nome: 'Farmácia Popular Mock', farm_endereco: 'Av. Brasil, 200', preco: (medicamento.medp_preco || 20) * 1.12 },
-          { farm_id: 104, farm_nome: 'Droga Raia (Exemplo)', farm_endereco: 'Rua Oscar Freire, 300', preco: (medicamento.medp_preco || 20) * 1.15 },
-          { farm_id: 105, farm_nome: 'Farma Conde (Mock)', farm_endereco: 'Praça da Sé, 10', preco: (medicamento.medp_preco || 20) * 1.20 },
-      ].sort((a, b) => a.preco - b.preco);
-      setFarmacias(mockFarmacias);
     } finally {
       setLoadingModal(false);
     }
@@ -165,41 +170,34 @@ export default function PaginaInicial() {
 
   const handleFecharModal = () => {
     setModalAberto(false);
-    setTimeout(() => {
-      setMedicamentoSelecionado(null);
-      setFarmacias([]);
-    }, 300);
-  };
-
-  const handleSearchSubmit = (event) => {
-    event.preventDefault();
-    if (!termoBusca.trim()) return;
-    router.push(`/busca?q=${encodeURIComponent(termoBusca)}`);
+    setTimeout(() => setMedicamentoSelecionado(null), 300);
   };
 
   const handlePaginaAnterior = () => setPaginaAtual(p => Math.max(p - 1, 1));
   const handleProximaPagina = () => setPaginaAtual(p => Math.min(p + 1, totalPaginas));
-  const handleMudarPagina = (numeroPagina) => { if (numeroPagina !== paginaAtual) setPaginaAtual(numeroPagina); };
+  const handleMudarPagina = (numeroPagina) => setPaginaAtual(numeroPagina);
   const paginasParaMostrar = gerarNumerosPaginacao(paginaAtual, totalPaginas);
+
+  const filtrosAtivos = laboratorioFiltro || ordenacao;
 
   return (
     <div className={style.container}>
-      <header className={style.header}>
-        <div className={style.logo}><h1>Pharma-X</h1></div>
-        <nav className={style.nav}>
-          <Link href="/" className={style.active}>Início</Link>
-          <Link href="/sobre">Sobre</Link>
-          <Link href="/contato">Contato</Link>
-          <Link href="/login" className={style.userBtn}>Login</Link>
-        </nav>
-      </header>
-      
       <section className={style.principal}>
         <h2>Sua saúde em primeiro lugar</h2>
         <p>Encontre os medicamentos que precisa com praticidade e confiança</p>
-        <form className={style.caixaBusca} onSubmit={handleSearchSubmit}>
-          <input type="text" placeholder="Buscar medicamentos..." value={termoBusca} onChange={(e) => setTermoBusca(e.target.value)} aria-label="Buscar medicamentos"/>
-          <button type="submit" aria-label="Buscar">Buscar</button>
+        <form className={style.caixaBusca} onSubmit={handleBuscaSubmit}>
+          <input 
+            type="text" 
+            placeholder="Buscar medicamentos..." 
+            value={termoBusca} 
+            onChange={(e) => setTermoBusca(e.target.value)} 
+            aria-label="Buscar medicamentos"
+          />
+          <button type="submit" aria-label="Buscar">
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" viewBox="0 0 16 16">
+              <path d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001c.03.04.062.078.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1.007 1.007 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0z"/>
+            </svg>
+          </button>
         </form>
       </section>
 
@@ -207,35 +205,50 @@ export default function PaginaInicial() {
 
       <section className={style.produtos}>
         <h3>Destaques</h3>
+        <div className={style.filtrosContainer}>
+          <select value={laboratorioFiltro} onChange={(e) => setLaboratorioFiltro(e.target.value)} aria-label="Filtrar por laboratório">
+            <option value="">Todos os Laboratórios</option>
+            {laboratorios.map(lab => (
+                <option key={lab.lab_id} value={lab.lab_id}>{lab.lab_nome}</option>
+            ))}
+          </select>
+          <select value={ordenacao} onChange={(e) => setOrdenacao(e.target.value)} aria-label="Ordenar por">
+            <option value="">Ordenar por...</option>
+            <option value="preco_asc">Menor Preço</option>
+            <option value="preco_desc">Maior Preço</option>
+          </select>
+          {filtrosAtivos && (
+            <button onClick={handleLimparFiltros} className={style.botaoLimpar}>
+              Limpar Filtros
+            </button>
+          )}
+        </div>
         <div className={`${style.gradeProdutos} ${loading ? style.gradeProdutosCarregando : ''}`}>
           {loading ? (
             Array.from({ length: ITENS_POR_PAGINA }).map((_, index) => <SkeletonCard key={index} />)
-          ) : (
-            medicamentosDestaque.map((medicamento) => (
-              <CardProduto
-                key={medicamento.med_id}
-                medicamento={medicamento}
-                onVerDetalhes={() => handleAbrirDetalhes(medicamento)}
-              />
-            ))
-          )}
+          ) : medicamentos.map((medicamento) => (
+            <CardProduto
+              key={medicamento.med_id}
+              medicamento={medicamento}
+              onVerDetalhes={() => handleAbrirDetalhes(medicamento)}
+            />
+          ))}
         </div>
-
-        {totalPaginas > 1 && (
+        {totalPaginas > 1 && !loading && (
           <div className={style.paginacao}>
-            <button onClick={handlePaginaAnterior} disabled={loading || paginaAtual === 1}>Anterior</button>
+            <button onClick={handlePaginaAnterior} disabled={paginaAtual === 1}>Anterior</button>
             {paginasParaMostrar.map((numero, index) =>
               typeof numero === 'number' ? (
-                <button key={index} onClick={() => handleMudarPagina(numero)} disabled={loading} className={numero === paginaAtual ? style.paginaAtiva : ''}>
+                <button key={index} onClick={() => handleMudarPagina(numero)} className={numero === paginaAtual ? style.paginaAtiva : ''}>
                   {numero}
                 </button>
               ) : ( <span key={index} className={style.ellipsis}>...</span> )
             )}
-            <button onClick={handleProximaPagina} disabled={loading || paginaAtual === totalPaginas}>Próximo</button>
+            <button onClick={handleProximaPagina} disabled={paginaAtual === totalPaginas}>Próximo</button>
           </div>
         )}
       </section>
-
+      
       {modalAberto && medicamentoSelecionado && (
         <div className={style.modalOverlay} onClick={handleFecharModal}>
           <div className={style.modal} onClick={(e) => e.stopPropagation()}>
@@ -246,11 +259,9 @@ export default function PaginaInicial() {
             <div className={style.modalContent}>
               <div className={style.detalhesContainer}>
                 <div className={style.infoMedicamento}>
-                  <img src={medicamentoSelecionado.med_imagem} alt={medicamentoSelecionado.med_nome} className={style.imagemModal} />
-                  
+                  <img src={getImageUrl(medicamentoSelecionado.med_imagem)} alt={medicamentoSelecionado.med_nome} className={style.imagemModal} />
                   <h4>Laboratório</h4>
                   <p>{medicamentoSelecionado.lab_nome || "Não informado"}</p>
-
                   <h4>Descrição</h4>
                   <p>{medicamentoSelecionado.med_descricao || "Nenhuma descrição disponível."}</p>
                 </div>

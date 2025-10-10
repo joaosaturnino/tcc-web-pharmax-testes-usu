@@ -74,7 +74,7 @@
   position: relative;
 }
 
-/* Sidebar - Estilo melhorado */
+/* Sidebar */
 .sidebar {
   width: 30rem;
   background: linear-gradient(180deg, #191970 0%, #0f1440 100%);
@@ -85,9 +85,9 @@
   box-shadow: 0.2rem 0 1rem rgba(0, 0, 0, 0.1);
   z-index: 90;
   flex-shrink: 0;
-  height: calc(100vh - 80px); /* Ajuste de altura */
+  height: calc(100vh - 80px);
   position: sticky;
-  top: 80px; /* Alinha com a parte inferior do header */
+  top: 80px;
   overflow-y: auto;
 }
 
@@ -100,6 +100,20 @@
   position: sticky;
   top: 0;
   z-index: 10;
+}
+
+/* --- ESTILOS ADICIONADOS PARA A LOGO --- */
+.logoContainer {
+  display: flex;
+  align-items: center;
+  gap: 1.2rem;
+}
+
+.logoImage {
+  width: 60px;
+  height: 60px;
+  border-radius: 5%;
+  object-fit: cover;
 }
 
 .logo {
@@ -198,7 +212,7 @@
   overflow-y: auto;
 }
 
-/* Filtros e Controles (Usado pelo formulário de contato) */
+/* Contêiner do formulário */
 .controlsContainer {
   background: #ffffff;
   padding: 2.5rem;
@@ -208,22 +222,10 @@
   border: 1px solid #e5e7eb;
 }
 
-.controlsRow {
-  display: flex;
-  gap: 1.5rem;
-  align-items: center;
-  flex-wrap: wrap;
-}
-
-.searchBox {
-  flex: 1;
-  min-width: 300px;
-  position: relative;
-}
-
+/* Input de busca (reaproveitado para o formulário) */
 .searchInput {
   width: 100%;
-  padding: 1.2rem 1.2rem 1.2rem 4rem;
+  padding: 1.2rem 1.5rem;
   border: 1px solid #e2e8f0;
   border-radius: 12px;
   font-size: 1.4rem;
@@ -237,21 +239,7 @@
   box-shadow: 0 0 0 3px rgba(69, 139, 0, 0.1);
 }
 
-.searchIcon {
-  position: absolute;
-  left: 1.5rem;
-  top: 50%;
-  transform: translateY(-50%);
-  font-size: 1.6rem;
-  color: #64748b;
-}
-
-.filterGroup {
-  display: flex;
-  gap: 1rem;
-  align-items: center;
-}
-
+/* Select (reaproveitado para o formulário) */
 .filterSelect {
   padding: 1.2rem 1.5rem;
   border: 1px solid #e2e8f0;
@@ -261,209 +249,12 @@
   min-width: 180px;
   cursor: pointer;
   transition: all 0.3s ease;
-  width: 100%; /* Garante que o select ocupe o espaço do grupo */
+  width: 100%;
 }
 
 .filterSelect:focus {
   outline: none;
   border-color: #458B00;
-}
-
-/* Grid de Favoritos */
-.grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(400px, 1fr));
-  gap: 2.4rem;
-  margin-bottom: 2.4rem;
-}
-
-.card {
-  background: linear-gradient(135deg, #ffffff 0%, #fafbfc 100%);
-  border-radius: 12px;
-  box-shadow: 0 0.2rem 0.8px rgba(0,0,0,0.04);
-  padding: 2.4rem;
-  transition: all 0.3s ease;
-  border: 1px solid #e5e7eb;
-  position: relative;
-  overflow: hidden;
-}
-
-.card::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 4px;
-  background: linear-gradient(90deg, #458B00, #191970);
-}
-
-.card:hover {
-  transform: translateY(-5px);
-  box-shadow: 0 0.8rem 2.5rem rgba(0, 0, 0, 0.1);
-}
-
-.cardHeader {
-  display: flex;
-  justify-content: space-between;
-  align-items: flex-start;
-  margin-bottom: 2rem;
-  padding-bottom: 2rem;
-  border-bottom: 0.1rem solid #e5e7eb;
-}
-
-.cardUserInfo {
-  display: flex;
-  align-items: flex-start;
-  gap: 1.2rem;
-}
-
-.userAvatar {
-  width: 5rem;
-  height: 5rem;
-  border-radius: 12px;
-  background: linear-gradient(135deg, #458B00 0%, #191970 100%);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 2rem;
-  color: white;
-  flex-shrink: 0;
-  font-weight: bold;
-}
-
-.cardUserInfo h2 {
-  font-size: 1.8rem;
-  font-weight: 600;
-  color: #191970;
-  margin: 0 0 0.4rem 0;
-}
-
-.cardUserInfo p {
-  font-size: 1.4rem;
-  color: #64748b;
-  margin: 0 0 0.8rem 0;
-}
-
-.favoriteDate {
-  font-size: 1.2rem;
-  color: #94a3b8;
-}
-
-/* Lista de Medicamentos */
-.medList {
-  display: flex;
-  flex-direction: column;
-  gap: 1.2rem;
-}
-
-.medItem {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 1.2rem;
-  background: #f8fafc;
-  border-radius: 8px;
-  border: 0.1rem solid #e5e7eb;
-}
-
-.medInfo {
-  display: flex;
-  flex-direction: column;
-  gap: 0.4rem;
-}
-
-.medInfo strong {
-  font-size: 1.6rem;
-  font-weight: 600;
-  color: #1e293b;
-}
-
-.dosagem {
-  font-size: 1.3rem;
-  color: #64748b;
-}
-
-/* Badges */
-.badge {
-  padding: 0.6rem 1.2rem;
-  border-radius: 1.2rem;
-  font-size: 1.3rem;
-  font-weight: 600;
-  text-align: center;
-  border: 1px solid;
-}
-
-.inStock {
-  background: #f0fff4;
-  color: #065f46;
-  border-color: #10b981;
-}
-
-.outStock {
-  background: #fef2f2;
-  color: #991b1b;
-  border-color: #ef4444;
-}
-
-.pending {
-  background: #fffbeb;
-  color: #92400e;
-  border-color: #f59e0b;
-}
-
-/* Empty State */
-.emptyState {
-  text-align: center;
-  padding: 6rem 3rem;
-  background: white;
-  border-radius: 1.6rem;
-  margin: 3rem;
-  box-shadow: 0 0.2rem 0.8rem rgba(0,0,0,0.04);
-}
-
-.emptyIcon {
-  font-size: 6.4rem;
-  margin-bottom: 2rem;
-  opacity: 0.5;
-  color: #458B00;
-}
-
-.emptyState h3 {
-  font-size: 2rem;
-  color: #191970;
-  margin: 0 0 0.8rem 0;
-  font-weight: 600;
-}
-
-.emptyState p {
-  color: #64748b;
-  margin: 0;
-  font-size: 1.5rem;
-}
-
-/* Loader */
-.loaderContainer {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  min-height: 30rem;
-  color: #458B00;
-}
-
-.spinner {
-  width: 3.8rem;
-  height: 3.8rem;
-  border: 0.4rem solid #e6f7e6;
-  border-top: 0.4rem solid #458B00;
-  border-radius: 50%;
-  animation: spin 1s linear infinite;
-  margin-bottom: 1.2rem;
-}
-
-@keyframes spin {
-  to { transform: rotate(360deg); }
 }
 
 /* Overlay para mobile */
@@ -475,15 +266,7 @@
   display: none;
 }
 
-/* Controles de paginação */
-.paginationControls {
-  display: flex;
-  align-items: center;
-  gap: 1.2rem;
-  justify-content: center;
-  margin-bottom: 1.8rem;
-}
-
+/* Botão de Paginação (reaproveitado para o submit) */
 .paginationBtn {
   padding: 1rem 1.5rem;
   border: none;
@@ -496,7 +279,7 @@
   font-size: 1.3rem;
 }
 
-.paginationBtn:hover:not(.disabled) {
+.paginationBtn:hover:not(:disabled) {
   background: #2e7d32;
   transform: translateY(-1px);
 }
@@ -505,36 +288,6 @@
   background: #d1d5db;
   color: #888;
   cursor: not-allowed;
-}
-
-.paginationNumbers {
-  display: flex;
-  gap: 0.4rem;
-}
-
-.paginationNumber {
-  padding: 1rem 1.2rem;
-  border: none;
-  border-radius: 0.6rem;
-  background: #f1f5f9;
-  color: #191970;
-  font-weight: 600;
-  cursor: pointer;
-  transition: all 0.3s ease;
-  min-width: 45px;
-  text-align: center;
-  font-size: 1.3rem;
-}
-
-.paginationNumber:hover {
-  background: #e6f7e6;
-  transform: translateY(-1px);
-}
-
-.paginationNumber.active {
-  background: #458B00;
-  color: #fff;
-  transform: scale(1.05);
 }
 
 /* --- Estilos para o Formulário de Contato --- */
@@ -565,27 +318,24 @@
 .formTextarea {
   min-height: 120px;
   resize: vertical;
-  padding: 1.2rem 1.5rem !important; /* Sobrescreve o padding com ícone */
 }
 
-/* Estilo para inputs com erro */
 .inputError {
-  border-color: #ef4444; /* Vermelho para erro */
+  border-color: #ef4444;
   box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.1);
 }
 
 .errorMessage {
-  color: #b91c1c; /* Vermelho escuro para o texto do erro */
+  color: #b91c1c;
   font-size: 1.2rem;
   font-weight: 500;
 }
 
-/* Estilo para o campo de grid que ocupa a largura total */
 .fullWidth {
   grid-column: 1 / -1;
 }
 
-/* Mensagens de Status (Sucesso/Erro) */
+/* Mensagens de Status */
 .statusMessage {
   margin-top: 2rem;
   padding: 1.5rem;
@@ -618,10 +368,6 @@
   opacity: 0.7;
 }
 
-.statusMessage button:hover {
-  opacity: 1;
-}
-
 /* Responsividade */
 @media (max-width: 64rem) { /* 1024px */
   .mainContent {
@@ -629,9 +375,6 @@
   }
   .sidebar {
     width: 25rem;
-  }
-  .grid {
-    grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
   }
 }
 
@@ -648,10 +391,7 @@
   .sidebar.sidebarOpen {
     transform: translateX(0);
   }
-  .menuToggle {
-    display: block;
-  }
-  .sidebarClose {
+  .menuToggle, .sidebarClose {
     display: block;
   }
   .overlay {
@@ -660,21 +400,6 @@
   .mainContent {
     padding: 1.6rem 2rem;
   }
-  .grid {
-    grid-template-columns: 1fr;
-    padding: 1rem;
-  }
-  .card {
-    padding: 1.6rem;
-  }
-  .controlsRow {
-    flex-direction: column;
-    gap: 1rem;
-  }
-  .searchBox {
-    min-width: 100%;
-  }
-  /* Ajuste do formulário para telas menores */
   .formGrid {
     grid-template-columns: 1fr;
     gap: 1.5rem;
@@ -687,28 +412,5 @@
     gap: 1.6rem;
     align-items: flex-start;
     padding: 1.6rem 2rem;
-  }
-  .grid {
-    padding: 0.8rem;
-  }
-  .card {
-    padding: 1.2rem;
-  }
-  .cardHeader {
-    flex-direction: column;
-    gap: 1.2rem;
-    align-items: flex-start;
-  }
-  .paginationNumbers {
-    flex-wrap: wrap;
-    justify-content: center;
-  }
-  .paginationNumber {
-    padding: 0.4rem 0.8rem;
-  }
-  .medItem {
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 0.5rem;
   }
 }

@@ -5,15 +5,16 @@ import { useState, useEffect } from 'react';
 import Head from 'next/head';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import styles from './page.module.css'; // Usando o CSS dos favoritos
-import AuthGuard from '../componentes/AuthGuard'; // Assumindo que a rota de contato também é protegida
+import styles from './page.module.css';
+import AuthGuard from '../componentes/AuthGuard';
 
 export default function ContactPage() {
-  // --- ESTADOS VINDOS DA PÁGINA DE FAVORITOS (PARA SIDEBAR) ---
+  // --- ESTADOS DA SIDEBAR ---
   const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [farmaciaInfo, setFarmaciaInfo] = useState(null); // Novo estado para dados da farmácia
   const router = useRouter();
 
-  // --- ESTADOS VINDOS DA PÁGINA DE CONTATO (PARA O FORMULÁRIO) ---
+  // --- ESTADOS DO FORMULÁRIO ---
   const [formData, setFormData] = useState({
     name: '',
     email: '',
@@ -27,14 +28,27 @@ export default function ContactPage() {
   const [errors, setErrors] = useState({});
   const [charCount, setCharCount] = useState(0);
 
-  // --- FUNÇÕES VINDAS DA PÁGINA DE FAVORITOS ---
+  // Efeito para buscar dados da farmácia ao carregar
+  useEffect(() => {
+    try {
+      const userDataString = localStorage.getItem("userData");
+      if (userDataString) {
+        setFarmaciaInfo(JSON.parse(userDataString));
+      }
+    } catch (error) {
+      console.error("Falha ao buscar dados da farmácia:", error);
+    }
+  }, []); // Array vazio garante que rode apenas uma vez
+
+  // --- FUNÇÕES DA SIDEBAR ---
   const handleLogout = async () => {
     localStorage.removeItem("authToken");
     localStorage.removeItem("userData");
+    // Adicione outras chaves se necessário
     router.push("/home");
   };
 
-  // --- FUNÇÕES VINDAS DA PÁGINA DE CONTATO ---
+  // --- FUNÇÕES DO FORMULÁRIO ---
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData(prev => ({ ...prev, [name]: value }));
@@ -107,13 +121,30 @@ export default function ContactPage() {
           {/* Sidebar */}
           <aside className={`${styles.sidebar} ${sidebarOpen ? styles.sidebarOpen : ""}`}>
             <div className={styles.sidebarHeader}>
+              {/* --- BLOCO DA LOGO ATUALIZADO --- */}
               <div className={styles.logo}>
-                <span className={styles.logoText}>PharmaX</span>
+                {farmaciaInfo ? (
+                  <div className={styles.logoContainer}>
+                    {farmaciaInfo.farm_logo_url && (
+                      <img
+                        src={farmaciaInfo.farm_logo_url}
+                        alt={`Logo de ${farmaciaInfo.farm_nome}`}
+                        className={styles.logoImage}
+                      />
+                    )}
+                    <span className={styles.logoText}>
+                      {farmaciaInfo.farm_nome}
+                    </span>
+                  </div>
+                ) : (
+                  <span className={styles.logoText}>PharmaX</span>
+                )}
               </div>
               <button className={styles.sidebarClose} onClick={() => setSidebarOpen(false)}>
                 ×
               </button>
             </div>
+            {/* Navegação da sidebar */}
             <nav className={styles.nav}>
               <div className={styles.navSection}>
                 <p className={styles.navLabel}>Principal</p>
@@ -157,96 +188,55 @@ export default function ContactPage() {
             </nav>
           </aside>
 
-          {/* Overlay para fechar a sidebar em telas menores */}
+          {/* Overlay */}
           {sidebarOpen && (
             <div className={styles.overlay} onClick={() => setSidebarOpen(false)} />
           )}
+
           {/* Conteúdo Principal com o Formulário */}
           <main className={styles.mainContent}>
             <div className={styles.controlsContainer}>
               <form onSubmit={handleSubmit} noValidate className={styles.contactForm}>
                 <div className={styles.formGrid}>
-                  {/* Campo Nome */}
+                  {/* Campos do formulário permanecem inalterados */}
                   <div className={styles.formGroup}>
                     <label htmlFor="name" className={styles.formLabel}>Nome Completo *</label>
-                    <input
-                      type="text" id="name" name="name"
-                      value={formData.name} onChange={handleChange}
-                      className={`${styles.searchInput} ${errors.name ? styles.inputError : ''}`}
-                      placeholder="Seu nome completo" disabled={isSubmitting}
-                    />
+                    <input type="text" id="name" name="name" value={formData.name} onChange={handleChange} className={`${styles.searchInput} ${errors.name ? styles.inputError : ''}`} placeholder="Seu nome completo" disabled={isSubmitting} />
                     {errors.name && <span className={styles.errorMessage}>{errors.name}</span>}
                   </div>
-
-                  {/* Campo E-mail */}
                   <div className={styles.formGroup}>
                     <label htmlFor="email" className={styles.formLabel}>E-mail *</label>
-                    <input
-                      type="email" id="email" name="email"
-                      value={formData.email} onChange={handleChange}
-                      className={`${styles.searchInput} ${errors.email ? styles.inputError : ''}`}
-                      placeholder="seu@email.com" disabled={isSubmitting}
-                    />
+                    <input type="email" id="email" name="email" value={formData.email} onChange={handleChange} className={`${styles.searchInput} ${errors.email ? styles.inputError : ''}`} placeholder="seu@email.com" disabled={isSubmitting} />
                     {errors.email && <span className={styles.errorMessage}>{errors.email}</span>}
                   </div>
-                  
-                  {/* Campo Telefone */}
                   <div className={styles.formGroup}>
                     <label htmlFor="phone" className={styles.formLabel}>Telefone</label>
-                    <input
-                      type="tel" id="phone" name="phone"
-                      value={formData.phone} onChange={handleChange}
-                      className={styles.searchInput}
-                      placeholder="(11) 99999-9999" disabled={isSubmitting}
-                    />
+                    <input type="tel" id="phone" name="phone" value={formData.phone} onChange={handleChange} className={styles.searchInput} placeholder="(11) 99999-9999" disabled={isSubmitting} />
                   </div>
-
-                  {/* Campo Categoria */}
                   <div className={styles.formGroup}>
                     <label htmlFor="category" className={styles.formLabel}>Categoria</label>
-                    <select
-                      id="category" name="category"
-                      value={formData.category} onChange={handleChange}
-                      className={styles.filterSelect} disabled={isSubmitting}
-                    >
+                    <select id="category" name="category" value={formData.category} onChange={handleChange} className={styles.filterSelect} disabled={isSubmitting}>
                       <option value="geral">Geral</option>
                       <option value="suporte">Suporte Técnico</option>
                       <option value="vendas">Vendas</option>
                       <option value="parceria">Parceria</option>
                     </select>
                   </div>
-
-                  {/* Campo Assunto */}
                   <div className={`${styles.formGroup} ${styles.fullWidth}`}>
                     <label htmlFor="subject" className={styles.formLabel}>Assunto *</label>
-                    <input
-                      type="text" id="subject" name="subject"
-                      value={formData.subject} onChange={handleChange}
-                      className={`${styles.searchInput} ${errors.subject ? styles.inputError : ''}`}
-                      placeholder="Sobre o que você gostaria de falar?" disabled={isSubmitting}
-                    />
+                    <input type="text" id="subject" name="subject" value={formData.subject} onChange={handleChange} className={`${styles.searchInput} ${errors.subject ? styles.inputError : ''}`} placeholder="Sobre o que você gostaria de falar?" disabled={isSubmitting} />
                     {errors.subject && <span className={styles.errorMessage}>{errors.subject}</span>}
                   </div>
-
-                  {/* Campo Mensagem */}
                   <div className={`${styles.formGroup} ${styles.fullWidth}`}>
                     <label htmlFor="message" className={styles.formLabel}>Mensagem * ({charCount}/1000)</label>
-                    <textarea
-                      id="message" name="message" rows="6"
-                      value={formData.message} onChange={handleChange}
-                      className={`${styles.searchInput} ${styles.formTextarea} ${errors.message ? styles.inputError : ''}`}
-                      placeholder="Descreva sua mensagem em detalhes..." disabled={isSubmitting}
-                    ></textarea>
+                    <textarea id="message" name="message" rows="6" value={formData.message} onChange={handleChange} className={`${styles.searchInput} ${styles.formTextarea} ${errors.message ? styles.inputError : ''}`} placeholder="Descreva sua mensagem em detalhes..." disabled={isSubmitting}></textarea>
                     {errors.message && <span className={styles.errorMessage}>{errors.message}</span>}
                   </div>
                 </div>
-
                 <button type="submit" disabled={isSubmitting} className={styles.paginationBtn} style={{ minWidth: '180px', alignSelf: 'center', marginTop: '1.5rem' }}>
                   {isSubmitting ? 'Enviando...' : 'Enviar Mensagem'}
                 </button>
               </form>
-
-              {/* Mensagens de Status */}
               {submitStatus && (
                 <div className={`${styles.statusMessage} ${styles[submitStatus]}`}>
                   {submitStatus === 'success' ? '✅ Mensagem enviada com sucesso!' : '❌ Erro ao enviar. Tente novamente.'}
