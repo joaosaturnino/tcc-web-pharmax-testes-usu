@@ -17,7 +17,7 @@
 .navLink { display: flex; align-items: center; padding: 1.2rem 1.4rem; color: #CDC1C5; text-decoration: none; border-radius: 0.6rem; margin-bottom: 0.4rem; transition: all 0.3s ease; font-size: 1.5rem; gap: 1.2rem; }
 .navLink:hover { background: rgba(69, 139, 0, 0.15); color: #fff; }
 .navLink.active { background: linear-gradient(135deg, #458B00 0%, #2e7d32 100%); color: #fff; }
-.navText { font-family: "Montserrat", sans-serif; }
+.navText { font-family: "Montserrat"; }
 
 /* REESTRUTURADO: Conteúdo Principal e Formulário para consistência */
 .mainContent { flex: 1; padding: 3.2rem; background: #f8fafc; overflow-y: auto; }
@@ -69,17 +69,59 @@
 
 /* --- RESPONSIVIDADE --- */
 @media (max-width: 64rem) { .formGrid { grid-template-columns: 1fr; } }
+
 @media (max-width: 48rem) {
   .sidebar { position: fixed; left: 0; top: 0; height: 100vh; transform: translateX(-100%); z-index: 110; }
   .sidebar.sidebarOpen { transform: translateX(0); }
   .menuToggle, .sidebarClose { display: block; }
-  .mainContent { padding: 1.6rem; }
-  .form { padding: 2.4rem; }
+
+  /* MUDANÇA: Ajuste no padding do conteúdo principal para acomodar a barra fixa */
+  .mainContent {
+    padding: 1.6rem;
+    padding-bottom: 12rem; /* Espaço extra no final para o último campo não ser coberto */
+  }
+
+  .form {
+    padding: 2.4rem;
+    /* O padding-bottom foi movido para o .mainContent */
+  }
+  
   .formRow { grid-template-columns: 1fr; gap: 2rem; }
-  .formActions { flex-direction: column-reverse; gap: 1rem; }
+
+  /* CORREÇÃO: Usando position: fixed para garantir que a barra fique visível */
+  .formActions {
+    /* Desvincula o elemento do fluxo e fixa na janela */
+    position: fixed;
+    bottom: 0;
+    left: 0; /* Alinha à esquerda da tela */
+    right: 0; /* Alinha à direita da tela (ocupando a largura total) */
+    
+    /* Estilos visuais */
+    background: white;
+    padding: 1.6rem;
+    border-top: 1px solid #e5e7eb;
+    box-shadow: 0 -4px 12px rgba(0, 0, 0, 0.08);
+    z-index: 80; /* Garante que fique acima do conteúdo, mas abaixo do sidebar */
+
+    /* Remove estilos antigos que não são mais necessários com position:fixed */
+    margin-top: 0;
+    grid-column: unset;
+
+    /* Mantém a organização dos botões */
+    display: flex;
+    flex-direction: column-reverse;
+    gap: 1rem;
+  }
+
   .cancelButton, .submitButton { width: 100%; }
 }
+
 @media (max-width: 30rem) {
   .header { flex-direction: column; gap: 1.6rem; align-items: flex-start; padding: 1.6rem; }
   .form { padding: 1.6rem; }
+
+  /* Ajuste no padding da barra para telas muito pequenas */
+  .formActions {
+      padding: 1.2rem;
+  }
 }

@@ -382,6 +382,15 @@ function ListagemMedicamentos() {
           </div>
         )}
       </div>
+
+      {/* ADIÇÃO DO BOTÃO FLUTUANTE */}
+      <button 
+        onClick={abrirModal} 
+        className={styles.mobileAddButton} 
+        aria-label="Adicionar Novo Medicamento"
+      >
+        +
+      </button>
     </AuthGuard>
   );
 }

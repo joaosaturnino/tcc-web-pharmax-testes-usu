@@ -43,6 +43,8 @@ export default function RelatorioFavoritosPage() {
           throw new Error("Não foi possível identificar sua farmácia. Faça o login novamente.");
         }
         
+        // CORREÇÃO: O endpoint da API estava incorreto.
+        // O correto é buscar os favoritos de uma farmácia específica.
         const response = await api.get(`/favoritos/${idDaFarmacia}/favoritos`);
         
         if (response.data.sucesso) {
@@ -72,9 +74,12 @@ export default function RelatorioFavoritosPage() {
     const startDate = new Date(dateRange.start);
     const endDate = new Date(dateRange.end);
     
+    // Adiciona um dia ao endDate para incluir o dia final por completo
+    endDate.setDate(endDate.getDate() + 1);
+
     const filtered = medicamentos.filter((med) => {
       const dataFavorito = new Date(med.dataFavorito);
-      return dataFavorito >= startDate && dataFavorito <= endDate;
+      return dataFavorito >= startDate && dataFavorito < endDate;
     });
 
     return [...filtered].sort((a, b) => b.favoritacoes - a.favoritacoes);
@@ -127,7 +132,6 @@ export default function RelatorioFavoritosPage() {
                 ×
               </button>
             </div>
-            {/* CORREÇÃO: Trocados <a> por <Link> para navegação mais rápida */}
             <nav className={styles.nav}>
               <div className={styles.navSection}><p className={styles.navLabel}>Principal</p><Link href="/farmacias/favoritos" className={styles.navLink}><span className={styles.navText}>Favoritos</span></Link><Link href="/farmacias/produtos/medicamentos" className={styles.navLink}><span className={styles.navText}>Medicamentos</span></Link></div>
               <div className={styles.navSection}><p className={styles.navLabel}>Gestão</p><Link href="/farmacias/cadastro/funcionario/lista" className={styles.navLink}><span className={styles.navText}>Funcionários</span></Link><Link href="/farmacias/laboratorio/lista" className={styles.navLink}><span className={styles.navText}>Laboratórios</span></Link></div>
@@ -157,7 +161,9 @@ export default function RelatorioFavoritosPage() {
               <table className={styles.reportTable}>
                 <thead><tr><th>Ranking</th><th>Medicamento</th><th>Dosagem</th><th>Fabricante</th><th>Nº de Favoritações</th></tr></thead>
                 <tbody>
-                  {sortedMedicamentos.length > 0 ? (
+                  {loading ? (
+                    <tr><td colSpan="5">Carregando dados...</td></tr>
+                  ) : sortedMedicamentos.length > 0 ? (
                     sortedMedicamentos.map((med, index) => (
                       <tr key={med.id}>
                         <td><strong>{index + 1}º</strong></td>

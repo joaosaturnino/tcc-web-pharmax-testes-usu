@@ -2,13 +2,13 @@
 
 'use client';
 
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useRef } from 'react'; // Adicionado useRef
 import { useRouter } from 'next/navigation';
 import api from '../services/api';
 import style from "./page.module.css";
 import Slider from "../componentes/slider";
 
-// --- FUNÇÕES AUXILIARES ---
+// --- FUNÇÕES AUXILIARES (sem alterações) ---
 const getImageUrl = (imagePath) => {
   const imagemPadrao = "https://www.institutoaron.com.br/static/img/large/c28a030a59bae1283321c340cdc846df.webp";
   if (!imagePath) return imagemPadrao;
@@ -43,7 +43,7 @@ const gerarNumerosPaginacao = (paginaAtual, totalPaginas) => {
   return paginas;
 };
 
-// --- COMPONENTES INTERNOS ---
+// --- COMPONENTES INTERNOS (sem alterações) ---
 const CardProduto = ({ medicamento, onVerDetalhes }) => {
   return (
     <div className={style.cartaoProduto}>
@@ -92,6 +92,9 @@ export default function PaginaInicial() {
   const [farmacias, setFarmacias] = useState([]);
   const [loadingModal, setLoadingModal] = useState(false);
 
+  // MELHORIA: Referência para controlar o primeiro render e evitar resets desnecessários.
+  const isInitialMount = useRef(true);
+
   const fetchMedicamentos = useCallback(async () => {
     setLoading(true);
     try {
@@ -99,6 +102,8 @@ export default function PaginaInicial() {
         page: paginaAtual.toString(),
         limit: ITENS_POR_PAGINA.toString(),
       });
+      // CORREÇÃO: Inclui o termo de busca na requisição da API.
+      if (termoBusca) params.append('search', termoBusca);
       if (laboratorioFiltro) params.append('lab', laboratorioFiltro);
       if (ordenacao) params.append('sort', ordenacao);
 
@@ -113,7 +118,8 @@ export default function PaginaInicial() {
     } finally {
       setLoading(false);
     }
-  }, [paginaAtual, laboratorioFiltro, ordenacao]);
+    // CORREÇÃO: Adiciona 'termoBusca' às dependências para que a busca seja refeita ao digitar.
+  }, [paginaAtual, laboratorioFiltro, ordenacao, termoBusca]);
 
   useEffect(() => {
     fetchMedicamentos();
@@ -133,23 +139,32 @@ export default function PaginaInicial() {
     fetchLaboratorios();
   }, []);
 
+  // MELHORIA: Efeito para resetar a página para 1 quando filtros mudam.
   useEffect(() => {
-    if (paginaAtual !== 1) {
-      setPaginaAtual(1);
+    // Evita que rode na primeira renderização do componente
+    if (isInitialMount.current) {
+      isInitialMount.current = false;
+      return;
     }
-  }, [laboratorioFiltro, ordenacao]);
+    setPaginaAtual(1);
+  }, [laboratorioFiltro, ordenacao, termoBusca]);
 
   const handleBuscaSubmit = (event) => {
     event.preventDefault();
-    if (termoBusca.trim()) {
-      router.push(`/busca?q=${encodeURIComponent(termoBusca)}`);
-    }
+    // A busca agora é feita nesta mesma página, acionando o useEffect.
+    // A navegação para /busca pode ser mantida se for um comportamento desejado para buscas explícitas.
+    // Para uma experiência de "Single Page Application", a busca já acontece ao digitar.
+    // Se a intenção é ter uma página de busca separada, o onSumbit pode ser mantido como estava:
+    // router.push(`/busca?q=${encodeURIComponent(termoBusca)}`);
+    fetchMedicamentos(); // Aciona a busca ao pressionar enter.
   };
 
   const handleLimparFiltros = () => {
     setTermoBusca('');
     setLaboratorioFiltro('');
     setOrdenacao('');
+    // CORREÇÃO: Reseta para a página 1 ao limpar os filtros.
+    setPaginaAtual(1);
   };
 
   const handleAbrirDetalhes = async (medicamento) => {
@@ -178,7 +193,7 @@ export default function PaginaInicial() {
   const handleMudarPagina = (numeroPagina) => setPaginaAtual(numeroPagina);
   const paginasParaMostrar = gerarNumerosPaginacao(paginaAtual, totalPaginas);
 
-  const filtrosAtivos = laboratorioFiltro || ordenacao;
+  const filtrosAtivos = laboratorioFiltro || ordenacao || termoBusca;
 
   return (
     <div className={style.container}>
@@ -188,7 +203,7 @@ export default function PaginaInicial() {
         <form className={style.caixaBusca} onSubmit={handleBuscaSubmit}>
           <input 
             type="text" 
-            placeholder="Buscar medicamentos..." 
+            placeholder="Buscar por nome, laboratório..." 
             value={termoBusca} 
             onChange={(e) => setTermoBusca(e.target.value)} 
             aria-label="Buscar medicamentos"
@@ -226,13 +241,18 @@ export default function PaginaInicial() {
         <div className={`${style.gradeProdutos} ${loading ? style.gradeProdutosCarregando : ''}`}>
           {loading ? (
             Array.from({ length: ITENS_POR_PAGINA }).map((_, index) => <SkeletonCard key={index} />)
-          ) : medicamentos.map((medicamento) => (
+          ) : medicamentos.length > 0 ? (
+            medicamentos.map((medicamento) => (
             <CardProduto
-              key={medicamento.med_id}
+              // CORREÇÃO CRÍTICA: Usa 'medp_id' como chave única para evitar erros de renderização.
+              key={medicamento.medp_id} 
               medicamento={medicamento}
               onVerDetalhes={() => handleAbrirDetalhes(medicamento)}
             />
-          ))}
+          ))
+          ) : (
+            <p className={style.mensagemAviso}>Nenhum medicamento encontrado com os filtros selecionados.</p>
+          )}
         </div>
         {totalPaginas > 1 && !loading && (
           <div className={style.paginacao}>

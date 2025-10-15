@@ -18,7 +18,7 @@
 .navLink { display: flex; align-items: center; padding: 1.2rem 1.4rem; color: #CDC1C5; text-decoration: none; border-radius: 0.6rem; margin-bottom: 0.4rem; transition: all 0.3s ease; font-size: 1.5rem; border-left: 4px solid transparent; gap: 1.2rem; }
 .navLink:hover { background: rgba(69, 139, 0, 0.15); color: #fff; border-left-color: #458B00; transform: translateX(5px); }
 .navLink.active { background: linear-gradient(135deg, #458B00 0%, #2e7d32 100%); color: #fff; border-left-color: #fff; box-shadow: 0 4px 12px rgba(69, 139, 0, 0.3); }
-.navText { font-family: "Montserrat", sans-serif; }
+.navText { font-family: "Montserrat"; }
 
 /* REESTRUTURADO: Conteúdo Principal e Formulário para consistência */
 .mainContent { flex: 1; padding: 3.2rem; background: #f8fafc; overflow-y: auto; }
