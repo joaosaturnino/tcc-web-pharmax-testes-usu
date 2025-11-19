@@ -41,13 +41,13 @@ export default function RelatorioFuncionariosPage() {
       try {
         const userDataString = localStorage.getItem("userData");
         if (!userDataString) throw new Error("Usuário não autenticado.");
-        
+
         const userData = JSON.parse(userDataString);
         setFarmaciaInfo(userData);
 
         const idDaFarmacia = userData.farm_id;
         if (!idDaFarmacia) throw new Error("ID da farmácia não encontrado.");
-        
+
         const response = await api.get(`/funcionario?farmacia_id=${idDaFarmacia}`);
 
         if (response.data.sucesso) {
@@ -75,7 +75,7 @@ export default function RelatorioFuncionariosPage() {
     };
     listarFuncionarios();
   }, []);
-  
+
   // MELHORIA: Lógica de filtro e ordenação movida para useMemo para performance
   const sortedFuncionarios = useMemo(() => {
     const filtered = funcionarios.filter((func) => {
@@ -134,19 +134,19 @@ export default function RelatorioFuncionariosPage() {
     localStorage.removeItem("userData");
     router.push("/home");
   };
-  
+
   if (loading) {
-      return (
-        <div className={styles.loaderContainer}>
-          <div className={styles.spinner}></div>
-          <span>Carregando funcionários...</span>
-        </div>
-      );
+    return (
+      <div className={styles.loaderContainer}>
+        <div className={styles.spinner}></div>
+        <span>Carregando funcionários...</span>
+      </div>
+    );
   }
 
   return (
     <div className={styles.dashboard}>
-       <header className={styles.header}>
+      <header className={styles.header}>
         <div className={styles.headerLeft}>
           <button className={styles.menuToggle} onClick={() => setSidebarOpen(!sidebarOpen)} aria-label="Abrir menu">☰</button>
           <h1 className={styles.title}>Relatório de Funcionários</h1>
@@ -186,7 +186,7 @@ export default function RelatorioFuncionariosPage() {
           )}
           <div ref={reportRef} className={`${styles.reportContainer} ${reportGenerated ? styles.reportMode : ""}`}>
             <div className={styles.reportHeader}>
-              <img src={farmaciaInfo?.farm_logo_url || "../../../../../temp/LogoEscrita.png"} alt="Logo" className={styles.printLogo}/>
+              <img src={farmaciaInfo?.farm_logo_url || "../../../../../temp/LogoEscrita.png"} alt="Logo" className={styles.printLogo} />
               <div className={styles.reportTitle}><h1>Relatório de Funcionários</h1><p>Período: {new Date(dateRange.start).toLocaleDateString("pt-BR", { timeZone: 'UTC' })} a {new Date(dateRange.end).toLocaleDateString("pt-BR", { timeZone: 'UTC' })}</p><p>Data do relatório: {new Date().toLocaleDateString("pt-BR")}</p></div>
             </div>
             <div className={styles.tableWrapper}>

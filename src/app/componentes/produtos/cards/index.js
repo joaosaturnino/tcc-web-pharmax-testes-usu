@@ -47,22 +47,21 @@ export default function MedicamentoCard({ medicamento, index, onStatusChange }) 
             <span className={styles.dosagem}>{medicamento.dosagem}</span>
           </div>
           <span
-            className={`${styles.badge} ${
-              medicamento.status === "em_estoque"
+            className={`${styles.badge} ${medicamento.status === "em_estoque"
                 ? styles.inStock
                 : medicamento.status === "indisponivel"
-                ? styles.outStock
-                : styles.pending
-            }`}
+                  ? styles.outStock
+                  : styles.pending
+              }`}
           >
             {medicamento.status === "em_estoque"
               ? "Disponível"
               : medicamento.status === "indisponivel"
-              ? "Indisponível"
-              : "Pendente"}
+                ? "Indisponível"
+                : "Pendente"}
           </span>
         </div>
-        
+
         <div className={styles.medItem}>
           <div className={styles.medInfo}>
             <strong>Última atualização</strong>

@@ -27,8 +27,8 @@ module.exports = (request, response, next) => {
 
     // Anexa o ID do token ao request para ser usado nos controllers
     // Certifique-se que o payload do seu token contém o campo 'id' com o ID da farmácia.
-    request.farmaciaId = decoded.id; 
-    
+    request.farmaciaId = decoded.id;
+
     return next();
   });
 };

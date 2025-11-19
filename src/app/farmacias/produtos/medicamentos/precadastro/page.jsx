@@ -36,7 +36,7 @@ const bancoDeDados = {
       codigoBarras: "7890987654321"
     },
   ],
-  buscarPorCodigoBarras: function(codigo) {
+  buscarPorCodigoBarras: function (codigo) {
     return this.medicamentos.find(med => med.codigoBarras === codigo);
   }
 };
@@ -96,7 +96,7 @@ export default function CadastroMedicamentoPage() {
     if (medicamentoExistente && name !== "preco" && name !== "descricao") {
       return;
     }
-    
+
     setForm({
       ...form,
       [name]: value,
@@ -118,16 +118,16 @@ export default function CadastroMedicamentoPage() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
-    
+
     // Simulando processamento
     setTimeout(() => {
       // Aqui você pode adicionar a lógica para enviar os dados para o backend
       console.log("Dados atualizados:", form);
-      alert(medicamentoExistente 
-        ? "Preço do medicamento atualizado com sucesso!" 
+      alert(medicamentoExistente
+        ? "Preço do medicamento atualizado com sucesso!"
         : "Medicamento cadastrado com sucesso!");
       setLoading(false);
-      
+
       // Redireciona para a página de listagem de medicamentos após o cadastro
       router.push("/farmacias/produtos/medicamentos");
     }, 1500);
@@ -153,94 +153,94 @@ export default function CadastroMedicamentoPage() {
       <div className={styles.contentWrapper}>
         {/* Sidebar Não Fixa */}
         <aside className={`${styles.sidebar} ${sidebarOpen ? styles.sidebarOpen : ""}`}>
-            <div className={styles.sidebarHeader}>
-              <div className={styles.logo}>
-                <span className={styles.logoText}>PharmaX</span>
-              </div>
-              <button
-                className={styles.sidebarClose}
-                onClick={() => setSidebarOpen(false)}
+          <div className={styles.sidebarHeader}>
+            <div className={styles.logo}>
+              <span className={styles.logoText}>PharmaX</span>
+            </div>
+            <button
+              className={styles.sidebarClose}
+              onClick={() => setSidebarOpen(false)}
+            >
+              ×
+            </button>
+          </div>
+
+          <nav className={styles.nav}>
+            <div className={styles.navSection}>
+              <p className={styles.navLabel}>Principal</p>
+              <a
+                href="/farmacias/favoritos"
+                className={styles.navLink}
               >
-                ×
-              </button>
+                <span className={styles.navText}>Favoritos</span>
+              </a>
+              <a
+                href="/farmacias/produtos/medicamentos"
+                className={`${styles.navLink} ${styles.active}`}
+
+              >
+                <span className={styles.navText}>Medicamentos</span>
+              </a>
             </div>
 
-            <nav className={styles.nav}>
-              <div className={styles.navSection}>
-                <p className={styles.navLabel}>Principal</p>
-                <a
-                  href="/farmacias/favoritos"
-                  className={styles.navLink}
-                >
-                  <span className={styles.navText}>Favoritos</span>
-                </a>
-                <a
-                  href="/farmacias/produtos/medicamentos"
-                  className={`${styles.navLink} ${styles.active}`}
-                  
-                >
-                  <span className={styles.navText}>Medicamentos</span>
-                </a>
-              </div>
+            <div className={styles.navSection}>
+              <p className={styles.navLabel}>Gestão</p>
+              <a
+                href="/farmacias/cadastro/funcionario/lista"
+                className={styles.navLink}
+              >
+                <span className={styles.navText}>Funcionários</span>
+              </a>
+              <a href="/farmacias/laboratorio/lista" className={styles.navLink}>
+                <span className={styles.navText}>Laboratórios</span>
+              </a>
+            </div>
 
-              <div className={styles.navSection}>
-                <p className={styles.navLabel}>Gestão</p>
-                <a
-                  href="/farmacias/cadastro/funcionario/lista"
-                  className={styles.navLink}
-                >
-                  <span className={styles.navText}>Funcionários</span>
-                </a>
-                <a href="/farmacias/laboratorio/lista" className={styles.navLink}>
-                  <span className={styles.navText}>Laboratórios</span>
-                </a>
-              </div>
+            <div className={styles.navSection}>
+              <p className={styles.navLabel}>Relatórios</p>
+              <a
+                href="/farmacias/relatorios/favoritos"
+                className={styles.navLink}
+              >
+                <span className={styles.navText}>Medicamentos Favoritos</span>
+              </a>
+              <a
+                href="/farmacias/relatorios/funcionarios"
+                className={styles.navLink}
+              >
+                <span className={styles.navText}>Relatório de Funcionarios</span>
+              </a>
+              <a
+                href="/farmacias/relatorios/laboratorios"
+                className={styles.navLink}
+              >
+                <span className={styles.navText}>Relatório de Laboratorios</span>
+              </a>
+            </div>
 
-              <div className={styles.navSection}>
-                <p className={styles.navLabel}>Relatórios</p>
-                <a
-                  href="/farmacias/relatorios/favoritos"
-                  className={styles.navLink}
-                >
-                  <span className={styles.navText}>Medicamentos Favoritos</span>
-                </a>
-                <a
-                  href="/farmacias/relatorios/funcionarios"
-                  className={styles.navLink}
-                >
-                  <span className={styles.navText}>Relatório de Funcionarios</span>
-                </a>
-                <a
-                  href="/farmacias/relatorios/laboratorios"
-                  className={styles.navLink}
-                >
-                  <span className={styles.navText}>Relatório de Laboratorios</span>
-                </a>
-              </div>
+            <div className={styles.navSection}>
+              <p className={styles.navLabel}>Conta</p>
+              <a
+                href="/farmacias/perfil"
+                className={styles.navLink}
+              >
+                <span className={styles.navText}>Meu Perfil</span>
+              </a>
+              <button
+                onClick={handleLogout}
+                className={styles.navLink}
+                style={{ background: 'none', border: 'none', width: '100%', textAlign: 'left', cursor: 'pointer' }}
+              >
+                <span className={styles.navText}>Sair</span>
+              </button>
+            </div>
+          </nav>
+        </aside>
 
-              <div className={styles.navSection}>
-                <p className={styles.navLabel}>Conta</p>
-                <a
-                  href="/farmacias/perfil"
-                  className={styles.navLink}
-                >
-                  <span className={styles.navText}>Meu Perfil</span>
-                </a>
-                <button
-                  onClick={handleLogout}
-                  className={styles.navLink}
-                  style={{ background: 'none', border: 'none', width: '100%', textAlign: 'left', cursor: 'pointer' }}
-                >
-                  <span className={styles.navText}>Sair</span>
-                </button>
-              </div>
-            </nav>
-          </aside>
-
-          {/* Overlay para mobile */}
-          {sidebarOpen && (
-            <div className={styles.overlay} onClick={() => setSidebarOpen(false)} />
-          )}
+        {/* Overlay para mobile */}
+        {sidebarOpen && (
+          <div className={styles.overlay} onClick={() => setSidebarOpen(false)} />
+        )}
 
         {/* Conteúdo Principal */}
         <main className={styles.mainContent}>
@@ -273,7 +273,7 @@ export default function CadastroMedicamentoPage() {
                       value={form.codigoBarras}
                       onChange={handleChange}
                       readOnly={!!medicamentoExistente}
-                      style={medicamentoExistente ? {backgroundColor: "#f5f5f5", cursor: "not-allowed"} : {}}
+                      style={medicamentoExistente ? { backgroundColor: "#f5f5f5", cursor: "not-allowed" } : {}}
                     />
                   </div>
 
@@ -286,7 +286,7 @@ export default function CadastroMedicamentoPage() {
                       value={form.nome}
                       onChange={handleChange}
                       readOnly={!!medicamentoExistente}
-                      style={medicamentoExistente ? {backgroundColor: "#f5f5f5", cursor: "not-allowed"} : {}}
+                      style={medicamentoExistente ? { backgroundColor: "#f5f5f5", cursor: "not-allowed" } : {}}
                       required={!medicamentoExistente}
                     />
                   </div>
@@ -301,7 +301,7 @@ export default function CadastroMedicamentoPage() {
                         value={form.dosagem}
                         onChange={handleChange}
                         readOnly={!!medicamentoExistente}
-                        style={medicamentoExistente ? {backgroundColor: "#f5f5f5", cursor: "not-allowed"} : {}}
+                        style={medicamentoExistente ? { backgroundColor: "#f5f5f5", cursor: "not-allowed" } : {}}
                         required={!medicamentoExistente}
                       />
                     </div>
@@ -315,7 +315,7 @@ export default function CadastroMedicamentoPage() {
                         value={form.quantidade}
                         onChange={handleChange}
                         readOnly={!!medicamentoExistente}
-                        style={medicamentoExistente ? {backgroundColor: "#f5f5f5", cursor: "not-allowed"} : {}}
+                        style={medicamentoExistente ? { backgroundColor: "#f5f5f5", cursor: "not-allowed" } : {}}
                         required={!medicamentoExistente}
                       />
                     </div>
@@ -351,7 +351,7 @@ export default function CadastroMedicamentoPage() {
                       value={form.tipo}
                       onChange={handleChange}
                       disabled={!!medicamentoExistente}
-                      style={medicamentoExistente ? {backgroundColor: "#f5f5f5", cursor: "not-allowed"} : {}}
+                      style={medicamentoExistente ? { backgroundColor: "#f5f5f5", cursor: "not-allowed" } : {}}
                       required={!medicamentoExistente}
                     >
                       <option value="">Selecione o tipo</option>
@@ -373,7 +373,7 @@ export default function CadastroMedicamentoPage() {
                       value={form.forma}
                       onChange={handleChange}
                       disabled={!!medicamentoExistente}
-                      style={medicamentoExistente ? {backgroundColor: "#f5f5f5", cursor: "not-allowed"} : {}}
+                      style={medicamentoExistente ? { backgroundColor: "#f5f5f5", cursor: "not-allowed" } : {}}
                       required={!medicamentoExistente}
                     >
                       <option value="">Selecione a forma</option>
@@ -417,7 +417,7 @@ export default function CadastroMedicamentoPage() {
                       value={form.laboratorio}
                       onChange={handleChange}
                       disabled={!!medicamentoExistente}
-                      style={medicamentoExistente ? {backgroundColor: "#f5f5f5", cursor: "not-allowed"} : {}}
+                      style={medicamentoExistente ? { backgroundColor: "#f5f5f5", cursor: "not-allowed" } : {}}
                       required={!medicamentoExistente}
                     >
                       <option value="">Selecione o laboratório</option>
@@ -451,7 +451,7 @@ export default function CadastroMedicamentoPage() {
                       value={form.imagem}
                       onChange={handleChange}
                       readOnly={!!medicamentoExistente}
-                      style={medicamentoExistente ? {backgroundColor: "#f5f5f5", cursor: "not-allowed"} : {}}
+                      style={medicamentoExistente ? { backgroundColor: "#f5f5f5", cursor: "not-allowed" } : {}}
                     />
                   </div>
                 </div>
@@ -470,7 +470,7 @@ export default function CadastroMedicamentoPage() {
                     value={form.descricao}
                     onChange={handleChange}
                     rows="4"
-                    
+
                     required={!medicamentoExistente}
                   ></textarea>
                 </div>
@@ -485,8 +485,8 @@ export default function CadastroMedicamentoPage() {
                 >
                   Cancelar
                 </button>
-                <button 
-                  type="submit" 
+                <button
+                  type="submit"
                   className={styles.submitButton}
                   disabled={loading}
                 >

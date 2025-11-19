@@ -42,15 +42,15 @@ export default function PerfilUsuarioPage() {
       try {
         const userDataString = localStorage.getItem("userData");
         if (!userDataString) { router.push("/login"); return; }
-        
+
         const userDataFromStorage = JSON.parse(userDataString);
         const farmaciaId = userDataFromStorage.farm_id;
         if (!farmaciaId) { localStorage.clear(); router.push("/login"); return; }
-        
-        const response = await api.get(`/farmacias/${farmaciaId}`); 
+
+        const response = await api.get(`/farmacias/${farmaciaId}`);
         if (response.data.sucesso) {
           const apiData = response.data.dados;
-          
+
           let fullAvatarUrl = apiData.farm_logo_url || apiData.farm_logo;
           if (fullAvatarUrl && !fullAvatarUrl.startsWith('http')) {
             const baseUrl = api.defaults.baseURL.endsWith('/') ? api.defaults.baseURL.slice(0, -1) : api.defaults.baseURL;
@@ -59,16 +59,16 @@ export default function PerfilUsuarioPage() {
           }
 
           const formattedData = {
-              id: apiData.farm_id,
-              nome: apiData.farm_nome,
-              email: apiData.farm_email,
-              avatar: fullAvatarUrl,
-              telefone: apiData.farm_telefone,
-              cnpj: apiData.farm_cnpj,
-              endereco: { // Endereço preenchido com a string da API, outros campos vazios
-                rua: apiData.farm_endereco || "",
-                cep: "", numero: "", bairro: "", cidade: "", estado: "",
-              },
+            id: apiData.farm_id,
+            nome: apiData.farm_nome,
+            email: apiData.farm_email,
+            avatar: fullAvatarUrl,
+            telefone: apiData.farm_telefone,
+            cnpj: apiData.farm_cnpj,
+            endereco: { // Endereço preenchido com a string da API, outros campos vazios
+              rua: apiData.farm_endereco || "",
+              cep: "", numero: "", bairro: "", cidade: "", estado: "",
+            },
           };
           setUserData(formattedData);
           setFormData(formattedData);
@@ -137,36 +137,36 @@ export default function PerfilUsuarioPage() {
       payload.append("farm_cnpj", formData.cnpj);
       payload.append("farm_endereco", enderecoCompleto);
       if (logoFile) {
-        payload.append("farm_logo", logoFile); 
+        payload.append("farm_logo", logoFile);
       }
 
-      const response = await api.put(`/farmacias/${userData.id}`, payload); 
+      const response = await api.put(`/farmacias/${userData.id}`, payload);
       if (response.data.sucesso) {
-          alert("Perfil atualizado com sucesso!");
-          
-          let updatedUserData = { ...userData, ...formData };
-          if (response.data.dados?.farm_logo_url) {
-            let newAvatarUrl = response.data.dados.farm_logo_url;
-            if (!newAvatarUrl.startsWith('http')) {
-              const baseUrl = api.defaults.baseURL.endsWith('/') ? api.defaults.baseURL.slice(0, -1) : api.defaults.baseURL;
-              newAvatarUrl = `${baseUrl}${newAvatarUrl.startsWith('/') ? '' : '/'}${newAvatarUrl}`;
-            }
-            updatedUserData.avatar = newAvatarUrl;
-          }
+        alert("Perfil atualizado com sucesso!");
 
-          const storedData = JSON.parse(localStorage.getItem("userData") || "{}");
-          const newStoredData = { ...storedData, farm_nome: updatedUserData.nome, farm_logo_url: updatedUserData.avatar };
-          localStorage.setItem("userData", JSON.stringify(newStoredData));
-          
-          setUserData(updatedUserData);
-          setFormData(updatedUserData);
-          setEditing(false);
-          setLogoFile(null);
+        let updatedUserData = { ...userData, ...formData };
+        if (response.data.dados?.farm_logo_url) {
+          let newAvatarUrl = response.data.dados.farm_logo_url;
+          if (!newAvatarUrl.startsWith('http')) {
+            const baseUrl = api.defaults.baseURL.endsWith('/') ? api.defaults.baseURL.slice(0, -1) : api.defaults.baseURL;
+            newAvatarUrl = `${baseUrl}${newAvatarUrl.startsWith('/') ? '' : '/'}${newAvatarUrl}`;
+          }
+          updatedUserData.avatar = newAvatarUrl;
+        }
+
+        const storedData = JSON.parse(localStorage.getItem("userData") || "{}");
+        const newStoredData = { ...storedData, farm_nome: updatedUserData.nome, farm_logo_url: updatedUserData.avatar };
+        localStorage.setItem("userData", JSON.stringify(newStoredData));
+
+        setUserData(updatedUserData);
+        setFormData(updatedUserData);
+        setEditing(false);
+        setLogoFile(null);
       } else {
-          alert("Erro ao atualizar o perfil: " + response.data.mensagem);
+        alert("Erro ao atualizar o perfil: " + response.data.mensagem);
       }
     } catch (error) {
-        alert("Erro ao salvar: " + (error.response?.data?.mensagem || error.message));
+      alert("Erro ao salvar: " + (error.response?.data?.mensagem || error.message));
     }
   };
 
@@ -199,16 +199,16 @@ export default function PerfilUsuarioPage() {
     setIsChangingPassword(true);
     setPasswordErrors({});
     try {
-      const response = await api.put(`/farmacias/${userData.id}/senha`, { 
-          senha_atual: passwordData.currentPassword,
-          nova_senha: passwordData.newPassword
+      const response = await api.put(`/farmacias/${userData.id}/senha`, {
+        senha_atual: passwordData.currentPassword,
+        nova_senha: passwordData.newPassword
       });
       if (response.data.sucesso) {
         setPasswordSuccess(true);
         setPasswordData({ currentPassword: "", newPassword: "", confirmPassword: "" });
         setTimeout(() => { closePasswordModal(); }, 2000);
       } else {
-         setPasswordErrors({ submit: response.data.mensagem || "Não foi possível alterar a senha." });
+        setPasswordErrors({ submit: response.data.mensagem || "Não foi possível alterar a senha." });
       }
     } catch (error) {
       setPasswordErrors({ submit: error.response?.data?.mensagem || "Erro ao alterar senha. Verifique sua senha atual." });
@@ -234,8 +234,8 @@ export default function PerfilUsuarioPage() {
       </header>
       <div className={styles.contentWrapper}>
         <aside className={`${styles.sidebar} ${sidebarOpen ? styles.sidebarOpen : ""}`}>
-            <div className={styles.sidebarHeader}><div className={styles.logoContainer}>{userData.avatar && <img src={userData.avatar} alt="Logo" className={styles.sidebarAvatar} />}<span className={styles.logoText}>{userData.nome}</span></div><button className={styles.sidebarClose} onClick={() => setSidebarOpen(false)} aria-label="Fechar menu">×</button></div>
-            <nav className={styles.nav}><div className={styles.navSection}><p className={styles.navLabel}>Principal</p><Link href="/farmacias/favoritos" className={styles.navLink}><span className={styles.navText}>Favoritos</span></Link><Link href="/farmacias/produtos/medicamentos" className={styles.navLink}><span className={styles.navText}>Medicamentos</span></Link></div><div className={styles.navSection}><p className={styles.navLabel}>Gestão</p><Link href="/farmacias/cadastro/funcionario/lista" className={styles.navLink}><span className={styles.navText}>Funcionários</span></Link><Link href="/farmacias/laboratorio/lista" className={styles.navLink}><span className={styles.navText}>Laboratórios</span></Link></div><div className={styles.navSection}><p className={styles.navLabel}>Relatórios</p><Link href="/farmacias/relatorios/favoritos" className={styles.navLink}><span className={styles.navText}>Medicamentos Favoritos</span></Link><Link href="/farmacias/relatorios/funcionarios" className={styles.navLink}><span className={styles.navText}>Relatório de Funcionarios</span></Link><Link href="/farmacias/relatorios/laboratorios" className={styles.navLink}><span className={styles.navText}>Relatório de Laboratorios</span></Link></div><div className={styles.navSection}><p className={styles.navLabel}>Conta</p><Link href="/farmacias/perfil" className={`${styles.navLink} ${styles.active}`}><span className={styles.navText}>Meu Perfil</span></Link><button onClick={handleLogout} className={styles.navLink} style={{ background: 'none', border: 'none', width: '100%', textAlign: 'left', cursor: 'pointer' }}><span className={styles.navText}>Sair</span></button></div></nav>
+          <div className={styles.sidebarHeader}><div className={styles.logoContainer}>{userData.avatar && <img src={userData.avatar} alt="Logo" className={styles.sidebarAvatar} />}<span className={styles.logoText}>{userData.nome}</span></div><button className={styles.sidebarClose} onClick={() => setSidebarOpen(false)} aria-label="Fechar menu">×</button></div>
+          <nav className={styles.nav}><div className={styles.navSection}><p className={styles.navLabel}>Principal</p><Link href="/farmacias/favoritos" className={styles.navLink}><span className={styles.navText}>Favoritos</span></Link><Link href="/farmacias/produtos/medicamentos" className={styles.navLink}><span className={styles.navText}>Medicamentos</span></Link></div><div className={styles.navSection}><p className={styles.navLabel}>Gestão</p><Link href="/farmacias/cadastro/funcionario/lista" className={styles.navLink}><span className={styles.navText}>Funcionários</span></Link><Link href="/farmacias/laboratorio/lista" className={styles.navLink}><span className={styles.navText}>Laboratórios</span></Link></div><div className={styles.navSection}><p className={styles.navLabel}>Relatórios</p><Link href="/farmacias/relatorios/favoritos" className={styles.navLink}><span className={styles.navText}>Medicamentos Favoritos</span></Link><Link href="/farmacias/relatorios/funcionarios" className={styles.navLink}><span className={styles.navText}>Relatório de Funcionarios</span></Link><Link href="/farmacias/relatorios/laboratorios" className={styles.navLink}><span className={styles.navText}>Relatório de Laboratorios</span></Link></div><div className={styles.navSection}><p className={styles.navLabel}>Conta</p><Link href="/farmacias/perfil" className={`${styles.navLink} ${styles.active}`}><span className={styles.navText}>Meu Perfil</span></Link><button onClick={handleLogout} className={styles.navLink} style={{ background: 'none', border: 'none', width: '100%', textAlign: 'left', cursor: 'pointer' }}><span className={styles.navText}>Sair</span></button></div></nav>
         </aside>
         {sidebarOpen && (<div className={styles.overlay} onClick={() => setSidebarOpen(false)} />)}
         <main className={styles.mainContent}>
@@ -245,7 +245,7 @@ export default function PerfilUsuarioPage() {
             <div className={styles.formGrid}><div className={styles.formGroup}><label>Nome da Farmácia</label>{editing ? (<input className={styles.modernInput} type="text" name="nome" value={formData.nome || ''} onChange={handleInputChange} />) : (<p>{userData.nome}</p>)}</div><div className={styles.formGroup}><label>Email de Contato</label>{editing ? (<input className={styles.modernInput} type="email" name="email" value={formData.email || ''} onChange={handleInputChange} />) : (<p>{userData.email}</p>)}</div><div className={styles.formGroup}><label>CNPJ</label><p>{userData.cnpj}</p></div><div className={styles.formGroup}><label>Telefone</label>{editing ? (<input className={styles.modernInput} type="tel" name="telefone" value={formData.telefone || ''} onChange={handleInputChange} />) : (<p>{userData.telefone}</p>)}</div></div>
             <div className={styles.sectionHeader}><h3>Endereço</h3></div>
             {editing ? (<div className={styles.addressGrid}><div className={`${styles.formGroup} ${styles.cepGroup}`}><label>CEP</label><div className={styles.cepInputContainer}><input className={styles.modernInput} type="text" name="cep" value={formData.endereco.cep || ''} onChange={handleAddressChange} onBlur={handleCepBlur} placeholder="00000-000" />{cepLoading && <div className={styles.cepSpinner}></div>}</div></div><div className={`${styles.formGroup} ${styles.ruaGroup}`}><label>Rua / Logradouro</label><input className={styles.modernInput} type="text" name="rua" value={formData.endereco.rua || ''} onChange={handleAddressChange} /></div><div className={`${styles.formGroup} ${styles.numeroGroup}`}><label>Número</label><input className={styles.modernInput} type="text" name="numero" value={formData.endereco.numero || ''} onChange={handleAddressChange} /></div><div className={`${styles.formGroup} ${styles.bairroGroup}`}><label>Bairro</label><input className={styles.modernInput} type="text" name="bairro" value={formData.endereco.bairro || ''} onChange={handleAddressChange} /></div><div className={`${styles.formGroup} ${styles.cidadeGroup}`}><label>Cidade</label><input className={styles.modernInput} type="text" name="cidade" value={formData.endereco.cidade || ''} onChange={handleAddressChange} disabled /></div><div className={`${styles.formGroup} ${styles.estadoGroup}`}><label>Estado</label><input className={styles.modernInput} type="text" name="estado" value={formData.endereco.estado || ''} onChange={handleAddressChange} disabled /></div></div>) : (<div className={styles.formGroup}><p>{userData.endereco.rua}</p></div>)}
-            <div className={styles.sectionHeader} style={{marginTop: '3.2rem'}}><button className={styles.actionButtonAlt} onClick={() => setShowPasswordModal(true)}>Alterar Senha</button></div>
+            <div className={styles.sectionHeader} style={{ marginTop: '3.2rem' }}><button className={styles.actionButtonAlt} onClick={() => setShowPasswordModal(true)}>Alterar Senha</button></div>
           </div>
         </main>
       </div>

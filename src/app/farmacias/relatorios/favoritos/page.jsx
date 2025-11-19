@@ -10,7 +10,6 @@ export default function RelatorioFavoritosPage() {
   const [medicamentos, setMedicamentos] = useState([]);
   const [loading, setLoading] = useState(true);
   const [sidebarOpen, setSidebarOpen] = useState(false);
-  const [reportGenerated, setReportGenerated] = useState(false);
   const [userInfo, setUserInfo] = useState(null);
   const [dateRange, setDateRange] = useState(() => {
     const endDate = new Date();
@@ -29,24 +28,33 @@ export default function RelatorioFavoritosPage() {
     const fetchFavoritos = async () => {
       setLoading(true);
       setError("");
+
+      let userData = userInfo;
+
       try {
-        const userDataString = localStorage.getItem("userData");
-        if (!userDataString) {
-          throw new Error("Usuário não autenticado. Faça o login novamente.");
+        // Garante que userInfo seja carregado antes de fazer a chamada da API
+        if (!userData) {
+          const userDataString = localStorage.getItem("userData");
+          if (!userDataString) {
+            throw new Error("Usuário não autenticado. Faça o login novamente.");
+          }
+          userData = JSON.parse(userDataString);
+          setUserInfo(userData);
         }
-        
-        const userData = JSON.parse(userDataString);
-        setUserInfo(userData);
 
         const idDaFarmacia = userData?.farm_id;
         if (!idDaFarmacia) {
           throw new Error("Não foi possível identificar sua farmácia. Faça o login novamente.");
         }
-        
-        // CORREÇÃO: O endpoint da API estava incorreto.
-        // O correto é buscar os favoritos de uma farmácia específica.
-        const response = await api.get(`/favoritos/${idDaFarmacia}/favoritos`);
-        
+
+        // ✅ MELHORIA: Enviando o filtro de data para a API
+        const response = await api.get(`/favoritos/${idDaFarmacia}/favoritos`, {
+          params: {
+            dataInicio: dateRange.start,
+            dataFim: dateRange.end,
+          }
+        });
+
         if (response.data.sucesso) {
           setMedicamentos(response.data.dados.map(med => ({
             id: med.med_id,
@@ -57,6 +65,7 @@ export default function RelatorioFavoritosPage() {
             dataFavorito: med.med_data_atualizacao,
           })));
         } else {
+          setMedicamentos([]); // Limpa os dados em caso de erro da API
           throw new Error(response.data.mensagem || "A API retornou um erro, mas sem detalhes.");
         }
       } catch (err) {
@@ -68,29 +77,17 @@ export default function RelatorioFavoritosPage() {
     };
 
     fetchFavoritos();
-  }, []);
+    // ✅ MELHORIA: O useEffect agora depende do dateRange e executa novamente quando ele muda
+  }, [dateRange]);
 
+  // ✅ MELHORIA: O useMemo agora apenas ordena, pois a API já filtrou
   const sortedMedicamentos = useMemo(() => {
-    const startDate = new Date(dateRange.start);
-    const endDate = new Date(dateRange.end);
-    
-    // Adiciona um dia ao endDate para incluir o dia final por completo
-    endDate.setDate(endDate.getDate() + 1);
-
-    const filtered = medicamentos.filter((med) => {
-      const dataFavorito = new Date(med.dataFavorito);
-      return dataFavorito >= startDate && dataFavorito < endDate;
-    });
-
-    return [...filtered].sort((a, b) => b.favoritacoes - a.favoritacoes);
-  }, [medicamentos, dateRange]);
+    return [...medicamentos].sort((a, b) => b.favoritacoes - a.favoritacoes);
+  }, [medicamentos]);
 
   const generateReport = () => {
-    setReportGenerated(true);
-    setTimeout(() => {
-      window.print();
-      setReportGenerated(false);
-    }, 500);
+    // ✅ MELHORIA: Simplificado. O CSS @media print cuida da formatação.
+    window.print();
   };
 
   const handleLogout = async () => {
@@ -144,18 +141,19 @@ export default function RelatorioFavoritosPage() {
           <main className={styles.mainContent}>
             {error && (<div className={styles.errorMessage}><span>{error}</span></div>)}
             <div className={styles.controls}>
-                <div className={styles.filters}>
-                  <div className={styles.filterGroup}>
-                    <label>Período de Referência:</label>
-                    <input type="date" value={dateRange.start} onChange={(e) => setDateRange({ ...dateRange, start: e.target.value })} />
-                    <span>até</span>
-                    <input type="date" value={dateRange.end} onChange={(e) => setDateRange({ ...dateRange, end: e.target.value })} />
-                  </div>
+              <div className={styles.filters}>
+                <div className={styles.filterGroup}>
+                  <label>Período de Referência:</label>
+                  <input type="date" value={dateRange.start} onChange={(e) => setDateRange({ ...dateRange, start: e.target.value })} />
+                  <span>até</span>
+                  <input type="date" value={dateRange.end} onChange={(e) => setDateRange({ ...dateRange, end: e.target.value })} />
                 </div>
+              </div>
             </div>
-            <div ref={reportRef} className={`${styles.reportContainer} ${reportGenerated ? styles.reportMode : ""}`}>
+            {/* ✅ MELHORIA: Removida a classe 'reportMode' desnecessária */}
+            <div ref={reportRef} className={styles.reportContainer}>
               <div className={styles.reportHeader}>
-                {userInfo?.farm_logo_url && <img src={userInfo.farm_logo_url} alt={`Logo de ${userInfo.farm_nome}`} className={styles.printLogo}/>}
+                {userInfo?.farm_logo_url && <img src={userInfo.farm_logo_url} alt={`Logo de ${userInfo.farm_nome}`} className={styles.printLogo} />}
                 <div className={styles.reportTitle}><h1>Relatório de Medicamentos Mais Favoritados</h1><p>Período: {new Date(dateRange.start).toLocaleDateString("pt-BR", { timeZone: 'UTC' })} a {new Date(dateRange.end).toLocaleDateString("pt-BR", { timeZone: 'UTC' })}</p><p>Data do relatório: {new Date().toLocaleDateString("pt-BR")}</p></div>
               </div>
               <table className={styles.reportTable}>

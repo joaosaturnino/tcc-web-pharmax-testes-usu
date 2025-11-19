@@ -2,7 +2,7 @@
 
 import React, { useEffect, useState, useRef, useMemo } from "react";
 import { useRouter } from "next/navigation";
-import Link from "next/link";
+import Link from "next/link"; // Importado para navegação SPA
 import styles from "./page.module.css";
 import api from "../../../services/api";
 
@@ -14,18 +14,17 @@ export default function RelatorioLaboratoriosPage() {
   const [currentPage, setCurrentPage] = useState(1);
   const [itemsPerPage] = useState(10);
   const [reportGenerated, setReportGenerated] = useState(false);
-  
-  // CORREÇÃO FUNDAMENTAL: O filtro de data agora inicia vazio.
-  // Isso garante que TODOS os laboratórios sejam exibidos ao carregar a página pela primeira vez.
+
+  // MELHORIA: Filtro de data agora inicia com 30 dias (igual a page.jsx)
   const [dateRange, setDateRange] = useState({
-    start: "",
-    end: "",
+    start: new Date(Date.now() - 30 * 24 * 60 * 60 * 1000).toISOString().split("T")[0],
+    end: new Date().toISOString().split("T")[0],
   });
 
   const [sortBy, setSortBy] = useState("nome");
   const [sortOrder, setSortOrder] = useState("asc");
   const [searchTerm, setSearchTerm] = useState("");
-  const [error, setError] = useState(""); 
+  const [error, setError] = useState("");
   const reportRef = useRef(null);
   const router = useRouter();
 
@@ -41,8 +40,8 @@ export default function RelatorioLaboratoriosPage() {
     try {
       setLoading(true);
       setError("");
-      const response = await api.get('/laboratorios');
-      
+      const response = await api.get('/todoslab');
+
       if (response.data.sucesso === true) {
         const labsApi = response.data.dados;
         const labsFormatados = labsApi.map(lab => ({
@@ -51,7 +50,7 @@ export default function RelatorioLaboratoriosPage() {
           endereco: lab.lab_endereco,
           telefone: lab.lab_telefone,
           email: lab.lab_email,
-          dataCadastro: lab.lab_data_cadastro,
+          dataCadastro: lab.lab_data_cadastro ? new Date(lab.lab_data_cadastro).toISOString().split('T')[0] : new Date().toISOString().split('T')[0],
           cnpj: lab.lab_cnpj,
           logo: lab.lab_logo
         }));
@@ -67,19 +66,17 @@ export default function RelatorioLaboratoriosPage() {
     }
   }
 
+  // MELHORIA: Lógica de filtro e ordenação
   const sortedLaboratorios = useMemo(() => {
     const filtered = laboratorios.filter((lab) => {
-      
-      // CORREÇÃO: A lógica de filtro de data só é aplicada se as duas datas forem preenchidas.
-      let dateInRange = true; // Por padrão, não filtra por data
-      if (dateRange.start && dateRange.end) {
-        const labDate = new Date(lab.dataCadastro);
-        const startDate = new Date(dateRange.start);
-        const endDate = new Date(dateRange.end);
-        endDate.setHours(23, 59, 59, 999);
-        dateInRange = labDate >= startDate && labDate <= endDate;
-      }
-      
+
+      // Lógica de data ajustada (igual a page.jsx)
+      const labDate = new Date(lab.dataCadastro);
+      const startDate = new Date(dateRange.start);
+      const endDate = new Date(dateRange.end);
+      endDate.setHours(23, 59, 59, 999); // Garante que o dia final seja incluído
+      const dateInRange = labDate >= startDate && labDate <= endDate;
+
       const searchMatch =
         lab.nome.toLowerCase().includes(searchTerm.toLowerCase()) ||
         lab.email.toLowerCase().includes(searchTerm.toLowerCase());
@@ -88,20 +85,15 @@ export default function RelatorioLaboratoriosPage() {
     });
 
     return [...filtered].sort((a, b) => {
-      let valueA, valueB;
-      if (sortBy === "nome" || sortBy === "email") { 
-        valueA = a[sortBy].toLowerCase(); 
-        valueB = b[sortBy].toLowerCase(); 
-      } else { 
-        valueA = a[sortBy]; 
-        valueB = b[sortBy]; 
+      let valA = a[sortBy];
+      let valB = b[sortBy];
+      if (sortBy === "dataCadastro") {
+        valA = new Date(valA);
+        valB = new Date(valB);
       }
-      
-      if (typeof valueA === "string") {
-        return sortOrder === "asc" ? valueA.localeCompare(valueB) : valueB.localeCompare(valueA);
-      } else {
-        return sortOrder === "asc" ? valueA - valueB : valueB - a;
-      }
+      if (valA < valB) return sortOrder === "asc" ? -1 : 1;
+      if (valA > valB) return sortOrder === "asc" ? 1 : -1;
+      return 0;
     });
   }, [laboratorios, dateRange, searchTerm, sortBy, sortOrder]);
 
@@ -118,13 +110,13 @@ export default function RelatorioLaboratoriosPage() {
 
   const handleSort = (column) => {
     if (sortBy === column) {
-      setSortOrder(sortOrder === "asc" ? "desc" : "asc");
+      setSortOrder((prev) => (prev === "asc" ? "desc" : "asc"));
     } else {
       setSortBy(column);
       setSortOrder("asc");
     }
   };
-  
+
   const getSortIcon = (column) => (sortBy !== column) ? "⇅" : (sortOrder === "asc" ? "↑" : "↓");
 
   const totalLaboratorios = sortedLaboratorios.length;
@@ -136,7 +128,7 @@ export default function RelatorioLaboratoriosPage() {
   };
 
   if (loading) {
-    return (<div className={styles.loaderContainer}><div className={styles.spinner}></div><span>Carregando...</span></div>);
+    return (<div className={styles.loaderContainer}><div className={styles.spinner}></div><span>Carregando laboratórios...</span></div>);
   }
 
   const itemsToRender = reportGenerated ? sortedLaboratorios : currentItems;
@@ -153,28 +145,31 @@ export default function RelatorioLaboratoriosPage() {
         </div>
       </header>
       <div className={styles.contentWrapper}>
+        {/* MELHORIA: Sidebar integrada (igual a page.jsx) */}
         <aside className={`${styles.sidebar} ${sidebarOpen ? styles.sidebarOpen : ""}`}>
-            <div className={styles.sidebarHeader}>
-                <div className={styles.logoContainer}>
-                {farmaciaInfo?.farm_logo_url && (<img src={farmaciaInfo.farm_logo_url} alt={`Logo de ${farmaciaInfo.farm_nome}`} className={styles.logoImage} />)}
-                <span className={styles.logoText}>{farmaciaInfo?.farm_nome || "PharmaX"}</span>
-                </div>
-                <button className={styles.sidebarClose} onClick={() => setSidebarOpen(false)} aria-label="Fechar menu">×</button>
+          <div className={styles.sidebarHeader}>
+            <div className={styles.logoContainer}>
+              {farmaciaInfo?.farm_logo_url && (<img src={farmaciaInfo.farm_logo_url} alt={`Logo de ${farmaciaInfo.farm_nome}`} className={styles.logoImage} />)}
+              <span className={styles.logoText}>{farmaciaInfo?.farm_nome || "PharmaX"}</span>
             </div>
-            <nav className={styles.nav}>
-                <div className={styles.navSection}><p className={styles.navLabel}>Principal</p><Link href="/farmacias/favoritos" className={styles.navLink}><span className={styles.navText}>Favoritos</span></Link><Link href="/farmacias/produtos/medicamentos" className={styles.navLink}><span className={styles.navText}>Medicamentos</span></Link></div>
-                <div className={styles.navSection}><p className={styles.navLabel}>Gestão</p><Link href="/farmacias/cadastro/funcionario/lista" className={styles.navLink}><span className={styles.navText}>Funcionários</span></Link><Link href="/farmacias/laboratorio/lista" className={styles.navLink}><span className={styles.navText}>Laboratórios</span></Link></div>
-                <div className={styles.navSection}><p className={styles.navLabel}>Relatórios</p><Link href="/farmacias/relatorios/favoritos" className={styles.navLink}><span className={styles.navText}>Medicamentos Favoritos</span></Link><Link href="/farmacias/relatorios/funcionarios" className={styles.navLink}><span className={styles.navText}>Relatório de Funcionarios</span></Link><Link href="/farmacias/relatorios/laboratorios" className={`${styles.navLink} ${styles.active}`}><span className={styles.navText}>Relatório de Laboratorios</span></Link></div>
-                <div className={styles.navSection}><p className={styles.navLabel}>Conta</p><Link href="/farmacias/perfil" className={styles.navLink}><span className={styles.navText}>Meu Perfil</span></Link><button onClick={handleLogout} className={styles.navLink} style={{ all: 'unset', cursor: 'pointer', width: '100%' }}><span className={styles.navText}>Sair</span></button></div>
-            </nav>
+            <button className={styles.sidebarClose} onClick={() => setSidebarOpen(false)} aria-label="Fechar menu">×</button>
+          </div>
+          <nav className={styles.nav}>
+            <div className={styles.navSection}><p className={styles.navLabel}>Principal</p><Link href="/farmacias/favoritos" className={styles.navLink}><span className={styles.navText}>Favoritos</span></Link><Link href="/farmacias/produtos/medicamentos" className={styles.navLink}><span className={styles.navText}>Medicamentos</span></Link></div>
+            <div className={styles.navSection}><p className={styles.navLabel}>Gestão</p><Link href="/farmacias/cadastro/funcionario/lista" className={styles.navLink}><span className={styles.navText}>Funcionários</span></Link><Link href="/farmacias/laboratorio/lista" className={styles.navLink}><span className={styles.navText}>Laboratórios</span></Link></div>
+            <div className={styles.navSection}><p className={styles.navLabel}>Relatórios</p><Link href="/farmacias/relatorios/favoritos" className={styles.navLink}><span className={styles.navText}>Medicamentos Favoritos</span></Link><Link href="/farmacias/relatorios/funcionarios" className={styles.navLink}><span className={styles.navText}>Relatório de Funcionarios</span></Link><Link href="/farmacias/relatorios/laboratorios" className={`${styles.navLink} ${styles.active}`}><span className={styles.navText}>Relatório de Laboratorios</span></Link></div>
+            <div className={styles.navSection}><p className={styles.navLabel}>Conta</p><Link href="/farmacias/perfil" className={styles.navLink}><span className={styles.navText}>Meu Perfil</span></Link><button onClick={handleLogout} className={styles.navLink} style={{ all: 'unset', cursor: 'pointer', width: '100%' }}><span className={styles.navText}>Sair</span></button></div>
+          </nav>
         </aside>
         {sidebarOpen && (<div className={styles.overlay} onClick={() => setSidebarOpen(false)} />)}
+
         <main className={styles.mainContent}>
           {error && <div className={styles.errorMessage}><span>{error}</span></div>}
           {!reportGenerated && (
             <div className={styles.controls}>
               <div className={styles.filters}>
-                <div className={styles.filterGroup}><label>Período:</label><input type="date" value={dateRange.start} onChange={(e) => setDateRange({ ...dateRange, start: e.target.value })}/><input type="date" value={dateRange.end} onChange={(e) => setDateRange({ ...dateRange, end: e.target.value })} /></div>
+                {/* MELHORIA: Layout do filtro de data (igual a page.jsx) */}
+                <div className={styles.filterGroup}><label>Período:</label><input type="date" value={dateRange.start} onChange={(e) => setDateRange({ ...dateRange, start: e.target.value })} /><span>até</span><input type="date" value={dateRange.end} onChange={(e) => setDateRange({ ...dateRange, end: e.target.value })} /></div>
                 <div className={styles.filterGroup}>
                   <label>Pesquisar:</label>
                   <input type="text" placeholder="Nome ou email..." value={searchTerm} onChange={(e) => setSearchTerm(e.target.value)} />
@@ -184,41 +179,43 @@ export default function RelatorioLaboratoriosPage() {
           )}
           <div ref={reportRef} className={`${styles.reportContainer} ${reportGenerated ? styles.reportMode : ""}`}>
             <div className={styles.reportHeader}>
-              <img src={farmaciaInfo?.farm_logo_url || "../../../../../temp/LogoEscrita.png"} alt="Logo" className={styles.printLogo}/>
+              <img src={farmaciaInfo?.farm_logo_url || "../../../../../temp/LogoEscrita.png"} alt="Logo" className={styles.printLogo} />
               <div className={styles.reportTitle}>
                 <h1>Relatório de Laboratórios</h1>
-                {/* Mostra o período apenas se um tiver sido selecionado */}
-                {dateRange.start && dateRange.end && (
-                  <p>Período: {new Date(dateRange.start).toLocaleDateString("pt-BR", { timeZone: 'UTC' })} a {new Date(dateRange.end).toLocaleDateString("pt-BR", { timeZone: 'UTC' })}</p>
-                )}
+                {/* MELHORIA: Período sempre visível (igual a page.jsx) */}
+                <p>Período: {new Date(dateRange.start).toLocaleDateString("pt-BR", { timeZone: 'UTC' })} a {new Date(dateRange.end).toLocaleDateString("pt-BR", { timeZone: 'UTC' })}</p>
                 <p>Data do relatório: {new Date().toLocaleDateString("pt-BR")}</p>
               </div>
             </div>
             <div className={styles.tableWrapper}>
-                <table className={styles.reportTable}>
-                  <thead>
-                    <tr>
-                      <th className={styles.sortableHeader} onClick={() => handleSort("nome")}>Nome {getSortIcon("nome")}</th>
-                      <th>Endereço</th>
-                      <th>Telefone</th>
-                      <th className={styles.sortableHeader} onClick={() => handleSort("email")}>Email {getSortIcon("email")}</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                      {itemsToRender.length > 0 ? (
-                      itemsToRender.map((lab) => (
-                          <tr key={lab.id}>
-                            <td className={styles.medName}>{lab.nome}</td>
-                            <td>{lab.endereco}</td>
-                            <td>{lab.telefone}</td>
-                            <td>{lab.email}</td>
-                          </tr>
-                      ))
-                      ) : (
-                      <tr><td colSpan="4" className={styles.emptyState}>Nenhum laboratório encontrado para os filtros selecionados.</td></tr>
-                      )}
-                  </tbody>
-                </table>
+              <table className={styles.reportTable}>
+                <thead>
+                  <tr>
+                    <th className={styles.sortableHeader} onClick={() => handleSort("nome")}>Nome {getSortIcon("nome")}</th>
+                    <th>Endereço</th>
+                    <th>Telefone</th>
+                    <th className={styles.sortableHeader} onClick={() => handleSort("email")}>Email {getSortIcon("email")}</th>
+                    {/* MELHORIA: Coluna de Data de Cadastro (igual a page.jsx) */}
+                    <th className={styles.sortableHeader} onClick={() => handleSort("dataCadastro")}>Cadastro {getSortIcon("dataCadastro")}</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {itemsToRender.length > 0 ? (
+                    itemsToRender.map((lab) => (
+                      <tr key={lab.id}>
+                        <td className={styles.medName}>{lab.nome}</td>
+                        <td>{lab.endereco}</td>
+                        <td>{lab.telefone}</td>
+                        <td>{lab.email}</td>
+                        {/* MELHORIA: Coluna de Data de Cadastro (igual a page.jsx) */}
+                        <td>{new Date(lab.dataCadastro).toLocaleDateString("pt-BR", { timeZone: 'UTC' })}</td>
+                      </tr>
+                    ))
+                  ) : (
+                    <tr><td colSpan="5" className={styles.emptyState}>Nenhum laboratório encontrado para os filtros selecionados.</td></tr>
+                  )}
+                </tbody>
+              </table>
             </div>
             <div className={styles.reportSummary}>
               <h2>Resumo do Relatório</h2>
@@ -227,6 +224,7 @@ export default function RelatorioLaboratoriosPage() {
                   <span className={styles.summaryLabel}>Total de Laboratórios</span>
                   <span className={styles.summaryValue}>{totalLaboratorios}</span>
                 </div>
+                {/* Nota: Não é possível adicionar mais resumos (ex: Ativos) pois a API de labs não fornece esses dados */}
               </div>
             </div>
             <div className={styles.reportFooter}><p>Relatório gerado em: {new Date().toLocaleString("pt-BR")}</p><p>{farmaciaInfo?.farm_nome} - Sistema PharmaX</p></div>

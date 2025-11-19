@@ -120,7 +120,8 @@
 
 /* NOVO: Estilos para o botão flutuante */
 .mobileAddButton {
-  display: none; /* Escondido por padrão em telas grandes */
+  display: none;
+  /* Escondido por padrão em telas grandes */
   position: fixed;
   bottom: 2rem;
   right: 2rem;
@@ -152,19 +153,26 @@
   position: relative;
 }
 
+/* Sidebar - Estilo melhorado */
 .sidebar {
   width: 28rem;
+  /* Largura ajustada */
   background: linear-gradient(180deg, #191970 0%, #0f1440 100%);
   color: #CDC1C5;
   display: flex;
   flex-direction: column;
   transition: transform 0.3s ease-in-out;
+  /* Transição mais suave */
+  box-shadow: 0.2rem 0 1rem rgba(0, 0, 0, 0.1);
   flex-shrink: 0;
-  height: calc(100vh - 8.1rem);
+  height: calc(100vh - 72px);
+  /* Altura recalculada com base no padding do header */
   position: sticky;
-  top: 8.1rem;
+  top: 72px;
+  /* Valor recalculado */
   overflow-y: auto;
   z-index: 90;
+  /* Abaixo do header */
 }
 
 .sidebarHeader {
@@ -184,12 +192,15 @@
   gap: 1.2rem;
 }
 
+/* === ATUALIZADO === */
 .logoImage {
-  height: 5rem;
-  width: 5rem;
-  border-radius: 8px;
+  width: 60px;
+  height: 60px;
+  border-radius: 5%;
   object-fit: cover;
 }
+
+/* === FIM DA ATUALIZAÇÃO === */
 
 .logoText {
   font-size: 2rem;
@@ -201,12 +212,23 @@
   background: none;
   border: none;
   font-size: 2.8rem;
+  /* Tamanho ajustado */
   color: #fff;
   cursor: pointer;
   border-radius: 0.6rem;
   padding: 0.4rem 0.8rem;
+  transition: background 0.2s;
   display: none;
+  /* Escondido por padrão */
 }
+
+/* === ADICIONADO === */
+.sidebarClose:hover {
+  background: #222266;
+}
+
+/* === FIM DA ADIÇÃO === */
+
 
 .nav {
   flex: 1;
@@ -217,11 +239,13 @@
   margin-bottom: 1.8rem;
 }
 
+/* === ATUALIZADO === */
 .navLabel {
   font-size: 1.3rem;
   color: #b0b0b0;
   margin: 1rem 0 0.6rem 1rem;
   text-transform: uppercase;
+  letter-spacing: 0.5px;
 }
 
 .navLink {
@@ -235,17 +259,24 @@
   transition: all 0.3s ease;
   font-size: 1.5rem;
   gap: 1.2rem;
+  border-left: 4px solid transparent;
 }
 
 .navLink:hover {
   background: rgba(69, 139, 0, 0.15);
   color: #fff;
+  border-left-color: #458B00;
+  transform: translateX(5px);
 }
 
 .navLink.active {
   background: linear-gradient(135deg, #458B00 0%, #2e7d32 100%);
   color: #fff;
+  border-left-color: #fff;
+  box-shadow: 0 4px 12px rgba(69, 139, 0, 0.3);
 }
+
+/* === FIM DA ATUALIZAÇÃO === */
 
 .navText {
   font-family: "Montserrat";
@@ -615,6 +646,7 @@
   from {
     opacity: 0;
   }
+
   to {
     opacity: 1;
   }
@@ -625,6 +657,7 @@
     transform: scale(0.95);
     opacity: 0;
   }
+
   to {
     transform: scale(1);
     opacity: 1;
@@ -676,6 +709,8 @@
   justify-content: flex-end;
   gap: 1.6rem;
   background-color: #f8fafc;
+  flex-wrap: wrap;
+  /* Adicionado para responsividade */
 }
 
 /* Modal de Código de Barras */
@@ -862,6 +897,7 @@
   background: #b91c1c;
 }
 
+/* === ATUALIZADO === */
 .overlay {
   position: fixed;
   inset: 0;
@@ -869,7 +905,10 @@
   z-index: 105;
   display: none;
   opacity: 0;
+  transition: opacity 0.3s ease-in-out;
 }
+
+/* === FIM DA ATUALIZAÇÃO === */
 
 .sidebar.sidebarOpen~.overlay {
   display: block;
@@ -913,7 +952,7 @@
 
   /* Mostra o novo botão flutuante */
   .mobileAddButton {
-    display: flex; 
+    display: flex;
   }
 
   .mainContent {
@@ -940,4 +979,243 @@
     height: auto;
     max-height: 25rem;
   }
+}
+
+/* ================================================================= */
+/* === NOVOS ESTILOS (Promoção, Preços, Novo Modal) === */
+/* ================================================================= */
+
+/* --- Botões de Promoção --- */
+.promoButton {
+  padding: 1rem 2rem;
+  border-radius: 0.8rem;
+  font-weight: 600;
+  font-size: 1.4rem;
+  cursor: pointer;
+  border: none;
+  background: #f59e0b;
+  /* Laranja/Amarelo */
+  color: white;
+  transition: background 0.3s ease;
+  white-space: nowrap;
+}
+
+.promoButton:hover:not(:disabled) {
+  background: #d97706;
+  /* Tom mais escuro */
+}
+
+.promoButton:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+}
+
+
+.promoRemoveButton {
+  padding: 1rem 2rem;
+  border-radius: 0.8rem;
+  font-weight: 600;
+  font-size: 1.4rem;
+  cursor: pointer;
+  border: none;
+  background: #ef4444;
+  /* Vermelho */
+  color: white;
+  transition: background 0.3s ease;
+  white-space: nowrap;
+}
+
+.promoRemoveButton:hover {
+  background: #dc2626;
+}
+
+
+/* --- Tags e Badges de Promoção --- */
+.promoTag {
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: #b45309;
+  /* Laranja escuro */
+  background: #fef3c7;
+  /* Laranja claro */
+  padding: 0.2rem 0.8rem;
+  border-radius: 999px;
+  display: inline-block;
+  margin-top: 0.4rem;
+  letter-spacing: 0.5px;
+}
+
+.cardPromoTag {
+  position: absolute;
+  top: 1.2rem;
+  left: 1.2rem;
+  background: #f59e0b;
+  color: white;
+  padding: 0.4rem 1rem;
+  border-radius: 0.6rem;
+  font-size: 1.2rem;
+  font-weight: 700;
+  z-index: 5;
+}
+
+.cardStatus {
+  position: absolute;
+  top: 1.2rem;
+  right: 1.2rem;
+  z-index: 5;
+}
+
+
+/* --- Estilos de Preço Promocional --- */
+.precoOriginal {
+  font-size: 1.3rem;
+  color: #9ca3af;
+  text-decoration: line-through;
+  margin-right: 0.4rem;
+}
+
+.precoPromocional {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: #16a34a;
+  /* Verde */
+}
+
+.precoContainerGrade {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+}
+
+.precoModal {
+  font-size: 1.5rem;
+  display: block;
+}
+
+.precoPromocional.precoModal {
+  font-size: 1.8rem;
+}
+
+
+/* --- Box de Info no Modal de Detalhes --- */
+.infoPromocao {
+  background: #fef3c7;
+  border: 1px solid #fde68a;
+  border-radius: 0.8rem;
+  padding: 1.2rem 1.6rem;
+  margin-bottom: 1.6rem;
+}
+
+.infoPromocao strong {
+  color: #b45309;
+  font-size: 1.4rem;
+  display: block;
+}
+
+.infoPromocao p {
+  font-size: 1.8rem;
+  font-weight: 700;
+  color: #d97706;
+  margin: 0.4rem 0;
+}
+
+.infoPromocao span {
+  font-size: 1.3rem;
+  color: #b45309;
+}
+
+
+/* --- Novo Modal de Formulário de Promoção --- */
+.formGroup {
+  margin-bottom: 1.6rem;
+}
+
+.formGroup label {
+  display: block;
+  font-size: 1.4rem;
+  font-weight: 500;
+  color: #374151;
+  margin-bottom: 0.6rem;
+}
+
+.formInput {
+  width: 100%;
+  padding: 1rem 1.4rem;
+  border: 1px solid #d1d5db;
+  border-radius: 0.8rem;
+  font-size: 1.4rem;
+  background: #f9fafb;
+}
+
+.formInput:focus {
+  outline: none;
+  border-color: #458B00;
+  background: white;
+  box-shadow: 0 0 0 3px rgba(69, 139, 0, 0.1);
+}
+
+.formGrid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1.6rem;
+}
+
+.promoError {
+  color: #dc2626;
+  background: #fee2e2;
+  border: 1px solid #fca5a5;
+  border-radius: 0.8rem;
+  padding: 1rem;
+  font-size: 1.4rem;
+  font-weight: 500;
+  margin-top: 1.6rem;
+  text-align: center;
+}
+
+/* ================================================================= */
+/* === NOVOS ESTILOS (Modal de Confirmação) === */
+/* ================================================================= */
+
+.modalConfirmContainer {
+  display: flex;
+  gap: 2.4rem;
+  align-items: flex-start;
+}
+
+.modalConfirmIcon {
+  flex-shrink: 0;
+  font-size: 4rem;
+  color: #f59e0b;
+  /* Laranja de aviso */
+}
+
+.modalConfirmIcon.danger {
+  color: #dc2626;
+  /* Vermelho perigo */
+}
+
+.modalConfirmContent {
+  text-align: left;
+}
+
+.modalConfirmContent h3 {
+  margin: 0 0 0.8rem 0;
+  font-size: 2rem;
+  color: #1e293b;
+}
+
+.modalConfirmContent p {
+  font-size: 1.5rem;
+  color: #4b5563;
+  line-height: 1.6;
+  margin: 0;
+}
+
+.modalConfirmFooter {
+  display: flex;
+  justify-content: flex-end;
+  gap: 1.2rem;
+  padding: 2rem 2.4rem;
+  border-top: 1px solid #e5e7eb;
+  background-color: #f8fafc;
 }

@@ -2,9 +2,12 @@
 
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
-import Link from "next/link"; // CORREÇÃO: Importado para navegação SPA
+import Link from "next/link";
 import styles from "./funcionario.module.css";
 import api from "../../../services/api";
+
+// === MUDANÇA: Importado o 'react-hot-toast' ===
+import toast, { Toaster } from "react-hot-toast";
 
 // Ícones para validação
 import { MdCheckCircle, MdError } from "react-icons/md";
@@ -57,7 +60,7 @@ export default function CadastroFuncionarioPage() {
     setForm({ ...form, [name]: value });
   };
 
-  // --- Funções de validação completas ---
+  // --- Funções de validação (sem alterações) ---
   function validaNome() {
     let objTemp = { validado: valSucesso, mensagem: [] };
     if (form.nome === '') {
@@ -124,13 +127,12 @@ export default function CadastroFuncionarioPage() {
     } else {
       const dataNascimento = new Date(form.dataNascimento);
       const hoje = new Date();
-      // Melhora no cálculo da idade
       let idade = hoje.getFullYear() - dataNascimento.getFullYear();
       const m = hoje.getMonth() - dataNascimento.getMonth();
       if (m < 0 || (m === 0 && hoje.getDate() < dataNascimento.getDate())) {
         idade--;
       }
-      
+
       if (idade < 18) {
         objTemp.validado = valErro;
         objTemp.mensagem.push('O funcionário deve ter pelo menos 18 anos');
@@ -207,6 +209,8 @@ export default function CadastroFuncionarioPage() {
     setValida(prev => ({ ...prev, nivelAcesso: objTemp }));
     return objTemp.mensagem.length === 0;
   }
+  // --- Fim das funções de validação ---
+
 
   const handleLogout = () => {
     localStorage.removeItem("authToken");
@@ -216,9 +220,8 @@ export default function CadastroFuncionarioPage() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    
-    // CORREÇÃO: Lógica de validação mais robusta e legível
-    const isFormValid = 
+
+    const isFormValid =
       validaNome() &&
       validaEmail() &&
       validaTelefone() &&
@@ -231,15 +234,16 @@ export default function CadastroFuncionarioPage() {
       validaNivelAcesso();
 
     if (!isFormValid) {
-      alert("Por favor, corrija os erros no formulário.");
+      // === MUDANÇA: Substituído alert() por toast.error() ===
+      toast.error("Por favor, corrija os erros no formulário.");
       return;
     }
-  
+
     setLoading(true);
-  
+
     try {
       const userData = JSON.parse(localStorage.getItem("userData"));
-      const idDaFarmacia = userData?.farm_id; 
+      const idDaFarmacia = userData?.farm_id;
       if (!idDaFarmacia) {
         throw new Error("ID da farmácia não encontrado. Faça o login novamente.");
       }
@@ -254,33 +258,60 @@ export default function CadastroFuncionarioPage() {
         farmacia_id: idDaFarmacia,
         func_usuario: form.usuario,
         func_senha: form.senha,
-        func_nivel: form.nivelAcesso, // CORREÇÃO: Enviando o nível de acesso
+        func_nivel: form.nivelAcesso,
       };
-    
+
       const response = await api.post('/funcionario', dadosFuncionario);
-  
+
       if (response.data.sucesso) {
-        alert("Funcionário cadastrado com sucesso!");
+        // === MUDANÇA: Substituído alert() por toast.success() ===
+        toast.success("Funcionário cadastrado com sucesso!");
         router.push("/farmacias/cadastro/funcionario/lista");
       } else {
-        alert('Erro ao cadastrar funcionário: ' + response.data.mensagem);
+        // === MUDANÇA: Substituído alert() por toast.error() ===
+        toast.error('Erro ao cadastrar funcionário: ' + response.data.mensagem);
       }
     } catch (error) {
       const errorMsg = error.response?.data?.mensagem || error.message || "Ocorreu um erro desconhecido.";
-      alert(errorMsg);
+      // === MUDANÇA: Substituído alert() por toast.error() ===
+      toast.error(errorMsg);
     } finally {
       setLoading(false);
     }
   };
-  
+
   return (
     <div className={styles.dashboard}>
+      {/* === MUDANÇA: Adicionado o <Toaster /> === */}
+      <Toaster
+        position="top-right"
+        toastOptions={{
+          duration: 4000,
+          style: {
+            background: '#333',
+            color: '#fff',
+            fontSize: '1.5rem',
+            padding: '1.6rem',
+          },
+          success: {
+            style: {
+              background: '#458B00',
+            },
+          },
+          error: {
+            style: {
+              background: '#dc2626',
+            },
+          },
+        }}
+      />
+
       <header className={styles.header}>
         <div className={styles.headerLeft}>
-          <button 
-            className={styles.menuToggle} 
+          <button
+            className={styles.menuToggle}
             onClick={() => setSidebarOpen(!sidebarOpen)}
-            aria-label="Abrir menu" // NOVO: Acessibilidade
+            aria-label="Abrir menu"
           >
             ☰
           </button>
@@ -289,28 +320,27 @@ export default function CadastroFuncionarioPage() {
       </header>
       <div className={styles.contentWrapper}>
         <aside className={`${styles.sidebar} ${sidebarOpen ? styles.sidebarOpen : ""}`}>
-            <div className={styles.sidebarHeader}>
-              <div className={styles.logoContainer}>
-                {farmaciaInfo?.farm_logo_url && (
-                  <img src={farmaciaInfo.farm_logo_url} alt={`Logo de ${farmaciaInfo.farm_nome}`} className={styles.logoImage} />
-                )}
-                <span className={styles.logoText}>{farmaciaInfo?.farm_nome || "Pharma-X"}</span>
-              </div>
-              <button 
-                className={styles.sidebarClose} 
-                onClick={() => setSidebarOpen(false)}
-                aria-label="Fechar menu" // NOVO: Acessibilidade
-              >×</button>
+          <div className={styles.sidebarHeader}>
+            <div className={styles.logoContainer}>
+              {farmaciaInfo?.farm_logo_url && (
+                <img src={farmaciaInfo.farm_logo_url} alt={`Logo de ${farmaciaInfo.farm_nome}`} className={styles.logoImage} />
+              )}
+              <span className={styles.logoText}>{farmaciaInfo?.farm_nome || "Pharma-X"}</span>
             </div>
-            {/* CORREÇÃO: Trocadas <a> por <Link> para navegação mais rápida */}
-            <nav className={styles.nav}>
-              <div className={styles.navSection}><p className={styles.navLabel}>Principal</p><Link href="/farmacias/favoritos" className={styles.navLink}><span className={styles.navText}>Favoritos</span></Link><Link href="/farmacias/produtos/medicamentos" className={styles.navLink}><span className={styles.navText}>Medicamentos</span></Link></div>
-              <div className={styles.navSection}><p className={styles.navLabel}>Gestão</p><Link href="/farmacias/cadastro/funcionario/lista" className={`${styles.navLink} ${styles.active}`}><span className={styles.navText}>Funcionários</span></Link><Link href="/farmacias/laboratorio/lista" className={styles.navLink}><span className={styles.navText}>Laboratórios</span></Link></div>
-              <div className={styles.navSection}><p className={styles.navLabel}>Relatórios</p><Link href="/farmacias/relatorios/favoritos" className={styles.navLink}><span className={styles.navText}>Medicamentos Favoritos</span></Link><Link href="/farmacias/relatorios/funcionarios" className={styles.navLink}><span className={styles.navText}>Relatório de Funcionarios</span></Link><Link href="/farmacias/relatorios/laboratorios" className={styles.navLink}><span className={styles.navText}>Relatório de Laboratorios</span></Link></div>
-              <div className={styles.navSection}><p className={styles.navLabel}>Conta</p><Link href="/farmacias/perfil" className={styles.navLink}><span className={styles.navText}>Meu Perfil</span></Link><button onClick={handleLogout} className={styles.navLink} style={{ background: 'none', border: 'none', width: '100%', textAlign: 'left', cursor: 'pointer' }}><span className={styles.navText}>Sair</span></button></div>
-            </nav>
-          </aside>
-          {sidebarOpen && (<div className={styles.overlay} onClick={() => setSidebarOpen(false)} />)}
+            <button
+              className={styles.sidebarClose}
+              onClick={() => setSidebarOpen(false)}
+              aria-label="Fechar menu"
+            >×</button>
+          </div>
+          <nav className={styles.nav}>
+            <div className={styles.navSection}><p className={styles.navLabel}>Principal</p><Link href="/farmacias/favoritos" className={styles.navLink}><span className={styles.navText}>Favoritos</span></Link><Link href="/farmacias/produtos/medicamentos" className={styles.navLink}><span className={styles.navText}>Medicamentos</span></Link></div>
+            <div className={styles.navSection}><p className={styles.navLabel}>Gestão</p><Link href="/farmacias/cadastro/funcionario/lista" className={`${styles.navLink} ${styles.active}`}><span className={styles.navText}>Funcionários</span></Link><Link href="/farmacias/laboratorio/lista" className={styles.navLink}><span className={styles.navText}>Laboratórios</span></Link></div>
+            <div className={styles.navSection}><p className={styles.navLabel}>Relatórios</p><Link href="/farmacias/relatorios/favoritos" className={styles.navLink}><span className={styles.navText}>Medicamentos Favoritos</span></Link><Link href="/farmacias/relatorios/funcionarios" className={styles.navLink}><span className={styles.navText}>Relatório de Funcionarios</span></Link><Link href="/farmacias/relatorios/laboratorios" className={styles.navLink}><span className={styles.navText}>Relatório de Laboratorios</span></Link></div>
+            <div className={styles.navSection}><p className={styles.navLabel}>Conta</p><Link href="/farmacias/perfil" className={styles.navLink}><span className={styles.navText}>Meu Perfil</span></Link><button onClick={handleLogout} className={styles.navLink} style={{ background: 'none', border: 'none', width: '100%', textAlign: 'left', cursor: 'pointer' }}><span className={styles.navText}>Sair</span></button></div>
+          </nav>
+        </aside>
+        {sidebarOpen && (<div className={styles.overlay} onClick={() => setSidebarOpen(false)} />)}
         <main className={styles.mainContent}>
           <div className={styles.formContainer}>
             <div className={styles.formHeader}>

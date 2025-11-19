@@ -76,11 +76,11 @@ export default function CadastroFarmacia() {
     setFarmacia({ ...farmacia, [name]: value });
 
     if (name === 'cidade') {
-        if (value !== "") {
-            setValida(prev => ({ ...prev, [name]: { validado: valSucesso, mensagem: [] } }));
-        } else {
-            setValida(prev => ({ ...prev, [name]: { validado: valErro, mensagem: ["Selecione uma cidade."] } }));
-        }
+      if (value !== "") {
+        setValida(prev => ({ ...prev, [name]: { validado: valSucesso, mensagem: [] } }));
+      } else {
+        setValida(prev => ({ ...prev, [name]: { validado: valErro, mensagem: ["Selecione uma cidade."] } }));
+      }
     }
   };
 
@@ -129,8 +129,8 @@ export default function CadastroFarmacia() {
 
     // 1. Validação de carregamento e campos
     if (loadingCidades) {
-        alert("Aguarde o carregamento das cidades.");
-        return;
+      alert("Aguarde o carregamento das cidades.");
+      return;
     }
 
     if (validaNome() + validaCNPJ() + validaEndereco() + validaCidade() + validaTelefone() + validaEmail() + validaSenha() + validaLogo() !== 8) {
@@ -232,7 +232,7 @@ export default function CadastroFarmacia() {
               <div className={valida.cidade.validado}>
                 <label className={styles.label}>Cidade</label>
                 <div className={styles.divInput}>
-                  {cidadesError && <p className={styles.small} style={{marginBottom: '5px', color: 'red'}}>Erro: {cidadesError}</p>}
+                  {cidadesError && <p className={styles.small} style={{ marginBottom: '5px', color: 'red' }}>Erro: {cidadesError}</p>}
                   <select className={styles.select} name="cidade" value={farmacia.cidade} onChange={handleChange} required disabled={loadingCidades || cidadesError}>
                     <option key="placeholder-cidade" value="">
                       {loadingCidades ? 'Carregando cidades...' : 'Selecione uma cidade'}

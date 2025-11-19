@@ -370,12 +370,12 @@
   .dashboardContainer {
     flex-direction: row;
   }
-  
+
   .sidebar {
     width: 280px;
     min-height: 100vh;
   }
-  
+
   .mainContent {
     margin-left: 0;
     width: calc(100% - 280px);
@@ -386,32 +386,32 @@
   .sidebar {
     width: 100%;
   }
-  
+
   .sidebarOpen {
     display: block;
   }
-  
+
   .formGrid {
     grid-template-columns: 1fr;
   }
-  
+
   .contentCard {
     margin: 0 15px;
     padding: 20px;
   }
-  
+
   .nav {
     display: none;
   }
-  
+
   .sidebarOpen .nav {
     display: flex;
   }
-  
+
   .userPanel {
     display: none;
   }
-  
+
   .sidebarOpen .userPanel {
     display: flex;
   }

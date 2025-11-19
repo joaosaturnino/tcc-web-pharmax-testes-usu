@@ -5,6 +5,7 @@ import { useRouter, useParams } from "next/navigation";
 import styles from "./index.module.css";
 import api from "../../../../../services/api";
 import Link from "next/link";
+import toast, { Toaster } from "react-hot-toast";
 
 export default function EditarFuncionarioPage() {
   const router = useRouter();
@@ -13,7 +14,6 @@ export default function EditarFuncionarioPage() {
 
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState("");
   const [farmaciaInfo, setFarmaciaInfo] = useState(null);
 
   const [form, setForm] = useState({
@@ -25,14 +25,13 @@ export default function EditarFuncionarioPage() {
     func_endereco: "",
     func_usuario: "",
     func_senha: "",
-    func_nivel: "",
+    func_nivel: "", // O valor inicial é uma string vazia
   });
 
   useEffect(() => {
     if (id) {
       const fetchFuncionario = async () => {
         setLoading(true);
-        setError("");
         try {
           const userDataString = localStorage.getItem("userData");
           if (!userDataString) throw new Error("Usuário não autenticado.");
@@ -58,6 +57,8 @@ export default function EditarFuncionarioPage() {
               func_endereco: funcionarioData.func_endereco || "",
               func_usuario: funcionarioData.func_usuario,
               func_senha: "",
+              // === 1ª CORREÇÃO: Armazena o NOME vindo da API ===
+              // (ex: "Farmacêutico")
               func_nivel: funcionarioData.func_nivel,
             });
           } else {
@@ -65,7 +66,9 @@ export default function EditarFuncionarioPage() {
           }
         } catch (err) {
           console.error("Erro ao buscar dados do funcionário:", err);
-          setError(err.response?.data?.mensagem || err.message || 'Não foi possível carregar os dados.');
+          const errorMsg = err.response?.data?.mensagem || err.message || 'Não foi possível carregar os dados.';
+          toast.error(errorMsg);
+          router.push("/farmacias/cadastro/funcionario/lista");
         } finally {
           setLoading(false);
         }
@@ -88,39 +91,45 @@ export default function EditarFuncionarioPage() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
-    setError("");
 
-    try {
-      const userDataString = localStorage.getItem("userData");
-      if (!userDataString) throw new Error("Usuário não autenticado.");
+    const promise = (async () => {
+      try {
+        const userDataString = localStorage.getItem("userData");
+        if (!userDataString) throw new Error("Usuário não autenticado.");
 
-      const userData = JSON.parse(userDataString);
-      const idDaFarmacia = userData.farm_id;
-      if (!idDaFarmacia) throw new Error("ID da farmácia não encontrado para realizar a atualização.");
+        const userData = JSON.parse(userDataString);
+        const idDaFarmacia = userData.farm_id;
+        if (!idDaFarmacia) throw new Error("ID da farmácia não encontrado para realizar a atualização.");
 
-      const dadosParaEnviar = { ...form, farmacia_id: idDaFarmacia };
+        // 'dadosParaEnviar' agora contém func_nivel: "Farmacêutico" (o nome)
+        const dadosParaEnviar = { ...form, farmacia_id: idDaFarmacia };
 
-      if (!dadosParaEnviar.func_senha || dadosParaEnviar.func_senha.trim() === "") {
-        delete dadosParaEnviar.func_senha;
+        if (!dadosParaEnviar.func_senha || dadosParaEnviar.func_senha.trim() === "") {
+          delete dadosParaEnviar.func_senha;
+        }
+
+        const response = await api.patch(`/funcionario/${id}`, dadosParaEnviar);
+
+        if (response.data.sucesso) {
+          router.push("/farmacias/cadastro/funcionario/lista");
+        } else {
+          throw new Error(response.data.mensagem);
+        }
+      } catch (err) {
+        console.error("Erro ao atualizar funcionário:", err);
+        throw new Error(err.response?.data?.mensagem || err.message || 'Ocorreu um erro ao salvar.');
+      } finally {
+        setLoading(false);
       }
+    })();
 
-      const response = await api.patch(`/funcionario/${id}`, dadosParaEnviar);
-
-      if (response.data.sucesso) {
-        alert("Funcionário atualizado com sucesso!");
-        router.push("/farmacias/cadastro/funcionario/lista");
-      } else {
-        throw new Error(response.data.mensagem);
-      }
-    } catch (err) {
-      console.error("Erro ao atualizar funcionário:", err);
-      setError(err.response?.data?.mensagem || err.message || 'Ocorreu um erro ao salvar.');
-    } finally {
-      setLoading(false);
-    }
+    toast.promise(promise, {
+      loading: 'Atualizando funcionário...',
+      success: 'Funcionário atualizado com sucesso!',
+      error: (err) => err.message,
+    });
   };
 
-  // Mostra o spinner de carregamento inicial enquanto os dados do formulário não chegam
   if (loading && !form.func_nome) {
     return (
       <div className={styles.loadingContainer}>
@@ -132,12 +141,15 @@ export default function EditarFuncionarioPage() {
 
   return (
     <div className={styles.dashboard}>
+      <Toaster position="top-right" reverseOrder={false} />
+
       <header className={styles.header}>
+        {/* ... (Header JSX) ... */}
         <div className={styles.headerLeft}>
           <button
             className={styles.menuToggle}
             onClick={() => setSidebarOpen(!sidebarOpen)}
-            aria-label="Abrir menu" // NOVO: Acessibilidade
+            aria-label="Abrir menu"
           >
             ☰
           </button>
@@ -146,6 +158,7 @@ export default function EditarFuncionarioPage() {
       </header>
       <div className={styles.contentWrapper}>
         <aside className={`${styles.sidebar} ${sidebarOpen ? styles.sidebarOpen : ""}`}>
+          {/* ... (Sidebar JSX) ... */}
           <div className={styles.sidebarHeader}>
             <div className={styles.logoContainer}>
               {farmaciaInfo?.farm_logo_url && (
@@ -158,7 +171,7 @@ export default function EditarFuncionarioPage() {
             <button
               className={styles.sidebarClose}
               onClick={() => setSidebarOpen(false)}
-              aria-label="Fechar menu" // NOVO: Acessibilidade
+              aria-label="Fechar menu"
             >×</button>
           </div>
           <nav className={styles.nav}>
@@ -219,10 +232,11 @@ export default function EditarFuncionarioPage() {
               <h2>Editar Funcionário</h2>
               <p>Atualize os dados do colaborador</p>
             </div>
-            {error && <p className={styles.errorMessage}>{error}</p>}
+
             <form onSubmit={handleSubmit} className={styles.form}>
               <div className={styles.formGrid}>
                 <div className={styles.formSection}>
+                  {/* ... (Formulário: Informações Pessoais) ... */}
                   <h3 className={styles.sectionTitle}>Informações Pessoais</h3>
                   <div className={styles.formGroup}>
                     <label className={styles.inputLabel}>Nome Completo</label>
@@ -280,6 +294,7 @@ export default function EditarFuncionarioPage() {
                 </div>
                 <div className={styles.formSection}>
                   <h3 className={styles.sectionTitle}>Acesso ao Sistema</h3>
+                  {/* ... (Formulário: Acesso) ... */}
                   <div className={styles.formGroup}>
                     <label className={styles.inputLabel}>Nome de Usuário</label>
                     <input className={styles.modernInput}
@@ -298,20 +313,23 @@ export default function EditarFuncionarioPage() {
                       onChange={handleChange}
                       placeholder="Deixe em branco para não alterar" />
                   </div>
+
+                  {/* === 2ª CORREÇÃO: Mudar o VALUE das options === */}
                   <div className={styles.formGroup}>
                     <label className={styles.inputLabel}>Nível de Acesso</label>
                     <select className={styles.modernInput}
                       name="func_nivel"
-                      value={form.func_nivel}
+                      value={form.func_nivel} // Agora (ex: "Farmacêutico")
                       onChange={handleChange}
                       required >
-                      <option
-                        value="" disabled>Selecione</option>
-                      <option value="1">Funcionário</option>
-                      <option value="2">Farmacêutico</option>
-                      <option value="3">Administrador</option>
+                      <option value="" disabled>Selecione</option>
+                      <option value="Funcionário">Funcionário</option>
+                      <option value="Farmacêutico">Farmacêutico</option>
+                      <option value="Administrador">Administrador</option>
                     </select>
                   </div>
+                  {/* === FIM DAS CORREÇÕES === */}
+
                 </div>
               </div>
               <div className={styles.formActions}>

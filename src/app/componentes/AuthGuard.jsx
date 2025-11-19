@@ -13,13 +13,28 @@ export default function AuthGuard({ children, requiredRole = null }) {
       try {
         // CORREÇÃO: Alterado de "usuario" para "userData" para corresponder ao que é salvo no login.
         const userDataString = localStorage.getItem("userData");
-        
+
         if (!userDataString) {
-          router.push("/login");
-          return;
+          // Ambiente de desenvolvimento: injetar usuário admin padrão para facilitar testes.
+          // AVISO: A injeção é permitida somente quando a flag pública NEXT_PUBLIC_ENABLE_DEV_AUTH estiver ativa
+          // e quando a rota exigir role 'admin'. Isso reduz o risco de vazamento acidental em builds.
+          try {
+            const enableDevAuth = process.env.NEXT_PUBLIC_ENABLE_DEV_AUTH === 'true';
+            if (enableDevAuth && requiredRole === 'admin') {
+              const devUser = { id: 1, nome: 'Dev Admin', tipo: 'admin', email: 'admin@dev.local', senha: '123456' };
+              localStorage.setItem('userData', JSON.stringify(devUser));
+            } else {
+              router.push("/login");
+              return;
+            }
+          } catch (err) {
+            console.error('Erro ao injetar usuário dev:', err);
+            router.push('/login');
+            return;
+          }
         }
 
-        const user = JSON.parse(userDataString);
+        const user = JSON.parse(localStorage.getItem('userData'));
         setIsAuthenticated(true);
 
         if (requiredRole && user.tipo !== requiredRole) {
@@ -42,7 +57,7 @@ export default function AuthGuard({ children, requiredRole = null }) {
   const redirectToAppropriatePage = (userType) => {
     switch (userType) {
       case 'admin':
-        router.push("/farmacias/favoritos");
+        router.push("/admin");
         break;
       case 'farmacia':
         router.push("/funcionario/produtos/medicamentos");

@@ -2,7 +2,7 @@
 .card {
   background: #fff;
   border-radius: 12px;
-  box-shadow: 0 0.2rem 0.8px rgba(0,0,0,0.04);
+  box-shadow: 0 0.2rem 0.8px rgba(0, 0, 0, 0.04);
   padding: 2.4rem;
   transition: transform 0.3s ease, box-shadow 0.3s ease;
 }
@@ -154,5 +154,5 @@
 
 .statusBtn:hover:not(:disabled) {
   transform: translateY(-1px);
-  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }

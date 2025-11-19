@@ -1,0 +1,43 @@
+.backdrop {
+    position: fixed;
+    inset: 0;
+    background: rgba(2, 6, 23, 0.6);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+    padding: 1rem
+}
+
+.modal {
+    background: #fff;
+    border-radius: 10px;
+    width: min(860px, 100%);
+    max-height: 92vh;
+    overflow: auto;
+    box-shadow: 0 16px 40px rgba(2, 6, 23, 0.35);
+    border: 1px solid rgba(15, 23, 42, 0.04)
+}
+
+.header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0.9rem 1rem;
+    border-bottom: 1px solid #f1f5f9
+}
+
+.content {
+    padding: 1rem 1.25rem
+}
+
+.close {
+    background: #f1f5f9;
+    border: none;
+    font-size: 1.2rem;
+    line-height: 1;
+    cursor: pointer;
+    width: 36px;
+    height: 36px;
+    border-radius: 8px
+}

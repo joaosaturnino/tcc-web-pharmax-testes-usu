@@ -1,7 +1,8 @@
 /* Layout Principal */
 .dashboard {
   min-height: 100vh;
-  background: #f8fafc; /* Simplificado */
+  background: #f8fafc;
+  /* Simplificado */
   display: flex;
   flex-direction: column;
 }
@@ -9,14 +10,17 @@
 /* Header */
 .header {
   background: #ffffff;
-  padding: 1.5rem 2.4rem; /* Ajuste no padding */
+  padding: 1.5rem 2.4rem;
+  /* Ajuste no padding */
   display: flex;
   justify-content: space-between;
   align-items: center;
-  box-shadow: 0 0.2rem 0.4rem rgba(0, 0, 0, 0.05); /* Sombra mais suave */
+  box-shadow: 0 0.2rem 0.4rem rgba(0, 0, 0, 0.05);
+  /* Sombra mais suave */
   position: sticky;
   top: 0;
-  z-index: 100; /* Z-index ajustado */
+  z-index: 100;
+  /* Z-index ajustado */
 }
 
 .headerLeft {
@@ -28,12 +32,14 @@
 .menuToggle {
   background: none;
   border: none;
-  font-size: 2.4rem; /* Tamanho ajustado */
+  font-size: 2.4rem;
+  /* Tamanho ajustado */
   cursor: pointer;
   padding: 0.8rem;
   border-radius: 0.6rem;
   transition: background 0.3s ease;
-  display: none; /* Escondido por padrão em telas maiores */
+  display: none;
+  /* Escondido por padrão em telas maiores */
   color: #458B00;
 }
 
@@ -62,19 +68,24 @@
 
 /* Sidebar - Estilo melhorado */
 .sidebar {
-  width: 28rem; /* Largura ajustada */
+  width: 28rem;
+  /* Largura ajustada */
   background: linear-gradient(180deg, #191970 0%, #0f1440 100%);
   color: #CDC1C5;
   display: flex;
   flex-direction: column;
-  transition: transform 0.3s ease-in-out; /* Transição mais suave */
+  transition: transform 0.3s ease-in-out;
+  /* Transição mais suave */
   box-shadow: 0.2rem 0 1rem rgba(0, 0, 0, 0.1);
   flex-shrink: 0;
-  height: calc(100vh - 72px); /* Altura recalculada com base no padding do header */
+  height: calc(100vh - 72px);
+  /* Altura recalculada com base no padding do header */
   position: sticky;
-  top: 72px; /* Valor recalculado */
+  top: 72px;
+  /* Valor recalculado */
   overflow-y: auto;
-  z-index: 90; /* Abaixo do header */
+  z-index: 90;
+  /* Abaixo do header */
 }
 
 .sidebarHeader {
@@ -95,14 +106,16 @@
 }
 
 .logoImage {
-  width: 60px; /* Tamanho ajustado */
+  width: 60px;
+  /* Tamanho ajustado */
   height: 60px;
   border-radius: 5%;
   object-fit: cover;
 }
 
 .logoText {
-  font-size: 2rem; /* Tamanho ajustado */
+  font-size: 2rem;
+  /* Tamanho ajustado */
   font-weight: 600;
   color: #fff;
 }
@@ -110,13 +123,15 @@
 .sidebarClose {
   background: none;
   border: none;
-  font-size: 2.8rem; /* Tamanho ajustado */
+  font-size: 2.8rem;
+  /* Tamanho ajustado */
   color: #fff;
   cursor: pointer;
   border-radius: 0.6rem;
   padding: 0.4rem 0.8rem;
   transition: background 0.2s;
-  display: none; /* Escondido por padrão */
+  display: none;
+  /* Escondido por padrão */
 }
 
 .sidebarClose:hover {
@@ -136,7 +151,8 @@
 .navLabel {
   font-size: 1.3rem;
   color: #b0b0b0;
-  margin: 1rem 0 0.6rem 1rem; /* Margem ajustada */
+  margin: 1rem 0 0.6rem 1rem;
+  /* Margem ajustada */
   text-transform: uppercase;
   letter-spacing: 0.5px;
 }
@@ -144,7 +160,8 @@
 .navLink {
   display: flex;
   align-items: center;
-  padding: 1.2rem 1.4rem; /* Padding ajustado */
+  padding: 1.2rem 1.4rem;
+  /* Padding ajustado */
   color: #CDC1C5;
   text-decoration: none;
   border-radius: 0.6rem;
@@ -152,7 +169,8 @@
   transition: all 0.3s ease;
   font-size: 1.5rem;
   border-left: 4px solid transparent;
-  gap: 1.2rem; /* Gap ajustado */
+  gap: 1.2rem;
+  /* Gap ajustado */
 }
 
 .navLink:hover {
@@ -190,7 +208,8 @@
 }
 
 .card {
-  background: #ffffff; /* Simplificado */
+  background: #ffffff;
+  /* Simplificado */
   border-radius: 12px;
   box-shadow: 0 0.2rem 0.8rem rgba(0, 0, 0, 0.04);
   padding: 2.4rem;
@@ -198,8 +217,10 @@
   border: 1px solid #e5e7eb;
   position: relative;
   overflow: hidden;
-  display: flex; /* Adicionado para melhor controle do conteúdo interno */
-  flex-direction: column; /* Adicionado */
+  display: flex;
+  /* Adicionado para melhor controle do conteúdo interno */
+  flex-direction: column;
+  /* Adicionado */
 }
 
 .card::before {
@@ -219,7 +240,8 @@
 
 .cardHeader {
   display: flex;
-  align-items: flex-start; /* Alinhamento ajustado */
+  align-items: flex-start;
+  /* Alinhamento ajustado */
   margin-bottom: 1.6rem;
   padding-bottom: 1.6rem;
   border-bottom: 0.1rem solid #e5e7eb;
@@ -227,27 +249,33 @@
 
 .cardUserInfo {
   display: flex;
-  align-items: center; /* Alinhamento ajustado */
-  gap: 1.6rem; /* Gap ajustado */
-  flex: 1; /* Para ocupar o espaço disponível */
+  align-items: center;
+  /* Alinhamento ajustado */
+  gap: 1.6rem;
+  /* Gap ajustado */
+  flex: 1;
+  /* Para ocupar o espaço disponível */
 }
 
 .userAvatar {
   width: 5rem;
   height: 5rem;
-  border-radius: 50%; /* MELHORIA: Avatar circular */
+  border-radius: 50%;
+  /* MELHORIA: Avatar circular */
   background: linear-gradient(135deg, #458B00 0%, #191970 100%);
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 1.8rem; /* Tamanho ajustado */
+  font-size: 1.8rem;
+  /* Tamanho ajustado */
   color: white;
   flex-shrink: 0;
   font-weight: bold;
 }
 
 .cardUserInfo h2 {
-  font-size: clamp(1.6rem, 2vw, 1.8rem); /* Tipografia Fluida */
+  font-size: clamp(1.6rem, 2vw, 1.8rem);
+  /* Tipografia Fluida */
   font-weight: 600;
   color: #191970;
   margin: 0 0 0.2rem 0;
@@ -263,7 +291,8 @@
   font-size: 1.2rem;
   color: #94a3b8;
   margin-top: 0.4rem;
-  display: block; /* Garante que ocupe a linha */
+  display: block;
+  /* Garante que ocupe a linha */
 }
 
 /* Lista de Medicamentos */
@@ -271,7 +300,8 @@
   display: flex;
   flex-direction: column;
   gap: 1.2rem;
-  margin-top: auto; /* Empurra a lista para o final do card */
+  margin-top: auto;
+  /* Empurra a lista para o final do card */
 }
 
 .medItem {
@@ -282,8 +312,10 @@
   background: #f8fafc;
   border-radius: 8px;
   border: 0.1rem solid #e5e7eb;
-  flex-wrap: wrap; /* Permite quebrar linha em telas pequenas */
-  gap: 1rem; /* Espaçamento entre itens quando quebrar linha */
+  flex-wrap: wrap;
+  /* Permite quebrar linha em telas pequenas */
+  gap: 1rem;
+  /* Espaçamento entre itens quando quebrar linha */
 }
 
 .medInfo {
@@ -305,26 +337,45 @@
 
 .badge {
   padding: 0.6rem 1.2rem;
-  border-radius: 9999px; /* Formato de pílula */
-  font-size: 1.2rem; /* Tamanho ajustado */
+  border-radius: 9999px;
+  /* Formato de pílula */
+  font-size: 1.2rem;
+  /* Tamanho ajustado */
   font-weight: 600;
   text-align: center;
   border: 1px solid;
 }
 
-.inStock { background: #f0fff4; color: #065f46; border-color: #10b981; }
-.outStock { background: #fef2f2; color: #991b1b; border-color: #ef4444; }
-.pending { background: #fffbeb; color: #92400e; border-color: #f59e0b; }
+.inStock {
+  background: #f0fff4;
+  color: #065f46;
+  border-color: #10b981;
+}
+
+.outStock {
+  background: #fef2f2;
+  color: #991b1b;
+  border-color: #ef4444;
+}
+
+.pending {
+  background: #fffbeb;
+  color: #92400e;
+  border-color: #f59e0b;
+}
 
 /* Empty State & Loader */
-.emptyState, .loaderContainer {
+.emptyState,
+.loaderContainer {
   text-align: center;
   padding: 6rem 3rem;
   background: white;
   border-radius: 1.6rem;
-  margin-top: 3rem; /* Margem ajustada */
-  box-shadow: 0 0.2rem 0.8rem rgba(0,0,0,0.04);
+  margin-top: 3rem;
+  /* Margem ajustada */
+  box-shadow: 0 0.2rem 0.8rem rgba(0, 0, 0, 0.04);
 }
+
 .loaderContainer {
   display: flex;
   flex-direction: column;
@@ -332,23 +383,58 @@
   justify-content: center;
   min-height: 30rem;
 }
-.emptyIcon { font-size: 6rem; margin-bottom: 2rem; color: #458B00; opacity: 0.5; }
-.emptyState h3 { font-size: 2rem; color: #191970; margin: 0 0 0.8rem 0; }
-.emptyState p { color: #64748b; font-size: 1.5rem; margin: 0; }
-.spinner { width: 4rem; height: 4rem; border: 0.4rem solid #e6f7e6; border-top-color: #458B00; border-radius: 50%; animation: spin 1s linear infinite; margin-bottom: 1.2rem; }
-@keyframes spin { to { transform: rotate(360deg); } }
+
+.emptyIcon {
+  font-size: 6rem;
+  margin-bottom: 2rem;
+  color: #458B00;
+  opacity: 0.5;
+}
+
+.emptyState h3 {
+  font-size: 2rem;
+  color: #191970;
+  margin: 0 0 0.8rem 0;
+}
+
+.emptyState p {
+  color: #64748b;
+  font-size: 1.5rem;
+  margin: 0;
+}
+
+.spinner {
+  width: 4rem;
+  height: 4rem;
+  border: 0.4rem solid #e6f7e6;
+  border-top-color: #458B00;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+  margin-bottom: 1.2rem;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
 
 /* Overlay para mobile */
 .overlay {
   position: fixed;
   inset: 0;
-  background: rgba(0,0,0,0.4); /* Mais escuro para melhor contraste */
-  z-index: 105; /* CORREÇÃO: Deve estar acima de outros conteúdos, mas abaixo da sidebar */
-  display: none; /* Controlado pelo estado do componente */
+  background: rgba(0, 0, 0, 0.4);
+  /* Mais escuro para melhor contraste */
+  z-index: 105;
+  /* CORREÇÃO: Deve estar acima de outros conteúdos, mas abaixo da sidebar */
+  display: none;
+  /* Controlado pelo estado do componente */
   opacity: 0;
   transition: opacity 0.3s ease-in-out;
 }
-.sidebar.sidebarOpen ~ .overlay { /* Mostra o overlay quando a sidebar estiver aberta */
+
+.sidebar.sidebarOpen~.overlay {
+  /* Mostra o overlay quando a sidebar estiver aberta */
   display: block;
   opacity: 1;
 }
@@ -358,16 +444,21 @@
 .paginationControls {
   display: flex;
   align-items: center;
-  gap: 0.8rem; /* Gap ajustado */
+  gap: 0.8rem;
+  /* Gap ajustado */
   justify-content: center;
-  margin-top: 3.2rem; /* Margem superior para separar do grid */
-  flex-wrap: wrap; /* Permite quebrar linha em telas muito pequenas */
+  margin-top: 3.2rem;
+  /* Margem superior para separar do grid */
+  flex-wrap: wrap;
+  /* Permite quebrar linha em telas muito pequenas */
 }
 
-.paginationBtn, .paginationNumber {
+.paginationBtn,
+.paginationNumber {
   padding: 1rem 1.6rem;
   border: 1px solid #e2e8f0;
-  border-radius: 0.8rem; /* Bordas mais arredondadas */
+  border-radius: 0.8rem;
+  /* Bordas mais arredondadas */
   background: #ffffff;
   color: #191970;
   font-weight: 600;
@@ -376,7 +467,8 @@
   font-size: 1.4rem;
 }
 
-.paginationBtn:hover:not(.disabled), .paginationNumber:hover {
+.paginationBtn:hover:not(.disabled),
+.paginationNumber:hover {
   background: #f1f5f9;
   border-color: #458B00;
   transform: translateY(-2px);
@@ -404,9 +496,11 @@
   .mainContent {
     padding: 2.4rem;
   }
+
   .sidebar {
     width: 26rem;
   }
+
   .grid {
     grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
     gap: 2rem;
@@ -419,22 +513,30 @@
     position: fixed;
     left: 0;
     top: 0;
-    height: 100%; /* Ocupa a altura toda */
+    height: 100%;
+    /* Ocupa a altura toda */
     transform: translateX(-100%);
-    z-index: 110; /* CORREÇÃO: Deve estar acima do overlay */
+    z-index: 110;
+    /* CORREÇÃO: Deve estar acima do overlay */
     /* Remove o sticky e a altura calculada */
     height: 100vh;
-    top: 0; 
+    top: 0;
   }
+
   .sidebar.sidebarOpen {
     transform: translateX(0);
   }
-  .menuToggle, .sidebarClose {
-    display: block; /* Mostra os botões de controle do menu */
+
+  .menuToggle,
+  .sidebarClose {
+    display: block;
+    /* Mostra os botões de controle do menu */
   }
+
   .mainContent {
     padding: 1.6rem;
   }
+
   .grid {
     grid-template-columns: 1fr;
   }
@@ -448,18 +550,24 @@
     flex-wrap: wrap;
     gap: 1rem;
   }
+
   .title {
-    flex-basis: 100%; /* O título ocupa a linha inteira se necessário */
-    text-align: center; /* Centraliza o título */
+    flex-basis: 100%;
+    /* O título ocupa a linha inteira se necessário */
+    text-align: center;
+    /* Centraliza o título */
   }
+
   .card {
     padding: 1.6rem;
   }
+
   .cardHeader {
     flex-direction: column;
     gap: 1.2rem;
     align-items: flex-start;
   }
+
   .userAvatar {
     width: 4rem;
     height: 4rem;

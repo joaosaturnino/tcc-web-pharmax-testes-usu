@@ -2,10 +2,12 @@
 
 import { useState, useEffect } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
-import Link from "next/link"; // CORREÇÃO: Importado para navegação SPA
+import Link from "next/link";
 import styles from "./cadastro.module.css";
 import api from "../../../../services/api";
 import { MdCheckCircle, MdError, MdUploadFile } from "react-icons/md";
+// === MUDANÇA: Importado o 'react-hot-toast' ===
+import toast, { Toaster } from "react-hot-toast";
 
 export default function CadastroMedicamentoPage() {
   const router = useRouter();
@@ -24,6 +26,21 @@ export default function CadastroMedicamentoPage() {
   const [touched, setTouched] = useState({});
   const [fileName, setFileName] = useState("");
 
+  // Estados para Tipo de Produto
+  const [tiposList, setTiposList] = useState([]);
+  const [tiposError, setTiposError] = useState(null);
+  const [loadingTipos, setLoadingTipos] = useState(true);
+
+  // Estados para Forma Farmacêutica
+  const [formaList, setFormaList] = useState([]);
+  const [formaError, setFormaError] = useState(null);
+  const [loadingFormas, setLoadingFormas] = useState(true);
+
+  // Estados para Laboratório
+  const [labList, setLabList] = useState([]);
+  const [labError, setLabError] = useState(null);
+  const [loadingLabs, setLoadingLabs] = useState(true);
+
   useEffect(() => {
     const userDataString = localStorage.getItem("userData");
     if (userDataString) {
@@ -37,6 +54,76 @@ export default function CadastroMedicamentoPage() {
       validateField('codigoBarras', codigoBarrasUrl);
     }
   }, [searchParams]);
+
+  // useEffect para buscar os Tipos de Produto
+  useEffect(() => {
+    const fetchTipos = async () => {
+      try {
+        setLoadingTipos(true);
+        setTiposError(null);
+        const response = await api.get('/tipoproduto');
+
+        if (response.data && Array.isArray(response.data.dados)) {
+          setTiposList(response.data.dados);
+        } else {
+          setTiposError("Formato de resposta inesperado (Tipos).");
+        }
+      } catch (error) {
+        console.error("Erro ao buscar tipos:", error);
+        setTiposError("Não foi possível carregar os tipos.");
+      } finally {
+        setLoadingTipos(false);
+      }
+    };
+    fetchTipos();
+  }, []);
+
+  // useEffect para buscar as Formas Farmacêuticas
+  useEffect(() => {
+    const fetchFormas = async () => {
+      try {
+        setLoadingFormas(true);
+        setFormaError(null);
+        const response = await api.get('/farmaceutica');
+
+        if (response.data && Array.isArray(response.data.dados)) {
+          setFormaList(response.data.dados);
+        } else {
+          setFormaError("Formato de resposta inesperado (Formas).");
+        }
+      } catch (error) {
+        console.error("Erro ao buscar formas:", error);
+        setFormaError("Não foi possível carregar as formas.");
+      } finally {
+        setLoadingFormas(false);
+      }
+    };
+    fetchFormas();
+  }, []);
+
+  // useEffect para buscar os Laboratórios
+  useEffect(() => {
+    const fetchLabs = async () => {
+      try {
+        setLoadingLabs(true);
+        setLabError(null);
+        const response = await api.get('/todoslab');
+
+        if (response.data && Array.isArray(response.data.dados)) {
+          setLabList(response.data.dados);
+        } else {
+          setLabError("Formato de resposta inesperado (Laboratórios).");
+        }
+      } catch (error) {
+        console.error("Erro ao buscar laboratórios:", error);
+        setLabError("Não foi possível carregar os laboratórios.");
+      } finally {
+        setLoadingLabs(false);
+      }
+    };
+    fetchLabs();
+  }, []);
+
 
   const handleBlur = (e) => {
     const { name } = e.target;
@@ -75,7 +162,7 @@ export default function CadastroMedicamentoPage() {
       case 'quantidade':
         if (!value) fieldErrors.push('A quantidade é obrigatória');
         else if (!/^\d+\s+[a-zA-Z]+(s)?$/i.test(value)) {
-            fieldErrors.push('Formato inválido. Use número seguido da unidade (ex: 30 comprimidos, 100 ml)');
+          fieldErrors.push('Formato inválido. Use número seguido da unidade (ex: 30 comprimidos, 100 ml)');
         }
         break;
       case 'tipo':
@@ -119,24 +206,27 @@ export default function CadastroMedicamentoPage() {
     return fieldErrors.length === 0;
   };
 
-  const tipoMap = { 'Alopático': 1, 'Fitoterápico': 2, 'Genérico': 3, 'Homeopático': 4, 'Manipulado': 5, 'Referência': 6, 'Similar': 7 };
-  const formaMap = { 'Comprimido': 1, 'Cápsula': 2, 'Pastilhas': 3, 'Drágeas': 4, 'Pós para Reconstituição': 5, 'Gotas': 6, 'Xarope': 7, 'Solução Oral': 8, 'Suspensão': 9, 'Comprimidos Sublinguais': 10, 'Soluções': 11, 'Suspensões Injetáveis': 12, 'Soluções Tópicas': 13, 'Pomadas': 14, 'Cremes': 15, 'Loção': 16, 'Gel': 17, 'Adesivos': 18, 'Spray': 19, 'Gotas Nasais': 20, 'Colírios': 21, 'Pomadas Oftálmicas': 22, 'Gotas Auriculares ou Otológicas': 23, 'Pomadas Auriculares': 24, 'Aerosol': 25, 'Comprimidos Vaginais': 26, 'Óvulos': 27, 'Supositórios': 28, 'Enemas': 29 };
-  const laboratorioMap = { 'Neo Química': 1, 'EMS': 2, 'Eurofarma': 3, 'Aché': 4, 'União Química': 5, 'Medley': 6, 'Sanofi': 7, 'Geolab': 8, 'Merck': 9, 'Legrand': 10, 'Natulab': 11, 'Germed': 12, 'Prati Donaduzzi': 13, 'Biolab': 14, 'Hipera CH': 15, 'Sandoz': 16, 'Med Química': 17, 'Mantecorp Farmasa': 18 };
-
   const handleSubmit = async (e) => {
     e.preventDefault();
     let isFormValid = true;
     const allTouched = Object.keys(form).reduce((acc, key) => ({ ...acc, [key]: true }), {});
     setTouched(allTouched);
-    
+
     for (const field in form) {
       if (!validateField(field, form[field])) {
         isFormValid = false;
       }
     }
 
+    if (tiposError || formaError || labError) {
+      // === MUDANÇA: Substituído alert() por toast.error() ===
+      toast.error("Erro ao carregar dados (tipos, formas ou laboratórios). Recarregue a página.", { duration: 5000 });
+      return;
+    }
+
     if (!isFormValid) {
-      alert("Por favor, corrija os erros no formulário.");
+      // === MUDANÇA: Substituído alert() por toast.error() ===
+      toast.error("Por favor, corrija os erros no formulário.");
       return;
     }
 
@@ -145,11 +235,11 @@ export default function CadastroMedicamentoPage() {
     try {
       const userDataString = localStorage.getItem("userData");
       if (!userDataString) throw new Error("Usuário não autenticado. Faça o login novamente.");
-      
+
       const userData = JSON.parse(userDataString);
-      const farmaciaId = userData.farm_id; 
+      const farmaciaId = userData.farm_id;
       if (!farmaciaId) throw new Error("ID da farmácia não encontrado nos dados do usuário.");
-      
+
       const formData = new FormData();
       formData.append('med_nome', form.nome);
       formData.append('med_dosagem', form.dosagem);
@@ -157,37 +247,40 @@ export default function CadastroMedicamentoPage() {
       formData.append('med_descricao', form.descricao);
       formData.append('med_preco', parseFloat(form.preco));
       formData.append('med_cod_barras', form.codigoBarras);
-      formData.append('tipo_id', tipoMap[form.tipo]);
-      formData.append('forma_id', formaMap[form.forma]);
-      formData.append('lab_id', laboratorioMap[form.laboratorio]);
+      formData.append('tipo_id', form.tipo);
+      formData.append('forma_id', form.forma);
+      formData.append('lab_id', form.laboratorio);
       formData.append('farmacia_id', farmaciaId);
 
       if (form.imagem) {
         formData.append('med_imagem', form.imagem);
       }
-      
+
       const response = await api.post('/medicamentos', formData, {
         headers: { 'Content-Type': 'multipart/form-data' },
       });
 
       if (response.data.sucesso) {
-          alert("Medicamento cadastrado com sucesso!");
-          router.push("/farmacias/produtos/medicamentos");
+        // === MUDANÇA: Substituído alert() por toast.success() ===
+        toast.success("Medicamento cadastrado com sucesso!");
+        router.push("/farmacias/produtos/medicamentos");
       } else {
-          throw new Error(response.data.mensagem);
+        throw new Error(response.data.mensagem);
       }
     } catch (error) {
-        if (error.response) {
-            alert(error.response.data.mensagem + '\n' + (error.response.data.dados || ''));
-        } else {
-            alert(error.message || 'Erro na comunicação com o servidor. Tente novamente.');
-            console.error("Erro ao enviar dados:", error);
-        }
+      // === MUDANÇA: Substituído alert() por toast.error() ===
+      if (error.response) {
+        const errorMsg = error.response.data.mensagem + '\n' + (error.response.data.dados || '');
+        toast.error(errorMsg, { duration: 5000 });
+      } else {
+        toast.error(error.message || 'Erro na comunicação com o servidor. Tente novamente.');
+        console.error("Erro ao enviar dados:", error);
+      }
     } finally {
-        setLoading(false);
+      setLoading(false);
     }
   };
-  
+
   const handleLogout = () => {
     localStorage.removeItem("authToken");
     localStorage.removeItem("userData");
@@ -201,6 +294,30 @@ export default function CadastroMedicamentoPage() {
 
   return (
     <div className={styles.dashboard}>
+      {/* === MUDANÇA: Adicionado o <Toaster /> === */}
+      <Toaster
+        position="top-right"
+        toastOptions={{
+          duration: 4000,
+          style: {
+            background: '#333',
+            color: '#fff',
+            fontSize: '1.5rem',
+            padding: '1.6rem',
+          },
+          success: {
+            style: {
+              background: '#458B00',
+            },
+          },
+          error: {
+            style: {
+              background: '#dc2626',
+            },
+          },
+        }}
+      />
+
       <header className={styles.header}>
         <div className={styles.headerLeft}>
           <button className={styles.menuToggle} onClick={() => setSidebarOpen(!sidebarOpen)} aria-label="Abrir menu">☰</button>
@@ -208,22 +325,23 @@ export default function CadastroMedicamentoPage() {
         </div>
       </header>
       <div className={styles.contentWrapper}>
-          <aside className={`${styles.sidebar} ${sidebarOpen ? styles.sidebarOpen : ""}`}>
-            <div className={styles.sidebarHeader}>
-                <div className={styles.logoContainer}>
-                    {farmaciaInfo?.farm_logo_url && (<img src={farmaciaInfo.farm_logo_url} alt={`Logo de ${farmaciaInfo.farm_nome}`} className={styles.logoImage} />)}
-                    <span className={styles.logoText}>{farmaciaInfo?.farm_nome || "PharmaX"}</span>
-                </div>
-                <button className={styles.sidebarClose} onClick={() => setSidebarOpen(false)} aria-label="Fechar menu">×</button>
+        <aside className={`${styles.sidebar} ${sidebarOpen ? styles.sidebarOpen : ""}`}>
+          <div className={styles.sidebarHeader}>
+            <div className={styles.logoContainer}>
+              {farmaciaInfo?.farm_logo_url && (<img src={farmaciaInfo.farm_logo_url} alt={`Logo de ${farmaciaInfo.farm_nome}`} className={styles.logoImage} />)}
+              <span className={styles.logoText}>{farmaciaInfo?.farm_nome || "PharmaX"}</span>
             </div>
-            <nav className={styles.nav}>
-              <div className={styles.navSection}><p className={styles.navLabel}>Principal</p><Link href="/farmacias/favoritos" className={styles.navLink}><span className={styles.navText}>Favoritos</span></Link><Link href="/farmacias/produtos/medicamentos" className={`${styles.navLink} ${styles.active}`}><span className={styles.navText}>Medicamentos</span></Link></div>
-              <div className={styles.navSection}><p className={styles.navLabel}>Gestão</p><Link href="/farmacias/cadastro/funcionario/lista" className={styles.navLink}><span className={styles.navText}>Funcionários</span></Link><Link href="/farmacias/laboratorio/lista" className={styles.navLink}><span className={styles.navText}>Laboratórios</span></Link></div>
-              <div className={styles.navSection}><p className={styles.navLabel}>Relatórios</p><Link href="/farmacias/relatorios/favoritos" className={styles.navLink}><span className={styles.navText}>Medicamentos Favoritos</span></Link><Link href="/farmacias/relatorios/funcionarios" className={styles.navLink}><span className={styles.navText}>Relatório de Funcionarios</span></Link><Link href="/farmacias/relatorios/laboratorios" className={styles.navLink}><span className={styles.navText}>Relatório de Laboratorios</span></Link></div>
-              <div className={styles.navSection}><p className={styles.navLabel}>Conta</p><Link href="/farmacias/perfil" className={styles.navLink}><span className={styles.navText}>Meu Perfil</span></Link><button onClick={handleLogout} className={styles.navLink} style={{ all: 'unset', cursor: 'pointer', width: '100%' }}><span className={styles.navText}>Sair</span></button></div>
-            </nav>
-          </aside>
-          {sidebarOpen && (<div className={styles.overlay} onClick={() => setSidebarOpen(false)} />)}
+            <button className={styles.sidebarClose} onClick={() => setSidebarOpen(false)} aria-label="Fechar menu">×</button>
+          </div>
+          <nav className={styles.nav}>
+            <div className={styles.navSection}><p className={styles.navLabel}>Principal</p><Link href="/farmacias/favoritos" className={styles.navLink}><span className={styles.navText}>Favoritos</span></Link><Link href="/farmacias/produtos/medicamentos" className={`${styles.navLink} ${styles.active}`}><span className={styles.navText}>Medicamentos</span></Link></div>
+            <div className={styles.navSection}><p className={styles.navLabel}>Gestão</p><Link href="/farmacias/cadastro/funcionario/lista" className={styles.navLink}><span className={styles.navText}>Funcionários</span></Link><Link href="/farmacias/laboratorio/lista" className={styles.navLink}><span className={styles.navText}>Laboratórios</span></Link></div>
+            <div className={styles.navSection}><p className={styles.navLabel}>Relatórios</p><Link href="/farmacias/relatorios/favoritos" className={styles.navLink}><span className={styles.navText}>Medicamentos Favoritos</span></Link><Link href="/farmacias/relatorios/funcionarios" className={styles.navLink}><span className={styles.navText}>Relatório de Funcionarios</span></Link><Link href="/farmacias/relatorios/laboratorios" className={styles.navLink}><span className={styles.navText}>Relatório de Laboratorios</span></Link></div>
+            <div className={styles.navSection}><p className={styles.navLabel}>Conta</p><Link href="/farmacias/perfil" className={styles.navLink}><span className={styles.navText}>Meu Perfil</span></Link><button onClick={handleLogout} className={styles.navLink} style={{ all: 'unset', cursor: 'pointer', width: '100%' }}><span className={styles.navText}>Sair</span></button></div>
+          </nav>
+        </aside>
+        {sidebarOpen && (<div className={styles.overlay} onClick={() => setSidebarOpen(false)} />)}
+
         <main className={styles.mainContent}>
           <div className={styles.formContainer}>
             <div className={styles.formHeader}>
@@ -244,9 +362,91 @@ export default function CadastroMedicamentoPage() {
 
               <h3 className={styles.sectionTitle}>Informações Técnicas</h3>
               <div className={styles.formGrid}>
-                <div className={getValidationClass('tipo')}><label className={styles.inputLabel}>Tipo de Produto</label><div className={styles.divInput}><select className={styles.modernSelect} name="tipo" value={form.tipo} onChange={handleChange} onBlur={handleBlur} required><option value="">Selecione o tipo</option>{Object.keys(tipoMap).map(tipo => <option key={tipo} value={tipo}>{tipo}</option>)}</select></div>{touched.tipo && errors.tipo?.map(msg => <small key={msg} className={styles.small}>{msg}</small>)}</div>
-                <div className={getValidationClass('forma')}><label className={styles.inputLabel}>Forma Farmacêutica</label><div className={styles.divInput}><select className={styles.modernSelect} name="forma" value={form.forma} onChange={handleChange} onBlur={handleBlur} required><option value="">Selecione a forma</option>{Object.keys(formaMap).map(forma => <option key={forma} value={forma}>{forma}</option>)}</select></div>{touched.forma && errors.forma?.map(msg => <small key={msg} className={styles.small}>{msg}</small>)}</div>
-                <div className={getValidationClass('laboratorio')}><label className={styles.inputLabel}>Laboratório</label><div className={styles.divInput}><select className={styles.modernSelect} name="laboratorio" value={form.laboratorio} onChange={handleChange} onBlur={handleBlur} required><option value="">Selecione o laboratório</option>{Object.keys(laboratorioMap).map(lab => <option key={lab} value={lab}>{lab}</option>)}</select></div>{touched.laboratorio && errors.laboratorio?.map(msg => <small key={msg} className={styles.small}>{msg}</small>)}</div>
+
+                {/* Campo Tipo de Produto (Dinâmico) */}
+                <div className={getValidationClass('tipo')}>
+                  <label className={styles.inputLabel}>Tipo de Produto</label>
+                  <div className={styles.divInput}>
+                    <select
+                      className={styles.modernSelect}
+                      name="tipo"
+                      value={form.tipo}
+                      onChange={handleChange}
+                      onBlur={handleBlur}
+                      required
+                      disabled={loadingTipos}
+                    >
+                      <option value="">
+                        {loadingTipos ? "Carregando tipos..." : "Selecione o tipo"}
+                      </option>
+                      {tiposList.map(tipo => (
+                        <option key={tipo.tipo_id} value={tipo.tipo_id}>
+                          {tipo.nome_tipo}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+                  {tiposError && <small className={styles.small}>{tiposError}</small>}
+                  {touched.tipo && errors.tipo?.map(msg => <small key={msg} className={styles.small}>{msg}</small>)}
+                </div>
+
+                {/* MODIFICADO: Campo Forma Farmacêutica (Dinâmico) */}
+                <div className={getValidationClass('forma')}>
+                  <label className={styles.inputLabel}>Forma Farmacêutica</label>
+                  <div className={styles.divInput}>
+                    <select
+                      className={styles.modernSelect}
+                      name="forma"
+                      value={form.forma}
+                      onChange={handleChange}
+                      onBlur={handleBlur}
+                      required
+                      disabled={loadingFormas}
+                    >
+                      <option value="">
+                        {loadingFormas ? "Carregando formas..." : "Selecione a forma"}
+                      </option>
+
+                      {formaList.map(forma => (
+                        <option key={forma.forma_id} value={forma.forma_id}>
+                          {forma.forma_nome}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+                  {formaError && <small className={styles.small}>{formaError}</small>}
+                  {touched.forma && errors.forma?.map(msg => <small key={msg} className={styles.small}>{msg}</small>)}
+                </div>
+
+                {/* MODIFICADO: Campo Laboratório (Dinâmico) */}
+                <div className={getValidationClass('laboratorio')}>
+                  <label className={styles.inputLabel}>Laboratório</label>
+                  <div className={styles.divInput}>
+                    <select
+                      className={styles.modernSelect}
+                      name="laboratorio"
+                      value={form.laboratorio}
+                      onChange={handleChange}
+                      onBlur={handleBlur}
+                      required
+                      disabled={loadingLabs}
+                    >
+                      <option value="">
+                        {loadingLabs ? "Carregando laboratórios..." : "Selecione o laboratório"}
+                      </option>
+
+                      {labList.map(lab => (
+                        <option key={lab.lab_id} value={lab.lab_id}>
+                          {lab.lab_nome}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+                  {labError && <small className={styles.small}>{labError}</small>}
+                  {touched.laboratorio && errors.laboratorio?.map(msg => <small key={msg} className={styles.small}>{msg}</small>)}
+                </div>
+
+                {/* Campo Imagem (permanece igual) */}
                 <div className={getValidationClass('imagem')}><label className={styles.inputLabel}>Imagem do Produto</label><div className={styles.divInput}><input id="file-upload" className={styles.fileInput} type="file" name="imagem" onChange={handleChange} onBlur={handleBlur} accept="image/png, image/jpeg, image/webp, image/gif" /><label htmlFor="file-upload" className={styles.fileInputLabel}><MdUploadFile /><span>{fileName || "Escolher arquivo (Opcional)"}</span></label></div>{touched.imagem && errors.imagem?.map(msg => <small key={msg} className={styles.small}>{msg}</small>)}</div>
               </div>
 

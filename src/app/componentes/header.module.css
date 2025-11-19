@@ -1,0 +1,48 @@
+.headerShared {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1rem 1.5rem;
+    background: transparent;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.04)
+}
+
+.headerShared h1 {
+    margin: 0;
+    font-size: 1.25rem;
+    color: #0f172a
+}
+
+.logout {
+    background: transparent;
+    border: 1px solid rgba(30, 41, 59, 0.08);
+    padding: 0.45rem 0.75rem;
+    border-radius: 8px;
+    cursor: pointer
+}
+
+.logout:hover {
+    background: rgba(69, 139, 0, 0.06)
+}
+
+.envBadge {
+    display: inline-block;
+    margin-left: 0.6rem;
+    background: #fde68a;
+    color: #92400e;
+    padding: 0.15rem 0.45rem;
+    border-radius: 6px;
+    font-size: 0.75rem;
+    font-weight: 700
+}
+
+.devUserBadge {
+    display: inline-block;
+    margin-left: 0.4rem;
+    background: #ecfeff;
+    color: #055160;
+    padding: 0.15rem 0.45rem;
+    border-radius: 6px;
+    font-size: 0.75rem;
+    font-weight: 700
+}

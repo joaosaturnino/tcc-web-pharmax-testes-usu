@@ -1,0 +1,106 @@
+.sidebar {
+    width: 30rem;
+    background: linear-gradient(180deg, #191970 0%, #0f1440 100%);
+    color: #CDC1C5;
+    display: flex;
+    flex-direction: column;
+    transition: transform .3s;
+    box-shadow: 0.2rem 0 1rem rgba(0, 0, 0, 0.1);
+    z-index: 90;
+    flex-shrink: 0;
+    height: calc(100vh - 80px);
+    position: sticky;
+    top: 80px;
+    overflow-y: auto
+}
+
+.sidebarHeader {
+    padding: 2rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: rgba(25, 25, 112, 0.95);
+    position: sticky;
+    top: 0;
+    z-index: 10
+}
+
+.logoContainer {
+    display: flex;
+    align-items: center;
+    gap: 1.2rem
+}
+
+.logoImage {
+    width: 60px;
+    height: 60px;
+    border-radius: 5%;
+    object-fit: cover
+}
+
+.logoText {
+    font-size: 2.5rem;
+    font-weight: 600;
+    color: #fff
+}
+
+.sidebarClose {
+    display: none;
+    background: none;
+    border: none;
+    font-size: 2.2rem;
+    color: #fff;
+    cursor: pointer;
+    border-radius: 0.6rem;
+    padding: 0.4rem 0.8rem
+}
+
+.nav {
+    flex: 1;
+    padding: 0 1.0rem 2.0rem 1.0rem;
+    overflow-y: auto
+}
+
+.navSection {
+    margin-bottom: 1.8rem
+}
+
+.navLabel {
+    font-size: 1.3rem;
+    color: #b0b0b0;
+    margin-bottom: 0.6rem;
+    margin-top: 1rem;
+    text-transform: uppercase;
+    letter-spacing: 0.5px
+}
+
+.navLink {
+    display: flex;
+    align-items: center;
+    padding: 1rem 1.2rem;
+    color: #CDC1C5;
+    text-decoration: none;
+    border-radius: 0.6rem;
+    margin-bottom: 0.4rem;
+    transition: all .3s ease;
+    font-size: 1.5rem;
+    border-left: 4px solid transparent;
+    gap: 1rem
+}
+
+.navLink:hover {
+    background: rgba(69, 139, 0, 0.15);
+    color: #fff;
+    border-left-color: var(--secondary-brand-color);
+    transform: translateX(5px)
+}
+
+.navText {
+    margin-left: 0.6rem;
+    font-family: Montserrat
+}
+
+.active {
+    background: rgba(255, 255, 255, 0.06);
+    border-left-color: var(--secondary-brand-color)
+}

@@ -44,9 +44,9 @@ export default function FavoritosFarmaciaPage() {
           handleLogout();
           return;
         }
-        
+
         const response = await api.get(`/favoritos/${idDaFarmacia}/favoritos`);
-        
+
         if (response.data.sucesso) {
           const processedMedicamentos = response.data.dados.map(med => ({
             ...med,
@@ -56,8 +56,8 @@ export default function FavoritosFarmaciaPage() {
             dosagem: med.med_dosagem,
             favoritacoes: med.favoritacoes_count || 0,
             status: med.status || "pendente",
-            ultimaAtualizacao: med.med_data_atualizacao 
-              ? new Date(med.med_data_atualizacao).toISOString() 
+            ultimaAtualizacao: med.med_data_atualizacao
+              ? new Date(med.med_data_atualizacao).toISOString()
               : new Date().toISOString(),
           }));
 
@@ -122,7 +122,7 @@ export default function FavoritosFarmaciaPage() {
                       <img
                         src={farmaciaInfo.farm_logo_url}
                         alt={`Logo de ${farmaciaInfo.farm_nome}`}
-                        className={styles.logoImage} 
+                        className={styles.logoImage}
                       />
                     )}
                     <span className={styles.logoText}>
@@ -133,8 +133,8 @@ export default function FavoritosFarmaciaPage() {
                   <span className={styles.logoText}>PharmaX</span>
                 )}
               </div>
-              <button 
-                className={styles.sidebarClose} 
+              <button
+                className={styles.sidebarClose}
                 onClick={() => setSidebarOpen(false)}
                 aria-label="Fechar menu" // NOVO: Melhoria de acessibilidade
               >
@@ -201,43 +201,43 @@ export default function FavoritosFarmaciaPage() {
                   {currentItems.length > 0 ? (
                     // REMOVIDO: A ordenação (.sort) foi removida daqui pois agora é feita na busca dos dados.
                     currentItems.map((med, index) => (
-                        <div className={styles.card} key={med.id}>
-                          <div className={styles.cardHeader}>
-                            <div className={styles.cardUserInfo}>
-                              <div className={styles.userAvatar}>
-                                {/* O ranking agora é calculado corretamente com base na lista completa */}
-                                <span>#{indexOfFirstItem + index + 1}</span>
-                              </div>
-                              <div>
-                                <h2>{med.nome}</h2>
-                                <p>{med.fabricante}</p>
-                                <span className={styles.favoriteDate}>
-                                  {med.favoritacoes} favoritações
-                                </span>
-                              </div>
+                      <div className={styles.card} key={med.id}>
+                        <div className={styles.cardHeader}>
+                          <div className={styles.cardUserInfo}>
+                            <div className={styles.userAvatar}>
+                              {/* O ranking agora é calculado corretamente com base na lista completa */}
+                              <span>#{indexOfFirstItem + index + 1}</span>
                             </div>
-                          </div>
-                          <div className={styles.medList}>
-                            <div className={styles.medItem}>
-                              <div className={styles.medInfo}>
-                                <strong>Dosagem</strong>
-                                <span className={styles.dosagem}>{med.dosagem}</span>
-                              </div>
-                              <span className={`${styles.badge} ${med.status === "em_estoque" ? styles.inStock : med.status === "indisponivel" ? styles.outStock : styles.pending}`}>
-                                {med.status === "em_estoque" ? "Disponível" : med.status === "indisponivel" ? "Indisponível" : "Pendente"}
+                            <div>
+                              <h2>{med.nome}</h2>
+                              <p>{med.fabricante}</p>
+                              <span className={styles.favoriteDate}>
+                                {med.favoritacoes} favoritações
                               </span>
-                            </div>
-                            <div className={styles.medItem}>
-                              <div className={styles.medInfo}>
-                                <strong>Última atualização</strong>
-                                <span className={styles.dosagem}>
-                                  {new Date(med.ultimaAtualizacao).toLocaleDateString('pt-BR')}
-                                </span>
-                              </div>
                             </div>
                           </div>
                         </div>
-                      ))
+                        <div className={styles.medList}>
+                          <div className={styles.medItem}>
+                            <div className={styles.medInfo}>
+                              <strong>Dosagem</strong>
+                              <span className={styles.dosagem}>{med.dosagem}</span>
+                            </div>
+                            <span className={`${styles.badge} ${med.status === "em_estoque" ? styles.inStock : med.status === "indisponivel" ? styles.outStock : styles.pending}`}>
+                              {med.status === "em_estoque" ? "Disponível" : med.status === "indisponivel" ? "Indisponível" : "Pendente"}
+                            </span>
+                          </div>
+                          <div className={styles.medItem}>
+                            <div className={styles.medInfo}>
+                              <strong>Última atualização</strong>
+                              <span className={styles.dosagem}>
+                                {new Date(med.ultimaAtualizacao).toLocaleDateString('pt-BR')}
+                              </span>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    ))
                   ) : (
                     <div className={styles.emptyState}>
                       <span className={styles.emptyIcon}>⭐</span>

@@ -14,7 +14,7 @@ export default function EditarLaboratorioPage() {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [loading, setLoading] = useState(true);
   const [farmaciaInfo, setFarmaciaInfo] = useState(null);
-  
+
   const [form, setForm] = useState({
     lab_nome: "",
     lab_cnpj: "",
@@ -38,7 +38,7 @@ export default function EditarLaboratorioPage() {
         setLoading(true);
         try {
           const response = await api.get(`/laboratorios/${lab_id}`);
-          
+
           if (response.data.sucesso) {
             const laboratorioData = response.data.dados;
             setForm({
@@ -49,7 +49,7 @@ export default function EditarLaboratorioPage() {
               lab_email: laboratorioData.lab_email || "",
               lab_ativo: laboratorioData.lab_ativo,
             });
-            
+
             setDataCadastro(new Date(laboratorioData.lab_data_cadastro).toISOString().split('T')[0]);
 
             if (laboratorioData.lab_logo) {
@@ -62,12 +62,20 @@ export default function EditarLaboratorioPage() {
               setPreview(logoUrl);
             }
           } else {
-            alert("Laboratório não encontrado!");
-            router.push("/farmacias/laboratorio/lista");
+            if (typeof window !== 'undefined' && window.showAlert) {
+              window.showAlert({ type: 'error', title: 'Não encontrado', message: 'Laboratório não encontrado!', duration: 5000 });
+            } else {
+              alert('Laboratório não encontrado!');
+            }
+            router.push('/farmacias/laboratorio/lista');
           }
         } catch (error) {
-          console.error("Erro ao buscar dados do laboratório:", error);
-          alert("Não foi possível carregar os dados do laboratório.");
+          console.error('Erro ao buscar dados do laboratório:', error);
+          if (typeof window !== 'undefined' && window.showAlert) {
+            window.showAlert({ type: 'error', title: 'Erro', message: 'Não foi possível carregar os dados do laboratório.', duration: 6000 });
+          } else {
+            alert('Não foi possível carregar os dados do laboratório.');
+          }
         } finally {
           setLoading(false);
         }
@@ -104,14 +112,22 @@ export default function EditarLaboratorioPage() {
 
     try {
       await api.put(`/laboratorios/${lab_id}`, formData, {
-        headers: { "Content-Type": "multipart/form-data" },
+        headers: { 'Content-Type': 'multipart/form-data' },
       });
-      alert("Laboratório atualizado com sucesso!");
-      router.push("/farmacias/laboratorio/lista");
+      if (typeof window !== 'undefined' && window.showAlert) {
+        window.showAlert({ type: 'success', title: 'Atualizado', message: 'Laboratório atualizado com sucesso!', duration: 4000 });
+      } else {
+        alert('Laboratório atualizado com sucesso!');
+      }
+      router.push('/farmacias/laboratorio/lista');
     } catch (error) {
       console.error("Erro ao atualizar o laboratório:", error);
       const errorMsg = error.response?.data?.mensagem || "Verifique os dados e tente novamente.";
-      alert(`Erro ao atualizar: ${errorMsg}`);
+      if (typeof window !== 'undefined' && window.showAlert) {
+        window.showAlert({ type: 'error', title: 'Erro ao atualizar', message: errorMsg, duration: 7000 });
+      } else {
+        alert(`Erro ao atualizar: ${errorMsg}`);
+      }
     }
   };
 
@@ -125,8 +141,8 @@ export default function EditarLaboratorioPage() {
     <div className={styles.dashboard}>
       <header className={styles.header}>
         <div className={styles.headerLeft}>
-          <button 
-            className={styles.menuToggle} 
+          <button
+            className={styles.menuToggle}
             onClick={() => setSidebarOpen(!sidebarOpen)}
             aria-label="Abrir menu" // NOVO: Acessibilidade
           >
@@ -138,29 +154,29 @@ export default function EditarLaboratorioPage() {
 
       <div className={styles.contentWrapper}>
         <aside className={`${styles.sidebar} ${sidebarOpen ? styles.sidebarOpen : ""}`}>
-            <div className={styles.sidebarHeader}>
-              <div className={styles.logoContainer}>
-                {farmaciaInfo?.farm_logo_url && (
-                  <img src={farmaciaInfo.farm_logo_url} alt={`Logo de ${farmaciaInfo.farm_nome}`} className={styles.logoImage} />
-                )}
-                <span className={styles.logoText}>{farmaciaInfo?.farm_nome || "Pharma-X"}</span>
-              </div>
-              <button 
-                className={styles.sidebarClose} 
-                onClick={() => setSidebarOpen(false)}
-                aria-label="Fechar menu" // NOVO: Acessibilidade
-              >
-                ×
-              </button>
+          <div className={styles.sidebarHeader}>
+            <div className={styles.logoContainer}>
+              {farmaciaInfo?.farm_logo_url && (
+                <img src={farmaciaInfo.farm_logo_url} alt={`Logo de ${farmaciaInfo.farm_nome}`} className={styles.logoImage} />
+              )}
+              <span className={styles.logoText}>{farmaciaInfo?.farm_nome || "Pharma-X"}</span>
             </div>
-            
-            {/* CORREÇÃO: Trocadas <a> por <Link> para navegação mais rápida */}
-            <nav className={styles.nav}>
-              <div className={styles.navSection}><p className={styles.navLabel}>Principal</p><Link href="/farmacias/favoritos" className={styles.navLink}><span className={styles.navText}>Favoritos</span></Link><Link href="/farmacias/produtos/medicamentos" className={styles.navLink}><span className={styles.navText}>Medicamentos</span></Link></div>
-              <div className={styles.navSection}><p className={styles.navLabel}>Gestão</p><Link href="/farmacias/cadastro/funcionario/lista" className={styles.navLink}><span className={styles.navText}>Funcionários</span></Link><Link href="/farmacias/laboratorio/lista" className={`${styles.navLink} ${styles.active}`}><span className={styles.navText}>Laboratórios</span></Link></div>
-              <div className={styles.navSection}><p className={styles.navLabel}>Relatórios</p><Link href="/farmacias/relatorios/favoritos" className={styles.navLink}><span className={styles.navText}>Medicamentos Favoritos</span></Link><Link href="/farmacias/relatorios/funcionarios" className={styles.navLink}><span className={styles.navText}>Relatório de Funcionarios</span></Link><Link href="/farmacias/relatorios/laboratorios" className={styles.navLink}><span className={styles.navText}>Relatório de Laboratorios</span></Link></div>
-              <div className={styles.navSection}><p className={styles.navLabel}>Conta</p><Link href="/farmacias/perfil" className={styles.navLink}><span className={styles.navText}>Meu Perfil</span></Link><button onClick={handleLogout} className={styles.navLink} style={{ background: 'none', border: 'none', width: '100%', textAlign: 'left', cursor: 'pointer' }}><span className={styles.navText}>Sair</span></button></div>
-            </nav>
+            <button
+              className={styles.sidebarClose}
+              onClick={() => setSidebarOpen(false)}
+              aria-label="Fechar menu" // NOVO: Acessibilidade
+            >
+              ×
+            </button>
+          </div>
+
+          {/* CORREÇÃO: Trocadas <a> por <Link> para navegação mais rápida */}
+          <nav className={styles.nav}>
+            <div className={styles.navSection}><p className={styles.navLabel}>Principal</p><Link href="/farmacias/favoritos" className={styles.navLink}><span className={styles.navText}>Favoritos</span></Link><Link href="/farmacias/produtos/medicamentos" className={styles.navLink}><span className={styles.navText}>Medicamentos</span></Link></div>
+            <div className={styles.navSection}><p className={styles.navLabel}>Gestão</p><Link href="/farmacias/cadastro/funcionario/lista" className={styles.navLink}><span className={styles.navText}>Funcionários</span></Link><Link href="/farmacias/laboratorio/lista" className={`${styles.navLink} ${styles.active}`}><span className={styles.navText}>Laboratórios</span></Link></div>
+            <div className={styles.navSection}><p className={styles.navLabel}>Relatórios</p><Link href="/farmacias/relatorios/favoritos" className={styles.navLink}><span className={styles.navText}>Medicamentos Favoritos</span></Link><Link href="/farmacias/relatorios/funcionarios" className={styles.navLink}><span className={styles.navText}>Relatório de Funcionarios</span></Link><Link href="/farmacias/relatorios/laboratorios" className={styles.navLink}><span className={styles.navText}>Relatório de Laboratorios</span></Link></div>
+            <div className={styles.navSection}><p className={styles.navLabel}>Conta</p><Link href="/farmacias/perfil" className={styles.navLink}><span className={styles.navText}>Meu Perfil</span></Link><button onClick={handleLogout} className={styles.navLink} style={{ background: 'none', border: 'none', width: '100%', textAlign: 'left', cursor: 'pointer' }}><span className={styles.navText}>Sair</span></button></div>
+          </nav>
         </aside>
 
         {sidebarOpen && (<div className={styles.overlay} onClick={() => setSidebarOpen(false)} />)}

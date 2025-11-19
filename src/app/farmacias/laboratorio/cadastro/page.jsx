@@ -234,10 +234,10 @@ export default function CadastroLaboratorioPage() {
             <div className={styles.navSection}>
               <p className={styles.navLabel}>Relatórios</p>
               <Link href="/farmacias/relatorios/favoritos" className={styles.navLink}>
-              <span className={styles.navText}>Medicamentos Favoritos</span>
+                <span className={styles.navText}>Medicamentos Favoritos</span>
               </Link>
               <Link href="/farmacias/relatorios/funcionarios" className={styles.navLink}>
-              <span className={styles.navText}>Relatório de Funcionarios</span>
+                <span className={styles.navText}>Relatório de Funcionarios</span>
               </Link>
               <Link href="/farmacias/relatorios/laboratorios" className={styles.navLink}><span className={styles.navText}>Relatório de Laboratorios</span></Link></div>
             <div className={styles.navSection}><p className={styles.navLabel}>Conta</p><Link href="/farmacias/perfil" className={styles.navLink}><span className={styles.navText}>Meu Perfil</span></Link><button onClick={handleLogout} className={styles.navLink} style={{ background: 'none', border: 'none', width: '100%', textAlign: 'left', cursor: 'pointer' }}><span className={styles.navText}>Sair</span></button></div>

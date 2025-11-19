@@ -5,14 +5,39 @@ import { useRouter } from "next/navigation";
 import styles from "./cadastro.module.css";
 import AuthGuard from "../../../componentes/AuthGuard";
 import api from "../../../services/api";
-import { BsUpcScan, BsFillPatchCheckFill, BsFillPatchQuestionFill } from "react-icons/bs";
+import { BsUpcScan, BsFillPatchCheckFill, BsFillPatchQuestionFill, BsFillExclamationTriangleFill } from "react-icons/bs";
+import toast, { Toaster } from "react-hot-toast";
 
 const currency = new Intl.NumberFormat("pt-BR", { style: "currency", currency: "BRL" });
 
-// Mapeamentos
-const tiposMedicamento = { 1: "Referência", 2: "Genérico", 3: "Similar" };
-const formasMedicamento = { 1: "Comprimidos", 2: "Cápsulas", 3: "Líquido", 4: "Pó para Suspensão", 5: "Pomada", 6: "Injetável" };
-const categoriasMedicamento = { 1: "Analgésico", 2: "Antibiótico", 3: "Anti-hipertensivo", 4: "Gastrointestinal", 5: "Cardiovascular" };
+// === Funções de Data ===
+const formatDate = (date) => {
+  const d = new Date(date);
+  let month = '' + (d.getMonth() + 1);
+  let day = '' + d.getDate();
+  const year = d.getFullYear();
+
+  if (month.length < 2) month = '0' + month;
+  if (day.length < 2) day = '0' + day;
+
+  return [year, month, day].join('-');
+};
+
+const formatDateForDisplay = (dateString) => {
+  if (!dateString) return "N/A";
+  try {
+    const date = new Date(dateString);
+    return new Intl.DateTimeFormat('pt-BR', {
+      day: '2-digit',
+      month: '2-digit',
+      year: 'numeric',
+      timeZone: 'UTC'
+    }).format(date);
+  } catch (e) {
+    return "Data inválida";
+  }
+};
+// === FIM Funções de Data ===
 
 function ListagemMedicamentos() {
   const [medicamentos, setMedicamentos] = useState([]);
@@ -31,6 +56,8 @@ function ListagemMedicamentos() {
   const [termoPesquisa, setTermoPesquisa] = useState("");
   const [filtroStatus, setFiltroStatus] = useState("todos");
   const [filtroCategoria, setFiltroCategoria] = useState("todos");
+  const [tiposProduto, setTiposProduto] = useState([]);
+  const [promocoesAtivas, setPromocoesAtivas] = useState([]);
   const [ordenacao, setOrdenacao] = useState("nome");
   const [carregandoFiltro, setCarregandoFiltro] = useState(false);
   const [visualizacao, setVisualizacao] = useState("tabela");
@@ -38,59 +65,107 @@ function ListagemMedicamentos() {
   const [itensPorPagina, setItensPorPagina] = useState(10);
   const router = useRouter();
 
-  useEffect(() => {
-    const fetchMedicamentos = async () => {
-      setErroApi("");
-      try {
-        const userDataString = localStorage.getItem("userData");
-        if (!userDataString) throw new Error("Usuário não autenticado.");
-        
-        const userData = JSON.parse(userDataString);
-        setFarmaciaInfo(userData);
-        const farmaciaId = userData.farm_id;
-        if (!farmaciaId) throw new Error("ID da farmácia não encontrado.");
+  // States para o Modal de Promoção
+  const [modalPromocaoAberto, setModalPromocaoAberto] = useState(false);
+  const [promoErro, setPromoErro] = useState("");
+  const [isSubmittingPromo, setIsSubmittingPromo] = useState(false);
+  const [promoDados, setPromoDados] = useState({
+    porcentagem: "",
+    data_inicio: formatDate(new Date()),
+    data_fim: "",
+  });
 
-        const response = await api.get(`/medicamentos?farmacia_id=${farmaciaId}`);
+  const [confirmacao, setConfirmacao] = useState({
+    isOpen: false,
+    title: "",
+    message: "",
+    onConfirm: () => { },
+    isDanger: false,
+  });
 
-        if (response.data.sucesso) {
-          const processedMedicamentos = response.data.dados.map(med => ({
-            id: med.med_id,
-            nome: med.med_nome,
-            dosagem: med.med_dosagem,
-            quantidade: med.med_quantidade || 0,
-            tipo: med.tipo_nome || tiposMedicamento[med.tipo_id] || "N/A",
-            forma: med.forma_nome || formasMedicamento[med.forma_id] || "N/A",
-            descricao: med.med_descricao || "Sem descrição.",
-            laboratorio: med.lab_nome || "N/A",
-            preco: med.medp_preco || 0,
-            imagem: med.med_imagem, 
-            codigoBarras: med.med_cod_barras || "",
-            med_ativo: med.med_ativo,
-            status: med.med_ativo ? "ativo" : "inativo",
-            categoria: categoriasMedicamento[1] || "Geral",
-            lote: "LOTE" + med.med_id.toString().padStart(5, '0'),
-            dataCadastro: med.med_data_cadastro,
-            dataAtualizacao: med.med_data_atualizacao
-          }));
-          setMedicamentos(processedMedicamentos);
-        } else {
-          setErroApi(response.data.mensagem);
-        }
-      } catch (error) {
-        const mensagem = error.response?.data?.mensagem || error.message || "Não foi possível conectar ao servidor.";
-        setErroApi(mensagem);
-      } finally {
-        setLoading(false);
+  const processarMedicamentos = (medicamentosData, promocoesData) => {
+    return medicamentosData.map(med => {
+      const promocaoInfo = promocoesData.find(p => p.medicamento_id === med.med_id);
+      let precoPromocional = null;
+      if (promocaoInfo) {
+        const desconto = parseFloat(promocaoInfo.promo_desconto) / 100;
+        precoPromocional = (med.medp_preco * (1 - desconto));
       }
-    };
+      return {
+        preco_original: med.medp_preco || 0,
+        id: med.med_id,
+        nome: med.med_nome,
+        dosagem: med.med_dosagem,
+        quantidade: med.med_quantidade || 0,
+        tipo: med.tipo_nome || "N/A",
+        forma: med.forma_nome || "N/A",
+        descricao: med.med_descricao || "Sem descrição.",
+        laboratorio: med.lab_nome || "N/A",
+        imagem: med.med_imagem,
+        codigoBarras: med.med_cod_barras || "",
+        med_ativo: med.med_ativo,
+        status: med.med_ativo ? "ativo" : "inativo",
+        categoria: med.categoria_nome || "Geral",
+        lote: "LOTE" + med.med_id.toString().padStart(5, '0'),
+        dataCadastro: med.med_data_cadastro,
+        dataAtualizacao: med.med_data_atualizacao,
+        promocao: !!promocaoInfo,
+        preco_promocional: precoPromocional,
+        promocao_id: promocaoInfo?.promo_id || null,
+        promocao_porcentagem: promocaoInfo?.promo_desconto || 0,
+        // ================== MUDANÇA ADICIONADA ==================
+        promocao_data_inicio: promocaoInfo?.promo_inicio || null,
+        // ================== FIM DA MUDANÇA ==================
+        promocao_data_fim: promocaoInfo?.promo_fim || null,
+      };
+    });
+  };
 
-    fetchMedicamentos();
+  const fetchDadosIniciais = async () => {
+    setErroApi("");
+    let farmaciaId;
+    try {
+      const userDataString = localStorage.getItem("userData");
+      if (!userDataString) throw new Error("Usuário não autenticado.");
+      const userData = JSON.parse(userDataString);
+      setFarmaciaInfo(userData);
+      farmaciaId = userData.farm_id;
+      if (!farmaciaId) throw new Error("ID da farmácia não encontrado.");
+      const [responseMedicamentos, responseTipos, responsePromocoes] = await Promise.all([
+        api.get(`/medicamentos?farmacia_id=${farmaciaId}`),
+        api.get('/tipoproduto'),
+        api.get(`/promocoes?farmacia_id=${farmaciaId}`)
+      ]);
+      let promocoes = [];
+      if (responsePromocoes.data.sucesso) {
+        promocoes = responsePromocoes.data.dados;
+        setPromocoesAtivas(promocoes);
+      } else {
+        console.warn("Não foi possível carregar as promoções.");
+      }
+      if (responseMedicamentos.data.sucesso) {
+        const processedMedicamentos = processarMedicamentos(responseMedicamentos.data.dados, promocoes);
+        setMedicamentos(processedMedicamentos);
+      } else {
+        setErroApi(responseMedicamentos.data.mensagem);
+      }
+      if (responseTipos.data.sucesso) {
+        setTiposProduto(responseTipos.data.dados);
+      } else {
+        console.warn("Não foi possível carregar os tipos de produto para o filtro.");
+      }
+    } catch (error) {
+      const mensagem = error.response?.data?.mensagem || error.message || "Não foi possível conectar ao servidor.";
+      setErroApi(mensagem);
+      console.error("Erro ao buscar dados iniciais:", error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchDadosIniciais();
   }, []);
-
-  const categorias = useMemo(() => {
-    const cats = [...new Set(medicamentos.map((m) => m.categoria))];
-    return ["todos", ...cats];
-  }, [medicamentos]);
 
   useEffect(() => {
     setCarregandoFiltro(true);
@@ -100,7 +175,6 @@ function ListagemMedicamentos() {
 
   const medicamentosFiltrados = useMemo(() => {
     let resultado = [...medicamentos];
-    
     if (termoPesquisa) {
       const termo = termoPesquisa.toLowerCase();
       resultado = resultado.filter(
@@ -112,91 +186,187 @@ function ListagemMedicamentos() {
           med.categoria.toLowerCase().includes(termo)
       );
     }
-    
     if (filtroStatus !== "todos") {
       resultado = resultado.filter((med) => med.status === filtroStatus);
     }
-    
     if (filtroCategoria !== "todos") {
-      resultado = resultado.filter((med) => med.categoria === filtroCategoria);
+      resultado = resultado.filter((med) => med.tipo === filtroCategoria);
     }
-    
     resultado.sort((a, b) => {
       switch (ordenacao) {
         case "nome": return a.nome.localeCompare(b.nome);
         case "quantidade": return b.quantidade - a.quantidade;
-        case "preco": return b.preco - a.preco;
+        case "preco":
+          const precoA = a.promocao ? a.preco_promocional : a.preco_original;
+          const precoB = b.promocao ? b.preco_promocional : b.preco_original;
+          return precoB - precoA;
         case "laboratorio": return a.laboratorio.localeCompare(b.laboratorio);
         default: return 0;
       }
     });
-    
     return resultado;
   }, [medicamentos, termoPesquisa, filtroStatus, filtroCategoria, ordenacao]);
-  
+
   const totalPaginas = Math.ceil(medicamentosFiltrados.length / itensPorPagina);
   const indiceInicial = (paginaAtual - 1) * itensPorPagina;
   const medicamentosPaginados = medicamentosFiltrados.slice(indiceInicial, indiceInicial + itensPorPagina);
 
-  const handleExcluir = async (id) => {
-    if (window.confirm("Tem certeza que deseja excluir este medicamento?")) {
+  const fecharConfirmacao = () => {
+    setConfirmacao({ isOpen: false, title: "", message: "", onConfirm: () => { }, isDanger: false });
+  };
+
+  const handleConfirmar = async () => {
+    await confirmacao.onConfirm();
+    fecharConfirmacao();
+  };
+
+  const handleExcluir = (id) => {
+    const runDelete = async () => {
       try {
-        const userDataString = localStorage.getItem("userData");
-        if (!userDataString) throw new Error("Usuário não autenticado.");
-        const userData = JSON.parse(userDataString);
-        const farmaciaId = userData.farm_id;
+        const farmaciaId = farmaciaInfo?.farm_id;
         if (!farmaciaId) throw new Error("ID da farmácia não encontrado.");
 
         const response = await api.delete(`/medicamentos/${id}`, {
           data: { farmacia_id: farmaciaId }
         });
-        
+
         if (response.data.sucesso) {
-          setMedicamentos(medicamentos.filter((med) => med.id !== id));
-          if (modalDetalhesAberto && medicamentoSelecionado?.id === id) {
-            fecharModalDetalhes();
-          }
-          alert("Medicamento excluído com sucesso!");
+          await fetchDadosIniciais();
+          fecharModalDetalhes();
+          toast.success("Medicamento excluído com sucesso!");
         } else {
-          alert("Erro ao excluir medicamento: " + response.data.mensagem);
+          toast.error("Erro ao excluir medicamento: " + response.data.mensagem);
         }
       } catch (error) {
-        alert(error.response?.data?.mensagem || "Erro ao excluir medicamento.");
+        toast.error(error.response?.data?.mensagem || "Erro ao excluir medicamento.");
       }
-    }
+    };
+
+    setConfirmacao({
+      isOpen: true,
+      title: "Confirmar Exclusão",
+      message: `Tem certeza que deseja excluir o medicamento "${medicamentoSelecionado?.nome}"? Esta ação não pode ser desfeita.`,
+      onConfirm: runDelete,
+      isDanger: true,
+    });
   };
 
   const toggleStatus = async (id) => {
     try {
       const medicamento = medicamentos.find(med => med.id === id);
       if (!medicamento) return;
-
-      const userDataString = localStorage.getItem("userData");
-      if (!userDataString) throw new Error("Usuário não autenticado.");
-      const userData = JSON.parse(userDataString);
-      const farmaciaId = userData.farm_id;
+      const farmaciaId = farmaciaInfo?.farm_id;
       if (!farmaciaId) throw new Error("ID da farmácia não encontrado.");
-
       const novoStatusBooleano = !medicamento.med_ativo;
-      
+
       const response = await api.put(`/medicamentos/${id}`, {
         med_ativo: novoStatusBooleano,
-        farmacia_id: farmaciaId 
+        farmacia_id: farmaciaId
       });
 
       if (response.data.sucesso) {
-        const novoStatusString = novoStatusBooleano ? "ativo" : "inativo";
-        setMedicamentos(medicamentos.map((med) => med.id === id ? { ...med, med_ativo: novoStatusBooleano, status: novoStatusString } : med));
-        if (medicamentoSelecionado?.id === id) {
-          setMedicamentoSelecionado({ ...medicamentoSelecionado, med_ativo: novoStatusBooleano, status: novoStatusString });
-        }
-        alert(response.data.mensagem || "Status atualizado!");
+        await fetchDadosIniciais();
+        fecharModalDetalhes();
+        toast.success(response.data.mensagem || "Status atualizado!");
       } else {
-        alert("Erro: " + response.data.mensagem);
+        toast.error("Erro: " + response.data.mensagem);
       }
     } catch (error) {
-      alert(error.response?.data?.mensagem || "Não foi possível alterar o status.");
+      toast.error(error.response?.data?.mensagem || "Não foi possível alterar o status.");
     }
+  };
+
+  const handlePromoChange = (e) => {
+    const { name, value } = e.target;
+    setPromoDados(prev => ({ ...prev, [name]: value }));
+  };
+
+  const abrirModalPromocao = () => {
+    setPromoErro("");
+    setPromoDados({
+      porcentagem: "",
+      data_inicio: formatDate(new Date()),
+      data_fim: "",
+    });
+    setModalPromocaoAberto(true);
+  };
+
+  const fecharModalPromocao = () => {
+    if (isSubmittingPromo) return;
+    setModalPromocaoAberto(false);
+  };
+
+  const handleCriarPromocao = async (e) => {
+    e.preventDefault();
+    setPromoErro("");
+    setIsSubmittingPromo(true);
+
+    const { porcentagem, data_inicio, data_fim } = promoDados;
+    if (!porcentagem || !data_inicio || !data_fim) {
+      setPromoErro("Todos os campos são obrigatórios.");
+      setIsSubmittingPromo(false);
+      return;
+    }
+    if (parseFloat(porcentagem) <= 0 || parseFloat(porcentagem) >= 100) {
+      setPromoErro("A porcentagem deve ser um valor entre 1 e 99.");
+      setIsSubmittingPromo(false);
+      return;
+    }
+
+    try {
+      const payload = {
+        medicamento_id: medicamentoSelecionado.id,
+        farmacia_id: farmaciaInfo.farm_id,
+        promo_desconto: parseFloat(porcentagem),
+        promo_inicio: data_inicio,
+        promo_fim: data_fim,
+      };
+
+      const response = await api.post('/promocoes', payload);
+
+      if (response.data.sucesso) {
+        await fetchDadosIniciais();
+        fecharModalPromocao();
+        fecharModalDetalhes();
+        toast.success("Promoção ativada com sucesso!");
+      } else {
+        setPromoErro(response.data.mensagem || "Erro ao salvar promoção.");
+      }
+    } catch (error) {
+      setPromoErro(error.response?.data?.mensagem || "Erro de conexão.");
+    } finally {
+      setIsSubmittingPromo(false);
+    }
+  };
+
+  const handleRemoverPromocao = (promoId) => {
+    if (!promoId) {
+      toast.error("Erro: ID da promoção não encontrado.");
+      return;
+    }
+
+    const runRemove = async () => {
+      try {
+        const response = await api.delete(`/promocoes/${promoId}`);
+        if (response.data.sucesso) {
+          await fetchDadosIniciais();
+          fecharModalDetalhes();
+          toast.success("Promoção removida com sucesso!");
+        } else {
+          toast.error(response.data.mensagem || "Erro ao remover promoção.");
+        }
+      } catch (error) {
+        toast.error(error.response?.data?.mensagem || "Erro de conexão.");
+      }
+    };
+
+    setConfirmacao({
+      isOpen: true,
+      title: "Remover Promoção",
+      message: `Tem certeza que deseja remover a promoção deste item?`,
+      onConfirm: runRemove,
+      isDanger: false,
+    });
   };
 
   const handleEditar = (id) => router.push(`/farmacias/produtos/medicamentos/editar/${id}`);
@@ -204,7 +374,7 @@ function ListagemMedicamentos() {
   const abrirModal = () => { setModalAberto(true); setCodigoBarras(""); setMedicamentoExistente(null); setProdutoNaoEncontrado(false); setErro(""); };
   const fecharModal = () => setModalAberto(false);
   const fecharModalDetalhes = () => { setModalDetalhesAberto(false); setMedicamentoSelecionado(null); };
-  
+
   const verificarCodigoBarras = () => {
     if (!codigoBarras.trim()) {
       setErro("Digite um código de barras válido.");
@@ -212,7 +382,6 @@ function ListagemMedicamentos() {
     }
     setVerificandoCodigo(true);
     setErro("");
-
     setTimeout(() => {
       const medicamento = medicamentos.find((med) => med.codigoBarras === codigoBarras);
       if (medicamento) {
@@ -235,6 +404,29 @@ function ListagemMedicamentos() {
 
   return (
     <AuthGuard>
+      <Toaster
+        position="top-right"
+        toastOptions={{
+          duration: 4000,
+          style: {
+            background: '#333',
+            color: '#fff',
+            fontSize: '1.5rem',
+            padding: '1.6rem',
+          },
+          success: {
+            style: {
+              background: '#458B00',
+            },
+          },
+          error: {
+            style: {
+              background: '#dc2626',
+            },
+          },
+        }}
+      />
+
       <div className={styles.dashboard}>
         <header className={styles.header}>
           <div className={styles.headerLeft}>
@@ -274,21 +466,57 @@ function ListagemMedicamentos() {
               <div className={styles.filtros}>
                 <div className={styles.viewToggle}><button className={`${styles.viewButton} ${visualizacao === "tabela" ? styles.active : ""}`} onClick={() => setVisualizacao("tabela")} title="Tabela">≡</button><button className={`${styles.viewButton} ${visualizacao === "grade" ? styles.active : ""}`} onClick={() => setVisualizacao("grade")} title="Grade">◼︎</button></div>
                 <div className={styles.filtroGroup}><label>Status:</label><select value={filtroStatus} onChange={(e) => setFiltroStatus(e.target.value)} className={styles.selectFiltro}><option value="todos">Todos</option><option value="ativo">Ativos</option><option value="inativo">Inativos</option></select></div>
-                <div className={styles.filtroGroup}><label>Categoria:</label><select value={filtroCategoria} onChange={(e) => setFiltroCategoria(e.target.value)} className={styles.selectFiltro}>{categorias.map((cat) => (<option key={cat} value={cat}>{cat === "todos" ? "Todas" : cat}</option>))}</select></div>
+                <div className={styles.filtroGroup}>
+                  <label>Categoria:</label>
+                  <select value={filtroCategoria} onChange={(e) => setFiltroCategoria(e.target.value)} className={styles.selectFiltro}>
+                    <option value="todos">Todas</option>
+                    {tiposProduto.map((tipo) => (
+                      <option key={tipo.tipo_id} value={tipo.nome_tipo}>{tipo.nome_tipo}</option>
+                    ))}
+                  </select>
+                </div>
                 <div className={styles.filtroGroup}><label>Ordenar por:</label><select value={ordenacao} onChange={(e) => setOrdenacao(e.target.value)} className={styles.selectFiltro}><option value="nome">Nome</option><option value="quantidade">Conteúdo</option><option value="preco">Preço</option><option value="laboratorio">Laboratório</option></select></div>
                 <div className={styles.filtroGroup}><label>Itens:</label><select value={itensPorPagina} onChange={handleItensPorPaginaChange} className={styles.selectFiltro}><option value="5">5</option><option value="10">10</option><option value="20">20</option><option value="50">50</option></select></div>
               </div>
               <div className={styles.infoResultados}>Exibindo {medicamentosPaginados.length} de {medicamentosFiltrados.length}</div>
             </div>
-            
+
             <div className={styles.tableContainer}>
-              {carregandoFiltro ? (<div className={styles.carregando}><div className={styles.spinner}></div><p>Filtrando...</p></div>) : medicamentosPaginados.length === 0 ? (<div className={styles.semResultados}><p>Nenhum medicamento encontrado.</p><button onClick={abrirModal} className={styles.actionButton}>+ Adicionar Medicamento</button></div>) : visualizacao === "tabela" ? (<table className={styles.tabela}><thead><tr><th>Imagem</th><th>Nome</th><th>Dosagem</th><th>Conteúdo</th><th>Preço</th><th>Status</th><th>Ações</th></tr></thead><tbody>{medicamentosPaginados.map((med) => (<tr key={med.id} className={`${styles.tableRow} ${med.status === "inativo" ? styles.inativo : ""}`}><td><img src={med.imagem} alt={med.nome} className={styles.medicamentoImagem} /></td><td><div className={styles.nomeContainer}><span className={styles.nome}>{med.nome}</span><span className={styles.categoria}>{med.categoria}</span></div></td><td>{med.dosagem}</td><td><span className={styles.quantidade}>{med.quantidade}</span></td><td>{currency.format(med.preco)}</td><td><span className={`${styles.status} ${med.status === "ativo" ? styles.statusAtivo : styles.statusInativo}`}>{med.status}</span></td><td><div className={styles.acoes}><button onClick={() => abrirDetalhes(med)} className={styles.botaoAcao}>Detalhes</button></div></td></tr>))}</tbody></table>) : (<div className={styles.gradeContainer}>{medicamentosPaginados.map((med) => (<div key={med.id} className={`${styles.medicamentoCard} ${med.status === "inativo" ? styles.inativo : ""}`}><div className={styles.cardHeader}><img src={med.imagem} alt={med.nome} className={styles.cardImagem} /><span className={`${styles.cardStatus} ${med.status === "ativo" ? styles.statusAtivo : styles.statusInativo}`}>{med.status}</span></div><div className={styles.cardContent}><h3 className={styles.cardNome}>{med.nome}</h3><p className={styles.cardDosagem}>{med.dosagem}</p><div className={styles.cardInfo}><div className={styles.infoItem}><span className={styles.infoLabel}>Conteúdo:</span><span className={styles.infoValue}>{med.quantidade}</span></div><div className={styles.infoItem}><span className={styles.infoLabel}>Preço:</span><span className={styles.infoValue}>{currency.format(med.preco)}</span></div></div></div><div className={styles.cardActions}><button onClick={() => abrirDetalhes(med)} className={styles.botaoAcaoCard}>Detalhes</button></div></div>))}</div>)}
+              {carregandoFiltro ? (<div className={styles.carregando}><div className={styles.spinner}></div><p>Filtrando...</p></div>) : medicamentosPaginados.length === 0 ? (<div className={styles.semResultados}><p>Nenhum medicamento encontrado.</p><button onClick={abrirModal} className={styles.actionButton}>+ Adicionar Medicamento</button></div>) : visualizacao === "tabela" ? (<table className={styles.tabela}><thead><tr><th>Imagem</th><th>Nome</th><th>Dosagem</th><th>Conteúdo</th><th>Preço</th><th>Status</th><th>Ações</th></tr></thead><tbody>{medicamentosPaginados.map((med) => (<tr key={med.id} className={`${styles.tableRow} ${med.status === "inativo" ? styles.inativo : ""}`}><td><img src={med.imagem} alt={med.nome} className={styles.medicamentoImagem} /></td><td><div className={styles.nomeContainer}><span className={styles.nome}>{med.nome}</span>
+                <span className={styles.categoria}>{med.tipo}</span>
+                {med.promocao && <span className={styles.promoTag}>PROMOÇÃO</span>}
+              </div></td><td>{med.dosagem}</td><td><span className={styles.quantidade}>{med.quantidade}</span></td>
+                <td>
+                  {med.promocao ? (
+                    <div>
+                      <span className={styles.precoOriginal}>{currency.format(med.preco_original)}</span>
+                      <span className={styles.precoPromocional}>{currency.format(med.preco_promocional)}</span>
+                    </div>
+                  ) : (
+                    currency.format(med.preco_original)
+                  )}
+                </td>
+                <td><span className={`${styles.status} ${med.status === "ativo" ? styles.statusAtivo : styles.statusInativo}`}>{med.status}</span></td><td><div className={styles.acoes}><button onClick={() => abrirDetalhes(med)} className={styles.botaoAcao}>Detalhes</button></div></td></tr>))}</tbody></table>) : (<div className={styles.gradeContainer}>{medicamentosPaginados.map((med) => (<div key={med.id} className={`${styles.medicamentoCard} ${med.status === "inativo" ? styles.inativo : ""}`}><div className={styles.cardHeader}><img src={med.imagem} alt={med.nome} className={styles.cardImagem} />
+                  {med.promocao && <span className={styles.cardPromoTag}>PROMO</span>}
+                  <span className={`${styles.cardStatus} ${med.status === "ativo" ? styles.statusAtivo : styles.statusInativo}`}>{med.status}</span></div><div className={styles.cardContent}><h3 className={styles.cardNome}>{med.nome}</h3><p className={styles.cardDosagem}>{med.dosagem}</p><div className={styles.cardInfo}><div className={styles.infoItem}><span className={styles.infoLabel}>Conteúdo:</span><span className={styles.infoValue}>{med.quantidade}</span></div>
+                    <div className={styles.infoItem}>
+                      <span className={styles.infoLabel}>Preço:</span>
+                      {med.promocao ? (
+                        <div className={styles.precoContainerGrade}>
+                          <span className={styles.precoOriginal}>{currency.format(med.preco_original)}</span>
+                          <span className={styles.precoPromocional}>{currency.format(med.preco_promocional)}</span>
+                        </div>
+                      ) : (
+                        <span className={styles.infoValue}>{currency.format(med.preco_original)}</span>
+                      )}
+                    </div>
+                  </div></div><div className={styles.cardActions}><button onClick={() => abrirDetalhes(med)} className={styles.botaoAcaoCard}>Detalhes</button></div></div>))}</div>)}
             </div>
-            
-            {totalPaginas > 1 && (<div className={styles.paginacao}><button onClick={() => setPaginaAtual(p => Math.max(1, p - 1))} disabled={paginaAtual === 1} className={styles.botaoPaginacao}>←</button>{Array.from({ length: totalPaginas }).map((_, i) => i + 1).map(p => (<button key={p} onClick={() => setPaginaAtual(p)} className={`${styles.botaoPaginacao} ${p === paginaAtual ? styles.paginaAtual : ""}`}>{p}</button>))}<button onClick={() => setPaginaAtual(p => Math.min(totalPaginas, p + 1))} disabled={paginaAtual === totalPaginas} className={styles.botaoPaginacao}>→</button></div>)}
+
+            {totalPaginas > 1 && (<div className={styles.paginacao}></div>)}
           </main>
         </div>
-        
+
         {modalAberto && (
           <div className={styles.modalOverlay}>
             <div className={styles.modal}>
@@ -336,8 +564,8 @@ function ListagemMedicamentos() {
                     <h3>Produto não Encontrado</h3>
                     <p>Nenhum medicamento corresponde ao código de barras <strong>{codigoBarras}</strong>. Deseja cadastrá-lo agora?</p>
                     <div className={styles.modalFooter}>
-                       <button onClick={abrirModal} className={styles.cancelButton}>Cancelar</button>
-                       <button onClick={redirecionarParaCadastro} className={styles.actionButton}>Sim, Cadastrar Agora</button>
+                      <button onClick={abrirModal} className={styles.cancelButton}>Cancelar</button>
+                      <button onClick={redirecionarParaCadastro} className={styles.actionButton}>Sim, Cadastrar Agora</button>
                     </div>
                   </div>
                 )}
@@ -345,7 +573,7 @@ function ListagemMedicamentos() {
             </div>
           </div>
         )}
-        
+
         {modalDetalhesAberto && medicamentoSelecionado && (
           <div className={styles.modalOverlay}>
             <div className={styles.modal}>
@@ -360,11 +588,33 @@ function ListagemMedicamentos() {
                   </div>
                   <div className={styles.detalhesInfo}>
                     <h3>{medicamentoSelecionado.nome}</h3>
+                    {medicamentoSelecionado.promocao && (
+                      <div className={styles.infoPromocao}>
+                        <strong>PROMOÇÃO ATIVA</strong>
+                        <p>{medicamentoSelecionado.promocao_porcentagem}% OFF</p>
+                        {/* ================== MUDANÇA ADICIONADA ================== */}
+                        <span>Início: {formatDateForDisplay(medicamentoSelecionado.promocao_data_inicio)}</span><br />
+                        {/* ================== FIM DA MUDANÇA ================== */}
+                        <span>Válida até: {formatDateForDisplay(medicamentoSelecionado.promocao_data_fim)}</span>
+                      </div>
+                    )}
                     <div className={styles.infoGrid}>
                       <div className={styles.infoItem}><span className={styles.infoLabel}>Dosagem:</span><span className={styles.infoValue}>{medicamentoSelecionado.dosagem}</span></div>
                       <div className={styles.infoItem}><span className={styles.infoLabel}>Conteúdo:</span><span className={styles.infoValue}>{medicamentoSelecionado.quantidade}</span></div>
-                      <div className={styles.infoItem}><span className={styles.infoLabel}>Preço:</span><span className={styles.infoValue}>{currency.format(medicamentoSelecionado.preco)}</span></div>
+                      <div className={styles.infoItem}><span className={styles.infoLabel}>Forma:</span><span className={styles.infoValue}>{medicamentoSelecionado.forma}</span></div>
+                      <div className={styles.infoItem}><span className={styles.infoLabel}>Categoria:</span><span className={styles.infoValue}>{medicamentoSelecionado.tipo}</span></div>
                       <div className={styles.infoItem}><span className={styles.infoLabel}>Laboratório:</span><span className={styles.infoValue}>{medicamentoSelecionado.laboratorio}</span></div>
+                      <div className={styles.infoItem}>
+                        <span className={styles.infoLabel}>Preço:</span>
+                        {medicamentoSelecionado.promocao ? (
+                          <div>
+                            <span className={`${styles.precoOriginal} ${styles.precoModal}`}>{currency.format(medicamentoSelecionado.preco_original)}</span>
+                            <span className={`${styles.precoPromocional} ${styles.precoModal}`}>{currency.format(medicamentoSelecionado.preco_promocional)}</span>
+                          </div>
+                        ) : (
+                          <span className={styles.infoValue}>{currency.format(medicamentoSelecionado.preco_original)}</span>
+                        )}
+                      </div>
                     </div>
                     <div className={styles.descricao}>
                       <span className={styles.infoLabel}>Descrição:</span>
@@ -375,22 +625,97 @@ function ListagemMedicamentos() {
               </div>
               <div className={styles.modalFooter}>
                 <button onClick={() => handleExcluir(medicamentoSelecionado.id)} className={styles.dangerButton}>Excluir</button>
+
+                {medicamentoSelecionado.promocao ? (
+                  <button
+                    onClick={() => handleRemoverPromocao(medicamentoSelecionado.promocao_id)}
+                    className={styles.promoRemoveButton}
+                  >
+                    Remover Promoção
+                  </button>
+                ) : (
+                  <button
+                    onClick={abrirModalPromocao}
+                    className={styles.promoButton}
+                  >
+                    Ativar Promoção
+                  </button>
+                )}
+
                 <button onClick={() => toggleStatus(medicamentoSelecionado.id)} className={styles.cancelButton}>{medicamentoSelecionado.status === "ativo" ? "Desativar" : "Ativar"}</button>
                 <button onClick={() => handleEditar(medicamentoSelecionado.id)} className={styles.actionButton}>Editar</button>
               </div>
             </div>
           </div>
         )}
+
+        {modalPromocaoAberto && (
+          <div className={styles.modalOverlay} style={{ zIndex: 1010 }}>
+            <div className={styles.modal} style={{ maxWidth: '50rem' }}>
+              <div className={styles.modalHeader}>
+                <h2>Ativar Promoção</h2>
+                <button onClick={fecharModalPromocao} className={styles.modalClose} aria-label="Fechar" disabled={isSubmittingPromo}>✕</button>
+              </div>
+              <form onSubmit={handleCriarPromocao}>
+                <div className={styles.modalContent} style={{ textAlign: 'left' }}>
+                  <p>Defina os detalhes da promoção para <strong>{medicamentoSelecionado?.nome}</strong>.</p>
+                  <div className={styles.formGroup}>
+                    <label htmlFor="porcentagem">Porcentagem de Desconto (%)</label>
+                    <input type="number" id="porcentagem" name="porcentagem" className={styles.formInput} value={promoDados.porcentagem} onChange={handlePromoChange} placeholder="Ex: 20" min="1" max="99" />
+                  </div>
+                  <div className={styles.formGrid}>
+                    <div className={styles.formGroup}>
+                      <label htmlFor="data_inicio">Data de Início</label>
+                      <input type="date" id="data_inicio" name="data_inicio" className={styles.formInput} value={promoDados.data_inicio} onChange={handlePromoChange} min={formatDate(new Date())} />
+                    </div>
+                    <div className={styles.formGroup}>
+                      <label htmlFor="data_fim">Data de Fim</label>
+                      <input type="date" id="data_fim" name="data_fim" className={styles.formInput} value={promoDados.data_fim} onChange={handlePromoChange} min={promoDados.data_inicio || formatDate(new Date())} />
+                    </div>
+                  </div>
+                  {promoErro && <p className={styles.promoError}>{promoErro}</p>}
+                </div>
+                <div className={styles.modalFooter}>
+                  <button type="button" onClick={fecharModalPromocao} className={styles.cancelButton} disabled={isSubmittingPromo}>Cancelar</button>
+                  <button type="submit" className={styles.promoButton} disabled={isSubmittingPromo}>
+                    {isSubmittingPromo ? <span className={styles.buttonSpinner}></span> : "Salvar Promoção"}
+                  </button>
+                </div>
+              </form>
+            </div>
+          </div>
+        )}
+
+        {confirmacao.isOpen && (
+          <div className={styles.modalOverlay} style={{ zIndex: 1020 }}>
+            <div className={styles.modal} style={{ maxWidth: '50rem' }}>
+              <div className={styles.modalContent} style={{ padding: '3rem' }}>
+                <div className={styles.modalConfirmContainer}>
+                  <BsFillExclamationTriangleFill className={`${styles.modalConfirmIcon} ${confirmacao.isDanger ? styles.danger : ''}`} />
+                  <div className={styles.modalConfirmContent}>
+                    <h3>{confirmacao.title}</h3>
+                    <p>{confirmacao.message}</p>
+                  </div>
+                </div>
+              </div>
+              <div className={styles.modalConfirmFooter}>
+                <button onClick={fecharConfirmacao} className={styles.cancelButton}>
+                  Cancelar
+                </button>
+                <button
+                  onClick={handleConfirmar}
+                  className={confirmacao.isDanger ? styles.dangerButton : styles.actionButton}
+                >
+                  Confirmar
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
+
       </div>
 
-      {/* ADIÇÃO DO BOTÃO FLUTUANTE */}
-      <button 
-        onClick={abrirModal} 
-        className={styles.mobileAddButton} 
-        aria-label="Adicionar Novo Medicamento"
-      >
-        +
-      </button>
+      <button onClick={abrirModal} className={styles.mobileAddButton} aria-label="Adicionar Novo Medicamento">+</button>
     </AuthGuard>
   );
 }

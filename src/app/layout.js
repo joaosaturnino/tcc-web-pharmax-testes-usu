@@ -8,6 +8,7 @@ import "../styles/globals.css";
 import CabecalhoSecundario from "./componentes/cabecalhoSecundario";
 import CabecalhoTerciario from "./componentes/cabecalhoTerciario";
 import Rodape from "./componentes/rodape";
+import Alert from "./componentes/Alert";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -41,6 +42,7 @@ export default function RootLayout({ children }) {
     <html lang="pt-BR">
       <body className={`${geistSans.variable} ${geistMono.variable}`}>
         {renderHeader()}
+        <Alert />
         <main>{children}</main>
         <Rodape />
       </body>

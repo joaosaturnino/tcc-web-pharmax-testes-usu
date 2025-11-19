@@ -1,38 +1,77 @@
 /* ========================== ESTILOS GERAIS DA PÁGINA ========================== */
-.container { min-height: 100vh; display: flex; flex-direction: column; }
+.container {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
 
 /* ========================== SEÇÃO PRINCIPAL (HERO) ========================== */
-.principal { background: linear-gradient(135deg, #458B00 0%, #A2CD5A 100%); color: white; padding: 4rem 2rem; text-align: center; }
-.principal h2 { font-size: 3.3rem; margin-bottom: 1rem; }
-.principal p { font-size: 1.7rem; margin-bottom: 2rem; opacity: 0.9; }
-.caixaBusca { display: flex; max-width: 500px; margin: 0 auto; }
+.principal {
+  background: linear-gradient(135deg, #458B00 0%, #A2CD5A 100%);
+  color: white;
+  padding: 4rem 2rem;
+  text-align: center;
+}
 
-/* Input com borda arredondada apenas à esquerda */
+.principal h2 {
+  font-size: 3.3rem;
+  margin-bottom: 1rem;
+}
+
+.principal p {
+  font-size: 1.7rem;
+  margin-bottom: 2rem;
+  opacity: 0.9;
+}
+
+.caixaBusca {
+  display: flex;
+  max-width: 500px;
+  margin: 0 auto;
+}
+
 .caixaBusca input {
   flex: 1;
   padding: 0.8rem 1.2rem;
   border: none;
-  border-radius: 6px 0 0 6px; /* Apenas cantos da esquerda */
+  border-radius: 6px 0 0 6px;
   font-size: 1.5rem;
+  transition: background-color 0.2s;
 }
-.caixaBusca input:focus-visible { outline: 3px solid #FF9F43; outline-offset: 2px; z-index: 1; }
 
-/* Botão de busca reativado e estilizado */
+.caixaBusca input:disabled {
+  background-color: #f1f1f1;
+  cursor: not-allowed;
+}
+
+.caixaBusca input:focus-visible {
+  outline: 3px solid #FF9F43;
+  outline-offset: 2px;
+  z-index: 1;
+}
+
 .caixaBusca button {
   display: flex;
   align-items: center;
   justify-content: center;
   padding: 0 1.5rem;
   border: none;
-  border-radius: 0 6px 6px 0; /* Apenas cantos da direita */
+  border-radius: 0 6px 6px 0;
   background-color: #458B00;
   color: white;
   cursor: pointer;
   transition: background-color 0.2s;
 }
+
 .caixaBusca button:hover {
   background-color: #5a9e1a;
 }
+
+.caixaBusca button:disabled {
+  background-color: #999;
+  cursor: not-allowed;
+}
+
 .caixaBusca button:focus-visible {
   outline: 3px solid #FF9F43;
   outline-offset: 2px;
@@ -41,31 +80,158 @@
 
 
 /* ========================== SEÇÃO DE PRODUTOS ========================== */
-.produtos { padding: 4rem 2rem; text-align: center; }
-.produtos h3 { font-size: 2.7rem; margin-bottom: 3rem; color: #333; }
-.gradeProdutos { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 2rem; max-width: 1200px; margin: 0 auto; transition: opacity 0.3s ease-in-out; }
-.gradeProdutosCarregando { opacity: 0.5; pointer-events: none; }
-.cartaoProduto { background: white; border-radius: 8px; overflow: hidden; box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); transition: transform 0.3s; display: flex; flex-direction: column; text-align: left; }
-.cartaoProduto:hover { transform: translateY(-5px); }
-.containerImagemProduto { height: 200px; background-color: #fff; }
-.imagemProduto { object-fit: scale-down; width: 100%; height: 100%; }
-.infoProduto { padding: 0 1rem; flex-grow: 1; display: flex; flex-direction: column; }
-.infoProduto h4 { font-size: 1.2rem; margin: 1rem 0 0.5rem; color: #333; }
-.infoProduto p { color: #666; margin-bottom: 1rem; flex-grow: 1; }
-.preco { display: block; font-size: 1.3rem; font-weight: 600; color: #458B00; margin-bottom: 1rem; }
-.cartaoProduto button { width: 100%; padding: 0.8rem; background-color: #458B00; color: white; border: none; font-weight: 600; cursor: pointer; transition: background-color 0.3s; margin-top: auto; }
-.cartaoProduto button:hover { background-color: #A2CD5A; }
-.cartaoProduto button:focus-visible { outline: 3px solid #458B00; outline-offset: -3px; }
+.produtos {
+  padding: 4rem 2rem;
+  margin-top: -2rem;
+}
 
-/* ========================== ESTILOS PARA FILTROS ========================== */
+.produtos h3 {
+  font-size: 2.7rem;
+  margin-bottom: 2rem;
+  color: #333;
+  text-align: center;
+}
+
+.gradeProdutos {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 2rem;
+  max-width: 1200px;
+  margin: 0 auto;
+  transition: opacity 0.3s ease-in-out;
+}
+
+.gradeProdutosCarregando {
+  opacity: 0.5;
+  pointer-events: none;
+}
+
+.cartaoProduto {
+  background: white;
+  border: 2px solid transparent;
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  transition: transform 0.3s, box-shadow 0.3s, border-color 0.3s;
+  display: flex;
+  flex-direction: column;
+  text-align: left;
+}
+
+.cartaoProduto:hover {
+  transform: translateY(-5px);
+}
+
+.containerImagemProduto {
+  height: 200px;
+  background-color: #fff;
+  position: relative;
+  overflow: hidden;
+}
+
+.imagemProduto {
+  object-fit: scale-down;
+  width: 100%;
+  height: 100%;
+  transition: transform 0.3s ease;
+}
+
+.cartaoProduto:hover .imagemProduto {
+  transform: scale(1.05);
+}
+
+.infoProduto {
+  padding: 0 1rem;
+  flex-grow: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+.infoProduto h4 {
+  font-size: 1.2rem;
+  margin: 1rem 0 0.5rem;
+  color: #333;
+}
+
+.infoProduto p {
+  color: #666;
+  margin-bottom: 1rem;
+  flex-grow: 1;
+}
+
+.preco {
+  display: block;
+  font-size: 1.3rem;
+  font-weight: 600;
+  color: #458B00;
+  margin-bottom: 1rem;
+}
+
+/* ================== BLOCO REMOVIDO DAQUI ================== */
+/* .periodoPromocao { ... } foi removido */
+/* ================== FIM DO BLOCO REMOVIDO ================== */
+
+.cartaoProduto button {
+  width: 100%;
+  padding: 0.8rem;
+  background-color: #458B00;
+  color: white;
+  border: none;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 0.3s, transform 0.2s ease;
+  margin-top: auto;
+}
+
+.cartaoProduto button:hover {
+  background-color: #A2CD5A;
+  transform: scale(1.02);
+}
+
+.cartaoProduto button:focus-visible {
+  outline: 3px solid #458B00;
+  outline-offset: -3px;
+}
+
+/* ========================== ESTILOS PARA FILTROS (MELHORADO) ========================== */
+
 .filtrosContainer {
   display: flex;
-  justify-content: center;
+  justify-content: space-between;
   align-items: center;
   gap: 1.5rem;
-  margin-bottom: 3rem;
+  margin-bottom: 1.5rem;
+  flex-wrap: wrap;
+  padding: 1rem 1.5rem;
+  background-color: #fff;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+  max-width: 1200px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.filterGroup {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
   flex-wrap: wrap;
 }
+
+.filterLabel {
+  font-size: 1.2rem;
+  font-weight: 600;
+  color: #555;
+  white-space: nowrap;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.filterLabel svg {
+  color: #458B00;
+}
+
 .filtrosContainer select {
   padding: 0.8rem 1.2rem;
   font-size: 1.5rem;
@@ -73,83 +239,1100 @@
   border: 1px solid #ccc;
   background-color: #fff;
   cursor: pointer;
+  transition: background-color 0.2s, border-color 0.2s;
 }
+
+.filtrosContainer select:disabled {
+  background-color: #f1f1f1;
+  cursor: not-allowed;
+}
+
 .filtrosContainer select:focus-visible {
   outline: 3px solid #FF9F43;
   outline-offset: 2px;
   border-color: #458B00;
 }
+
 .botaoLimpar {
+  display: none;
+}
+
+/* "Chips" (Tags) de Filtros Ativos */
+.activeFiltersContainer {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-items: center;
+  gap: 0.75rem;
+  max-width: 1200px;
+  margin: 0 auto 2.5rem auto;
+}
+
+.filterChip {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  background-color: #e0f2f1;
+  color: #004d40;
+  padding: 0.4rem 0.8rem;
+  border-radius: 16px;
+  font-size: 1.3rem;
+  font-weight: 500;
+  border: 1px solid #b2dfdb;
+}
+
+.filterChip button {
+  background: none;
+  border: none;
+  color: #004d40;
+  font-size: 1.4rem;
+  font-weight: 700;
+  cursor: pointer;
+  padding: 0;
+  line-height: 1;
+  opacity: 0.7;
+  transition: opacity 0.2s, transform 0.2s ease;
+}
+
+.filterChip button:hover {
+  opacity: 1;
+  transform: scale(1.2);
+}
+
+.botaoLimparChips {
+  background: none;
+  border: none;
+  color: #dc3545;
+  font-size: 1.3rem;
+  font-weight: 600;
+  text-decoration: underline;
+  cursor: pointer;
+  padding: 0.4rem;
+}
+
+/* Botão de Filtro Mobile */
+.mobileFilterButtonContainer {
+  display: none;
+  margin-bottom: 2rem;
+}
+
+.mobileFilterButton {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  width: 100%;
   padding: 0.8rem 1.2rem;
   font-size: 1.5rem;
-  border-radius: 6px;
-  border: 1px solid #ccc;
-  background-color: #f8f9fa;
-  color: #333;
+  font-weight: 600;
+  color: #458B00;
+  background-color: #f0fdf4;
+  border: 2px solid #bbf7d0;
+  border-radius: 8px;
   cursor: pointer;
-  transition: all 0.2s ease-in-out;
+  position: relative;
 }
-.botaoLimpar:hover {
-  background-color: #e2e6ea;
-  border-color: #adb5bd;
+
+.mobileFilterButton:disabled {
+  background-color: #f1f1f1;
+  cursor: not-allowed;
+  opacity: 0.7;
 }
-.botaoLimpar:focus-visible {
-  outline: 3px solid #FF9F43;
-  outline-offset: 2px;
+
+.mobileFilterDot {
+  position: absolute;
+  top: 8px;
+  right: 12px;
+  width: 10px;
+  height: 10px;
+  background-color: #dc3545;
+  border-radius: 50%;
+  border: 2px solid white;
+}
+
+
+/* ==========================
+   VIEW TOGGLE (GRID/LIST)
+   ========================== */
+
+.viewToggleContainer {
+  display: flex;
+  justify-content: flex-end;
+  gap: 0.5rem;
+  max-width: 1200px;
+  margin: -2rem auto 1rem auto;
+  padding: 0 0.5rem;
+}
+
+.viewToggleButton {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.5rem;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  background-color: #fff;
+  color: #555;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.viewToggleButton:hover {
+  background-color: #f0f0f0;
+  color: #111;
+}
+
+.viewToggleButton:disabled {
+  background-color: #f1f1f1;
+  cursor: not-allowed;
+  opacity: 0.7;
+}
+
+.viewToggleActive {
+  background-color: #e0f2f1;
   border-color: #458B00;
+  color: #458B00;
 }
+
+/* Estilos para o Modo Lista */
+.gradeProdutosLista {
+  grid-template-columns: 1fr;
+  gap: 1rem;
+}
+
+.gradeProdutosLista .cartaoProduto {
+  flex-direction: row;
+  max-width: 100%;
+  height: 120px;
+  animation: none;
+  opacity: 1;
+}
+
+.gradeProdutosLista .cartaoProduto:hover {
+  transform: none;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.gradeProdutosLista .containerImagemProduto {
+  height: 100%;
+  width: 120px;
+  flex-shrink: 0;
+}
+
+.gradeProdutosLista .imagemProduto {
+  transform: none !important;
+}
+
+.gradeProdutosLista .infoProduto {
+  padding: 1rem 1.5rem;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.gradeProdutosLista .infoProduto h4 {
+  font-size: 1.3rem;
+  margin: 0;
+}
+
+.gradeProdutosLista .infoProduto p {
+  margin: 0;
+  display: none;
+}
+
+.gradeProdutosLista .preco {
+  margin: 0;
+  flex-shrink: 0;
+  text-align: right;
+}
+
+.gradeProdutosLista .cartaoProduto button {
+  width: auto;
+  margin: 0;
+  margin-left: 1.5rem;
+  flex-shrink: 0;
+}
+
 
 /* ========================== ESTILOS DE UX (MENSAGENS, LOADERS) ========================== */
-.mensagemAviso { grid-column: 1 / -1; background-color: #e3f2fd; color: #1565c0; border: 1px solid #bbdefb; padding: 1rem 1.5rem; border-radius: 8px; font-size: 1.1rem; }
-@keyframes shimmer { 0% { background-position: -1000px 0; } 100% { background-position: 1000px 0; } }
-.skeleton > div { background: linear-gradient(to right, #e0e0e0 8%, #f0f0f0 18%, #e0e0e0 33%); background-size: 1000px 100%; animation: shimmer 1.5s linear infinite; }
-.skeleton .containerImagemProduto { background-color: #e0e0e0; }
-.skeleton .skeletonText { height: 20px; background-color: #e0e0e0; border-radius: 4px; margin: 1rem 1rem 0 1rem; width: 90%; }
-.skeleton .skeletonText:last-child { width: 60%; }
+.emptyStateContainer {
+  grid-column: 1 / -1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 1rem;
+  padding: 4rem 2rem;
+  background-color: #fafafa;
+  border-radius: 12px;
+  border: 1px dashed #ddd;
+}
+
+.emptyStateIcon {
+  width: 60px;
+  height: 60px;
+  color: #999;
+}
+
+.emptyStateTitle {
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: #333;
+  margin: 0;
+}
+
+.emptyStateMessage {
+  font-size: 1.1rem;
+  color: #666;
+  margin: 0;
+  max-width: 400px;
+  line-height: 1.5;
+  text-align: center;
+}
+
+@keyframes shimmer {
+  0% {
+    background-position: -1000px 0;
+  }
+
+  100% {
+    background-position: 1000px 0;
+  }
+}
+
+.skeleton>div {
+  background: linear-gradient(to right, #e0e0e0 8%, #f0f0f0 18%, #e0e0e0 33%);
+  background-size: 1000px 100%;
+  animation: shimmer 1.5s linear infinite;
+}
+
+.skeleton .containerImagemProduto {
+  background-color: #e0e0e0;
+}
+
+.skeleton .skeletonText {
+  height: 20px;
+  background-color: #e0e0e0;
+  border-radius: 4px;
+  margin: 1rem 1rem 0 1rem;
+  width: 90%;
+}
+
+.skeleton .skeletonText:last-child {
+  width: 60%;
+}
+
+/* Skeleton para modo Lista */
+.skeleton.skeletonList {
+  flex-direction: row;
+  height: 120px;
+  animation: none;
+}
+
+.skeleton.skeletonList .skeletonListImage {
+  height: 100%;
+  width: 120px;
+  flex-shrink: 0;
+  margin: 0;
+}
+
+.skeleton.skeletonList .skeletonListInfo {
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+  padding: 1rem 1.5rem;
+  width: 100%;
+}
+
+.skeleton.skeletonList .skeletonText {
+  margin: 0;
+}
+
 
 /* ========================== PAGINAÇÃO ========================== */
-.paginacao { display: flex; justify-content: center; align-items: center; gap: 1rem; margin-top: 2.5rem; padding-bottom: 2rem; }
-.paginacao button { padding: 0.5rem 1rem; border: 1px solid #ccc; border-radius: 4px; background-color: #fff; cursor: pointer; font-weight: 600; transition: all 0.3s; }
-.paginacao button:hover:not(:disabled) { background-color: #458B00; border-color: #458B00; color: white; }
-.paginacao button:disabled { cursor: not-allowed; opacity: 0.5; }
-.paginaAtiva { background-color: #458B00 !important; border-color: #458B00 !important; color: white; font-weight: bold; }
-.ellipsis { padding: 0.5rem 0.2rem; color: #666; cursor: default; }
+.paginacao {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 1rem;
+  margin-top: 2.5rem;
+  padding-bottom: 2rem;
+}
+
+.paginacao button {
+  padding: 0.5rem 1rem;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  background-color: #fff;
+  cursor: pointer;
+  font-weight: 600;
+  transition: all 0.3s;
+}
+
+.paginacao button:hover:not(:disabled) {
+  background-color: #458B00;
+  border-color: #458B00;
+  color: white;
+}
+
+.paginacao button:disabled {
+  cursor: not-allowed;
+  opacity: 0.5;
+}
+
+.paginaAtiva {
+  background-color: #458B00 !important;
+  border-color: #458B00 !important;
+  color: white;
+  font-weight: bold;
+}
+
+.ellipsis {
+  padding: 0.5rem 0.2rem;
+  color: #666;
+  cursor: default;
+}
 
 /* ========================== ESTILOS PARA O MODAL DE DETALHES ========================== */
-.modalOverlay { position: fixed; inset: 0; background-color: rgba(0, 0, 0, 0.6); display: flex; align-items: center; justify-content: center; z-index: 1000; padding: 1rem; animation: fadeIn 0.3s ease; }
-@keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
-.modal { background: white; border-radius: 12px; width: 100%; max-width: 900px; max-height: 90vh; display: flex; flex-direction: column; box-shadow: 0 10px 30px rgba(0,0,0,0.2); animation: scaleIn 0.3s ease; }
-@keyframes scaleIn { from { transform: scale(0.95); opacity: 0; } to { transform: scale(1); opacity: 1; } }
-.modalHeader { display: flex; justify-content: space-between; align-items: center; padding: 1.5rem 2rem; border-bottom: 1px solid #eee; }
-.modalHeader h2 { font-size: 1.8rem; color: #333; margin: 0; }
-.modalClose { background: none; border: none; font-size: 2rem; cursor: pointer; color: #999; transition: color 0.2s; }
-.modalClose:hover { color: #333; }
-.modalContent { padding: 2rem; overflow-y: auto; }
-.detalhesContainer { display: grid; grid-template-columns: 1fr 1.5fr; gap: 2.5rem; }
-.infoMedicamento h4, .listaFarmacias h4 { font-size: 1.3rem; color: #458B00; margin-top: 0; margin-bottom: 1rem; padding-bottom: 0.5rem; border-bottom: 2px solid #f0f0f0; }
-.imagemModal { width: 100%; max-height: 300px; object-fit: contain; border-radius: 8px; margin-bottom: 1.5rem; border: 1px solid #eee; }
-.infoMedicamento p { line-height: 1.6; color: #555; font-size: 1.5rem; }
-.listaFarmacias { border-left: 1px solid #eee; padding-left: 2.5rem; }
-.farmaciaItem { display: flex; justify-content: space-between; align-items: center; padding: 1.2rem 0; border-bottom: 1px solid #f0f0f0; }
-.farmaciaItem:last-child { border-bottom: none; }
-.farmaciaInfo h5 { margin: 0 0 0.3rem 0; font-size: 1.5rem; color: #333; }
-.farmaciaInfo p { margin: 0; font-size: 1.3rem; color: #777; }
-.farmaciaPreco { font-size: 1.6rem; font-weight: 700; color: #458B00; white-space: nowrap; padding-left: 1rem; }
-.modalLoader { display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 4rem 0; gap: 1rem; color: #555; }
-.spinner { width: 40px; height: 40px; border: 4px solid #f0f0f0; border-top-color: #458B00; border-radius: 50%; animation: spin 1s linear infinite; }
-@keyframes spin { to { transform: rotate(360deg); } }
+.modalOverlay {
+  position: fixed;
+  inset: 0;
+  background-color: rgba(0, 0, 0, 0.6);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  padding: 1rem;
+  animation: fadeIn 0.3s ease;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
+}
+
+.modal {
+  background: white;
+  border-radius: 12px;
+  width: 100%;
+  max-width: 900px;
+  max-height: 90vh;
+  display: flex;
+  flex-direction: column;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+  animation: scaleIn 0.3s ease;
+}
+
+.modal:focus-visible {
+  outline: 3px solid #FF9F43;
+  outline-offset: 3px;
+}
+
+@keyframes scaleIn {
+  from {
+    transform: scale(0.95);
+    opacity: 0;
+  }
+
+  to {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+.modalHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1.5rem 2rem;
+  border-bottom: 1px solid #eee;
+}
+
+.modalHeader h2 {
+  font-size: 1.8rem;
+  color: #333;
+  margin: 0;
+}
+
+.modalClose {
+  background: none;
+  border: none;
+  font-size: 2rem;
+  cursor: pointer;
+  color: #999;
+  transition: color 0.2s;
+}
+
+.modalClose:hover {
+  color: #333;
+}
+
+.modalContent {
+  padding: 2rem;
+  overflow-y: auto;
+}
+
+.detalhesContainer {
+  display: grid;
+  grid-template-columns: 1fr 1.5fr;
+  gap: 2.5rem;
+  align-items: flex-start;
+}
+
+.infoDescricao h4,
+.listaFarmacias h4 {
+  font-size: 1.3rem;
+  color: #458B00;
+  margin-top: 0;
+  margin-bottom: 1rem;
+  padding-bottom: 0.5rem;
+  border-bottom: 2px solid #f0f0f0;
+}
+
+.imagemModal {
+  width: 100%;
+  max-height: 300px;
+  object-fit: contain;
+  border-radius: 8px;
+  margin-bottom: 1.5rem;
+  border: 1px solid #eee;
+}
+
+/* --- ESTILOS DA DESCRIÇÃO (MODIFICADO) --- */
+.infoDescricao {
+  margin-top: 1rem;
+}
+
+.infoDescricao p {
+  line-height: 1.7;
+  color: #333;
+  font-size: 1.4rem;
+}
+
+.descricaoVazia {
+  font-style: italic;
+  color: #777;
+}
+
+.lerMaisButton {
+  background: none;
+  border: none;
+  color: #458B00;
+  font-weight: 600;
+  cursor: pointer;
+  padding: 0.5rem 0;
+  font-size: 1.4rem;
+  text-decoration: underline;
+  margin-top: 0.5rem;
+}
+
+.listaFarmacias {
+  border-left: 1px solid #eee;
+  padding-left: 1rem;
+}
+
+/* --- NOVO: Container da lista para animação --- */
+.farmaciaListContainer {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  /* Espaço entre os itens da farmácia */
+}
+
+.farmaciaItem {
+  border-bottom: 1px solid #f0f0f0;
+}
+
+.farmaciaItem:last-child {
+  border-bottom: none;
+}
+
+.farmaciaInfo {
+  flex-grow: 1;
+  grid-area: info;
+}
+
+.farmaciaInfo h5 {
+  margin: 0 0 0.3rem 0;
+  font-size: 1.5rem;
+  color: #333;
+}
+
+.farmaciaEndereco {
+  margin: 0;
+  font-size: 1.3rem;
+  color: #777;
+}
+
+.modalLoader {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 4rem 0;
+  gap: 1rem;
+  color: #555;
+}
+
+.spinner {
+  width: 40px;
+  height: 40px;
+  border: 4px solid #f0f0f0;
+  border-top-color: #458B00;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
 
 /* ========================== RESPONSIVIDADE ========================== */
 @media (max-width: 768px) {
-  .header { flex-direction: column; padding: 1.5rem; gap: 1.5rem; }
-  .principal h2 { font-size: 2.5rem; }
-  .detalhesContainer { grid-template-columns: 1fr; }
-  .listaFarmacias { border-left: none; padding-left: 0; margin-top: 2rem; border-top: 1px solid #eee; padding-top: 2rem; }
-  .modalHeader h2 { font-size: 1.4rem; }
+  .header {
+    flex-direction: column;
+    padding: 1.5rem;
+    gap: 1.5rem;
+  }
+
+  .principal h2 {
+    font-size: 2.5rem;
+  }
+
+  .filtrosContainer {
+    display: none;
+  }
+
+  .mobileFilterButtonContainer {
+    display: block;
+  }
+
+  .viewToggleContainer {
+    display: none;
+  }
+
+  .detalhesContainer {
+    grid-template-columns: 1fr;
+  }
+
+  .listaFarmacias {
+    border-left: none;
+    padding-left: 0;
+    margin-top: 2rem;
+    border-top: 1px solid #eee;
+    padding-top: 2rem;
+  }
+
+  .modalHeader h2 {
+    font-size: 1.4rem;
+  }
 }
+
+@media (max-width: 600px) {
+  .gradeProdutosLista .infoProduto {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.5rem;
+  }
+
+  .gradeProdutosLista .preco {
+    text-align: left;
+  }
+
+  .gradeProdutosLista .cartaoProduto button {
+    display: none;
+  }
+}
+
 @media (max-width: 480px) {
-  .nav { gap: 1rem; flex-wrap: wrap; justify-content: center; }
-  .nav a { font-size: 1.4rem; }
-  .userBtn { padding: 0.6rem 1.2rem; }
-  .caixaBusca { flex-direction: column; }
+  .nav {
+    gap: 1rem;
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+
+  .nav a {
+    font-size: 1.4rem;
+  }
+
+  .userBtn {
+    padding: 0.6rem 1.2rem;
+  }
+
+  .caixaBusca {
+    flex-direction: column;
+  }
+
+  .caixaBusca input {
+    border-radius: 6px 6px 0 0;
+  }
+
+  .caixaBusca button {
+    border-radius: 0 0 6px 6px;
+  }
+}
+
+/* =====================================================
+  ESTILOS DO MODAL (GERAL E NOVOS)
+===================================================== */
+.infoMedicamento {
+  display: flex;
+  flex-direction: column;
+}
+
+/* --- NOVOS ESTILOS PARA ATRIBUTOS --- */
+.detalhesAtributos {
+  display: flex;
+  flex-direction: column;
+  gap: 1.2rem;
+  /* Aumenta o espaço */
+  margin: 1.5rem 0;
+  border-top: 1px solid #eee;
+  border-bottom: 1px solid #eee;
+  padding: 1.5rem 0;
+}
+
+.atributoItem {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 1.4rem;
+  gap: 1rem;
+}
+
+.atributoChave {
+  display: flex;
+  align-items: center;
+  gap: 0.8rem;
+  font-weight: 600;
+  color: #555;
+  white-space: nowrap;
+}
+
+.atributoIcon {
+  color: #458B00;
+  width: 20px;
+  height: 20px;
+  flex-shrink: 0;
+}
+
+.atributoIcon svg {
+  width: 100%;
+  height: 100%;
+}
+
+.atributoLabel {
+  font-size: 1.3rem;
+}
+
+.atributoValor {
+  font-weight: 600;
+  color: #111;
+  background-color: #f4f4f4;
+  padding: 0.3rem 0.8rem;
+  border-radius: 6px;
+  text-align: right;
+  font-size: 1.3rem;
+}
+
+.modalTitulo {
+  flex-grow: 1;
+}
+
+.modalDosagem {
+  font-size: 1.2rem;
+  font-weight: 500;
+  color: #555;
+  margin-top: -0.25rem;
+  display: block;
+}
+
+.tag {
+  padding: 0.4rem 0.8rem;
+  border-radius: 16px;
+  font-size: 0.9rem;
+  font-weight: 600;
+  border: 1px solid transparent;
+}
+
+
+/* === MELHORIA: Estilos para o Modal de Filtro === */
+.filterModal {
+  max-width: 500px;
+  height: auto;
+  max-height: 80vh;
+}
+
+.filterModalTitle {
+  font-size: 1.5rem;
+}
+
+.filterModalBody {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.filterModalBody .filterGroup {
+  flex-direction: column;
+  align-items: flex-start;
+  width: 100%;
+}
+
+.filterModalBody .filterGroup select {
+  width: 100%;
+}
+
+.filterModalApplyButton {
+  width: 100%;
+  padding: 0.8rem;
+  background-color: #458B00;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-weight: 600;
+  font-size: 1.5rem;
+  cursor: pointer;
+  transition: background-color 0.3s;
+  margin-top: 2rem;
+}
+
+.filterModalApplyButton:hover {
+  background-color: #A2CD5A;
+}
+
+
+/* =====================================================
+  === ESTILOS DE PROMOÇÃO ===
+===================================================== */
+
+.tagPromocao {
+  position: absolute;
+  top: 10px;
+  left: 10px;
+  background-color: #dc3545;
+  color: white;
+  padding: 0.3rem 0.6rem;
+  border-radius: 4px;
+  font-size: 1.2rem;
+  font-weight: 700;
+  z-index: 2;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+.precoAntigo {
+  text-decoration: line-through;
+  color: #777;
+  font-size: 1.1rem;
+  font-weight: 400;
+  margin-right: 0.5rem;
+}
+
+.precoFinal {
+  /* A cor é herdada do pai (.preco ou .farmaciaPreco) */
+}
+
+.cartaoProduto.promoted {
+  border-color: #458B00;
+  /*muda a cor do card em promoção*/
+  box-shadow: 0 6px 12px rgba(69, 139, 0, 0.2);
+}
+
+.visuallyHidden {
+  border: 0;
+  clip: rect(0 0 0 0);
+  height: 1px;
+  margin: -1px;
+  overflow: hidden;
+  padding: 0;
+  position: absolute;
+  width: 1px;
+}
+
+/* =====================================================
+  === MELHORIA MODAL: Destaque e CTAs ===
+===================================================== */
+
+.melhorPrecoItem {
+  background-color: #f6ffed;
+  border-radius: 8px;
+  padding: 1.2rem;
+  margin: 0 -1.2rem;
+  border: 1px solid #d9f7be;
+  display: grid;
+  grid-template-areas:
+    "info"
+    "acoes";
+  gap: 1rem;
+}
+
+.listaFarmacias .farmaciaItem {
+  padding: 1.2rem 1rem;
+  transition: background-color 0.2s;
+  border-bottom: none;
+}
+
+.farmaciaItem:not(.melhorPrecoItem) {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  border-bottom: 1px solid #f0f0f0;
+}
+
+.farmaciaListContainer>div:last-child .farmaciaItem {
+  border-bottom: none;
+}
+
+
+.farmaciaContato {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin-top: 0.5rem;
+  font-size: 1.2rem;
+  color: #555;
+  flex-wrap: wrap;
+}
+
+.mapLink {
+  color: #458B00;
+  text-decoration: underline;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.mapLink:hover {
+  color: #3a7500;
+}
+
+.farmaciaAcoes {
+  grid-area: acoes;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 0.75rem;
+  white-space: nowrap;
+  padding-left: 1rem;
+  flex-shrink: 0;
+  width: 100%;
+}
+
+.farmaciaItem:not(.melhorPrecoItem) .farmaciaAcoes {
+  width: auto;
+}
+
+.farmaciaPrecoContainer {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 0.3rem;
+  width: 100%;
+}
+
+.precoTags {
+  display: flex;
+  gap: 0.5rem;
+  justify-content: flex-end;
+}
+
+.tagMelhorPreco {
+  background-color: #458B00;
+  color: white;
+  border-color: #3a7500;
+  font-size: 0.8rem;
+}
+
+.tagDescontoModal {
+  background-color: #fdf2f2;
+  color: #dc3545;
+  border-color: #fadddd;
+  font-size: 0.8rem;
+}
+
+.farmaciaPreco {
+  font-size: 1.6rem;
+  font-weight: 700;
+  color: #458B00;
+  text-align: right;
+}
+
+.modalCtaButton {
+  width: 100%;
+  padding: 0.8rem 1rem;
+  font-size: 1.4rem;
+  font-weight: 600;
+  border-radius: 6px;
+  cursor: pointer;
+  text-decoration: none;
+  text-align: center;
+  transition: all 0.2s ease;
+}
+
+.modalCtaButtonPrimary {
+  background-color: #458B00;
+  color: white;
+  border: 2px solid #458B00;
+}
+
+.modalCtaButtonPrimary:hover {
+  background-color: #3a7500;
+  border-color: #3a7500;
+}
+
+.modalCtaButtonSecondary {
+  background-color: #fff;
+  color: #458B00;
+  border: 2px solid #458B00;
+}
+
+.modalCtaButtonSecondary:hover {
+  background-color: #f6ffed;
+}
+
+.semSiteAviso {
+  font-size: 1.2rem;
+  color: #777;
+  padding: 0.8rem 0;
+  text-align: right;
+  width: 100%;
+}
+
+/* +++ ADICIONADO ESTILO PARA DATA DA PROMOÇÃO NO MODAL +++ */
+.periodoPromocaoModal {
+  font-size: 1.1rem;
+  color: #555;
+  text-align: right;
+  /* Alinha com o preço */
+  line-height: 1.4;
+  margin-top: 0.5rem;
+  width: 100%;
+  /* Garante que o text-align funcione */
+}
+
+.periodoPromocaoModal span {
+  display: block;
+}
+
+.periodoPromocaoModal span:first-child {
+  font-weight: 600;
+  color: #3a7500;
+}
+
+/* +++ FIM DA ADIÇÃO +++ */
+
+
+.modalEmptyStateContainer {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.75rem;
+  padding: 3rem 1.5rem;
+  text-align: center;
+}
+
+.modalEmptyStateIcon {
+  width: 50px;
+  height: 50px;
+  color: #458B00;
+  background-color: #f6ffed;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.modalEmptyStateIcon svg {
+  width: 28px;
+  height: 28px;
+}
+
+.modalEmptyStateTitle {
+  font-size: 1.4rem;
+  font-weight: 600;
+  color: #333;
+  margin: 0.5rem 0 0 0;
+}
+
+.modalEmptyStateMessage {
+  font-size: 1.1rem;
+  color: #666;
+  margin: 0;
+  line-height: 1.5;
+}
+
+
+/* =====================================================
+  === RESPONSIVIDADE (Ajustes da Melhoria) ===
+===================================================== */
+
+@media (max-width: 768px) {
+  .melhorPrecoItem {
+    margin-left: 0;
+    margin-right: 0;
+    grid-template-areas:
+      "info"
+      "acoes";
+    gap: 1rem;
+  }
+
+  .farmaciaItem:not(.melhorPrecoItem) {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.8rem;
+  }
+
+  .farmaciaAcoes {
+    width: 100%;
+    flex-direction: column;
+    align-items: flex-start;
+    padding-left: 0;
+  }
+
+  .farmaciaPrecoContainer {
+    align-items: flex-start;
+  }
+
+  .farmaciaPreco {
+    text-align: left;
+  }
+
+  .precoTags {
+    order: -1;
+    justify-content: flex-start;
+  }
+
+  .semSiteAviso {
+    text-align: left;
+  }
+
+  /* +++ AJUSTE RESPONSIVO PARA DATA DO MODAL +++ */
+  .periodoPromocaoModal {
+    text-align: left;
+  }
+
+  .atributoItem {
+    font-size: 1.3rem;
+  }
+
+  .atributoChave {
+    gap: 1rem;
+  }
+
+  .atributoIcon {
+    width: 22px;
+    height: 22px;
+  }
+
+  .atributoValor {
+    font-size: 1.2rem;
+    padding: 0.3rem 0.6rem;
+  }
 }

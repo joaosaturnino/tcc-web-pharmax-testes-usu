@@ -6,66 +6,66 @@
   flex-direction: column;
 }
 
+/* Header e Sidebar padronizados com Relatório de Favoritos */
 .header {
   background: white;
-  :global {
-    @media print {
+  padding: 1.5rem 2.4rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+  position: sticky;
+  top: 0;
+  z-index: 100;
+}
 
-      .dashboard {
-        background: #fff !important;
-      }
+.headerLeft {
+  display: flex;
+  align-items: center;
+  gap: 1.6rem;
+}
 
-      .dashboard * {
-        visibility: hidden !important;
-      }
+.menuToggle {
+  background: none;
+  border: none;
+  font-size: 2.4rem;
+  cursor: pointer;
+  padding: 0.8rem;
+  border-radius: 0.6rem;
+  transition: background 0.3s ease;
+  display: none;
+  color: #458B00;
+}
 
-      .reportContainer,
-      .reportContainer * {
-        visibility: visible !important;
-      }
+.title {
+  font-size: clamp(2rem, 4vw, 2.8rem);
+  font-weight: 600;
+  margin: 0;
+  background: linear-gradient(135deg, #191970 0%, #458B00 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
 
-      .reportContainer {
-        position: absolute;
-        left: 0;
-        top: 0;
-        width: 100%;
-        box-shadow: none;
-        padding: 2rem;
-        border: none;
-      }
+.contentWrapper {
+  display: flex;
+  flex: 1;
+  position: relative;
+}
 
-      .sidebar,
-      .header,
-      .controls,
-      .overlay {
-        display: none !important;
-      }
-
-      .printLogo {
-        display: block !important;
-      }
-
-      .reportTable {
-        font-size: 10pt;
-      }
-
-      .reportTable th,
-      .reportTable td {
-        padding: 0.8rem;
-      }
-
-      .reportFooter {
-        display: block !important;
-        text-align: center;
-        color: #666;
-        font-size: 9pt;
-        position: fixed;
-        bottom: 1rem;
-        width: 100%;
-      }
-
-    }
-  }
+.sidebar {
+  width: 28rem;
+  background: linear-gradient(180deg, #191970 0%, #0f1440 100%);
+  color: #CDC1C5;
+  display: flex;
+  flex-direction: column;
+  transition: transform 0.3s ease-in-out;
+  box-shadow: 0.2rem 0 1rem rgba(0, 0, 0, 0.1);
+  flex-shrink: 0;
+  height: calc(100vh - 7.2rem);
+  position: sticky;
+  top: 7.2rem;
+  overflow-y: auto;
   z-index: 90;
 }
 
@@ -86,12 +86,22 @@
   gap: 1.2rem;
 }
 
+/* === ATUALIZADO === */
 .logoImage {
-  height: 6rem;
-  width: 6rem;
-  border-radius: 5px;
+  height: 60px;
+  width: 60px;
+  border-radius: 5%;
   object-fit: cover;
 }
+
+.sidebarAvatar {
+  width: 60px;
+  height: 60px;
+  border-radius: 5%;
+  object-fit: cover;
+}
+
+/* === FIM DA ATUALIZAÇÃO === */
 
 .logoText {
   font-size: 2rem;
@@ -110,6 +120,13 @@
   display: none;
 }
 
+/* === ADICIONADO === */
+.sidebarClose:hover {
+  background: #222266;
+}
+
+/* === FIM DA ADIÇÃO === */
+
 .nav {
   flex: 1;
   padding: 1rem;
@@ -127,6 +144,7 @@
   letter-spacing: 0.5px;
 }
 
+/* === ATUALIZADO === */
 .navLink {
   display: flex;
   align-items: center;
@@ -138,17 +156,24 @@
   transition: all 0.3s ease;
   font-size: 1.5rem;
   gap: 1.2rem;
+  border-left: 4px solid transparent;
 }
 
 .navLink:hover {
   background: rgba(69, 139, 0, 0.15);
   color: #fff;
+  border-left-color: #458B00;
+  transform: translateX(5px);
 }
 
 .navLink.active {
   background: linear-gradient(135deg, #458B00 0%, #2e7d32 100%);
   color: #fff;
+  border-left-color: #fff;
+  box-shadow: 0 4px 12px rgba(69, 139, 0, 0.3);
 }
+
+/* === FIM DA ATUALIZAÇÃO === */
 
 .navText {
   font-family: "Montserrat";
@@ -369,6 +394,7 @@
 }
 
 /* Overlay, Erro, Paginação e Footer */
+/* === ATUALIZADO === */
 .overlay {
   position: fixed;
   inset: 0;
@@ -376,7 +402,10 @@
   z-index: 105;
   display: none;
   opacity: 0;
+  transition: opacity 0.3s ease-in-out;
 }
+
+/* === FIM DA ATUALIZAÇÃO === */
 
 .sidebar.sidebarOpen~.overlay {
   display: block;

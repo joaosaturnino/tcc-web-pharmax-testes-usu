@@ -1,7 +1,7 @@
 // scripts/test-connection.js
 const testConnection = async () => {
   console.log('🔍 Testando conexão com a API...');
-  
+
   const endpoints = [
     'http://localhost:3333/api/medicamentos/favoritos',
     'http://localhost:3333/api/',
@@ -12,7 +12,7 @@ const testConnection = async () => {
     try {
       console.log(`\n📡 Tentando: ${url}`);
       const start = Date.now();
-      
+
       const response = await fetch(url, {
         method: 'GET',
         headers: {
@@ -24,7 +24,7 @@ const testConnection = async () => {
       const end = Date.now();
       console.log(`✅ Status: ${response.status} ${response.statusText}`);
       console.log(`⏱️  Tempo: ${end - start}ms`);
-      
+
       if (response.ok) {
         try {
           const data = await response.json();
@@ -34,7 +34,7 @@ const testConnection = async () => {
           console.log('📄 Resposta texto:', text.substring(0, 200) + '...');
         }
       }
-      
+
     } catch (error) {
       console.log('❌ Erro:', error.message);
       if (error.code === 'ECONNREFUSED') {

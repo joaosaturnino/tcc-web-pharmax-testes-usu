@@ -6,6 +6,8 @@ import Link from 'next/link';
 import styles from "./edita.module.css";
 import api from "../../../../../services/api";
 import { MdUploadFile } from "react-icons/md";
+// === MUDANÇA: Importado o 'react-hot-toast' ===
+import toast, { Toaster } from "react-hot-toast";
 
 export default function EditarMedicamento() {
   const router = useRouter();
@@ -16,8 +18,9 @@ export default function EditarMedicamento() {
   const [medicamento, setMedicamento] = useState(null);
   const [loading, setLoading] = useState(true);
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [error, setError] = useState("");
-  const [success, setSuccess] = useState("");
+  const [error, setError] = useState(""); // Este 'error' é mantido para o erro de carregamento da página
+  // === MUDANÇA: Estado 'success' removido, pois será substituído por toasts ===
+  // const [success, setSuccess] = useState(""); 
   const [farmaciaInfo, setFarmaciaInfo] = useState(null);
   const [laboratorios, setLaboratorios] = useState([]);
   const [tiposProduto, setTiposProduto] = useState([]);
@@ -33,24 +36,24 @@ export default function EditarMedicamento() {
         try {
           const userDataString = localStorage.getItem("userData");
           if (!userDataString) throw new Error("Usuário não autenticado. Faça o login.");
-          
+
           const userData = JSON.parse(userDataString);
           setFarmaciaInfo(userData);
-          const farmaciaId = userData.farm_id; 
+          const farmaciaId = userData.farm_id;
           if (!farmaciaId) throw new Error("ID da farmácia não encontrado no seu login.");
 
           const [
-            medicamentoResponse, 
+            medicamentoResponse,
             laboratoriosResponse,
             tiposProdutoResponse,
             formasResponse
           ] = await Promise.all([
             api.get(`/medicamentos/${id}?farmacia_id=${farmaciaId}`),
-            api.get('/laboratorios'),
+            api.get('/todoslab'),
             api.get('/tipoproduto'),
             api.get('/farmaceutica')
           ]);
-          
+
           if (medicamentoResponse.data.sucesso) {
             const medData = medicamentoResponse.data.dados;
             setMedicamento(medData);
@@ -73,8 +76,8 @@ export default function EditarMedicamento() {
       };
       fetchData();
     }
-     // Limpeza do Object URL para evitar memory leak
-     return () => {
+    // Limpeza do Object URL para evitar memory leak
+    return () => {
       if (imagePreviewUrl) {
         URL.revokeObjectURL(imagePreviewUrl);
       }
@@ -87,7 +90,7 @@ export default function EditarMedicamento() {
       const file = files[0];
       setImagemFile(file);
       setFileName(file ? file.name : "Nenhum arquivo selecionado");
-      
+
       if (imagePreviewUrl) {
         URL.revokeObjectURL(imagePreviewUrl);
       }
@@ -104,19 +107,19 @@ export default function EditarMedicamento() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setIsSubmitting(true);
-    setError("");
-    setSuccess("");
+    setError(""); // Limpa o erro de carregamento da página, se houver
+    // === MUDANÇA: setSuccess("") removido ===
 
     try {
       const userDataString = localStorage.getItem("userData");
       if (!userDataString) throw new Error("Usuário não autenticado. Faça o login.");
-      
+
       const userData = JSON.parse(userDataString);
       const farmaciaId = userData.farm_id;
       if (!farmaciaId) throw new Error("ID da farmácia não encontrado para realizar a atualização.");
-      
+
       const formData = new FormData();
-      
+
       Object.keys(medicamento).forEach(key => {
         if (key !== 'med_imagem' && key !== 'farmacia_id' && medicamento[key] !== null) {
           formData.append(key, medicamento[key]);
@@ -128,22 +131,24 @@ export default function EditarMedicamento() {
       if (imagemFile) {
         formData.append('med_imagem', imagemFile);
       }
-      
+
       const response = await api.put(`/medicamentos/${id}`, formData);
 
       if (response.data.sucesso) {
-          setSuccess("Medicamento atualizado com sucesso!");
-          setTimeout(() => router.push("/farmacias/produtos/medicamentos"), 1500);
+        // === MUDANÇA: Substituído setSuccess por toast.success ===
+        toast.success("Medicamento atualizado com sucesso!");
+        setTimeout(() => router.push("/farmacias/produtos/medicamentos"), 1500);
       } else {
         throw new Error(response.data.mensagem || "A API indicou uma falha.");
       }
     } catch (err) {
-      setError(err.response?.data?.mensagem || err.message || "Erro ao conectar com o servidor.");
+      // === MUDANÇA: Substituído setError por toast.error ===
+      toast.error(err.response?.data?.mensagem || err.message || "Erro ao conectar com o servidor.");
     } finally {
       setIsSubmitting(false);
     }
   };
-  
+
   const handleLogout = async () => {
     localStorage.removeItem("authToken");
     localStorage.removeItem("userData");
@@ -154,12 +159,37 @@ export default function EditarMedicamento() {
     return (<div className={styles.loadingContainer}><div className={styles.spinner}></div><span>Carregando dados...</span></div>);
   }
 
+  // Este bloco é para erros de carregamento, então mantemos a mensagem em tela
   if (error && !medicamento) {
     return (<div className={styles.loadingContainer}><p style={{ color: 'red' }}>{error}</p><button onClick={() => router.push("/farmacias/produtos/medicamentos")} className={styles.cancelButton}>Voltar</button></div>);
   }
 
   return (
     <div className={styles.dashboard}>
+      {/* === MUDANÇA: Adicionado o <Toaster /> === */}
+      <Toaster
+        position="top-right"
+        toastOptions={{
+          duration: 4000,
+          style: {
+            background: '#333',
+            color: '#fff',
+            fontSize: '1.5rem',
+            padding: '1.6rem',
+          },
+          success: {
+            style: {
+              background: '#458B00',
+            },
+          },
+          error: {
+            style: {
+              background: '#dc2626',
+            },
+          },
+        }}
+      />
+
       <header className={styles.header}>
         <div className={styles.headerLeft}>
           <button className={styles.menuToggle} onClick={() => setSidebarOpen(!sidebarOpen)} aria-label="Abrir menu">
@@ -170,19 +200,19 @@ export default function EditarMedicamento() {
       </header>
       <div className={styles.contentWrapper}>
         <aside className={`${styles.sidebar} ${sidebarOpen ? styles.sidebarOpen : ""}`}>
-            <div className={styles.sidebarHeader}>
-                <div className={styles.logoContainer}>
-                    {farmaciaInfo?.farm_logo_url && (<img src={farmaciaInfo.farm_logo_url} alt={`Logo de ${farmaciaInfo.farm_nome}`} className={styles.logoImage} />)}
-                    <span className={styles.logoText}>{farmaciaInfo?.farm_nome || "PharmaX"}</span>
-                </div>
-                <button className={styles.sidebarClose} onClick={() => setSidebarOpen(false)} aria-label="Fechar menu">×</button>
+          <div className={styles.sidebarHeader}>
+            <div className={styles.logoContainer}>
+              {farmaciaInfo?.farm_logo_url && (<img src={farmaciaInfo.farm_logo_url} alt={`Logo de ${farmaciaInfo.farm_nome}`} className={styles.logoImage} />)}
+              <span className={styles.logoText}>{farmaciaInfo?.farm_nome || "PharmaX"}</span>
             </div>
-            <nav className={styles.nav}>
-                <div className={styles.navSection}><p className={styles.navLabel}>Principal</p><Link href="/farmacias/favoritos" className={styles.navLink}><span className={styles.navText}>Favoritos</span></Link><Link href="/farmacias/produtos/medicamentos" className={`${styles.navLink} ${styles.active}`}><span className={styles.navText}>Medicamentos</span></Link></div>
-                <div className={styles.navSection}><p className={styles.navLabel}>Gestão</p><Link href="/farmacias/cadastro/funcionario/lista" className={styles.navLink}><span className={styles.navText}>Funcionários</span></Link><Link href="/farmacias/laboratorio/lista" className={styles.navLink}><span className={styles.navText}>Laboratórios</span></Link></div>
-                <div className={styles.navSection}><p className={styles.navLabel}>Relatórios</p><Link href="/farmacias/relatorios/favoritos" className={styles.navLink}><span className={styles.navText}>Medicamentos Favoritos</span></Link><Link href="/farmacias/relatorios/funcionarios" className={styles.navLink}><span className={styles.navText}>Relatório de Funcionarios</span></Link><Link href="/farmacias/relatorios/laboratorios" className={styles.navLink}><span className={styles.navText}>Relatório de Laboratorios</span></Link></div>
-                <div className={styles.navSection}><p className={styles.navLabel}>Conta</p><Link href="/farmacias/perfil" className={styles.navLink}><span className={styles.navText}>Meu Perfil</span></Link><button onClick={handleLogout} className={styles.navLink} style={{ all: 'unset', cursor: 'pointer', width: '100%' }}><span className={styles.navText}>Sair</span></button></div>
-            </nav>
+            <button className={styles.sidebarClose} onClick={() => setSidebarOpen(false)} aria-label="Fechar menu">×</button>
+          </div>
+          <nav className={styles.nav}>
+            <div className={styles.navSection}><p className={styles.navLabel}>Principal</p><Link href="/farmacias/favoritos" className={styles.navLink}><span className={styles.navText}>Favoritos</span></Link><Link href="/farmacias/produtos/medicamentos" className={`${styles.navLink} ${styles.active}`}><span className={styles.navText}>Medicamentos</span></Link></div>
+            <div className={styles.navSection}><p className={styles.navLabel}>Gestão</p><Link href="/farmacias/cadastro/funcionario/lista" className={styles.navLink}><span className={styles.navText}>Funcionários</span></Link><Link href="/farmacias/laboratorio/lista" className={styles.navLink}><span className={styles.navText}>Laboratórios</span></Link></div>
+            <div className={styles.navSection}><p className={styles.navLabel}>Relatórios</p><Link href="/farmacias/relatorios/favoritos" className={styles.navLink}><span className={styles.navText}>Medicamentos Favoritos</span></Link><Link href="/farmacias/relatorios/funcionarios" className={styles.navLink}><span className={styles.navText}>Relatório de Funcionarios</span></Link><Link href="/farmacias/relatorios/laboratorios" className={styles.navLink}><span className={styles.navText}>Relatório de Laboratorios</span></Link></div>
+            <div className={styles.navSection}><p className={styles.navLabel}>Conta</p><Link href="/farmacias/perfil" className={styles.navLink}><span className={styles.navText}>Meu Perfil</span></Link><button onClick={handleLogout} className={styles.navLink} style={{ all: 'unset', cursor: 'pointer', width: '100%' }}><span className={styles.navText}>Sair</span></button></div>
+          </nav>
         </aside>
         {sidebarOpen && <div className={styles.overlay} onClick={() => setSidebarOpen(false)} />}
         <main className={styles.mainContent}>
@@ -206,9 +236,16 @@ export default function EditarMedicamento() {
                 <div className={styles.formSection}>
                   <h3 className={styles.sectionTitle}>Imagem e Descrição</h3>
                   <div className={styles.imageUploadSection}><div className={styles.imagePreviewContainer}><label className={styles.inputLabel}>Imagem</label>{imagePreviewUrl ? (<img src={imagePreviewUrl} alt="Preview da nova imagem" className={styles.currentImage} />) : existingImageUrl ? (<img src={existingImageUrl} alt="Imagem atual do medicamento" className={styles.currentImage} />) : (<div className={styles.noImageText}>Nenhuma imagem</div>)}</div><div className={styles.formGroup}><label className={styles.inputLabel}>Trocar Imagem</label><input id="file-upload" className={styles.fileInput} type="file" name="med_imagem" onChange={handleChange} accept="image/png, image/jpeg, image/webp, image/gif" /><label htmlFor="file-upload" className={styles.fileInputLabel}><MdUploadFile /><span>{fileName || "Escolher novo arquivo"}</span></label></div></div>
-                  <div className={styles.formGroup} style={{marginTop: '2.4rem'}}><label className={styles.inputLabel}>Descrição</label><textarea className={styles.modernTextarea} name="med_descricao" value={medicamento.med_descricao || ''} onChange={handleChange} rows="4" required></textarea></div>
+                  <div className={styles.formGroup} style={{ marginTop: '2.4rem' }}><label className={styles.inputLabel}>Descrição</label><textarea className={styles.modernTextarea} name="med_descricao" value={medicamento.med_descricao || ''} onChange={handleChange} rows="4" required></textarea></div>
                 </div>
-                <div className={styles.formActions}>{error && <p className={styles.errorMessage}>{error}</p>}{success && <p className={styles.successMessage}>{success}</p>}<button type="button" className={styles.cancelButton} onClick={() => router.push("/farmacias/produtos/medicamentos")}>Cancelar</button><button type="submit" className={styles.submitButton} disabled={isSubmitting}>{isSubmitting ? 'Atualizando...' : 'Atualizar Medicamento'}</button></div>
+
+                {/* === MUDANÇA: Mensagens de erro e sucesso removidas daqui === */}
+                <div className={styles.formActions}>
+                  {/* {error && <p className={styles.errorMessage}>{error}</p>} */}
+                  {/* {success && <p className={styles.successMessage}>{success}</p>} */}
+                  <button type="button" className={styles.cancelButton} onClick={() => router.push("/farmacias/produtos/medicamentos")}>Cancelar</button>
+                  <button type="submit" className={styles.submitButton} disabled={isSubmitting}>{isSubmitting ? 'Atualizando...' : 'Atualizar Medicamento'}</button>
+                </div>
               </form>
             )}
           </div>

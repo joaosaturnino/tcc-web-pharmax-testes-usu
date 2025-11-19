@@ -4,6 +4,8 @@ import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
 import styles from "./page.module.css";
+// === MUDANÇA: Importado o 'react-hot-toast' ===
+import toast, { Toaster } from "react-hot-toast";
 
 export default function Login() {
   const router = useRouter();
@@ -17,7 +19,7 @@ export default function Login() {
   const [showForgotPassword, setShowForgotPassword] = useState(false);
   const [isResetting, setIsResetting] = useState(false);
   const [resetError, setResetError] = useState("");
-  
+
   const [resetStep, setResetStep] = useState('enterEmail'); // 'enterEmail', 'enterPassword', 'success'
   const [resetEmail, setResetEmail] = useState("");
   const [newPassword, setNewPassword] = useState("");
@@ -40,12 +42,32 @@ export default function Login() {
 
     if (!email || !senha) {
       setIsLoading(false);
-      alert("Preencha todos os campos!");
+      // === MUDANÇA: Substituído alert() por toast.error() ===
+      toast.error("Preencha todos os campos!");
+      return;
+    }
+
+    // Atalho de desenvolvimento: aceita credenciais locais sem chamar a API
+    if (process.env.NODE_ENV !== 'production' && email === 'admin@dev.local' && senha === '123456') {
+      const devData = { id: 1, farm_id: 1, farm_nome: 'Dev Farmácia', farm_email: email, tipo: 'admin' };
+      localStorage.setItem('userData', JSON.stringify(devData));
+      if (rememberMe) {
+        localStorage.setItem('rememberedCredentials', JSON.stringify({ email, senha }));
+      } else {
+        localStorage.removeItem('rememberedCredentials');
+      }
+      setIsLoading(false);
+      // === MUDANÇA: Substituído alert() por toast.success() ===
+      toast.success(`Login bem-sucedido! Bem-vinda, ${devData.farm_nome}.`);
+
+      // Se for admin, levar para a área administrativa
+      if (devData.tipo === 'admin') router.push('/admin');
+      else router.push('/farmacias/favoritos');
       return;
     }
 
     try {
-      const response = await fetch('http://localhost:3334/loginfarm',  {
+      const response = await fetch('http://localhost:3334/loginfarm', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -73,20 +95,26 @@ export default function Login() {
         }
 
         const nomeFarmacia = data.dados.farm_nome || 'Farmácia';
-        alert(`Login bem-sucedido! Bem-vinda, ${nomeFarmacia}.`);
+        // === MUDANÇA: Substituído alert() por toast.success() ===
+        toast.success(`Login bem-sucedido! Bem-vinda, ${nomeFarmacia}.`);
 
-        router.push("/farmacias/favoritos");
+        // Redireciona para /admin se o usuário for admin; caso contrário para a área das farmácias
+        const userData = data.dados || {};
+        if (userData.tipo === 'admin') router.push('/admin');
+        else router.push('/farmacias/favoritos');
       }
 
     } catch (error) {
       console.error("Erro no login:", error);
-      alert(error.message);
+      // === MUDANÇA: Substituído alert() por toast.error() ===
+      toast.error(error.message);
     } finally {
       setIsLoading(false);
     }
   };
 
   // ### INÍCIO: Funções do Modal "Esqueceu a Senha" Simplificado ###
+  // (Nenhuma alteração aqui, pois já usa 'setResetError' para erros inline no modal, o que é uma boa prática)
   const closeForgotPasswordModal = () => {
     setShowForgotPassword(false);
     setTimeout(() => {
@@ -112,7 +140,7 @@ export default function Login() {
       });
       const data = await response.json();
       if (!response.ok) throw new Error(data.mensagem || "E-mail não encontrado.");
-      
+
       // Se o e-mail for encontrado, avança para a etapa de redefinir a senha
       setResetStep('enterPassword');
     } catch (error) {
@@ -130,8 +158,8 @@ export default function Login() {
       return;
     }
     if (newPassword.length < 6) {
-        setResetError("A senha deve ter no mínimo 6 caracteres.");
-        return;
+      setResetError("A senha deve ter no mínimo 6 caracteres.");
+      return;
     }
     setIsResetting(true);
     setResetError("");
@@ -147,7 +175,7 @@ export default function Login() {
       });
       const data = await response.json();
       if (!response.ok) throw new Error(data.mensagem || "Não foi possível alterar a senha.");
-      
+
       // Avança para a etapa final de sucesso
       setResetStep('success');
     } catch (error) {
@@ -211,6 +239,30 @@ export default function Login() {
 
   return (
     <div className={styles.container}>
+      {/* === MUDANÇA: Adicionado o <Toaster /> === */}
+      <Toaster
+        position="top-right"
+        toastOptions={{
+          duration: 4000,
+          style: {
+            background: '#333',
+            color: '#fff',
+            fontSize: '1.5rem',
+            padding: '1.6rem',
+          },
+          success: {
+            style: {
+              background: '#458B00',
+            },
+          },
+          error: {
+            style: {
+              background: '#dc2626',
+            },
+          },
+        }}
+      />
+
       <div className={styles.loginCard}>
         <div className={styles.header}>
           <div className={styles.logo}>

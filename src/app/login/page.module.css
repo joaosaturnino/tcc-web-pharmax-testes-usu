@@ -233,8 +233,13 @@
 }
 
 @keyframes spin {
-  0% { transform: rotate(0deg); }
-  100% { transform: rotate(360deg); }
+  0% {
+    transform: rotate(0deg);
+  }
+
+  100% {
+    transform: rotate(360deg);
+  }
 }
 
 .linkCadastro {
@@ -333,7 +338,8 @@
   justify-content: flex-end;
 }
 
-.cancelBtn, .backBtn {
+.cancelBtn,
+.backBtn {
   padding: 12px 20px;
   border: 2px solid #e2e8f0;
   background: white;
@@ -414,21 +420,21 @@
   .container {
     padding: 16px;
   }
-  
+
   .loginCard {
     padding: 32px 24px;
     border-radius: 20px;
   }
-  
+
   .modal {
     padding: 20px;
     margin: 16px;
   }
-  
+
   .modalActions {
     flex-direction: column;
   }
-  
+
   .cancelBtn,
   .backBtn,
   .continueBtn {
@@ -440,33 +446,33 @@
   .loginCard {
     padding: 24px 20px;
   }
-  
+
   .header {
     margin-bottom: 24px;
   }
-  
+
   .logoText {
     font-size: 24px;
   }
-  
+
   .titulo {
     font-size: 20px;
   }
-  
+
   .options {
     flex-direction: column;
     gap: 12px;
     align-items: flex-start;
   }
-  
+
   .formGroup {
     margin-bottom: 20px;
   }
-  
+
   .input {
     padding: 14px;
   }
-  
+
   .botao {
     padding: 14px;
   }

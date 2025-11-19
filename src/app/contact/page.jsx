@@ -3,15 +3,15 @@
 
 import { useState, useEffect } from 'react';
 import Head from 'next/head';
-import Link from 'next/link';
+// Importação do 'Link' removida, pois não estava em uso
 import { useRouter } from 'next/navigation';
 import styles from './page.module.css';
 import AuthGuard from '../componentes/AuthGuard';
 
 export default function ContactPage() {
-  // --- ESTADOS DA SIDEBAR ---
-  const [sidebarOpen, setSidebarOpen] = useState(false);
-  const [farmaciaInfo, setFarmaciaInfo] = useState(null); // Novo estado para dados da farmácia
+  // --- ESTADOS DA SIDEBAR (REMOVIDOS) ---
+  // const [sidebarOpen, setSidebarOpen] = useState(false);
+  // const [farmaciaInfo, setFarmaciaInfo] = useState(null); // Estado removido
   const router = useRouter();
 
   // --- ESTADOS DO FORMULÁRIO ---
@@ -28,24 +28,15 @@ export default function ContactPage() {
   const [errors, setErrors] = useState({});
   const [charCount, setCharCount] = useState(0);
 
-  // Efeito para buscar dados da farmácia ao carregar
-  useEffect(() => {
-    try {
-      const userDataString = localStorage.getItem("userData");
-      if (userDataString) {
-        setFarmaciaInfo(JSON.parse(userDataString));
-      }
-    } catch (error) {
-      console.error("Falha ao buscar dados da farmácia:", error);
-    }
-  }, []); // Array vazio garante que rode apenas uma vez
+  // Efeito para buscar dados da farmácia (REMOVIDO)
+  // useEffect(() => { ... }, []);
 
-  // --- FUNÇÕES DA SIDEBAR ---
-  const handleLogout = async () => {
-    localStorage.removeItem("authToken");
-    localStorage.removeItem("userData");
-    // Adicione outras chaves se necessário
-    router.push("/home");
+  // --- FUNÇÃO DE LOGOUT (REMOVIDA) ---
+  // const handleLogout = async () => { ... };
+
+  // --- NOVA FUNÇÃO DE VOLTAR ---
+  const handleGoBack = () => {
+    router.back();
   };
 
   // --- FUNÇÕES DO FORMULÁRIO ---
@@ -79,18 +70,19 @@ export default function ContactPage() {
     setIsSubmitting(true);
     setSubmitStatus(null);
     try {
-      const response = await fetch('/api/contact', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(formData),
-      });
-      const data = await response.json();
-      if (response.ok && data.success) {
+      // Simulação de envio (substitua pela sua lógica de API se necessário)
+      // const response = await fetch('/api/contact', { ... });
+      // const data = await response.json();
+
+      // Simulação de sucesso após 1 segundo
+      await new Promise(resolve => setTimeout(resolve, 1000));
+      // if (response.ok && data.success) {
+      if (true) { // Simulação
         setSubmitStatus('success');
         setFormData({ name: '', email: '', phone: '', subject: '', category: 'geral', message: '' });
         setCharCount(0);
       } else {
-        throw new Error(data.message || 'Erro ao enviar a mensagem.');
+        throw new Error('Erro ao enviar a mensagem.');
       }
     } catch (error) {
       console.error('Falha no envio do formulário:', error);
@@ -110,89 +102,17 @@ export default function ContactPage() {
         {/* Header */}
         <header className={styles.header}>
           <div className={styles.headerLeft}>
-            <button className={styles.menuToggle} onClick={() => setSidebarOpen(!sidebarOpen)}>
-              ☰
-            </button>
             <h1 className={styles.title}>Entre em Contato</h1>
+          </div>
+          <div className={styles.headerActions}>
+            {/* Botão "Sair" alterado para "Voltar" */}
+            <button onClick={handleGoBack} className={styles.headerButton} aria-label="Voltar">
+              Voltar
+            </button>
           </div>
         </header>
 
         <div className={styles.contentWrapper}>
-          {/* Sidebar */}
-          <aside className={`${styles.sidebar} ${sidebarOpen ? styles.sidebarOpen : ""}`}>
-            <div className={styles.sidebarHeader}>
-              {/* --- BLOCO DA LOGO ATUALIZADO --- */}
-              <div className={styles.logo}>
-                {farmaciaInfo ? (
-                  <div className={styles.logoContainer}>
-                    {farmaciaInfo.farm_logo_url && (
-                      <img
-                        src={farmaciaInfo.farm_logo_url}
-                        alt={`Logo de ${farmaciaInfo.farm_nome}`}
-                        className={styles.logoImage}
-                      />
-                    )}
-                    <span className={styles.logoText}>
-                      {farmaciaInfo.farm_nome}
-                    </span>
-                  </div>
-                ) : (
-                  <span className={styles.logoText}>PharmaX</span>
-                )}
-              </div>
-              <button className={styles.sidebarClose} onClick={() => setSidebarOpen(false)}>
-                ×
-              </button>
-            </div>
-            {/* Navegação da sidebar */}
-            <nav className={styles.nav}>
-              <div className={styles.navSection}>
-                <p className={styles.navLabel}>Principal</p>
-                <Link href="/farmacias/favoritos" className={styles.navLink}>
-                  <span className={styles.navText}>Favoritos</span>
-                </Link>
-                <Link href="/farmacias/produtos/medicamentos" className={styles.navLink}>
-                  <span className={styles.navText}>Medicamentos</span>
-                </Link>
-              </div>
-              <div className={styles.navSection}>
-                <p className={styles.navLabel}>Gestão</p>
-                <Link href="/farmacias/cadastro/funcionario/lista" className={styles.navLink}>
-                  <span className={styles.navText}>Funcionários</span>
-                </Link>
-                <Link href="/farmacias/laboratorio/lista" className={styles.navLink}>
-                  <span className={styles.navText}>Laboratórios</span>
-                </Link>
-              </div>
-              <div className={styles.navSection}>
-                <p className={styles.navLabel}>Relatórios</p>
-                <Link href="/farmacias/relatorios/favoritos" className={styles.navLink}>
-                  <span className={styles.navText}>Medicamentos Favoritos</span>
-                </Link>
-                <Link href="/farmacias/relatorios/funcionarios" className={styles.navLink}>
-                  <span className={styles.navText}>Relatório de Funcionarios</span>
-                </Link>
-                <Link href="/farmacias/relatorios/laboratorios" className={styles.navLink}>
-                  <span className={styles.navText}>Relatório de Laboratorios</span>
-                </Link>
-              </div>
-              <div className={styles.navSection}>
-                <p className={styles.navLabel}>Conta</p>
-                <Link href="/farmacias/perfil" className={styles.navLink}>
-                  <span className={styles.navText}>Meu Perfil</span>
-                </Link>
-                <button onClick={handleLogout} className={styles.navLink} style={{ background: 'none', border: 'none', width: '100%', textAlign: 'left', cursor: 'pointer' }}>
-                  <span className={styles.navText}>Sair</span>
-                </button>
-              </div>
-            </nav>
-          </aside>
-
-          {/* Overlay */}
-          {sidebarOpen && (
-            <div className={styles.overlay} onClick={() => setSidebarOpen(false)} />
-          )}
-
           {/* Conteúdo Principal com o Formulário */}
           <main className={styles.mainContent}>
             <div className={styles.controlsContainer}>
