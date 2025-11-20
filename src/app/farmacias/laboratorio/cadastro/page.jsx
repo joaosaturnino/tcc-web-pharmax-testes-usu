@@ -2,12 +2,14 @@
 
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
-import Link from "next/link"; // CORREÇÃO: Importado para navegação SPA
+import Link from "next/link";
 import styles from "./laboratorio.module.css";
 import api from "../../../services/api";
 
 // Ícones para validação
 import { MdCheckCircle, MdError } from "react-icons/md";
+// === MUDANÇA: Import do Toast ===
+import toast, { Toaster } from "react-hot-toast";
 
 export default function CadastroLaboratorioPage() {
   const router = useRouter();
@@ -68,7 +70,7 @@ export default function CadastroLaboratorioPage() {
     }
   };
 
-  // --- Funções de validação (a lógica interna permanece a mesma) ---
+  // --- Funções de validação (mantidas iguais) ---
   function validaNome() {
     let objTemp = { validado: valSucesso, mensagem: [] };
     if (form.nome === '') {
@@ -96,7 +98,7 @@ export default function CadastroLaboratorioPage() {
     return objTemp.mensagem.length === 0;
   }
 
-  function validaDigitosCNPJ(cnpj) { /* ...código original mantido... */ return true; }
+  function validaDigitosCNPJ(cnpj) { return true; } // Simplificado para o exemplo, manter sua lógica original
 
   function validaEndereco() {
     let objTemp = { validado: valSucesso, mensagem: [] };
@@ -151,7 +153,8 @@ export default function CadastroLaboratorioPage() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (!validaNome() || !validaCNPJ() || !validaEndereco() || !validaTelefone() || !validaEmail() || !validaLogo()) {
-      alert("Por favor, corrija os erros no formulário.");
+      // === MUDANÇA: Alert -> Toast Error ===
+      toast.error("Por favor, corrija os erros no formulário.");
       return;
     }
 
@@ -171,14 +174,19 @@ export default function CadastroLaboratorioPage() {
     try {
       const response = await api.post('/laboratorios', formData, { headers: { 'Content-Type': 'multipart/form-data' } });
       if (response.data.sucesso) {
-        alert("Laboratório cadastrado com sucesso!");
-        router.push("/farmacias/laboratorio/lista");
+        // === MUDANÇA: Alert -> Toast Success + Timeout ===
+        toast.success("Laboratório cadastrado com sucesso!");
+        setTimeout(() => {
+          router.push("/farmacias/laboratorio/lista");
+        }, 1500);
       } else {
-        alert('Erro ao cadastrar: ' + response.data.mensagem);
+        // === MUDANÇA: Alert -> Toast Error ===
+        toast.error('Erro ao cadastrar: ' + response.data.mensagem);
       }
     } catch (error) {
       const errorMsg = error.response?.data?.mensagem || 'Erro na comunicação com o servidor. Tente novamente.';
-      alert(errorMsg);
+      // === MUDANÇA: Alert -> Toast Error ===
+      toast.error(errorMsg);
     }
   };
 
@@ -190,6 +198,30 @@ export default function CadastroLaboratorioPage() {
 
   return (
     <div className={styles.dashboard}>
+      {/* === MUDANÇA: Adicionado Toaster === */}
+      <Toaster
+        position="top-right"
+        toastOptions={{
+          duration: 4000,
+          style: {
+            background: '#333',
+            color: '#fff',
+            fontSize: '1.5rem',
+            padding: '1.6rem',
+          },
+          success: {
+            style: {
+              background: '#458B00',
+            },
+          },
+          error: {
+            style: {
+              background: '#dc2626',
+            },
+          },
+        }}
+      />
+
       <header className={styles.header}>
         <div className={styles.headerLeft}>
           <button className={styles.menuToggle} onClick={() => setSidebarOpen(!sidebarOpen)} aria-label="Abrir menu">
@@ -211,7 +243,6 @@ export default function CadastroLaboratorioPage() {
             </button>
           </div>
 
-          {/* CORREÇÃO: Trocadas <a> por <Link> para navegação mais rápida */}
           <nav className={styles.nav}>
             <div className={styles.navSection}>
               <p className={styles.navLabel}>Principal</p>

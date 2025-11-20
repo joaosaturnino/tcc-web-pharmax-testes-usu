@@ -5,6 +5,7 @@ import { useRouter, useParams } from "next/navigation";
 import styles from "./index.module.css";
 import api from "../../../../../services/api";
 import Link from "next/link";
+// === PADRONIZAÇÃO: Import do Toast ===
 import toast, { Toaster } from "react-hot-toast";
 
 export default function EditarFuncionarioPage() {
@@ -25,7 +26,7 @@ export default function EditarFuncionarioPage() {
     func_endereco: "",
     func_usuario: "",
     func_senha: "",
-    func_nivel: "", // O valor inicial é uma string vazia
+    func_nivel: "",
   });
 
   useEffect(() => {
@@ -57,8 +58,6 @@ export default function EditarFuncionarioPage() {
               func_endereco: funcionarioData.func_endereco || "",
               func_usuario: funcionarioData.func_usuario,
               func_senha: "",
-              // === 1ª CORREÇÃO: Armazena o NOME vindo da API ===
-              // (ex: "Farmacêutico")
               func_nivel: funcionarioData.func_nivel,
             });
           } else {
@@ -67,8 +66,9 @@ export default function EditarFuncionarioPage() {
         } catch (err) {
           console.error("Erro ao buscar dados do funcionário:", err);
           const errorMsg = err.response?.data?.mensagem || err.message || 'Não foi possível carregar os dados.';
+          // === PADRONIZAÇÃO: Toast Error ===
           toast.error(errorMsg);
-          router.push("/farmacias/cadastro/funcionario/lista");
+          setTimeout(() => router.push("/farmacias/cadastro/funcionario/lista"), 2000);
         } finally {
           setLoading(false);
         }
@@ -92,42 +92,38 @@ export default function EditarFuncionarioPage() {
     e.preventDefault();
     setLoading(true);
 
-    const promise = (async () => {
-      try {
-        const userDataString = localStorage.getItem("userData");
-        if (!userDataString) throw new Error("Usuário não autenticado.");
+    try {
+      const userDataString = localStorage.getItem("userData");
+      if (!userDataString) throw new Error("Usuário não autenticado.");
 
-        const userData = JSON.parse(userDataString);
-        const idDaFarmacia = userData.farm_id;
-        if (!idDaFarmacia) throw new Error("ID da farmácia não encontrado para realizar a atualização.");
+      const userData = JSON.parse(userDataString);
+      const idDaFarmacia = userData.farm_id;
+      if (!idDaFarmacia) throw new Error("ID da farmácia não encontrado para realizar a atualização.");
 
-        // 'dadosParaEnviar' agora contém func_nivel: "Farmacêutico" (o nome)
-        const dadosParaEnviar = { ...form, farmacia_id: idDaFarmacia };
+      const dadosParaEnviar = { ...form, farmacia_id: idDaFarmacia };
 
-        if (!dadosParaEnviar.func_senha || dadosParaEnviar.func_senha.trim() === "") {
-          delete dadosParaEnviar.func_senha;
-        }
-
-        const response = await api.patch(`/funcionario/${id}`, dadosParaEnviar);
-
-        if (response.data.sucesso) {
-          router.push("/farmacias/cadastro/funcionario/lista");
-        } else {
-          throw new Error(response.data.mensagem);
-        }
-      } catch (err) {
-        console.error("Erro ao atualizar funcionário:", err);
-        throw new Error(err.response?.data?.mensagem || err.message || 'Ocorreu um erro ao salvar.');
-      } finally {
-        setLoading(false);
+      if (!dadosParaEnviar.func_senha || dadosParaEnviar.func_senha.trim() === "") {
+        delete dadosParaEnviar.func_senha;
       }
-    })();
 
-    toast.promise(promise, {
-      loading: 'Atualizando funcionário...',
-      success: 'Funcionário atualizado com sucesso!',
-      error: (err) => err.message,
-    });
+      const response = await api.patch(`/funcionario/${id}`, dadosParaEnviar);
+
+      if (response.data.sucesso) {
+        // === PADRONIZAÇÃO: Toast Success + Timeout ===
+        toast.success("Funcionário atualizado com sucesso!");
+        setTimeout(() => {
+          router.push("/farmacias/cadastro/funcionario/lista");
+        }, 1500);
+      } else {
+        throw new Error(response.data.mensagem);
+      }
+    } catch (err) {
+      console.error("Erro ao atualizar funcionário:", err);
+      // === PADRONIZAÇÃO: Toast Error ===
+      toast.error(err.response?.data?.mensagem || err.message || 'Ocorreu um erro ao salvar.');
+    } finally {
+      setLoading(false);
+    }
   };
 
   if (loading && !form.func_nome) {
@@ -141,10 +137,31 @@ export default function EditarFuncionarioPage() {
 
   return (
     <div className={styles.dashboard}>
-      <Toaster position="top-right" reverseOrder={false} />
+      {/* === PADRONIZAÇÃO: Componente Toaster === */}
+      <Toaster
+        position="top-right"
+        toastOptions={{
+          duration: 4000,
+          style: {
+            background: '#333',
+            color: '#fff',
+            fontSize: '1.5rem',
+            padding: '1.6rem',
+          },
+          success: {
+            style: {
+              background: '#458B00',
+            },
+          },
+          error: {
+            style: {
+              background: '#dc2626',
+            },
+          },
+        }}
+      />
 
       <header className={styles.header}>
-        {/* ... (Header JSX) ... */}
         <div className={styles.headerLeft}>
           <button
             className={styles.menuToggle}
@@ -158,7 +175,6 @@ export default function EditarFuncionarioPage() {
       </header>
       <div className={styles.contentWrapper}>
         <aside className={`${styles.sidebar} ${sidebarOpen ? styles.sidebarOpen : ""}`}>
-          {/* ... (Sidebar JSX) ... */}
           <div className={styles.sidebarHeader}>
             <div className={styles.logoContainer}>
               {farmaciaInfo?.farm_logo_url && (
@@ -236,7 +252,6 @@ export default function EditarFuncionarioPage() {
             <form onSubmit={handleSubmit} className={styles.form}>
               <div className={styles.formGrid}>
                 <div className={styles.formSection}>
-                  {/* ... (Formulário: Informações Pessoais) ... */}
                   <h3 className={styles.sectionTitle}>Informações Pessoais</h3>
                   <div className={styles.formGroup}>
                     <label className={styles.inputLabel}>Nome Completo</label>
@@ -294,7 +309,6 @@ export default function EditarFuncionarioPage() {
                 </div>
                 <div className={styles.formSection}>
                   <h3 className={styles.sectionTitle}>Acesso ao Sistema</h3>
-                  {/* ... (Formulário: Acesso) ... */}
                   <div className={styles.formGroup}>
                     <label className={styles.inputLabel}>Nome de Usuário</label>
                     <input className={styles.modernInput}
@@ -314,12 +328,11 @@ export default function EditarFuncionarioPage() {
                       placeholder="Deixe em branco para não alterar" />
                   </div>
 
-                  {/* === 2ª CORREÇÃO: Mudar o VALUE das options === */}
                   <div className={styles.formGroup}>
                     <label className={styles.inputLabel}>Nível de Acesso</label>
                     <select className={styles.modernInput}
                       name="func_nivel"
-                      value={form.func_nivel} // Agora (ex: "Farmacêutico")
+                      value={form.func_nivel}
                       onChange={handleChange}
                       required >
                       <option value="" disabled>Selecione</option>
@@ -328,7 +341,6 @@ export default function EditarFuncionarioPage() {
                       <option value="Administrador">Administrador</option>
                     </select>
                   </div>
-                  {/* === FIM DAS CORREÇÕES === */}
 
                 </div>
               </div>

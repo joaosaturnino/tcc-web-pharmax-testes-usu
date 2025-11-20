@@ -1,36 +1,43 @@
+/* --- 1. BACKDROP (Fundo Escuro) --- */
 .backdrop {
-    position: fixed;
-    inset: 0;
-    background: rgba(2, 6, 23, 0.6);
+    position: fixed; /* Fixa o elemento na tela, ignorando o scroll */
+    inset: 0; /* Atalho para top: 0, right: 0, bottom: 0, left: 0 (Cobre a tela inteira) */
+    background: rgba(2, 6, 23, 0.6); /* Cor semi-transparente para focar no modal */
     display: flex;
-    align-items: center;
-    justify-content: center;
-    z-index: 1000;
-    padding: 1rem
+    align-items: center; /* Centraliza o modal verticalmente */
+    justify-content: center; /* Centraliza o modal horizontalmente */
+    z-index: 1000; /* Garante que o modal fique por cima de todo o conteúdo */
+    padding: 1rem /* Espaçamento interno */
 }
 
+/* --- 2. MODAL (Conteúdo Interno) --- */
 .modal {
     background: #fff;
     border-radius: 10px;
-    width: min(860px, 100%);
-    max-height: 92vh;
-    overflow: auto;
-    box-shadow: 0 16px 40px rgba(2, 6, 23, 0.35);
-    border: 1px solid rgba(15, 23, 42, 0.04)
+    /* Define a largura: usa 100% até atingir o máximo de 860px */
+    width: min(860px, 100%); 
+    max-height: 92vh; /* Limita a altura para que ele não ocupe toda a tela e seja responsivo */
+    overflow: auto; /* Permite scroll interno se o conteúdo for muito longo */
+    /* Sombra profunda para destacar o modal */
+    box-shadow: 0 16px 40px rgba(2, 6, 23, 0.35); 
+    border: 1px solid rgba(15, 23, 42, 0.04) /* Borda sutil */
 }
 
+/* --- 3. HEADER (Cabeçalho com Título e Botão Fechar) --- */
 .header {
     display: flex;
     align-items: center;
-    justify-content: space-between;
+    justify-content: space-between; /* Empurra o título para a esquerda e o botão para a direita */
     padding: 0.9rem 1rem;
-    border-bottom: 1px solid #f1f5f9
+    border-bottom: 1px solid #f1f5f9 /* Linha divisória suave */
 }
 
+/* --- 4. CONTENT (Corpo do Modal) --- */
 .content {
-    padding: 1rem 1.25rem
+    padding: 1rem 1.25rem /* Espaçamento interno do conteúdo */
 }
 
+/* --- 5. BOTÃO FECHAR (X) --- */
 .close {
     background: #f1f5f9;
     border: none;
@@ -39,5 +46,5 @@
     cursor: pointer;
     width: 36px;
     height: 36px;
-    border-radius: 8px
+    border-radius: 8px /* Botão quadrado com cantos arredondados */
 }

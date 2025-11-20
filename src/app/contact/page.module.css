@@ -1,6 +1,7 @@
 /* Layout Principal */
 .dashboard {
   min-height: 100vh;
+  /* Garante que a página ocupe toda a altura */
   background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
   display: flex;
   flex-direction: column;
@@ -12,9 +13,11 @@
   padding: 1.5rem 3rem;
   display: flex;
   justify-content: space-between;
+  /* Espaço entre o título e as ações */
   align-items: center;
   box-shadow: 0 0.2rem 0.4rem rgba(0, 0, 0, 0.1);
   position: sticky;
+  /* Mantém o header fixo no topo ao rolar */
   top: 0;
   z-index: 100;
 }
@@ -28,8 +31,8 @@
 .title {
   font-size: 2.8rem;
   font-weight: 600;
-  color: #1e293b;
   margin: 0;
+  /* Cria um gradiente de texto usando o tema principal */
   background: linear-gradient(135deg, #191970 0%, #458B00 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
@@ -42,7 +45,6 @@
   gap: 1.6rem;
 }
 
-/* Botão renomeado para .headerButton */
 .headerButton {
   padding: 0.6rem 1rem;
   background: transparent;
@@ -56,6 +58,7 @@
 
 .headerButton:hover {
   background: rgba(69, 139, 0, 0.08);
+  /* Fundo verde suave no hover */
   transform: translateY(-1px);
 }
 
@@ -63,6 +66,7 @@
 .contentWrapper {
   display: flex;
   flex: 1;
+  /* Permite que o wrapper ocupe o espaço restante */
   position: relative;
 }
 
@@ -85,7 +89,7 @@
   border: 1px solid #e5e7eb;
 }
 
-/* Input de busca (reaproveitado para o formulário) */
+/* --- ESTILOS COMPARTILHADOS DE INPUT --- */
 .searchInput {
   width: 100%;
   padding: 1.2rem 1.5rem;
@@ -100,6 +104,7 @@
   outline: none;
   border-color: #458B00;
   box-shadow: 0 0 0 3px rgba(69, 139, 0, 0.1);
+  /* Efeito de foco verde suave */
 }
 
 /* Select (reaproveitado para o formulário) */
@@ -120,17 +125,18 @@
   border-color: #458B00;
 }
 
-/* Botão de Paginação (reaproveitado para o submit) */
+/* Botão de Submissão (reaproveitado de Paginação) */
 .paginationBtn {
   padding: 1rem 1.5rem;
   border: none;
   border-radius: 0.6rem;
   background: #458B00;
+  /* Verde Destaque */
   color: white;
   font-weight: 600;
   cursor: pointer;
   transition: all 0.3s ease;
-  font-size: 1.3rem;
+  font-size: 1.4rem;
 }
 
 .paginationBtn:hover:not(:disabled) {
@@ -144,7 +150,7 @@
   cursor: not-allowed;
 }
 
-/* --- Estilos para o Formulário de Contato --- */
+/* --- ESTILOS ESPECÍFICOS DO FORMULÁRIO DE CONTATO --- */
 .contactForm {
   display: flex;
   flex-direction: column;
@@ -154,6 +160,7 @@
 .formGrid {
   display: grid;
   grid-template-columns: 1fr 1fr;
+  /* Duas colunas em desktop */
   gap: 2rem;
 }
 
@@ -172,10 +179,17 @@
 .formTextarea {
   min-height: 120px;
   resize: vertical;
+  /* Permite redimensionar apenas na vertical */
+}
+
+.fullWidth {
+  grid-column: 1 / -1;
+  /* Faz o elemento ocupar todas as colunas */
 }
 
 .inputError {
   border-color: #ef4444;
+  /* Borda vermelha em caso de erro */
   box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.1);
 }
 
@@ -185,11 +199,7 @@
   font-weight: 500;
 }
 
-.fullWidth {
-  grid-column: 1 / -1;
-}
-
-/* Mensagens de Status */
+/* --- Mensagens de Status (Feedback ao usuário) --- */
 .statusMessage {
   margin-top: 2rem;
   padding: 1.5rem;
@@ -203,12 +213,14 @@
 
 .statusMessage.success {
   background-color: #f0fff4;
+  /* Fundo verde suave */
   color: #065f46;
   border: 1px solid #10b981;
 }
 
 .statusMessage.error {
   background-color: #fef2f2;
+  /* Fundo vermelho suave */
   color: #991b1b;
   border: 1px solid #ef4444;
 }
@@ -222,27 +234,35 @@
   opacity: 0.7;
 }
 
-/* Responsividade */
+/* --- RESPONSIVIDADE --- */
 @media (max-width: 64rem) {
+
+  /* ~1024px */
   .mainContent {
-    padding: 2.4rem 0.8rem;
+    padding: 2.4rem 1.5rem;
   }
 }
 
 @media (max-width: 48rem) {
+
+  /* ~768px (Tablet Portrait) */
   .mainContent {
     padding: 1.6rem 2rem;
   }
 
   .formGrid {
     grid-template-columns: 1fr;
+    /* Coluna única no mobile */
     gap: 1.5rem;
   }
 }
 
 @media (max-width: 30rem) {
+
+  /* ~480px (Mobile) */
   .header {
     flex-direction: column;
+    /* Empilha logo/título sobre as ações */
     gap: 1.6rem;
     align-items: flex-start;
     padding: 1.6rem 2rem;

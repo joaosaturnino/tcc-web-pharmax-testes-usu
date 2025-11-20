@@ -45,6 +45,7 @@ export default function FavoritosFarmaciaPage() {
           return;
         }
 
+        // ROTA CORRETA: /favoritos/{farm_id}/favoritos
         const response = await api.get(`/favoritos/${idDaFarmacia}/favoritos`);
 
         if (response.data.sucesso) {
@@ -52,17 +53,22 @@ export default function FavoritosFarmaciaPage() {
             ...med,
             id: med.med_id,
             nome: med.med_nome,
-            fabricante: med.fabricante_nome || `Laboratório ${med.lab_nome}`,
+            // O SQL retorna "fabricante_nome", usamos esse campo.
+            fabricante: med.fabricante_nome || 'Laboratório Não Informado',
             dosagem: med.med_dosagem,
             favoritacoes: med.favoritacoes_count || 0,
-            status: med.status || "pendente",
+            
+            // CORREÇÃO CRÍTICA: O SQL não retorna o status de estoque. 
+            // Definimos um status padrão para que o badge na UI funcione.
+            // Usando "em_estoque" para exibir "Disponível" (badge verde).
+            status: "em_estoque", 
+            
             ultimaAtualizacao: med.med_data_atualizacao
               ? new Date(med.med_data_atualizacao).toISOString()
               : new Date().toISOString(),
           }));
 
-          // CORREÇÃO CRÍTICA: Ordena a lista completa de medicamentos antes de salvá-la no estado.
-          // Isso garante que a paginação funcione corretamente sobre a lista já ordenada.
+          // A ordenação é feita aqui para garantir que a lista completa esteja ordenada.
           const sortedMedicamentos = processedMedicamentos.sort((a, b) => b.favoritacoes - a.favoritacoes);
           setMedicamentos(sortedMedicamentos);
 

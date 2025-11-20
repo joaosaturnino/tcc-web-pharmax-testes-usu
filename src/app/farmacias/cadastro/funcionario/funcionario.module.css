@@ -45,6 +45,7 @@
   font-size: clamp(2rem, 4vw, 2.8rem);
   font-weight: 600;
   margin: 0;
+  /* Gradiente de cor para o título */
   background: linear-gradient(135deg, #191970 0%, #458B00 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
@@ -57,6 +58,7 @@
   position: relative;
 }
 
+/* --- SIDEBAR --- */
 .sidebar {
   width: 28rem;
   background: linear-gradient(180deg, #191970 0%, #0f1440 100%);
@@ -164,7 +166,7 @@
   font-family: "Montserrat";
 }
 
-/* REESTRUTURADO: Conteúdo Principal e Formulário para consistência */
+/* --- CONTEÚDO PRINCIPAL E FORMULÁRIO --- */
 .mainContent {
   flex: 1;
   padding: 3.2rem;
@@ -224,11 +226,7 @@
   border-bottom: 1px solid #e5e7eb;
 }
 
-.formControl {
-  position: relative;
-}
-
-/* Movido para o container de cada input */
+/* --- ESTILOS DE INPUT E VALIDAÇÃO --- */
 .inputLabel {
   display: block;
   font-size: 1.4rem;
@@ -259,27 +257,34 @@
 }
 
 .modernInput[type="date"] {
-  color-scheme: light;
+  color-scheme: light; /* Estiliza o calendário nativo para cores claras */
 }
 
 select.modernInput {
-  appearance: none;
+  appearance: none; /* Remove a seta padrão do select */
   background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
   background-repeat: no-repeat;
   background-position: right 1.6rem center;
   background-size: 1.6rem;
-  padding-right: 4rem;
+  padding-right: 4rem; /* Garante espaço para a seta personalizada */
 }
 
-/* Validação */
+/* Classe de controle (parent) */
+.formControl {
+  position: relative;
+}
+
+/* Validação: Borda verde em caso de sucesso */
 .success .modernInput {
   border-color: #458B00;
 }
 
+/* Validação: Borda vermelha em caso de erro */
 .error .modernInput {
   border-color: #ef4444;
 }
 
+/* Ícones de validação (aparecem no canto do input) */
 .sucesso,
 .erro {
   position: absolute;
@@ -311,7 +316,7 @@ select.modernInput {
   display: block;
 }
 
-/* Ações do Formulário */
+/* --- AÇÕES DE BOTÕES --- */
 .formActions {
   display: flex;
   justify-content: flex-end;
@@ -380,40 +385,12 @@ select.modernInput {
   }
 }
 
-/* Overlay (Consistente) */
-.overlay {
-  position: fixed;
-  inset: 0;
-  background: rgba(0, 0, 0, 0.4);
-  z-index: 105;
-  display: none;
-  opacity: 0;
-  transition: opacity 0.3s ease-in-out;
-}
-
-.sidebar.sidebarOpen~.overlay {
-  display: block;
-  opacity: 1;
-}
-
 /* --- RESPONSIVIDADE --- */
-@media (max-width: 64rem) {
-
-  /* até 1024px */
-  .formGrid {
-    grid-template-columns: 1fr;
-    gap: 0;
-  }
-
-  .formSection:not(:last-child) {
-    margin-bottom: 3.2rem;
-  }
-}
-
 @media (max-width: 48rem) {
 
   /* até 768px */
   .sidebar {
+    /* CORREÇÃO: Necessário para o modal funcionar no mobile */
     position: fixed;
     left: 0;
     top: 0;
@@ -439,8 +416,13 @@ select.modernInput {
     padding: 2.4rem;
   }
 
+  .formGrid {
+    grid-template-columns: 1fr; /* Coluna única no mobile */
+    gap: 1.6rem;
+  }
+
   .formActions {
-    flex-direction: column-reverse;
+    flex-direction: column-reverse; /* Inverte a ordem Salvar/Cancelar */
     gap: 1rem;
   }
 

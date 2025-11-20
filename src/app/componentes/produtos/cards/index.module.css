@@ -1,17 +1,22 @@
 /* src/components/medicamentos/card/index.module.css */
+
+/* --- CARD BASE --- */
 .card {
   background: #fff;
   border-radius: 12px;
+  /* Sombra sutil */
   box-shadow: 0 0.2rem 0.8px rgba(0, 0, 0, 0.04);
   padding: 2.4rem;
   transition: transform 0.3s ease, box-shadow 0.3s ease;
 }
 
 .card:hover {
+  /* Efeito de levitação ao passar o mouse */
   transform: translateY(-2px);
   box-shadow: 0 0.8rem 2.5rem rgba(0, 0, 0, 0.1);
 }
 
+/* --- HEADER --- */
 .cardHeader {
   display: flex;
   justify-content: space-between;
@@ -28,6 +33,7 @@
 }
 
 .userAvatar {
+  /* Avatar circular verde (cor do tema) */
   width: 4.8rem;
   height: 4.8rem;
   border-radius: 50%;
@@ -59,6 +65,7 @@
   color: #94a3b8;
 }
 
+/* --- LISTA DE INFORMAÇÕES (Dosagem, Data) --- */
 .medList {
   display: flex;
   flex-direction: column;
@@ -92,6 +99,7 @@
   color: #64748b;
 }
 
+/* --- BADGE DE STATUS (Ao lado da dosagem) --- */
 .badge {
   padding: 0.6rem 1.2rem;
   border-radius: 1.2rem;
@@ -102,20 +110,19 @@
 
 .inStock {
   background: #e6f7e6;
+  /* Fundo Verde Claro */
   color: #458B00;
+  /* Texto Verde Escuro */
 }
 
 .outStock {
   background: #ffeaea;
+  /* Fundo Vermelho Claro */
   color: #d32f2f;
+  /* Texto Vermelho Escuro */
 }
 
-.pending {
-  background: #fff7e6;
-  color: #ff9800;
-}
-
-/* Adicione ao src/components/medicamentos/card/index.module.css */
+/* --- CONTROLES DE BOTÕES --- */
 .statusControls {
   display: flex;
   gap: 0.8rem;
@@ -133,6 +140,7 @@
   cursor: pointer;
   transition: all 0.2s ease;
   flex: 1;
+  /* Garante que os botões dividam o espaço igualmente */
 }
 
 .statusBtn:disabled {

@@ -1,10 +1,12 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import Link from "next/link"; // CORREÇÃO: Importado para navegação SPA
+import Link from "next/link";
 import { useRouter } from "next/navigation";
 import styles from "./laboratorio.module.css";
 import api from "../../../services/api";
+// === MUDANÇA: Import do Toast ===
+import toast, { Toaster } from "react-hot-toast";
 
 export default function ListaLaboratorios() {
   const [laboratorios, setLaboratorios] = useState([]);
@@ -45,33 +47,92 @@ export default function ListaLaboratorios() {
         }));
         setLaboratorios(labsFormatados);
       } else {
-        alert('Erro ao carregar laboratórios: ' + response.data.mensagem);
+        // === MUDANÇA: Alert -> Toast Error ===
+        toast.error('Erro ao carregar laboratórios: ' + response.data.mensagem);
       }
     } catch (error) {
       console.error('Erro ao carregar laboratórios:', error);
-      alert('Não foi possível carregar os dados. Verifique sua conexão.');
+      // === MUDANÇA: Alert -> Toast Error ===
+      toast.error('Não foi possível carregar os dados. Verifique sua conexão.');
     } finally {
       setLoading(false);
     }
   }
 
-  const handleExcluir = async (id, nome) => {
-    if (window.confirm(`Tem certeza que deseja excluir o laboratório ${nome}?`)) {
-      try {
-        const response = await api.delete(`/laboratorios/${id}`);
+  // === MUDANÇA: Função separada para executar a exclusão após clicar em "Sim" ===
+  const confirmarExclusao = async (id, nome, toastId) => {
+    toast.dismiss(toastId); // Fecha o toast de pergunta
 
-        if (response.data.sucesso === true) {
-          alert(`Laboratório ${nome} excluído com sucesso!`);
-          // Atualiza a lista removendo o item excluído sem precisar de uma nova chamada à API
-          setLaboratorios(laboratorios.filter(lab => lab.id !== id));
-        } else {
-          alert('Erro ao excluir: ' + response.data.mensagem);
-        }
-      } catch (error) {
-        console.error('Erro ao excluir laboratório:', error);
-        alert('Não foi possível excluir o laboratório. Tente novamente.');
+    try {
+      const response = await api.delete(`/laboratorios/${id}`);
+
+      if (response.data.sucesso === true) {
+        // === MUDANÇA: Alert -> Toast Success ===
+        toast.success(`Laboratório ${nome} excluído com sucesso!`);
+        setLaboratorios((prev) => prev.filter(lab => lab.id !== id));
+      } else {
+        // === MUDANÇA: Alert -> Toast Error ===
+        toast.error('Erro ao excluir: ' + response.data.mensagem);
       }
+    } catch (error) {
+      console.error('Erro ao excluir laboratório:', error);
+      // === MUDANÇA: Alert -> Toast Error ===
+      toast.error('Não foi possível excluir o laboratório. Tente novamente.');
     }
+  };
+
+  // === MUDANÇA: Substitui window.confirm por Toast Customizado ===
+  const handleExcluir = (id, nome) => {
+    toast((t) => (
+      <div style={{ display: 'flex', flexDirection: 'column', gap: '12px', alignItems: 'center', minWidth: '280px' }}>
+        <span style={{ fontSize: '1.4rem', color: '#333', textAlign: 'center', lineHeight: '1.5' }}>
+          Tem certeza que deseja excluir o laboratório <br /> <strong>{nome}</strong>?
+        </span>
+        <div style={{ display: 'flex', gap: '12px', width: '100%', justifyContent: 'center', marginTop: '8px' }}>
+          <button
+            onClick={() => toast.dismiss(t.id)}
+            style={{
+              padding: '8px 16px',
+              backgroundColor: '#e5e7eb',
+              color: '#374151',
+              border: 'none',
+              borderRadius: '6px',
+              cursor: 'pointer',
+              fontSize: '1.3rem',
+              fontWeight: '600',
+              flex: 1
+            }}
+          >
+            Cancelar
+          </button>
+          <button
+            onClick={() => confirmarExclusao(id, nome, t.id)}
+            style={{
+              padding: '8px 16px',
+              backgroundColor: '#dc2626',
+              color: 'white',
+              border: 'none',
+              borderRadius: '6px',
+              cursor: 'pointer',
+              fontSize: '1.3rem',
+              fontWeight: '600',
+              flex: 1
+            }}
+          >
+            Sim, excluir
+          </button>
+        </div>
+      </div>
+    ), {
+      duration: Infinity, // Não fecha sozinho
+      style: {
+        padding: '20px',
+        background: '#fff',
+        boxShadow: '0 10px 25px rgba(0,0,0,0.15)',
+        borderRadius: '12px',
+        border: '1px solid #e5e7eb'
+      }
+    });
   };
 
   const handleLogout = () => {
@@ -89,12 +150,36 @@ export default function ListaLaboratorios() {
 
   return (
     <div className={styles.dashboard}>
+      {/* === MUDANÇA: Componente Toaster === */}
+      <Toaster
+        position="top-right"
+        toastOptions={{
+          duration: 4000,
+          style: {
+            background: '#333',
+            color: '#fff',
+            fontSize: '1.5rem',
+            padding: '1.6rem',
+          },
+          success: {
+            style: {
+              background: '#458B00',
+            },
+          },
+          error: {
+            style: {
+              background: '#dc2626',
+            },
+          },
+        }}
+      />
+
       <header className={styles.header}>
         <div className={styles.headerLeft}>
           <button
             className={styles.menuToggle}
             onClick={() => setSidebarOpen(!sidebarOpen)}
-            aria-label="Abrir menu" // NOVO: Acessibilidade
+            aria-label="Abrir menu"
           >
             ☰
           </button>
@@ -105,6 +190,8 @@ export default function ListaLaboratorios() {
             <input type="text" placeholder="Pesquisar laboratórios..." className={styles.searchInput} value={filtro} onChange={(e) => setFiltro(e.target.value)} />
             <span className={styles.searchIcon}>🔍</span>
           </div>
+          
+          {/* Nota: Se tiver problemas com Link, troque por button + router.push */}
           <Link href="/farmacias/laboratorio/cadastro" className={styles.submitButton}>
             <span className={styles.buttonIcon}>➕</span>
             Novo Laboratório
@@ -130,13 +217,12 @@ export default function ListaLaboratorios() {
             <button
               className={styles.sidebarClose}
               onClick={() => setSidebarOpen(false)}
-              aria-label="Fechar menu" // NOVO: Acessibilidade
+              aria-label="Fechar menu"
             >
               ×
             </button>
           </div>
 
-          {/* CORREÇÃO: Trocados <a> por <Link> para navegação mais rápida */}
           <nav className={styles.nav}>
             <div className={styles.navSection}><p className={styles.navLabel}>Principal</p><Link href="/farmacias/favoritos" className={styles.navLink}><span className={styles.navText}>Favoritos</span></Link><Link href="/farmacias/produtos/medicamentos" className={styles.navLink}><span className={styles.navText}>Medicamentos</span></Link></div>
             <div className={styles.navSection}><p className={styles.navLabel}>Gestão</p><Link href="/farmacias/cadastro/funcionario/lista" className={styles.navLink}><span className={styles.navText}>Funcionários</span></Link><Link href="/farmacias/laboratorio/lista" className={`${styles.navLink} ${styles.active}`}><span className={styles.navText}>Laboratórios</span></Link></div>
@@ -154,7 +240,6 @@ export default function ListaLaboratorios() {
           </div>
 
           {loading ? (
-            // MELHORIA: Spinner de carregamento visual
             <div className={styles.loaderContainer}>
               <div className={styles.spinner}></div>
               <p>Carregando laboratórios...</p>
@@ -179,7 +264,19 @@ export default function ListaLaboratorios() {
                         <tr key={lab.id}>
                           <td>
                             <div className={styles.labInfo}>
-                              {lab.logoUrl ? (<img src={lab.logoUrl} alt={`Logo do ${lab.nome}`} className={styles.labAvatar} />) : (<div className={styles.labAvatar}>{lab.nome.charAt(0)}</div>)}
+                               {/* === MUDANÇA: Estilo inline adicionado para prevenir imagens gigantes === */}
+                              {lab.logoUrl ? (
+                                <img 
+                                    src={lab.logoUrl} 
+                                    alt={`Logo do ${lab.nome}`} 
+                                    className={styles.labAvatar} 
+                                    style={{ width: '50px', height: '50px', objectFit: 'contain', borderRadius: '8px', border: '1px solid #eee' }}
+                                />
+                              ) : (
+                                <div className={styles.labAvatar} style={{ width: '50px', height: '50px', display: 'flex', alignItems: 'center', justifyContent: 'center', background: '#eee', borderRadius: '8px' }}>
+                                    {lab.nome.charAt(0)}
+                                </div>
+                              )}
                               <div>
                                 <div className={styles.labNome}>{lab.nome}</div>
                                 <div className={styles.labEmail}>{lab.email}</div>

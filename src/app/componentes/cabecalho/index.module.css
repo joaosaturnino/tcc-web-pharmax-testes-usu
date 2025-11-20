@@ -1,38 +1,47 @@
+/* Define o container principal da barra de navegação */
 .containerNav {
   display: flex;
-  justify-content: center;
-  align-items: center;
+  justify-content: center; /* Centraliza horizontalmente */
+  align-items: center;     /* Centraliza verticalmente */
   color: #458b00;
   border-bottom: 0.4rem solid #006400;
   font-size: 4.4rem;
   width: 100%;
-  max-width: 144rem;
+  max-width: 144rem; /* Limita a largura máxima em telas muito grandes */
   margin-bottom: 1.5rem;
+  /* Importante: Permite que os itens (menu e mobile menu) fiquem em coluna quando necessário */
+  flex-direction: column; 
 }
 
+/* Container interno que segura o Logo e os Links Desktop */
 .containerNav .menu {
   height: 8rem;
   padding: 0.3rem 2rem 0.4rem 2rem;
   font-size: 4.4rem;
   display: flex;
   align-items: center;
-  justify-content: space-between;
+  justify-content: space-between; /* Espaça logo e menu */
   width: 100%;
 }
 
+/* Ícone do Menu Hambúrguer */
 .containerNav .menu .icon {
   color: #458b00;
   font-size: 4.4rem;
+  cursor: pointer; /* Adicionado cursor pointer para indicar clique */
   user-select: none;
 }
 
+/* Menu Desktop (Links visíveis em telas grandes) */
 .containerNav .menu .menuGrande {
   display: flex;
+  gap: 1rem; /* Espaçamento entre os links */
 }
 
+/* Estilo dos Links do Menu Desktop */
 .containerNav .menu .menuGrande a {
   width: 12rem;
-  height: 8rem;
+  height: 8rem; /* Ocupa toda a altura do menu */
   color: #a2cd5a;
   text-align: center;
   text-decoration: none;
@@ -43,103 +52,93 @@
   font-size: 1.6rem;
   font-weight: bold;
   cursor: pointer;
+  transition: all 0.3s ease; /* Suaviza o efeito de hover */
 }
 
-.containerNav .menu .menuGrande .menuSair {
-  width: 12rem;
-  height: 8rem;
-  color: #458b00;
-  text-align: center;
-  text-decoration: none;
-  display: flex;
-  flex-direction: row;
-  justify-content: center;
-  align-items: center;
-  font-size: 1.6rem;
-  font-weight: bold;
-  cursor: pointer;
-}
-
+/* Estilo ao passar o mouse (Hover) */
 .containerNav .menu .menuGrande a:hover {
-  border: 0.1rem solid#006400;
+  border-bottom: 0.4rem solid #006400; /* Borda apenas embaixo fica mais elegante */
   color: #458b00;
-  border-radius: 1.4rem;
+  background-color: #f0f8ff; /* Fundo leve ao passar o mouse */
 }
 
+/* Estilo do Link Ativo (Página atual) */
 .containerNav .menu .menuGrande a.active {
   color: #458b00;
+  border-bottom: 0.4rem solid #458b00;
 }
 
+/* Container do ícone Mobile (escondido em telas grandes) */
 .containerNav .menu .menuMobile {
-  display: none;
+  display: none; 
 }
 
-.containerNav .menuMobileExpandidon {
-  display: none;
-}
+/* --- ESTILOS DO MENU MOBILE (Dropdown) --- */
 
-.containerNav .menuMobileExpandidos a {
+/* Classe para quando o menu está FECHADO */
+.menuMobileFechado {
   display: none;
-  border: 0.4rem solid #fafafa;
   width: 100%;
-  height: 4rem;
+}
+
+/* Classe para quando o menu está ABERTO */
+.menuMobileAberto {
+  display: flex;
+  flex-direction: column; /* Links um embaixo do outro */
+  width: 100%;
+  background-color: #fff;
+  border-top: 1px solid #ccc;
+  padding-bottom: 1rem;
+}
+
+/* Estilo dos Links Mobile */
+.menuMobileAberto a {
+  width: 100%;
+  padding: 1.5rem;
   color: #458b00;
   text-decoration: none;
   display: flex;
-  flex-direction: row;
   align-items: center;
+  justify-content: center;
   font-size: 1.6rem;
   font-weight: bold;
-  cursor: pointer;
+  border-bottom: 1px solid #eee;
 }
 
-.containerNav .menuMobileExpandidos a:hover {
-  border: 0.4rem solid #458b00;
-  color: #458b00;
+.menuMobileAberto a:hover {
+  background-color: #eaf4db;
+  color: #006400;
 }
 
-.containerNav .menuMobileExpandidos a.active {
+.menuMobileAberto a.active {
   background-color: #458b00;
   color: #fafafa;
-  border: 0.4rem solid #458b00;
 }
 
-.menuMobileExpandidon,
-.menuMobileExpandidos {
-  transition: max-height 0.3s ease-out;
-}
-
+/* --- LOGO --- */
 .logoImg {
-  height: 25rem;
+  /* CORREÇÃO: A altura não pode ser maior que o container pai (8rem) */
+  height: 7rem; 
   width: auto;
   margin-right: 3rem;
-  margin-top: 0.5rem;
-  margin-bottom: 0.5rem;
+  object-fit: contain; /* Garante que a imagem não distorça */
 }
 
+/* --- RESPONSIVIDADE (Telas menores que 940px) --- */
 @media screen and (max-width: 940px) {
-  .containerNav {
-    flex-direction: column;
-  }
-
-  .containerNav .menu {
-    width: 88%;
-    justify-content: space-between;
-  }
-
+  
+  /* Esconde o menu desktop */
   .containerNav .menu .menuGrande {
     display: none;
   }
 
+  /* Mostra o ícone do menu mobile */
   .containerNav .menu .menuMobile {
     display: flex;
   }
-}
 
-@media screen and (max-width: 940px) {
-  .containerNav .menuMobileExpandidos {
-    display: flex;
-    flex-direction: column;
-    width: 92%;
+  /* Ajusta largura do menu interno */
+  .containerNav .menu {
+    width: 95%; /* Usa mais espaço lateral no mobile */
   }
 }

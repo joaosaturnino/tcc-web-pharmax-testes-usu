@@ -1,16 +1,40 @@
 "use client";
-
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback, useRef } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import styles from "./funcionario.module.css";
 import api from "../../../services/api";
 
-// === MUDANÇA: Importado o 'react-hot-toast' ===
+// Componente de notificação externa (Toast)
 import toast, { Toaster } from "react-hot-toast";
 
-// Ícones para validação
+// Ícones para validação visual
 import { MdCheckCircle, MdError } from "react-icons/md";
+
+// --- HELPERS DE MÁSCARA ---
+const maskCPF = (value) => {
+    let rawValue = value.replace(/\D/g, ''); 
+    if (rawValue.length > 11) rawValue = rawValue.slice(0, 11); 
+    rawValue = rawValue.replace(/(\d{3})(\d)/, '$1.$2');
+    rawValue = rawValue.replace(/(\d{3})(\d)/, '$1.$2');
+    rawValue = rawValue.replace(/(\d{3})(\d{1,2})$/, '$1-$2');
+    return rawValue;
+};
+
+const maskTelefone = (value) => {
+    let rawValue = value.replace(/\D/g, '');
+    if (rawValue.length > 11) rawValue = rawValue.slice(0, 11);
+
+    if (rawValue.length >= 10) { 
+      return rawValue.replace(/^(\d{2})(\d{4,5})(\d{4})$/, '($1) $2-$3');
+    } else if (rawValue.length > 2) {
+      return rawValue.replace(/^(\d{2})(\d{0,9})$/, '($1) $2');
+    } else if (rawValue.length > 0) {
+      return `(${rawValue}`;
+    }
+    return rawValue;
+};
+// -------------------------
 
 export default function CadastroFuncionarioPage() {
   const router = useRouter();
@@ -28,13 +52,15 @@ export default function CadastroFuncionarioPage() {
     usuario: "",
     senha: "",
     confirmarSenha: "",
-    nivelAcesso: "1", // Padrão para "Funcionário"
+    nivelAcesso: "1",
   });
 
+  // Classes CSS para feedback visual de validação
   const valDefault = styles.formControl;
   const valSucesso = `${styles.formControl} ${styles.success}`;
   const valErro = `${styles.formControl} ${styles.error}`;
 
+  // Estado que gerencia a validação de cada campo individualmente
   const [valida, setValida] = useState({
     nome: { validado: valDefault, mensagem: [] },
     email: { validado: valDefault, mensagem: [] },
@@ -48,82 +74,74 @@ export default function CadastroFuncionarioPage() {
     nivelAcesso: { validado: valDefault, mensagem: [] }
   });
 
+  // Efeito para carregar o ID da farmácia do local storage
   useEffect(() => {
     const userDataString = localStorage.getItem("userData");
     if (userDataString) {
       setFarmaciaInfo(JSON.parse(userDataString));
     }
+    // DICA: Adicionar aqui a lógica para fechar o sidebar após o redimensionamento da tela
   }, []);
+  
+  // Função auxiliar para aplicar as classes de validação
+  const aplicarValidacao = (campo, valido, mensagem = []) => {
+    setValida(prev => ({ 
+      ...prev, 
+      [campo]: { validado: valido ? valSucesso : valErro, mensagem: mensagem } 
+    }));
+  };
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setForm({ ...form, [name]: value });
+    let newValue = value;
+    
+    // CORREÇÃO: Aplica as máscaras de forma reversa (retira caracteres)
+    if (name === 'cpf') newValue = maskCPF(value);
+    if (name === 'telefone') newValue = maskTelefone(value);
+
+    setForm({ ...form, [name]: newValue });
   };
 
-  // --- Funções de validação (sem alterações) ---
-  function validaNome() {
-    let objTemp = { validado: valSucesso, mensagem: [] };
-    if (form.nome === '') {
-      objTemp.validado = valErro;
-      objTemp.mensagem.push('O nome do funcionário é obrigatório');
-    } else if (form.nome.length < 3) {
-      objTemp.validado = valErro;
-      objTemp.mensagem.push('O nome deve ter pelo menos 3 caracteres');
-    }
-    setValida(prev => ({ ...prev, nome: objTemp }));
-    return objTemp.mensagem.length === 0;
-  }
+  // =================================================================
+  // FUNÇÕES DE VALIDAÇÃO (useCallback para performance)
+  // =================================================================
 
-  function validaEmail() {
-    let objTemp = { validado: valSucesso, mensagem: [] };
+  const validaNome = useCallback(() => {
+    const valido = form.nome.length >= 3;
+    aplicarValidacao('nome', valido, valido ? [] : ['O nome deve ter pelo menos 3 caracteres']);
+    return valido;
+  }, [form.nome]);
+
+  const validaEmail = useCallback(() => {
     const emailRegex = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
-    if (form.email === "") {
-      objTemp.validado = valErro;
-      objTemp.mensagem.push('O e-mail é obrigatório');
-    } else if (!emailRegex.test(form.email)) {
-      objTemp.validado = valErro;
-      objTemp.mensagem.push('Insira um e-mail válido');
-    }
-    setValida(prev => ({ ...prev, email: objTemp }));
-    return objTemp.mensagem.length === 0;
-  }
+    const valido = form.email !== "" && emailRegex.test(form.email);
+    aplicarValidacao('email', valido, valido ? [] : ['Insira um e-mail válido']);
+    return valido;
+  }, [form.email]);
 
-  function validaTelefone() {
-    let objTemp = { validado: valSucesso, mensagem: [] };
-    const telefone = form.telefone.replace(/\D/g, '');
-    if (form.telefone === '') {
-      objTemp.validado = valErro;
-      objTemp.mensagem.push('O telefone é obrigatório');
-    } else if (telefone.length < 10 || telefone.length > 11) {
-      objTemp.validado = valErro;
-      objTemp.mensagem.push('Telefone inválido');
-    }
-    setValida(prev => ({ ...prev, telefone: objTemp }));
-    return objTemp.mensagem.length === 0;
-  }
+  const validaTelefone = useCallback(() => {
+    // CORREÇÃO: Conta apenas os dígitos para validação
+    const telefoneLimpo = form.telefone.replace(/\D/g, ''); 
+    const valido = telefoneLimpo.length >= 10 && telefoneLimpo.length <= 11;
+    aplicarValidacao('telefone', valido, valido ? [] : ['Telefone inválido']);
+    return valido;
+  }, [form.telefone]);
 
-  function validaCPF() {
-    let objTemp = { validado: valSucesso, mensagem: [] };
-    const cpf = form.cpf.replace(/\D/g, '');
-    if (cpf === '') {
-      objTemp.validado = valErro;
-      objTemp.mensagem.push('O CPF é obrigatório');
-    } else if (cpf.length !== 11) {
-      objTemp.validado = valErro;
-      objTemp.mensagem.push('O CPF deve ter 11 dígitos');
-    } else if (/^(\d)\1{10}$/.test(cpf)) {
-      objTemp.validado = valErro;
-      objTemp.mensagem.push('CPF inválido');
-    }
-    setValida(prev => ({ ...prev, cpf: objTemp }));
-    return objTemp.mensagem.length === 0;
-  }
+  const validaCPF = useCallback(() => {
+    // CORREÇÃO: Conta apenas os 11 dígitos para validação
+    const cpfLimpo = form.cpf.replace(/\D/g, ''); 
+    const valido = cpfLimpo.length === 11 && !/^(\d)\1{10}$/.test(cpfLimpo); // Verifica 11 dígitos e se não são todos iguais
+    aplicarValidacao('cpf', valido, valido ? [] : ['O CPF deve ter 11 dígitos e ser válido']);
+    return valido;
+  }, [form.cpf]);
 
-  function validaDataNascimento() {
-    let objTemp = { validado: valSucesso, mensagem: [] };
+  const validaDataNascimento = useCallback(() => {
+    let valido = true;
+    let mensagem = [];
+
     if (form.dataNascimento === '') {
-      objTemp.validado = valErro;
-      objTemp.mensagem.push('A data de nascimento é obrigatória');
+      valido = false;
+      mensagem.push('A data de nascimento é obrigatória');
     } else {
       const dataNascimento = new Date(form.dataNascimento);
       const hoje = new Date();
@@ -132,85 +150,51 @@ export default function CadastroFuncionarioPage() {
       if (m < 0 || (m === 0 && hoje.getDate() < dataNascimento.getDate())) {
         idade--;
       }
-
       if (idade < 18) {
-        objTemp.validado = valErro;
-        objTemp.mensagem.push('O funcionário deve ter pelo menos 18 anos');
+        valido = false;
+        mensagem.push('O funcionário deve ter pelo menos 18 anos');
       } else if (idade > 100) {
-        objTemp.validado = valErro;
-        objTemp.mensagem.push('Data de nascimento inválida');
+        valido = false;
+        mensagem.push('Data de nascimento inválida');
       }
     }
-    setValida(prev => ({ ...prev, dataNascimento: objTemp }));
-    return objTemp.mensagem.length === 0;
-  }
+    aplicarValidacao('dataNascimento', valido, mensagem);
+    return valido;
+  }, [form.dataNascimento]);
 
-  function validaEndereco() {
-    let objTemp = { validado: valSucesso, mensagem: [] };
-    if (form.endereco === '') {
-      objTemp.validado = valErro;
-      objTemp.mensagem.push('O endereço é obrigatório');
-    } else if (form.endereco.length < 10) {
-      objTemp.validado = valErro;
-      objTemp.mensagem.push('Insira um endereço completo');
-    }
-    setValida(prev => ({ ...prev, endereco: objTemp }));
-    return objTemp.mensagem.length === 0;
-  }
+  const validaEndereco = useCallback(() => {
+    const valido = form.endereco.length >= 10;
+    aplicarValidacao('endereco', valido, valido ? [] : ['Insira um endereço completo']);
+    return valido;
+  }, [form.endereco]);
 
-  function validaUsuario() {
-    let objTemp = { validado: valSucesso, mensagem: [] };
-    if (form.usuario === '') {
-      objTemp.validado = valErro;
-      objTemp.mensagem.push('O nome de usuário é obrigatório');
-    } else if (form.usuario.length < 3) {
-      objTemp.validado = valErro;
-      objTemp.mensagem.push('O usuário deve ter pelo menos 3 caracteres');
-    } else if (!/^[a-zA-Z0-9_]+$/.test(form.usuario)) {
-      objTemp.validado = valErro;
-      objTemp.mensagem.push('O usuário deve conter apenas letras, números e underscore');
-    }
-    setValida(prev => ({ ...prev, usuario: objTemp }));
-    return objTemp.mensagem.length === 0;
-  }
+  const validaUsuario = useCallback(() => {
+    const valido = form.usuario.length >= 3 && /^[a-zA-Z0-9_]+$/.test(form.usuario);
+    aplicarValidacao('usuario', valido, valido ? [] : ['O usuário deve ter 3+ caracteres (apenas letras, números e underscore)']);
+    return valido;
+  }, [form.usuario]);
 
-  function validaSenha() {
-    let objTemp = { validado: valSucesso, mensagem: [] };
-    if (form.senha === '') {
-      objTemp.validado = valErro;
-      objTemp.mensagem.push('A senha é obrigatória');
-    } else if (form.senha.length < 6) {
-      objTemp.validado = valErro;
-      objTemp.mensagem.push('A senha deve ter pelo menos 6 caracteres');
-    }
-    setValida(prev => ({ ...prev, senha: objTemp }));
-    return objTemp.mensagem.length === 0;
-  }
+  const validaSenha = useCallback(() => {
+    const valido = form.senha.length >= 6;
+    aplicarValidacao('senha', valido, valido ? [] : ['A senha deve ter pelo menos 6 caracteres']);
+    return valido;
+  }, [form.senha]);
 
-  function validaConfirmarSenha() {
-    let objTemp = { validado: valSucesso, mensagem: [] };
-    if (form.confirmarSenha === '') {
-      objTemp.validado = valErro;
-      objTemp.mensagem.push('A confirmação de senha é obrigatória');
-    } else if (form.confirmarSenha !== form.senha) {
-      objTemp.validado = valErro;
-      objTemp.mensagem.push('As senhas não coincidem');
-    }
-    setValida(prev => ({ ...prev, confirmarSenha: objTemp }));
-    return objTemp.mensagem.length === 0;
-  }
+  const validaConfirmarSenha = useCallback(() => {
+    const valido = form.confirmarSenha === form.senha && form.confirmarSenha.length >= 6;
+    aplicarValidacao('confirmarSenha', valido, valido ? [] : ['As senhas não coincidem']);
+    return valido;
+  }, [form.confirmarSenha, form.senha]);
 
-  function validaNivelAcesso() {
-    let objTemp = { validado: valSucesso, mensagem: [] };
-    if (form.nivelAcesso === '') {
-      objTemp.validado = valErro;
-      objTemp.mensagem.push('Selecione o nível de acesso');
-    }
-    setValida(prev => ({ ...prev, nivelAcesso: objTemp }));
-    return objTemp.mensagem.length === 0;
-  }
-  // --- Fim das funções de validação ---
+  const validaNivelAcesso = useCallback(() => {
+    const valido = form.nivelAcesso !== '';
+    aplicarValidacao('nivelAcesso', valido, valido ? [] : ['Selecione o nível de acesso']);
+    return valido;
+  }, [form.nivelAcesso]);
 
+  // =================================================================
+  // AÇÕES FINAIS (Logout e Submit)
+  // =================================================================
 
   const handleLogout = () => {
     localStorage.removeItem("authToken");
@@ -221,20 +205,16 @@ export default function CadastroFuncionarioPage() {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    const isFormValid =
-      validaNome() &&
-      validaEmail() &&
-      validaTelefone() &&
-      validaCPF() &&
-      validaDataNascimento() &&
-      validaEndereco() &&
-      validaUsuario() &&
-      validaSenha() &&
-      validaConfirmarSenha() &&
-      validaNivelAcesso();
+    // 1. Executa todas as validações de UI/UX
+    const validationResults = [
+        validaNome(), validaEmail(), validaTelefone(), validaCPF(), 
+        validaDataNascimento(), validaEndereco(), validaUsuario(), 
+        validaSenha(), validaConfirmarSenha(), validaNivelAcesso()
+    ];
+    
+    const isFormValid = validationResults.every(result => result);
 
     if (!isFormValid) {
-      // === MUDANÇA: Substituído alert() por toast.error() ===
       toast.error("Por favor, corrija os erros no formulário.");
       return;
     }
@@ -248,6 +228,7 @@ export default function CadastroFuncionarioPage() {
         throw new Error("ID da farmácia não encontrado. Faça o login novamente.");
       }
 
+      // Prepara os dados (limpando máscaras)
       const dadosFuncionario = {
         func_nome: form.nome,
         func_email: form.email,
@@ -264,16 +245,16 @@ export default function CadastroFuncionarioPage() {
       const response = await api.post('/funcionario', dadosFuncionario);
 
       if (response.data.sucesso) {
-        // === MUDANÇA: Substituído alert() por toast.success() ===
         toast.success("Funcionário cadastrado com sucesso!");
-        router.push("/farmacias/cadastro/funcionario/lista");
+        // Redireciona após pequeno delay
+        setTimeout(() => {
+          router.push("/farmacias/cadastro/funcionario/lista");
+        }, 1500);
       } else {
-        // === MUDANÇA: Substituído alert() por toast.error() ===
         toast.error('Erro ao cadastrar funcionário: ' + response.data.mensagem);
       }
     } catch (error) {
       const errorMsg = error.response?.data?.mensagem || error.message || "Ocorreu um erro desconhecido.";
-      // === MUDANÇA: Substituído alert() por toast.error() ===
       toast.error(errorMsg);
     } finally {
       setLoading(false);
@@ -282,28 +263,10 @@ export default function CadastroFuncionarioPage() {
 
   return (
     <div className={styles.dashboard}>
-      {/* === MUDANÇA: Adicionado o <Toaster /> === */}
+      {/* Componente Toast (Notificações) */}
       <Toaster
         position="top-right"
-        toastOptions={{
-          duration: 4000,
-          style: {
-            background: '#333',
-            color: '#fff',
-            fontSize: '1.5rem',
-            padding: '1.6rem',
-          },
-          success: {
-            style: {
-              background: '#458B00',
-            },
-          },
-          error: {
-            style: {
-              background: '#dc2626',
-            },
-          },
-        }}
+        toastOptions={{ duration: 4000, style: { background: '#333', color: '#fff', fontSize: '1.5rem', padding: '1.6rem' }, success: { style: { background: '#458B00' } }, error: { style: { background: '#dc2626' } } }}
       />
 
       <header className={styles.header}>
@@ -322,16 +285,11 @@ export default function CadastroFuncionarioPage() {
         <aside className={`${styles.sidebar} ${sidebarOpen ? styles.sidebarOpen : ""}`}>
           <div className={styles.sidebarHeader}>
             <div className={styles.logoContainer}>
-              {farmaciaInfo?.farm_logo_url && (
-                <img src={farmaciaInfo.farm_logo_url} alt={`Logo de ${farmaciaInfo.farm_nome}`} className={styles.logoImage} />
-              )}
+              {/* Logo e Nome da Farmácia no Sidebar */}
+              {farmaciaInfo?.farm_logo_url && (<img src={farmaciaInfo.farm_logo_url} alt={`Logo de ${farmaciaInfo.farm_nome}`} className={styles.logoImage} />)}
               <span className={styles.logoText}>{farmaciaInfo?.farm_nome || "Pharma-X"}</span>
             </div>
-            <button
-              className={styles.sidebarClose}
-              onClick={() => setSidebarOpen(false)}
-              aria-label="Fechar menu"
-            >×</button>
+            <button className={styles.sidebarClose} onClick={() => setSidebarOpen(false)} aria-label="Fechar menu">×</button>
           </div>
           <nav className={styles.nav}>
             <div className={styles.navSection}><p className={styles.navLabel}>Principal</p><Link href="/farmacias/favoritos" className={styles.navLink}><span className={styles.navText}>Favoritos</span></Link><Link href="/farmacias/produtos/medicamentos" className={styles.navLink}><span className={styles.navText}>Medicamentos</span></Link></div>
@@ -351,18 +309,28 @@ export default function CadastroFuncionarioPage() {
               <div className={styles.formGrid}>
                 <div className={styles.formSection}>
                   <h3 className={styles.sectionTitle}>Informações Pessoais</h3>
+                  {/* Nome */}
                   <div className={valida.nome.validado}><label className={styles.inputLabel}>Nome Completo</label><div className={styles.divInput}><input className={styles.modernInput} type="text" name="nome" value={form.nome} onChange={handleChange} onBlur={validaNome} placeholder="Digite o nome completo" required /><MdCheckCircle className={styles.sucesso} /><MdError className={styles.erro} /></div>{valida.nome.mensagem.map(mens => <small key={mens} className={styles.small}>{mens}</small>)}</div>
+                  {/* Email */}
                   <div className={valida.email.validado}><label className={styles.inputLabel}>E-mail</label><div className={styles.divInput}><input className={styles.modernInput} type="email" name="email" value={form.email} onChange={handleChange} onBlur={validaEmail} placeholder="exemplo@pharmax.com" required /><MdCheckCircle className={styles.sucesso} /><MdError className={styles.erro} /></div>{valida.email.mensagem.map(mens => <small key={mens} className={styles.small}>{mens}</small>)}</div>
-                  <div className={valida.telefone.validado}><label className={styles.inputLabel}>Telefone</label><div className={styles.divInput}><input className={styles.modernInput} type="tel" name="telefone" value={form.telefone} onChange={handleChange} onBlur={validaTelefone} placeholder="(11) 99999-9999" required /><MdCheckCircle className={styles.sucesso} /><MdError className={styles.erro} /></div>{valida.telefone.mensagem.map(mens => <small key={mens} className={styles.small}>{mens}</small>)}</div>
-                  <div className={valida.cpf.validado}><label className={styles.inputLabel}>CPF</label><div className={styles.divInput}><input className={styles.modernInput} type="text" name="cpf" value={form.cpf} onChange={handleChange} onBlur={validaCPF} placeholder="000.000.000-00" required /><MdCheckCircle className={styles.sucesso} /><MdError className={styles.erro} /></div>{valida.cpf.mensagem.map(mens => <small key={mens} className={styles.small}>{mens}</small>)}</div>
+                  {/* Telefone */}
+                  <div className={valida.telefone.validado}><label className={styles.inputLabel}>Telefone</label><div className={styles.divInput}><input className={styles.modernInput} type="tel" name="telefone" value={form.telefone} onChange={handleChange} onBlur={validaTelefone} placeholder="(11) 99999-9999" required maxLength={16} /><MdCheckCircle className={styles.sucesso} /><MdError className={styles.erro} /></div>{valida.telefone.mensagem.map(mens => <small key={mens} className={styles.small}>{mens}</small>)}</div>
+                  {/* CPF */}
+                  <div className={valida.cpf.validado}><label className={styles.inputLabel}>CPF</label><div className={styles.divInput}><input className={styles.modernInput} type="text" name="cpf" value={form.cpf} onChange={handleChange} onBlur={validaCPF} placeholder="000.000.000-00" required maxLength={14} /><MdCheckCircle className={styles.sucesso} /><MdError className={styles.erro} /></div>{valida.cpf.mensagem.map(mens => <small key={mens} className={styles.small}>{mens}</small>)}</div>
+                  {/* Data Nascimento */}
                   <div className={valida.dataNascimento.validado}><label className={styles.inputLabel}>Data de Nascimento</label><div className={styles.divInput}><input className={styles.modernInput} type="date" name="dataNascimento" value={form.dataNascimento} onChange={handleChange} onBlur={validaDataNascimento} required /><MdCheckCircle className={styles.sucesso} /><MdError className={styles.erro} /></div>{valida.dataNascimento.mensagem.map(mens => <small key={mens} className={styles.small}>{mens}</small>)}</div>
+                  {/* Endereço */}
                   <div className={valida.endereco.validado}><label className={styles.inputLabel}>Endereço Completo</label><div className={styles.divInput}><input className={styles.modernInput} type="text" name="endereco" value={form.endereco} onChange={handleChange} onBlur={validaEndereco} placeholder="Rua, número, bairro, cidade - Estado" required /><MdCheckCircle className={styles.sucesso} /><MdError className={styles.erro} /></div>{valida.endereco.mensagem.map(mens => <small key={mens} className={styles.small}>{mens}</small>)}</div>
                 </div>
                 <div className={styles.formSection}>
                   <h3 className={styles.sectionTitle}>Informações de Acesso</h3>
+                  {/* Usuário */}
                   <div className={valida.usuario.validado}><label className={styles.inputLabel}>Nome de Usuário</label><div className={styles.divInput}><input className={styles.modernInput} type="text" name="usuario" value={form.usuario} onChange={handleChange} onBlur={validaUsuario} placeholder="Digite o nome de usuário" required /><MdCheckCircle className={styles.sucesso} /><MdError className={styles.erro} /></div>{valida.usuario.mensagem.map(mens => <small key={mens} className={styles.small}>{mens}</small>)}</div>
+                  {/* Senha */}
                   <div className={valida.senha.validado}><label className={styles.inputLabel}>Senha</label><div className={styles.divInput}><input className={styles.modernInput} type="password" name="senha" value={form.senha} onChange={handleChange} onBlur={validaSenha} placeholder="Mínimo 6 caracteres" required /><MdCheckCircle className={styles.sucesso} /><MdError className={styles.erro} /></div>{valida.senha.mensagem.map(mens => <small key={mens} className={styles.small}>{mens}</small>)}</div>
+                  {/* Confirmar Senha */}
                   <div className={valida.confirmarSenha.validado}><label className={styles.inputLabel}>Confirmar Senha</label><div className={styles.divInput}><input className={styles.modernInput} type="password" name="confirmarSenha" value={form.confirmarSenha} onChange={handleChange} onBlur={validaConfirmarSenha} placeholder="Digite a senha novamente" required /><MdCheckCircle className={styles.sucesso} /><MdError className={styles.erro} /></div>{valida.confirmarSenha.mensagem.map(mens => <small key={mens} className={styles.small}>{mens}</small>)}</div>
+                  {/* Nível de Acesso */}
                   <div className={valida.nivelAcesso.validado}><label className={styles.inputLabel}>Nível de Acesso</label><div className={styles.divInput}><select className={styles.modernInput} name="nivelAcesso" value={form.nivelAcesso} onChange={handleChange} onBlur={validaNivelAcesso} required><option value="1">Funcionário</option><option value="2">Farmacêutico</option><option value="3">Administrador</option></select></div>{valida.nivelAcesso.mensagem.map(mens => <small key={mens} className={styles.small}>{mens}</small>)}</div>
                 </div>
               </div>

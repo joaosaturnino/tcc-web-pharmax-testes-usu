@@ -2,9 +2,11 @@
 
 import { useState, useEffect } from "react";
 import { useRouter, useParams } from "next/navigation";
-import Link from "next/link"; // CORREÇÃO: Importado para navegação SPA
+import Link from "next/link";
 import styles from "./edita.module.css";
 import api from "../../../../../services/api";
+// === MUDANÇA 1: Import do Toast ===
+import toast, { Toaster } from "react-hot-toast";
 
 export default function EditarLaboratorioPage() {
   const router = useRouter();
@@ -62,20 +64,14 @@ export default function EditarLaboratorioPage() {
               setPreview(logoUrl);
             }
           } else {
-            if (typeof window !== 'undefined' && window.showAlert) {
-              window.showAlert({ type: 'error', title: 'Não encontrado', message: 'Laboratório não encontrado!', duration: 5000 });
-            } else {
-              alert('Laboratório não encontrado!');
-            }
+            // === MUDANÇA 2: Erro de carregamento com Toast ===
+            toast.error('Laboratório não encontrado!');
             router.push('/farmacias/laboratorio/lista');
           }
         } catch (error) {
           console.error('Erro ao buscar dados do laboratório:', error);
-          if (typeof window !== 'undefined' && window.showAlert) {
-            window.showAlert({ type: 'error', title: 'Erro', message: 'Não foi possível carregar os dados do laboratório.', duration: 6000 });
-          } else {
-            alert('Não foi possível carregar os dados do laboratório.');
-          }
+          // === MUDANÇA 3: Erro de catch com Toast ===
+          toast.error('Não foi possível carregar os dados do laboratório.');
         } finally {
           setLoading(false);
         }
@@ -114,20 +110,19 @@ export default function EditarLaboratorioPage() {
       await api.put(`/laboratorios/${lab_id}`, formData, {
         headers: { 'Content-Type': 'multipart/form-data' },
       });
-      if (typeof window !== 'undefined' && window.showAlert) {
-        window.showAlert({ type: 'success', title: 'Atualizado', message: 'Laboratório atualizado com sucesso!', duration: 4000 });
-      } else {
-        alert('Laboratório atualizado com sucesso!');
-      }
-      router.push('/farmacias/laboratorio/lista');
+      
+      // === MUDANÇA 4: Sucesso com Toast e Timeout ===
+      toast.success('Laboratório atualizado com sucesso!');
+      setTimeout(() => {
+        router.push('/farmacias/laboratorio/lista');
+      }, 1500);
+
     } catch (error) {
       console.error("Erro ao atualizar o laboratório:", error);
       const errorMsg = error.response?.data?.mensagem || "Verifique os dados e tente novamente.";
-      if (typeof window !== 'undefined' && window.showAlert) {
-        window.showAlert({ type: 'error', title: 'Erro ao atualizar', message: errorMsg, duration: 7000 });
-      } else {
-        alert(`Erro ao atualizar: ${errorMsg}`);
-      }
+      
+      // === MUDANÇA 5: Erro de submit com Toast ===
+      toast.error(`Erro ao atualizar: ${errorMsg}`);
     }
   };
 
@@ -139,12 +134,36 @@ export default function EditarLaboratorioPage() {
 
   return (
     <div className={styles.dashboard}>
+      {/* === MUDANÇA 6: Componente Toaster igual ao de Medicamento === */}
+      <Toaster
+        position="top-right"
+        toastOptions={{
+          duration: 4000,
+          style: {
+            background: '#333',
+            color: '#fff',
+            fontSize: '1.5rem',
+            padding: '1.6rem',
+          },
+          success: {
+            style: {
+              background: '#458B00',
+            },
+          },
+          error: {
+            style: {
+              background: '#dc2626',
+            },
+          },
+        }}
+      />
+
       <header className={styles.header}>
         <div className={styles.headerLeft}>
           <button
             className={styles.menuToggle}
             onClick={() => setSidebarOpen(!sidebarOpen)}
-            aria-label="Abrir menu" // NOVO: Acessibilidade
+            aria-label="Abrir menu"
           >
             ☰
           </button>
@@ -164,13 +183,12 @@ export default function EditarLaboratorioPage() {
             <button
               className={styles.sidebarClose}
               onClick={() => setSidebarOpen(false)}
-              aria-label="Fechar menu" // NOVO: Acessibilidade
+              aria-label="Fechar menu"
             >
               ×
             </button>
           </div>
 
-          {/* CORREÇÃO: Trocadas <a> por <Link> para navegação mais rápida */}
           <nav className={styles.nav}>
             <div className={styles.navSection}><p className={styles.navLabel}>Principal</p><Link href="/farmacias/favoritos" className={styles.navLink}><span className={styles.navText}>Favoritos</span></Link><Link href="/farmacias/produtos/medicamentos" className={styles.navLink}><span className={styles.navText}>Medicamentos</span></Link></div>
             <div className={styles.navSection}><p className={styles.navLabel}>Gestão</p><Link href="/farmacias/cadastro/funcionario/lista" className={styles.navLink}><span className={styles.navText}>Funcionários</span></Link><Link href="/farmacias/laboratorio/lista" className={`${styles.navLink} ${styles.active}`}><span className={styles.navText}>Laboratórios</span></Link></div>
@@ -183,7 +201,6 @@ export default function EditarLaboratorioPage() {
 
         <main className={styles.mainContent}>
           {loading ? (
-            // MELHORIA: Spinner de carregamento dentro do layout principal
             <div className={styles.loaderContainer}>
               <div className={styles.spinner}></div>
               <span>Carregando dados do laboratório...</span>

@@ -12,7 +12,7 @@ import { useDebounce } from "../../../../hooks/useDebounce";
 
 const fetcher = (url) => api.get(url).then((res) => res.data);
 
-// Mapeamento de classes (com acentos)
+// Mapeamento de classes
 const badgeClasses = {
   administrador: styles.administrador,
   farmacêutico: styles.farmaceutico,
@@ -55,7 +55,6 @@ export default function ListaFuncionariosPage() {
     revalidateOnFocus: true,
   });
 
-  // --- 1ª CORREÇÃO (useMemo) ---
   const funcionarios = useMemo(() => {
     if (!apiResponse?.sucesso) return [];
 
@@ -68,16 +67,12 @@ export default function ListaFuncionariosPage() {
       dataNascimento: func.func_dtnasc,
       endereco: func.func_endereco,
       usuario: func.func_usuario,
-
-      // Apenas usamos o valor que vem da API (ex: "Farmacêutico")
       nivelAcesso: func.func_nivel,
-
       dataCadastro: func.func_data_cadastro
         ? new Date(func.func_data_cadastro)
         : null,
     }));
   }, [apiResponse]);
-  // --- FIM DA 1ª CORREÇÃO ---
 
   const funcionariosFiltrados = useMemo(() => {
     const filtroLower = debouncedFiltro.toLowerCase();
@@ -103,33 +98,83 @@ export default function ListaFuncionariosPage() {
     router.push("/farmacias/cadastro/funcionario");
   };
 
-  const handleExcluir = async (funcionario) => {
+  // === MUDANÇA 1: Função que executa a exclusão após o "Sim" ===
+  const confirmarExclusao = async (funcionario, toastId) => {
+    toast.dismiss(toastId); // Fecha a pergunta
+
+    try {
+      const response = await api.delete(`/funcionario/${funcionario.id}`, {
+        params: { farmacia_id: farmaciaId },
+      });
+
+      if (response.data.sucesso) {
+        toast.success(`Funcionário ${funcionario.nome} excluído com sucesso!`);
+        refetchFuncionarios();
+      } else {
+        toast.error(response.data.mensagem || "Erro ao excluir funcionário.");
+      }
+    } catch (err) {
+      const msg = err.response?.data?.mensagem || err.message || "Erro ao excluir.";
+      toast.error(msg);
+    }
+  };
+
+  // === MUDANÇA 2: Exibe o Toast customizado (Substitui window.confirm e toast.promise direto) ===
+  const handleExcluir = (funcionario) => {
     if (funcionario.nivelAcesso === "Administrador") {
       toast.error("Não é possível excluir um usuário Administrador.");
       return;
     }
 
-    const exclusaoPromise = api.delete(`/funcionario/${funcionario.id}`, {
-      params: { farmacia_id: farmaciaId },
-    });
-
-    toast.promise(exclusaoPromise, {
-      loading: `Excluindo ${funcionario.nome}...`,
-      success: (response) => {
-        if (response.data.sucesso) {
-          refetchFuncionarios();
-          return "Funcionário excluído com sucesso!";
-        } else {
-          throw new Error(response.data.mensagem);
-        }
-      },
-      error: (err) => {
-        return (
-          err.response?.data?.mensagem ||
-          err.message ||
-          "Erro ao excluir funcionário."
-        );
-      },
+    toast((t) => (
+      <div style={{ display: 'flex', flexDirection: 'column', gap: '12px', alignItems: 'center', minWidth: '280px' }}>
+        <span style={{ fontSize: '1.4rem', color: '#333', textAlign: 'center', lineHeight: '1.5' }}>
+          Tem certeza que deseja excluir <br /> <strong>{funcionario.nome}</strong>?
+        </span>
+        <div style={{ display: 'flex', gap: '12px', width: '100%', justifyContent: 'center', marginTop: '8px' }}>
+          <button
+            onClick={() => toast.dismiss(t.id)}
+            style={{
+              padding: '8px 16px',
+              backgroundColor: '#e5e7eb',
+              color: '#374151',
+              border: 'none',
+              borderRadius: '6px',
+              cursor: 'pointer',
+              fontSize: '1.3rem',
+              fontWeight: '600',
+              flex: 1
+            }}
+          >
+            Cancelar
+          </button>
+          <button
+            onClick={() => confirmarExclusao(funcionario, t.id)}
+            style={{
+              padding: '8px 16px',
+              backgroundColor: '#dc2626',
+              color: 'white',
+              border: 'none',
+              borderRadius: '6px',
+              cursor: 'pointer',
+              fontSize: '1.3rem',
+              fontWeight: '600',
+              flex: 1
+            }}
+          >
+            Sim, excluir
+          </button>
+        </div>
+      </div>
+    ), {
+      duration: Infinity,
+      style: {
+        padding: '20px',
+        background: '#fff',
+        boxShadow: '0 10px 25px rgba(0,0,0,0.15)',
+        borderRadius: '12px',
+        border: '1px solid #e5e7eb'
+      }
     });
   };
 
@@ -147,7 +192,29 @@ export default function ListaFuncionariosPage() {
 
   return (
     <div className={styles.dashboard}>
-      <Toaster position="top-right" reverseOrder={false} />
+      {/* === MUDANÇA 3: Toaster Padronizado === */}
+      <Toaster
+        position="top-right"
+        toastOptions={{
+          duration: 4000,
+          style: {
+            background: '#333',
+            color: '#fff',
+            fontSize: '1.5rem',
+            padding: '1.6rem',
+          },
+          success: {
+            style: {
+              background: '#458B00',
+            },
+          },
+          error: {
+            style: {
+              background: '#dc2626',
+            },
+          },
+        }}
+      />
 
       <header className={styles.header}>
         <div className={styles.headerLeft}>
@@ -178,7 +245,6 @@ export default function ListaFuncionariosPage() {
             >×</button>
           </div>
           <nav className={styles.nav}>
-            {/* ... (Menu) ... */}
             <div className={styles.navSection}><p className={styles.navLabel}>Principal</p><Link href="/farmacias/favoritos" className={styles.navLink}><span className={styles.navText}>Favoritos</span></Link><Link href="/farmacias/produtos/medicamentos" className={styles.navLink}><span className={styles.navText}>Medicamentos</span></Link></div>
             <div className={styles.navSection}><p className={styles.navLabel}>Gestão</p><Link href="/farmacias/cadastro/funcionario/lista" className={`${styles.navLink} ${styles.active}`}><span className={styles.navText}>Funcionários</span></Link><Link href="/farmacias/laboratorio/lista" className={styles.navLink}><span className={styles.navText}>Laboratórios</span></Link></div>
             <div className={styles.navSection}><p className={styles.navLabel}>Relatórios</p><Link href="/farmacias/relatorios/favoritos" className={styles.navLink}><span className={styles.navText}>Medicamentos Favoritos</span></Link><Link href="/farmacias/relatorios/funcionarios" className={styles.navLink}><span className={styles.navText}>Relatório de Funcionarios</span></Link><Link href="/farmacias/relatorios/laboratorios" className={styles.navLink}><span className={styles.navText}>Relatório de Laboratorios</span></Link></div>
@@ -198,7 +264,6 @@ export default function ListaFuncionariosPage() {
             )}
 
             <div className={styles.listaHeader}>
-              {/* ... (Header) ... */}
               <div>
                 <h2>Funcionários Cadastrados</h2>
                 <p>Gerencie os funcionários do sistema</p>
@@ -247,7 +312,6 @@ export default function ListaFuncionariosPage() {
                     funcionariosFiltrados.map((funcionario) => (
                       <tr key={funcionario.id}>
                         <td data-label="Nome">
-                          {/* ... (Info Funcionário) ... */}
                           <div className={styles.funcionarioInfo}>
                             <div
                               className={styles.funcionarioAvatar}
@@ -270,21 +334,15 @@ export default function ListaFuncionariosPage() {
                         <td data-label="E-mail">{funcionario.email}</td>
                         <td data-label="Telefone">{funcionario.telefone}</td>
 
-                        {/* --- 2ª CORREÇÃO (tbody) --- */}
                         <td data-label="Nível">
                           <span
                             className={`${styles.nivelBadge} ${
-                              // Removemos o .replace('ê', 'e')
-                              // Agora ("farmacêutico") busca a classe correta
-                              badgeClasses[
-                              funcionario.nivelAcesso?.toLowerCase()
-                              ] || styles.funcionario
+                              badgeClasses[funcionario.nivelAcesso?.toLowerCase()] || styles.funcionario
                               }`}
                           >
                             {funcionario.nivelAcesso || "N/A"}
                           </span>
                         </td>
-                        {/* --- FIM DA 2ª CORREÇÃO --- */}
 
                         <td data-label="Cadastro">
                           {funcionario.dataCadastro
@@ -293,7 +351,6 @@ export default function ListaFuncionariosPage() {
                         </td>
                         <td data-label="Ações">
                           <div className={styles.acoes}>
-                            {/* ... (Botões de Ação) ... */}
                             <button
                               className={styles.editarButton}
                               onClick={() => handleEditar(funcionario.id)}

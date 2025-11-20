@@ -1,6 +1,17 @@
+/* Arquivo: src/components/Slider/index.module.css */
+
 .slideContainer {
+  /* position: relative e height são OBRIGATÓRIOS para o componente Next/Image com 'fill' funcionar corretamente */
   position: relative;
   width: 100%;
   height: 350px;
-  /* ajuste a altura como preferir */
+  /* Altura fixa garante que o layout não "pule" ao carregar */
 }
+
+/* * DICA: Para maior responsividade, você pode usar media queries aqui:
+ * @media (max-width: 768px) {
+ * .slideContainer {
+ * height: 200px; 
+ * }
+ * }
+ */

@@ -113,9 +113,7 @@ function ListagemMedicamentos() {
         preco_promocional: precoPromocional,
         promocao_id: promocaoInfo?.promo_id || null,
         promocao_porcentagem: promocaoInfo?.promo_desconto || 0,
-        // ================== MUDANÇA ADICIONADA ==================
         promocao_data_inicio: promocaoInfo?.promo_inicio || null,
-        // ================== FIM DA MUDANÇA ==================
         promocao_data_fim: promocaoInfo?.promo_fim || null,
       };
     });
@@ -251,7 +249,10 @@ function ListagemMedicamentos() {
     });
   };
 
-  const toggleStatus = async (id) => {
+  // === MUDANÇA: Função separada para executar a alteração de status ===
+  const executarAlteracaoStatus = async (id, toastId) => {
+    toast.dismiss(toastId); // Fecha a caixa de confirmação
+
     try {
       const medicamento = medicamentos.find(med => med.id === id);
       if (!medicamento) return;
@@ -274,6 +275,63 @@ function ListagemMedicamentos() {
     } catch (error) {
       toast.error(error.response?.data?.mensagem || "Não foi possível alterar o status.");
     }
+  };
+
+  // === MUDANÇA: Função para chamar o Toast de Confirmação do Status ===
+  const handleToggleStatus = (medicamento) => {
+    const acao = medicamento.status === "ativo" ? "Desativar" : "Ativar";
+    const isDanger = medicamento.status === "ativo"; // Desativar é "perigoso"
+
+    toast((t) => (
+      <div style={{ display: 'flex', flexDirection: 'column', gap: '12px', alignItems: 'center', minWidth: '280px' }}>
+        <span style={{ fontSize: '1.4rem', color: '#333', textAlign: 'center', lineHeight: '1.5' }}>
+          Tem certeza que deseja <strong>{acao}</strong> o medicamento <br /> <strong>{medicamento.nome}</strong>?
+        </span>
+        <div style={{ display: 'flex', gap: '12px', width: '100%', justifyContent: 'center', marginTop: '8px' }}>
+          <button
+            onClick={() => toast.dismiss(t.id)}
+            style={{
+              padding: '8px 16px',
+              backgroundColor: '#e5e7eb',
+              color: '#374151',
+              border: 'none',
+              borderRadius: '6px',
+              cursor: 'pointer',
+              fontSize: '1.3rem',
+              fontWeight: '600',
+              flex: 1
+            }}
+          >
+            Cancelar
+          </button>
+          <button
+            onClick={() => executarAlteracaoStatus(medicamento.id, t.id)}
+            style={{
+              padding: '8px 16px',
+              backgroundColor: isDanger ? '#dc2626' : '#458B00',
+              color: 'white',
+              border: 'none',
+              borderRadius: '6px',
+              cursor: 'pointer',
+              fontSize: '1.3rem',
+              fontWeight: '600',
+              flex: 1
+            }}
+          >
+            Sim, {acao}
+          </button>
+        </div>
+      </div>
+    ), {
+      duration: Infinity,
+      style: {
+        padding: '20px',
+        background: '#fff',
+        boxShadow: '0 10px 25px rgba(0,0,0,0.15)',
+        borderRadius: '12px',
+        border: '1px solid #e5e7eb'
+      }
+    });
   };
 
   const handlePromoChange = (e) => {
@@ -592,9 +650,7 @@ function ListagemMedicamentos() {
                       <div className={styles.infoPromocao}>
                         <strong>PROMOÇÃO ATIVA</strong>
                         <p>{medicamentoSelecionado.promocao_porcentagem}% OFF</p>
-                        {/* ================== MUDANÇA ADICIONADA ================== */}
                         <span>Início: {formatDateForDisplay(medicamentoSelecionado.promocao_data_inicio)}</span><br />
-                        {/* ================== FIM DA MUDANÇA ================== */}
                         <span>Válida até: {formatDateForDisplay(medicamentoSelecionado.promocao_data_fim)}</span>
                       </div>
                     )}
@@ -642,7 +698,9 @@ function ListagemMedicamentos() {
                   </button>
                 )}
 
-                <button onClick={() => toggleStatus(medicamentoSelecionado.id)} className={styles.cancelButton}>{medicamentoSelecionado.status === "ativo" ? "Desativar" : "Ativar"}</button>
+                {/* === MUDANÇA AQUI: Botão agora chama handleToggleStatus === */}
+                <button onClick={() => handleToggleStatus(medicamentoSelecionado)} className={styles.cancelButton}>{medicamentoSelecionado.status === "ativo" ? "Desativar" : "Ativar"}</button>
+                
                 <button onClick={() => handleEditar(medicamentoSelecionado.id)} className={styles.actionButton}>Editar</button>
               </div>
             </div>

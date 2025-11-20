@@ -1,46 +1,55 @@
+/* === ESTRUTURA E LAYOUT GERAL === */
 .headerShared {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 1rem 1.5rem;
-    background: transparent;
-    border-bottom: 1px solid rgba(0, 0, 0, 0.04)
+    display: flex; /* Habilita o Flexbox */
+    justify-content: space-between; /* Alinha o título à esquerda e o botão de sair à direita */
+    align-items: center; /* Centraliza verticalmente o conteúdo */
+    padding: 1rem 1.5rem; /* Espaçamento interno (vertical e horizontal) */
+    background: transparent; /* Fundo transparente (assume cor do container Next.js pai) */
+    /* Linha divisória sutil na parte inferior */
+    border-bottom: 1px solid rgba(0, 0, 0, 0.04) 
 }
 
+/* === TIPOGRAFIA E TÍTULO === */
 .headerShared h1 {
     margin: 0;
-    font-size: 1.25rem;
-    color: #0f172a
+    font-size: 1.25rem; /* Tamanho do título da página (aprox. 20px) */
+    color: #0f172a /* Cor escura para o título */
 }
 
+/* === BOTÃO DE LOGOUT === */
 .logout {
     background: transparent;
-    border: 1px solid rgba(30, 41, 59, 0.08);
+    border: 1px solid rgba(30, 41, 59, 0.08); /* Borda sutil e escura */
     padding: 0.45rem 0.75rem;
-    border-radius: 8px;
-    cursor: pointer
+    border-radius: 8px; /* Bordas arredondadas */
+    cursor: pointer;
+    color: #0f172a; /* Cor do texto padrão */
+    font-weight: 500;
 }
 
 .logout:hover {
-    background: rgba(69, 139, 0, 0.06)
+    background: rgba(69, 139, 0, 0.06); /* Fundo verde clarinho ao passar o mouse */
 }
 
+/* === BADGE DE AMBIENTE (DEV) === */
 .envBadge {
-    display: inline-block;
+    display: inline-block; /* Permite que fique ao lado do título */
     margin-left: 0.6rem;
-    background: #fde68a;
-    color: #92400e;
+    background: #fde68a; /* Amarelo (cor de aviso) */
+    color: #92400e; /* Texto marrom escuro para contraste */
     padding: 0.15rem 0.45rem;
     border-radius: 6px;
-    font-size: 0.75rem;
-    font-weight: 700
+    font-size: 0.75rem; /* Fonte pequena */
+    font-weight: 700;
+    text-transform: uppercase;
 }
 
+/* === BADGE DE USUÁRIO DE TESTE (Dev User) === */
 .devUserBadge {
     display: inline-block;
     margin-left: 0.4rem;
-    background: #ecfeff;
-    color: #055160;
+    background: #ecfeff; /* Azul/Ciano muito claro */
+    color: #055160; /* Texto azul escuro para contraste */
     padding: 0.15rem 0.45rem;
     border-radius: 6px;
     font-size: 0.75rem;
