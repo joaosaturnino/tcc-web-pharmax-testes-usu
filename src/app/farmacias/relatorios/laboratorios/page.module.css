@@ -14,6 +14,7 @@
   justify-content: space-between;
   align-items: center;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+  /* Sticky header: Fica preso no topo ao rolar */
   position: sticky;
   top: 0;
   z-index: 100;
@@ -53,6 +54,7 @@
   position: relative;
 }
 
+/* Barra Lateral (Sidebar) */
 .sidebar {
   width: 28rem;
   background: linear-gradient(180deg, #191970 0%, #0f1440 100%);
@@ -144,7 +146,7 @@
   letter-spacing: 0.5px;
 }
 
-/* === ATUALIZADO === */
+/* === ATUALIZADO: Estilos de Links de Navegação === */
 .navLink {
   display: flex;
   align-items: center;
@@ -244,7 +246,7 @@
   color-scheme: light;
 }
 
-/* Container do Relatório */
+/* Container do Relatório (Esta é a parte visível na tela) */
 .reportContainer {
   background: #fff;
   border-radius: 1.2rem;
@@ -267,6 +269,7 @@
 
 .printLogo {
   display: none;
+  /* Escondido na tela normal */
   height: 6rem;
   width: auto;
   object-fit: contain;
@@ -288,6 +291,7 @@
 .reportTable {
   width: 100%;
   min-width: 900px;
+  /* Garante scroll horizontal se necessário */
   border-collapse: collapse;
   margin-bottom: 3.2rem;
 }
@@ -314,6 +318,7 @@
 
 .sortableHeader {
   cursor: pointer;
+  /* Cursor de mão para indicar ordenação */
   transition: color 0.2s;
 }
 
@@ -326,9 +331,7 @@
   color: #1e293b;
 }
 
-/* REMOVIDO: Estilos de badges de status que não são mais usados */
-
-/* Resumo */
+/* Resumo Estatístico */
 .reportSummary {
   margin-top: 1.2rem;
 }
@@ -424,6 +427,7 @@
 
 .reportFooter {
   display: none;
+  /* Escondido na tela normal */
 }
 
 .paginationControls {
@@ -467,22 +471,28 @@
   color: #64748b;
 }
 
-/* ESTILOS DE IMPRESSÃO */
+/* ============================================================
+   ESTILOS DE IMPRESSÃO (@media print)
+   Define o que aparece e some ao imprimir (CTRL+P)
+   ============================================================ */
 @media print {
 
   .dashboard {
     background: #fff !important;
   }
 
+  /* 1. Esconde tudo da tela por padrão */
   .dashboard * {
     visibility: hidden !important;
   }
 
+  /* 2. Torna visível apenas o container do relatório */
   .reportContainer,
   .reportContainer * {
     visibility: visible !important;
   }
 
+  /* 3. Reposiciona o relatório para ocupar a folha */
   .reportContainer {
     position: absolute;
     left: 0;
@@ -493,6 +503,7 @@
     border: none;
   }
 
+  /* 4. Esconde elementos de UI desnecessários */
   .sidebar,
   .header,
   .controls,
@@ -501,6 +512,7 @@
     display: none !important;
   }
 
+  /* 5. Mostra elementos exclusivos de impressão */
   .printLogo {
     display: block !important;
   }
@@ -525,7 +537,7 @@
   }
 }
 
-/* RESPONSIVIDADE */
+/* Responsividade */
 @media (max-width: 48rem) {
   .sidebar {
     position: fixed;

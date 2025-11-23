@@ -1,13 +1,17 @@
 "use client";
+
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import styles from "./favoritos.module.css";
-import AuthGuard from "../../componentes/AuthGuard"; // Componente que protege a rota
-import api from "../../services/api"; // Seu arquivo de configuração da API
+import AuthGuard from "../../componentes/AuthGuard";
+import api from "../../services/api";
+
+// 1. IMPORTAÇÃO DO CONTEXTO
+import { useNotification } from "../../contexts/NotificationContext";
 
 export default function FavoritosFarmaciaPage() {
-  // --- ESTADOS DO COMPONENTE ---
+  // --- ESTADOS ---
   const [medicamentos, setMedicamentos] = useState([]);
   const [loadingData, setLoadingData] = useState(true);
   const [sidebarOpen, setSidebarOpen] = useState(false);
@@ -16,21 +20,29 @@ export default function FavoritosFarmaciaPage() {
   const [farmaciaInfo, setFarmaciaInfo] = useState(null);
   const router = useRouter();
 
-  // --- FUNÇÃO DE LOGOUT ---
+  // 2. RECUPERA O SINAL DE ATUALIZAÇÃO DO CONTEXTO
+  const { updateSignal } = useNotification();
+
+  // --- LOGOUT ---
   const handleLogout = async () => {
     localStorage.removeItem("authToken");
     localStorage.removeItem("userData");
     router.push("/home");
   };
 
-  // --- EFEITO PARA BUSCAR OS DADOS QUANDO O COMPONENTE É MONTADO ---
+  // --- DATA FETCHING ---
   useEffect(() => {
     const fetchMedicamentosFavoritos = async () => {
-      setLoadingData(true);
+      // Pequeno ajuste: Só mostra o loading se a lista estiver vazia (primeira carga).
+      // Nas atualizações automáticas, atualiza silenciosamente sem piscar a tela.
+      if (medicamentos.length === 0) {
+        setLoadingData(true);
+      }
+      
       try {
         const userDataString = localStorage.getItem("userData");
         if (!userDataString) {
-          alert("Sua sessão não foi encontrada. Por favor, faça o login novamente.");
+          // Removi o alert para não bloquear a atualização automática caso a sessão caia
           handleLogout();
           return;
         }
@@ -40,12 +52,11 @@ export default function FavoritosFarmaciaPage() {
 
         const idDaFarmacia = userData.farm_id;
         if (!idDaFarmacia) {
-          alert("Não foi possível identificar sua farmácia. Faça o login novamente.");
           handleLogout();
           return;
         }
 
-        // ROTA CORRETA: /favoritos/{farm_id}/favoritos
+        // Rota da API
         const response = await api.get(`/favoritos/${idDaFarmacia}/favoritos`);
 
         if (response.data.sucesso) {
@@ -53,36 +64,26 @@ export default function FavoritosFarmaciaPage() {
             ...med,
             id: med.med_id,
             nome: med.med_nome,
-            // O SQL retorna "fabricante_nome", usamos esse campo.
             fabricante: med.fabricante_nome || 'Laboratório Não Informado',
             dosagem: med.med_dosagem,
             favoritacoes: med.favoritacoes_count || 0,
-            
-            // CORREÇÃO CRÍTICA: O SQL não retorna o status de estoque. 
-            // Definimos um status padrão para que o badge na UI funcione.
-            // Usando "em_estoque" para exibir "Disponível" (badge verde).
-            status: "em_estoque", 
-            
+            status: "em_estoque", // Valor padrão para visualização
             ultimaAtualizacao: med.med_data_atualizacao
               ? new Date(med.med_data_atualizacao).toISOString()
               : new Date().toISOString(),
           }));
 
-          // A ordenação é feita aqui para garantir que a lista completa esteja ordenada.
+          // Ordenar por mais favoritados
           const sortedMedicamentos = processedMedicamentos.sort((a, b) => b.favoritacoes - a.favoritacoes);
           setMedicamentos(sortedMedicamentos);
 
         } else {
-          console.error("A API retornou um erro:", response.data.mensagem);
-          alert("Não foi possível carregar os favoritos.");
+          console.error("Erro API:", response.data.mensagem);
         }
       } catch (error) {
-        console.error("Falha na chamada à API:", error);
+        console.error("Falha na API:", error);
         if (error.response?.status === 401) {
-          alert("Sua sessão expirou. Por favor, faça o login novamente.");
           handleLogout();
-        } else {
-          alert("Não foi possível conectar ao servidor. Verifique sua conexão e se a API está online.");
         }
       } finally {
         setLoadingData(false);
@@ -90,18 +91,18 @@ export default function FavoritosFarmaciaPage() {
     };
 
     fetchMedicamentosFavoritos();
-  }, []); // O array vazio garante que o useEffect rode apenas uma vez
+    
+    // 3. ADICIONADO 'updateSignal' NAS DEPENDÊNCIAS
+    // Isso força o useEffect a rodar novamente sempre que o Contexto avisar
+  }, [updateSignal]); 
 
-  // --- LÓGICA DE PAGINAÇÃO ---
+  // --- PAGINAÇÃO ---
   const indexOfLastItem = currentPage * itemsPerPage;
   const indexOfFirstItem = indexOfLastItem - itemsPerPage;
-  // Agora 'currentItems' é apenas uma "fatia" da lista já ordenada
   const currentItems = medicamentos.slice(indexOfFirstItem, indexOfLastItem);
   const totalPages = Math.ceil(medicamentos.length / itemsPerPage);
   const paginate = (pageNumber) => setCurrentPage(pageNumber);
 
-
-  // --- RENDERIZAÇÃO DO COMPONENTE ---
   return (
     <AuthGuard>
       <div className={styles.dashboard}>
@@ -110,7 +111,7 @@ export default function FavoritosFarmaciaPage() {
             <button
               className={styles.menuToggle}
               onClick={() => setSidebarOpen(!sidebarOpen)}
-              aria-label="Abrir menu" // NOVO: Melhoria de acessibilidade
+              aria-label="Abrir menu"
             >
               ☰
             </button>
@@ -121,34 +122,23 @@ export default function FavoritosFarmaciaPage() {
         <div className={styles.contentWrapper}>
           <aside className={`${styles.sidebar} ${sidebarOpen ? styles.sidebarOpen : ""}`}>
             <div className={styles.sidebarHeader}>
-              <div className={styles.logo}>
-                {farmaciaInfo ? (
-                  <div className={styles.logoContainer}>
-                    {farmaciaInfo.farm_logo_url && (
-                      <img
-                        src={farmaciaInfo.farm_logo_url}
-                        alt={`Logo de ${farmaciaInfo.farm_nome}`}
-                        className={styles.logoImage}
-                      />
-                    )}
-                    <span className={styles.logoText}>
-                      {farmaciaInfo.farm_nome}
-                    </span>
-                  </div>
-                ) : (
-                  <span className={styles.logoText}>PharmaX</span>
+              <div className={styles.logoContainer}>
+                {farmaciaInfo?.farm_logo_url && (
+                  <img
+                    src={farmaciaInfo.farm_logo_url}
+                    alt="Logo"
+                    className={styles.logoImage}
+                  />
                 )}
+                <span className={styles.logoText}>{farmaciaInfo?.farm_nome || "PharmaX"}</span>
               </div>
               <button
                 className={styles.sidebarClose}
                 onClick={() => setSidebarOpen(false)}
-                aria-label="Fechar menu" // NOVO: Melhoria de acessibilidade
-              >
-                ×
-              </button>
+              >×</button>
             </div>
+
             <nav className={styles.nav}>
-              {/* Links de navegação permanecem os mesmos */}
               <div className={styles.navSection}>
                 <p className={styles.navLabel}>Principal</p>
                 <Link href="/farmacias/favoritos" className={`${styles.navLink} ${styles.active}`}>
@@ -199,19 +189,17 @@ export default function FavoritosFarmaciaPage() {
             {loadingData ? (
               <div className={styles.loaderContainer}>
                 <div className={styles.spinner}></div>
-                <p>Carregando medicamentos favoritos...</p>
+                <p>Carregando...</p>
               </div>
             ) : (
               <>
                 <div className={styles.grid}>
                   {currentItems.length > 0 ? (
-                    // REMOVIDO: A ordenação (.sort) foi removida daqui pois agora é feita na busca dos dados.
                     currentItems.map((med, index) => (
                       <div className={styles.card} key={med.id}>
                         <div className={styles.cardHeader}>
                           <div className={styles.cardUserInfo}>
                             <div className={styles.userAvatar}>
-                              {/* O ranking agora é calculado corretamente com base na lista completa */}
                               <span>#{indexOfFirstItem + index + 1}</span>
                             </div>
                             <div>
@@ -229,8 +217,8 @@ export default function FavoritosFarmaciaPage() {
                               <strong>Dosagem</strong>
                               <span className={styles.dosagem}>{med.dosagem}</span>
                             </div>
-                            <span className={`${styles.badge} ${med.status === "em_estoque" ? styles.inStock : med.status === "indisponivel" ? styles.outStock : styles.pending}`}>
-                              {med.status === "em_estoque" ? "Disponível" : med.status === "indisponivel" ? "Indisponível" : "Pendente"}
+                            <span className={`${styles.badge} ${med.status === "em_estoque" ? styles.inStock : styles.pending}`}>
+                              {med.status === "em_estoque" ? "Disponível" : "Pendente"}
                             </span>
                           </div>
                           <div className={styles.medItem}>
@@ -248,7 +236,6 @@ export default function FavoritosFarmaciaPage() {
                     <div className={styles.emptyState}>
                       <span className={styles.emptyIcon}>⭐</span>
                       <h3>Nenhum medicamento favoritado</h3>
-                      <p>Os medicamentos favoritados pelos clientes aparecerão aqui.</p>
                     </div>
                   )}
                 </div>

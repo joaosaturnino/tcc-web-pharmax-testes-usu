@@ -1,4 +1,8 @@
-/* Layout Principal, Header, Sidebar (Estrutura consistente com as outras telas) */
+/* index.module.css */
+
+/* --- LAYOUT E ESTRUTURA PRINCIPAL --- */
+
+/* Garante que a tela ocupe 100% da altura, mesmo com pouco conteúdo */
 .dashboard {
   min-height: 100vh;
   background-color: #f8fafc;
@@ -6,6 +10,7 @@
   flex-direction: column;
 }
 
+/* Header Sticky: Fica fixo no topo ao rolar a página */
 .header {
   background: white;
   padding: 1.5rem 2.4rem;
@@ -15,7 +20,7 @@
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
   position: sticky;
   top: 0;
-  z-index: 100;
+  z-index: 100; /* Garante que fique acima de tudo */
 }
 
 .headerLeft {
@@ -24,6 +29,7 @@
   gap: 1.6rem;
 }
 
+/* Botão Menu (Hambúrguer): Só aparece no mobile */
 .menuToggle {
   background: none;
   border: none;
@@ -32,7 +38,7 @@
   padding: 0.8rem;
   border-radius: 0.6rem;
   transition: background 0.3s ease;
-  display: none;
+  display: none; /* Oculto por padrão em Desktop */
   color: #458B00;
 }
 
@@ -40,12 +46,13 @@
   background: #f1f5f9;
 }
 
+/* Tipografia Fluida: Aumenta/diminui baseada na largura da tela (vw) */
 .title {
-  /* MELHORIA: Tipografia fluida e CORREÇÃO: Cor inválida */
   font-size: clamp(2rem, 4vw, 2.8rem);
   font-weight: 600;
   color: #1e293b;
   margin: 0;
+  /* Gradiente da marca PharmaX */
   background: linear-gradient(135deg, #191970 0%, #458B00 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
@@ -58,6 +65,7 @@
   position: relative;
 }
 
+/* --- SIDEBAR (MENU LATERAL) --- */
 .sidebar {
   width: 28rem;
   background: linear-gradient(180deg, #191970 0%, #0f1440 100%);
@@ -67,9 +75,11 @@
   transition: transform 0.3s ease-in-out;
   box-shadow: 0.2rem 0 1rem rgba(0, 0, 0, 0.1);
   flex-shrink: 0;
+  
+  /* Sticky Sidebar: Acompanha a rolagem mas respeita o Header */
   height: calc(100vh - 7.2rem);
   position: sticky;
-  top: 7.2rem;
+  top: 7.2rem; /* Altura aproximada do header */
   overflow-y: auto;
   z-index: 90;
 }
@@ -80,7 +90,7 @@
   justify-content: space-between;
   align-items: center;
   background: rgba(25, 25, 112, 0.95);
-  position: sticky;
+  position: sticky; /* Mantém logo fixa ao rolar o menu */
   top: 0;
   z-index: 10;
 }
@@ -116,6 +126,7 @@
   display: none;
 }
 
+/* --- NAVEGAÇÃO --- */
 .nav {
   flex: 1;
   padding: 1rem;
@@ -165,7 +176,7 @@
   font-family: "Montserrat";
 }
 
-/* Conteúdo Principal */
+/* --- CONTEÚDO PRINCIPAL (FORMULÁRIO) --- */
 .mainContent {
   flex: 1;
   padding: 3.2rem;
@@ -174,7 +185,7 @@
 }
 
 .formContainer {
-  max-width: 96rem;
+  max-width: 96rem; /* Limita largura em telas muito grandes */
   margin: 0 auto;
 }
 
@@ -196,6 +207,7 @@
   font-size: 1.6rem;
 }
 
+/* Card do Formulário */
 .form {
   background: white;
   border-radius: 1.2rem;
@@ -204,6 +216,7 @@
   border: 1px solid #e5e7eb;
 }
 
+/* Grid Layout: Divide o formulário em 2 colunas no Desktop */
 .formGrid {
   display: grid;
   grid-template-columns: 1fr 1fr;
@@ -227,6 +240,7 @@
   margin-bottom: 2rem;
 }
 
+/* Sub-grid para campos pequenos (CPF/Data) */
 .formRow {
   display: grid;
   grid-template-columns: 1fr 1fr;
@@ -241,6 +255,7 @@
   margin-bottom: 0.8rem;
 }
 
+/* Inputs Modernos com feedback visual */
 .modernInput {
   width: 100%;
   padding: 1.2rem 1.6rem;
@@ -253,11 +268,12 @@
 
 .modernInput:focus {
   outline: none;
-  border-color: #458B00;
+  border-color: #458B00; /* Verde PharmaX */
   background: white;
   box-shadow: 0 0 0 3px rgba(69, 139, 0, 0.1);
 }
 
+/* Customização do Select (Seta SVG) */
 select.modernInput {
   appearance: none;
   background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
@@ -267,7 +283,7 @@ select.modernInput {
   padding-right: 4rem;
 }
 
-/* Ações do Formulário */
+/* Botões de Ação */
 .formActions {
   display: flex;
   justify-content: flex-end;
@@ -351,13 +367,12 @@ select.modernInput {
   font-weight: 600;
 }
 
-/* Overlay (Consistente) */
+/* Overlay (Fundo Escuro Mobile) */
 .overlay {
   position: fixed;
   inset: 0;
   background: rgba(0, 0, 0, 0.4);
   z-index: 105;
-  /* CORREÇÃO: Z-index ajustado */
   display: none;
   opacity: 0;
   transition: opacity 0.3s ease-in-out;
@@ -369,6 +384,8 @@ select.modernInput {
 }
 
 /* --- RESPONSIVIDADE --- */
+
+/* Tablet: Grid vira 1 coluna */
 @media (max-width: 64rem) {
   .formGrid {
     grid-template-columns: 1fr;
@@ -380,6 +397,7 @@ select.modernInput {
   }
 }
 
+/* Mobile: Menu Off-canvas e ajustes de botões */
 @media (max-width: 48rem) {
   .sidebar {
     position: fixed;
@@ -388,7 +406,6 @@ select.modernInput {
     height: 100vh;
     transform: translateX(-100%);
     z-index: 110;
-    /* CORREÇÃO: Z-index ajustado */
   }
 
   .sidebar.sidebarOpen {
@@ -409,12 +426,12 @@ select.modernInput {
   }
 
   .formRow {
-    grid-template-columns: 1fr;
+    grid-template-columns: 1fr; /* Campos lado a lado viram pilha no mobile */
     gap: 0;
   }
 
   .formActions {
-    flex-direction: column-reverse;
+    flex-direction: column-reverse; /* Botões empilhados */
     gap: 1rem;
   }
 

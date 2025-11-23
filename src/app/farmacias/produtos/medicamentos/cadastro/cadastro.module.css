@@ -1,11 +1,19 @@
-/* Layout Principal e Componentes (Estrutura consistente com as outras telas) */
+/* ============================================================
+   ESTILOS GERAIS E LAYOUT
+   Define a estrutura base da página (Dashboard)
+   ============================================================ */
 .dashboard {
   min-height: 100vh;
   background-color: #f8fafc;
   display: flex;
   flex-direction: column;
+  /* Organiza Header e Conteúdo em coluna */
 }
 
+/* ============================================================
+   HEADER (CABEÇALHO)
+   Barra superior fixa com título e controles
+   ============================================================ */
 .header {
   background: white;
   padding: 1.5rem 2.4rem;
@@ -13,6 +21,7 @@
   justify-content: space-between;
   align-items: center;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+  /* Mantém o header fixo no topo ao rolar a página */
   position: sticky;
   top: 0;
   z-index: 100;
@@ -24,28 +33,33 @@
   gap: 1.6rem;
 }
 
+/* Botão de menu (hambúrguer) visível apenas no mobile via media queries */
 .menuToggle {
   background: none;
   border: none;
   font-size: 2.4rem;
   cursor: pointer;
   padding: 0.8rem;
-  border-radius: 0.6rem;
-  transition: background 0.3s ease;
-  display: none;
   color: #458B00;
+  display: none;
 }
 
 .title {
   font-size: clamp(2rem, 4vw, 2.8rem);
+  /* Tamanho responsivo */
   font-weight: 600;
   margin: 0;
+  /* Gradiente no texto do título */
   background: linear-gradient(135deg, #191970 0%, #458B00 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
 }
 
+/* ============================================================
+   SIDEBAR (MENU LATERAL)
+   Menu de navegação à esquerda
+   ============================================================ */
 .contentWrapper {
   display: flex;
   flex: 1;
@@ -59,8 +73,7 @@
   display: flex;
   flex-direction: column;
   transition: transform 0.3s ease-in-out;
-  box-shadow: 0.2rem 0 1rem rgba(0, 0, 0, 0.1);
-  flex-shrink: 0;
+  /* Calcula a altura subtraindo o tamanho do header para não gerar scroll duplo */
   height: calc(100vh - 7.2rem);
   position: sticky;
   top: 7.2rem;
@@ -85,15 +98,12 @@
   gap: 1.2rem;
 }
 
-/* === ATUALIZADO === */
 .logoImage {
   height: 60px;
   width: 60px;
   border-radius: 5%;
   object-fit: cover;
 }
-
-/* === FIM DA ATUALIZAÇÃO === */
 
 .logoText {
   font-size: 2rem;
@@ -107,18 +117,10 @@
   font-size: 2.8rem;
   color: #fff;
   cursor: pointer;
-  border-radius: 0.6rem;
-  padding: 0.4rem 0.8rem;
   display: none;
 }
 
-/* === ADICIONADO === */
-.sidebarClose:hover {
-  background: #222266;
-}
-
-/* === FIM DA ADIÇÃO === */
-
+/* Estilos dos Links de Navegação */
 .nav {
   flex: 1;
   padding: 1rem;
@@ -136,7 +138,6 @@
   letter-spacing: 0.5px;
 }
 
-/* === ATUALIZADO === */
 .navLink {
   display: flex;
   align-items: center;
@@ -151,6 +152,7 @@
   border-left: 4px solid transparent;
 }
 
+/* Efeito Hover e Active na navegação */
 .navLink:hover {
   background: rgba(69, 139, 0, 0.15);
   color: #fff;
@@ -165,23 +167,24 @@
   box-shadow: 0 4px 12px rgba(69, 139, 0, 0.3);
 }
 
-/* === FIM DA ATUALIZAÇÃO === */
-
 .navText {
   font-family: "Montserrat";
 }
 
-/* REESTRUTURADO: Conteúdo Principal e Formulário para consistência */
+/* ============================================================
+   CONTEÚDO PRINCIPAL E FORMULÁRIO
+   Estilização da área central e inputs
+   ============================================================ */
 .mainContent {
   flex: 1;
   padding: 3.2rem;
   background: #f8fafc;
-  overflow-y: auto;
 }
 
 .formContainer {
   max-width: 96rem;
   margin: 0 auto;
+  /* Centraliza o formulário */
 }
 
 .formHeader {
@@ -190,18 +193,17 @@
 }
 
 .formHeader h2 {
-  font-size: clamp(2.4rem, 5vw, 3.2rem);
-  font-weight: 700;
-  margin: 0 0 0.8rem 0;
+  font-size: 2.8rem;
   color: #191970;
+  margin-bottom: 0.8rem;
 }
 
 .formHeader p {
-  margin: 0;
-  color: #64748b;
   font-size: 1.6rem;
+  color: #64748b;
 }
 
+/* Card do formulário (Fundo branco com sombra) */
 .form {
   background: white;
   border-radius: 1.2rem;
@@ -210,20 +212,23 @@
   border: 1px solid #e5e7eb;
 }
 
+.sectionTitle {
+  font-size: 2rem;
+  font-weight: 600;
+  color: #191970;
+  margin-bottom: 1.2rem;
+  padding-bottom: 1.2rem;
+  border-bottom: 1px solid #e5e7eb;
+  grid-column: 1 / -1;
+  /* Faz o título ocupar a largura total da grid */
+}
+
+/* Grid system para organizar inputs (2 colunas) */
 .formGrid {
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: 2.4rem 3.2rem;
-}
-
-.sectionTitle {
-  font-size: clamp(1.8rem, 3vw, 2rem);
-  font-weight: 600;
-  color: #191970;
-  margin: 0 0 1.2rem 0;
-  padding-bottom: 1.2rem;
-  border-bottom: 1px solid #e5e7eb;
-  grid-column: 1 / -1;
+  margin-bottom: 3.2rem;
 }
 
 .formRow {
@@ -232,6 +237,10 @@
   gap: 2.4rem;
 }
 
+/* ============================================================
+   INPUTS, LABELS E VALIDAÇÃO
+   Estilização dos campos de formulário
+   ============================================================ */
 .formControl {
   position: relative;
 }
@@ -246,6 +255,7 @@
 
 .divInput {
   position: relative;
+  /* Necessário para posicionar ícones absolutos dentro */
 }
 
 .modernInput,
@@ -260,6 +270,7 @@
   background: #f9fafb;
 }
 
+/* Estados de foco (borda verde) */
 .modernInput:focus,
 .modernTextarea:focus,
 .modernSelect:focus {
@@ -270,74 +281,11 @@
 }
 
 .modernTextarea {
+  min-height: 12rem;
   resize: vertical;
-  min-height: 10rem;
 }
 
-.modernSelect {
-  appearance: none;
-  background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
-  background-repeat: no-repeat;
-  background-position: right 1.6rem center;
-  background-size: 1.6rem;
-  padding-right: 4rem;
-}
-
-.fileInput {
-  display: none;
-}
-
-.fileInputLabel {
-  display: flex;
-  align-items: center;
-  gap: 1rem;
-  width: 100%;
-  padding: 1.2rem 1.6rem;
-  border: 2px dashed #d1d5db;
-  border-radius: 0.8rem;
-  font-size: 1.4rem;
-  color: #64748b;
-  background-color: #f8fafc;
-  cursor: pointer;
-  transition: all 0.3s ease;
-}
-
-.fileInputLabel:hover {
-  border-color: #458B00;
-  background-color: #f0fdf4;
-  color: #191970;
-}
-
-.fileInputLabel span {
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  flex-grow: 1;
-}
-
-.success .fileInputLabel {
-  border-style: solid;
-  border-color: #458B00;
-}
-
-.error .fileInputLabel {
-  border-style: solid;
-  border-color: #ef4444;
-}
-
-/* Validação */
-.success .modernInput,
-.success .modernTextarea,
-.success .modernSelect {
-  border-color: #458B00;
-}
-
-.error .modernInput,
-.error .modernTextarea,
-.error .modernSelect {
-  border-color: #ef4444;
-}
-
+/* Ícones de Validação (Check verde ou X vermelho) */
 .sucesso,
 .erro {
   position: absolute;
@@ -345,8 +293,8 @@
   top: 50%;
   transform: translateY(-50%);
   font-size: 2rem;
-  pointer-events: none;
   display: none;
+  /* Escondidos por padrão */
 }
 
 .sucesso {
@@ -357,6 +305,17 @@
   color: #ef4444;
 }
 
+/* Alteração da cor da borda baseada na validação JS */
+.success .modernInput,
+.success .modernSelect {
+  border-color: #458B00;
+}
+
+.error .modernInput,
+.error .modernSelect {
+  border-color: #ef4444;
+}
+
 .success .sucesso,
 .error .erro {
   display: block;
@@ -364,20 +323,53 @@
 
 .small {
   color: #ef4444;
+  /* Texto de erro vermelho abaixo do input */
   font-size: 1.2rem;
   margin-top: 0.4rem;
   display: block;
 }
 
-/* Ações do Formulário */
+/* ============================================================
+   UPLOAD DE ARQUIVO CUSTOMIZADO
+   Esconde o input padrão e estiliza o label
+   ============================================================ */
+.fileInput {
+  display: none;
+}
+
+/* Esconde o input feio nativo */
+
+.fileInputLabel {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  width: 100%;
+  padding: 1.2rem 1.6rem;
+  border: 2px dashed #d1d5db;
+  /* Borda tracejada */
+  border-radius: 0.8rem;
+  font-size: 1.4rem;
+  color: #64748b;
+  cursor: pointer;
+  background: #f8fafc;
+  transition: all 0.3s ease;
+}
+
+.fileInputLabel:hover {
+  border-color: #458B00;
+  background: #f0fdf4;
+  color: #191970;
+}
+
+/* ============================================================
+   BOTÕES E AÇÕES
+   ============================================================ */
 .formActions {
-  grid-column: 1 / -1;
   display: flex;
   justify-content: flex-end;
   gap: 1.6rem;
-  padding-top: 2.4rem;
-  margin-top: 1.6rem;
   border-top: 1px solid #e5e7eb;
+  padding-top: 2.4rem;
 }
 
 .cancelButton,
@@ -388,78 +380,57 @@
   font-size: 1.4rem;
   cursor: pointer;
   transition: all 0.3s ease;
-  border: 1px solid transparent;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 0.8rem;
 }
 
 .cancelButton {
   background: white;
-  color: #4b5563;
-  border-color: #d1d5db;
+  color: #64748b;
+  border: 1px solid #d1d5db;
 }
 
-.cancelButton:hover:not(:disabled) {
-  background: #f9fafb;
-  border-color: #9ca3af;
+.cancelButton:hover {
+  background: #f1f5f9;
 }
 
 .submitButton {
   background: #458B00;
   color: white;
+  border: none;
 }
 
 .submitButton:hover:not(:disabled) {
+  background: #3a7500;
   transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(69, 139, 0, 0.3);
+  box-shadow: 0 4px 12px rgba(69, 139, 0, 0.2);
 }
 
-.submitButton:disabled,
-.cancelButton:disabled {
+.submitButton:disabled {
   opacity: 0.7;
   cursor: not-allowed;
 }
 
-.loadingSpinnerSmall {
-  width: 1.6rem;
-  height: 1.6rem;
-  border: 2px solid rgba(255, 255, 255, 0.3);
-  border-top-color: white;
-  border-radius: 50%;
-  animation: spin 0.8s linear infinite;
-}
-
-@keyframes spin {
-  to {
-    transform: rotate(360deg);
-  }
-}
-
-/* Overlay (Consistente) */
-/* === ATUALIZADO === */
+/* ============================================================
+   RESPONSIVIDADE (MOBILE)
+   Ajustes para telas menores que 48rem (aprox. 768px)
+   ============================================================ */
 .overlay {
   position: fixed;
   inset: 0;
   background: rgba(0, 0, 0, 0.4);
   z-index: 105;
   display: none;
-  opacity: 0;
-  transition: opacity 0.3s ease-in-out;
 }
 
-/* === FIM DA ATUALIZAÇÃO === */
 .sidebar.sidebarOpen~.overlay {
   display: block;
-  opacity: 1;
 }
 
-/* --- RESPONSIVIDADE --- */
 @media (max-width: 64rem) {
   .formGrid {
     grid-template-columns: 1fr;
   }
+
+  /* Coluna única em tablets */
 }
 
 @media (max-width: 48rem) {
@@ -469,6 +440,7 @@
     top: 0;
     height: 100vh;
     transform: translateX(-100%);
+    /* Esconde a sidebar lateralmente */
     z-index: 110;
   }
 
@@ -476,76 +448,33 @@
     transform: translateX(0);
   }
 
+  /* Mostra a sidebar */
+
   .menuToggle,
   .sidebarClose {
     display: block;
   }
 
-  /* MUDANÇA: Ajuste no padding do conteúdo principal para acomodar a barra fixa */
   .mainContent {
     padding: 1.6rem;
-    padding-bottom: 12rem;
-    /* Espaço extra no final para o último campo não ser coberto */
+    padding-bottom: 10rem;
   }
 
-  .form {
-    padding: 2.4rem;
-    /* O padding-bottom foi movido para o .mainContent */
-  }
-
-  .formRow {
-    grid-template-columns: 1fr;
-    gap: 2rem;
-  }
-
-  /* CORREÇÃO: Usando position: fixed para garantir que a barra fique visível */
+  /* Fixa os botões no fundo da tela no mobile */
   .formActions {
-    /* Desvincula o elemento do fluxo e fixa na janela */
     position: fixed;
     bottom: 0;
     left: 0;
-    /* Alinha à esquerda da tela */
     right: 0;
-    /* Alinha à direita da tela (ocupando a largura total) */
-
-    /* Estilos visuais */
     background: white;
     padding: 1.6rem;
     border-top: 1px solid #e5e7eb;
-    box-shadow: 0 -4px 12px rgba(0, 0, 0, 0.08);
     z-index: 80;
-    /* Garante que fique acima do conteúdo, mas abaixo do sidebar */
-
-    /* Remove estilos antigos que não são mais necessários com position:fixed */
-    margin-top: 0;
-    grid-column: unset;
-
-    /* Mantém a organização dos botões */
-    display: flex;
     flex-direction: column-reverse;
-    gap: 1rem;
   }
 
   .cancelButton,
   .submitButton {
     width: 100%;
-  }
-}
-
-@media (max-width: 30rem) {
-  .header {
-    flex-direction: column;
-    gap: 1.6rem;
-    align-items: flex-start;
-    padding: 1.6rem;
-  }
-
-  .form {
-    padding: 1.6rem;
-  }
-
-  /* Ajuste no padding da barra para telas muito pequenas */
-  .formActions {
-    padding: 1.2rem;
   }
 }

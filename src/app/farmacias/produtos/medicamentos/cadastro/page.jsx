@@ -1,4 +1,4 @@
-"use client";
+"use client"; // Indica componente Client-Side do Next.js
 
 import { useState, useEffect } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
@@ -6,47 +6,55 @@ import Link from "next/link";
 import styles from "./cadastro.module.css";
 import api from "../../../../services/api";
 import { MdCheckCircle, MdError, MdUploadFile } from "react-icons/md";
-// === MUDANÇA: Importado o 'react-hot-toast' ===
+// === MUDANÇA: Importado o 'react-hot-toast' para notificações bonitas ===
 import toast, { Toaster } from "react-hot-toast";
 
 export default function CadastroMedicamentoPage() {
+  // === HOOKS DE NAVEGAÇÃO E PARÂMETROS ===
   const router = useRouter();
   const searchParams = useSearchParams();
+  
+  // === ESTADOS DE CONTROLE DE INTERFACE ===
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [loading, setLoading] = useState(false);
   const [farmaciaInfo, setFarmaciaInfo] = useState(null);
 
+  // === ESTADO DO FORMULÁRIO (Objeto único para todos os campos) ===
   const [form, setForm] = useState({
     nome: "", dosagem: "", quantidade: "", tipo: "", forma: "",
     descricao: "", preco: "", laboratorio: "", imagem: null,
     codigoBarras: "",
   });
 
-  const [errors, setErrors] = useState({});
-  const [touched, setTouched] = useState({});
-  const [fileName, setFileName] = useState("");
+  // === ESTADOS DE VALIDAÇÃO ===
+  const [errors, setErrors] = useState({}); // Guarda mensagens de erro por campo
+  const [touched, setTouched] = useState({}); // Guarda quais campos o usuário já clicou
+  const [fileName, setFileName] = useState(""); // Nome do arquivo para exibição no input file
 
-  // Estados para Tipo de Produto
+  // === ESTADOS PARA LISTAS DO BANCO DE DADOS (Dropdowns) ===
+  // Tipos de Produto
   const [tiposList, setTiposList] = useState([]);
   const [tiposError, setTiposError] = useState(null);
   const [loadingTipos, setLoadingTipos] = useState(true);
 
-  // Estados para Forma Farmacêutica
+  // Formas Farmacêuticas
   const [formaList, setFormaList] = useState([]);
   const [formaError, setFormaError] = useState(null);
   const [loadingFormas, setLoadingFormas] = useState(true);
 
-  // Estados para Laboratório
+  // Laboratórios
   const [labList, setLabList] = useState([]);
   const [labError, setLabError] = useState(null);
   const [loadingLabs, setLoadingLabs] = useState(true);
 
+  // === EFEITO 1: CARREGAR DADOS DO USUÁRIO E PARÂMETROS URL ===
   useEffect(() => {
     const userDataString = localStorage.getItem("userData");
     if (userDataString) {
       setFarmaciaInfo(JSON.parse(userDataString));
     }
 
+    // Se vier 'codigoBarras' na URL (da tela de listagem), preenche automaticamente
     const codigoBarrasUrl = searchParams.get('codigoBarras');
     if (codigoBarrasUrl) {
       setForm(prevForm => ({ ...prevForm, codigoBarras: codigoBarrasUrl }));
@@ -55,7 +63,7 @@ export default function CadastroMedicamentoPage() {
     }
   }, [searchParams]);
 
-  // useEffect para buscar os Tipos de Produto
+  // === EFEITO 2: BUSCAR TIPOS DE PRODUTO NA API ===
   useEffect(() => {
     const fetchTipos = async () => {
       try {
@@ -78,7 +86,7 @@ export default function CadastroMedicamentoPage() {
     fetchTipos();
   }, []);
 
-  // useEffect para buscar as Formas Farmacêuticas
+  // === EFEITO 3: BUSCAR FORMAS FARMACÊUTICAS NA API ===
   useEffect(() => {
     const fetchFormas = async () => {
       try {
@@ -101,7 +109,7 @@ export default function CadastroMedicamentoPage() {
     fetchFormas();
   }, []);
 
-  // useEffect para buscar os Laboratórios
+  // === EFEITO 4: BUSCAR LABORATÓRIOS NA API ===
   useEffect(() => {
     const fetchLabs = async () => {
       try {
@@ -124,7 +132,8 @@ export default function CadastroMedicamentoPage() {
     fetchLabs();
   }, []);
 
-
+  // === HANDLER: PERDA DE FOCO (BLUR) ===
+  // Marca o campo como 'tocado' para exibir erros apenas após o usuário interagir
   const handleBlur = (e) => {
     const { name } = e.target;
     if (!touched[name]) {
@@ -133,14 +142,17 @@ export default function CadastroMedicamentoPage() {
     validateField(name, form[name]);
   };
 
+  // === HANDLER: ALTERAÇÃO DE VALORES (CHANGE) ===
   const handleChange = (e) => {
     const { name, value, files } = e.target;
+    // Lógica específica para arquivo de imagem
     if (name === "imagem" && files) {
       const file = files[0] || null;
       setForm({ ...form, imagem: file });
       setFileName(file ? file.name : "");
       validateField(name, file);
     } else {
+      // Lógica padrão para inputs de texto/número
       setForm({ ...form, [name]: value });
       if (touched[name]) {
         validateField(name, value);
@@ -148,6 +160,8 @@ export default function CadastroMedicamentoPage() {
     }
   };
 
+  // === FUNÇÃO DE VALIDAÇÃO MANUAL ===
+  // Verifica regras específicas para cada campo e preenche o objeto 'errors'
   const validateField = (name, value) => {
     let fieldErrors = [];
     switch (name) {
@@ -157,10 +171,12 @@ export default function CadastroMedicamentoPage() {
         break;
       case 'dosagem':
         if (!value) fieldErrors.push('A dosagem é obrigatória');
+        // Regex para validar formato como "500mg", "10ml"
         else if (!/^\d+(\.\d+)?(mg|mcg|g|ml|UI|%|ppm)$/i.test(value)) fieldErrors.push('Formato inválido (ex: 500mg, 10ml)');
         break;
       case 'quantidade':
         if (!value) fieldErrors.push('A quantidade é obrigatória');
+        // Regex para validar quantidade (número + texto)
         else if (!/^\d+\s+[a-zA-Z]+(s)?$/i.test(value)) {
           fieldErrors.push('Formato inválido. Use número seguido da unidade (ex: 30 comprimidos, 100 ml)');
         }
@@ -198,6 +214,7 @@ export default function CadastroMedicamentoPage() {
         break;
       case 'codigoBarras':
         if (!value) fieldErrors.push('O código de barras é obrigatório');
+        // Regex para garantir apenas números entre 8 e 14 dígitos
         else if (!/^\d{8,14}$/.test(value)) fieldErrors.push('Código de barras inválido (8-14 dígitos numéricos)');
         break;
       default: break;
@@ -206,18 +223,22 @@ export default function CadastroMedicamentoPage() {
     return fieldErrors.length === 0;
   };
 
+  // === SUBMISSÃO DO FORMULÁRIO ===
   const handleSubmit = async (e) => {
     e.preventDefault();
     let isFormValid = true;
+    // Marca todos os campos como "touched" para mostrar erros caso o usuário tente enviar vazio
     const allTouched = Object.keys(form).reduce((acc, key) => ({ ...acc, [key]: true }), {});
     setTouched(allTouched);
 
+    // Valida todos os campos
     for (const field in form) {
       if (!validateField(field, form[field])) {
         isFormValid = false;
       }
     }
 
+    // Verifica se as listas da API carregaram corretamente
     if (tiposError || formaError || labError) {
       // === MUDANÇA: Substituído alert() por toast.error() ===
       toast.error("Erro ao carregar dados (tipos, formas ou laboratórios). Recarregue a página.", { duration: 5000 });
@@ -233,6 +254,7 @@ export default function CadastroMedicamentoPage() {
     setLoading(true);
 
     try {
+      // Recupera ID da farmácia para enviar junto
       const userDataString = localStorage.getItem("userData");
       if (!userDataString) throw new Error("Usuário não autenticado. Faça o login novamente.");
 
@@ -240,6 +262,7 @@ export default function CadastroMedicamentoPage() {
       const farmaciaId = userData.farm_id;
       if (!farmaciaId) throw new Error("ID da farmácia não encontrado nos dados do usuário.");
 
+      // Criação do FormData (necessário para enviar arquivos/imagens)
       const formData = new FormData();
       formData.append('med_nome', form.nome);
       formData.append('med_dosagem', form.dosagem);
@@ -256,6 +279,7 @@ export default function CadastroMedicamentoPage() {
         formData.append('med_imagem', form.imagem);
       }
 
+      // Envio para API
       const response = await api.post('/medicamentos', formData, {
         headers: { 'Content-Type': 'multipart/form-data' },
       });
@@ -287,6 +311,7 @@ export default function CadastroMedicamentoPage() {
     router.push("/home");
   };
 
+  // Função auxiliar para definir classes CSS de validação (verde/vermelho)
   const getValidationClass = (fieldName) => {
     if (!touched[fieldName]) return styles.formControl;
     return errors[fieldName]?.length > 0 ? `${styles.formControl} ${styles.error}` : `${styles.formControl} ${styles.success}`;
@@ -294,7 +319,7 @@ export default function CadastroMedicamentoPage() {
 
   return (
     <div className={styles.dashboard}>
-      {/* === MUDANÇA: Adicionado o <Toaster /> === */}
+      {/* === MUDANÇA: Adicionado o <Toaster /> para renderizar os popups === */}
       <Toaster
         position="top-right"
         toastOptions={{
@@ -334,12 +359,14 @@ export default function CadastroMedicamentoPage() {
             <button className={styles.sidebarClose} onClick={() => setSidebarOpen(false)} aria-label="Fechar menu">×</button>
           </div>
           <nav className={styles.nav}>
+            {/* Links de Navegação */}
             <div className={styles.navSection}><p className={styles.navLabel}>Principal</p><Link href="/farmacias/favoritos" className={styles.navLink}><span className={styles.navText}>Favoritos</span></Link><Link href="/farmacias/produtos/medicamentos" className={`${styles.navLink} ${styles.active}`}><span className={styles.navText}>Medicamentos</span></Link></div>
             <div className={styles.navSection}><p className={styles.navLabel}>Gestão</p><Link href="/farmacias/cadastro/funcionario/lista" className={styles.navLink}><span className={styles.navText}>Funcionários</span></Link><Link href="/farmacias/laboratorio/lista" className={styles.navLink}><span className={styles.navText}>Laboratórios</span></Link></div>
             <div className={styles.navSection}><p className={styles.navLabel}>Relatórios</p><Link href="/farmacias/relatorios/favoritos" className={styles.navLink}><span className={styles.navText}>Medicamentos Favoritos</span></Link><Link href="/farmacias/relatorios/funcionarios" className={styles.navLink}><span className={styles.navText}>Relatório de Funcionarios</span></Link><Link href="/farmacias/relatorios/laboratorios" className={styles.navLink}><span className={styles.navText}>Relatório de Laboratorios</span></Link></div>
             <div className={styles.navSection}><p className={styles.navLabel}>Conta</p><Link href="/farmacias/perfil" className={styles.navLink}><span className={styles.navText}>Meu Perfil</span></Link><button onClick={handleLogout} className={styles.navLink} style={{ all: 'unset', cursor: 'pointer', width: '100%' }}><span className={styles.navText}>Sair</span></button></div>
           </nav>
         </aside>
+        {/* Overlay escuro para mobile quando o menu está aberto */}
         {sidebarOpen && (<div className={styles.overlay} onClick={() => setSidebarOpen(false)} />)}
 
         <main className={styles.mainContent}>
@@ -351,6 +378,7 @@ export default function CadastroMedicamentoPage() {
             <form onSubmit={handleSubmit} className={styles.form} noValidate>
               <h3 className={styles.sectionTitle}>Informações Básicas</h3>
               <div className={styles.formGrid}>
+                {/* Campos com validação visual (Ícones de Sucesso/Erro e mensagem de erro) */}
                 <div className={getValidationClass('nome')}><label className={styles.inputLabel}>Nome do Medicamento</label><div className={styles.divInput}><input className={styles.modernInput} type="text" name="nome" value={form.nome} onChange={handleChange} onBlur={handleBlur} placeholder="Digite o nome do medicamento" required /><MdCheckCircle className={styles.sucesso} /><MdError className={styles.erro} /></div>{touched.nome && errors.nome?.map(msg => <small key={msg} className={styles.small}>{msg}</small>)}</div>
                 <div className={styles.formRow}>
                   <div className={getValidationClass('dosagem')}><label className={styles.inputLabel}>Dosagem</label><div className={styles.divInput}><input className={styles.modernInput} type="text" name="dosagem" value={form.dosagem} onChange={handleChange} onBlur={handleBlur} placeholder="Ex: 500mg" required /><MdCheckCircle className={styles.sucesso} /><MdError className={styles.erro} /></div>{touched.dosagem && errors.dosagem?.map(msg => <small key={msg} className={styles.small}>{msg}</small>)}</div>
@@ -379,6 +407,7 @@ export default function CadastroMedicamentoPage() {
                       <option value="">
                         {loadingTipos ? "Carregando tipos..." : "Selecione o tipo"}
                       </option>
+                      {/* Mapeia a lista de tipos vinda da API */}
                       {tiposList.map(tipo => (
                         <option key={tipo.tipo_id} value={tipo.tipo_id}>
                           {tipo.nome_tipo}

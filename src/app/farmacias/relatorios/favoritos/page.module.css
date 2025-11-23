@@ -1,5 +1,6 @@
 /* ✅ MELHORIA: Definição de Variáveis de Cor para fácil manutenção */
 .dashboard {
+  /* Variáveis CSS (Custom Properties) para padronizar as cores em todo o componente */
   --color-primary: #458B00;
   --color-secondary: #191970;
   --color-text-sidebar: #CDC1C5;
@@ -26,6 +27,9 @@
   flex-direction: column;
 }
 
+/* =========================================
+   HEADER (Cabeçalho Fixo)
+   ========================================= */
 .header {
   background: var(--color-white);
   padding: 1.5rem 2.4rem;
@@ -33,6 +37,7 @@
   justify-content: space-between;
   align-items: center;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+  /* Sticky: Mantém o cabeçalho fixo no topo ao rolar a página */
   position: sticky;
   top: 0;
   z-index: 100;
@@ -52,12 +57,12 @@
   padding: 0.8rem;
   border-radius: 0.6rem;
   transition: background 0.3s ease;
-  display: none;
+  display: none; /* Escondido no desktop, aparece no mobile via Media Query */
   color: var(--color-primary);
 }
 
 .title {
-  font-size: clamp(2rem, 4vw, 2.8rem);
+  font-size: clamp(2rem, 4vw, 2.8rem); /* Tipografia responsiva */
   font-weight: 600;
   margin: 0;
   background: linear-gradient(135deg, var(--color-secondary) 0%, var(--color-primary) 100%);
@@ -72,6 +77,9 @@
   position: relative;
 }
 
+/* =========================================
+   SIDEBAR (Barra Lateral)
+   ========================================= */
 .sidebar {
   width: 28rem;
   background: linear-gradient(180deg, var(--color-secondary) 0%, var(--color-bg-dark-sidebar) 100%);
@@ -81,6 +89,7 @@
   transition: transform 0.3s ease-in-out;
   box-shadow: 0.2rem 0 1rem rgba(0, 0, 0, 0.1);
   flex-shrink: 0;
+  /* Altura calculada para descontar o header fixo */
   height: calc(100vh - 7.2rem);
   position: sticky;
   top: 7.2rem;
@@ -155,6 +164,7 @@
 }
 
 /* === ATUALIZADO === */
+/* Estilos de Links de Navegação */
 .navLink {
   display: flex;
   align-items: center;
@@ -195,13 +205,16 @@
   font-family: "Montserrat";
 }
 
-/* REESTRUTURADO: Conteúdo Principal e Relatório */
+/* =========================================
+   CONTEÚDO PRINCIPAL
+   ========================================= */
 .mainContent {
   flex: 1;
   padding: 3.2rem;
   background: var(--color-bg-light);
 }
 
+/* Botão de Gerar Relatório (Chama window.print) */
 .reportButton {
   padding: 1rem 2rem;
   border-radius: 0.8rem;
@@ -223,6 +236,7 @@
   box-shadow: 0 4px 12px rgba(69, 139, 0, 0.3);
 }
 
+/* Área de Controles e Filtros de Data */
 .controls {
   background: var(--color-white);
   border-radius: 1.2rem;
@@ -264,7 +278,9 @@
   font-size: 1.4rem;
 }
 
-/* Container do Relatório */
+/* =========================================
+   VISUALIZAÇÃO DO RELATÓRIO (TELA)
+   ========================================= */
 .reportContainer {
   background: var(--color-white);
   border-radius: 1.2rem;
@@ -282,6 +298,7 @@
   padding-bottom: 2.4rem;
 }
 
+/* Logo que aparece SOMENTE na impressão */
 .printLogo {
   display: none;
   height: 6rem;
@@ -332,7 +349,7 @@
   /* Tom de preto específico, pode ser var(--color-text-dark) */
 }
 
-/* Resumo */
+/* Resumo / Rodapé do Relatório */
 .reportSummary {
   margin-top: 1.2rem;
 }
@@ -372,6 +389,7 @@
   color: var(--color-primary);
 }
 
+/* Loader / Spinner */
 .loaderContainer {
   display: flex;
   flex-direction: column;
@@ -430,7 +448,10 @@
   display: none;
 }
 
-/* ESTILOS DE IMPRESSÃO - Mantidos e otimizados */
+/* =========================================
+   ESTILOS DE IMPRESSÃO (@media print)
+   Tudo aqui só é ativado ao clicar em "Imprimir"
+   ========================================= */
 @media print {
 
   body,
@@ -438,25 +459,29 @@
     background: var(--color-white) !important;
   }
 
+  /* 1. Esconde TUDO por padrão para limpar a tela */
   body * {
     visibility: hidden !important;
   }
 
+  /* 2. Torna visível apenas o container do relatório e seus filhos */
   .reportContainer,
   .reportContainer * {
     visibility: visible !important;
   }
 
+  /* 3. Reposiciona o relatório para ocupar a folha A4 corretamente */
   .reportContainer {
     position: absolute;
     left: 0;
     top: 0;
     width: 100%;
-    box-shadow: none;
+    box-shadow: none; /* Remove sombra (tinta) */
     padding: 2rem;
     border: none;
   }
 
+  /* 4. Esconde elementos de UI (Botões, Sidebar, Filtros) */
   .sidebar,
   .header,
   .controls,
@@ -464,12 +489,13 @@
     display: none !important;
   }
 
+  /* 5. Exibe elementos específicos de impressão */
   .printLogo {
-    display: block !important;
+    display: block !important; /* Logo preto e branco ou específico */
   }
 
   .reportTable {
-    font-size: 10pt;
+    font-size: 10pt; /* Ajusta fonte para papel */
   }
 
   .reportTable th,
@@ -477,6 +503,7 @@
     padding: 0.8rem;
   }
 
+  /* Exibe o rodapé fixo no final da página impressa */
   .reportFooter {
     display: block !important;
     text-align: center;
@@ -488,19 +515,21 @@
   }
 }
 
-/* RESPONSIVIDADE */
+/* =========================================
+   RESPONSIVIDADE (Mobile)
+   ========================================= */
 @media (max-width: 48rem) {
   .sidebar {
     position: fixed;
     left: 0;
     top: 0;
     height: 100vh;
-    transform: translateX(-100%);
+    transform: translateX(-100%); /* Esconde a sidebar por padrão */
     z-index: 110;
   }
 
   .sidebar.sidebarOpen {
-    transform: translateX(0);
+    transform: translateX(0); /* Mostra a sidebar */
   }
 
   .menuToggle,

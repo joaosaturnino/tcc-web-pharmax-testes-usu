@@ -1,15 +1,16 @@
 // app/page.jsx
-
-'use client';
+"use client"; // Define que este componente roda no navegador (Client Component)
 
 import { useState, useEffect, useCallback, useRef } from 'react';
 import { useRouter } from 'next/navigation';
 import api from '../services/api';
 import style from "./page.module.css";
 import Slider from "../componentes/slider";
+// Importa biblioteca de animação para transições suaves (modais, cards, listas)
 import { motion, AnimatePresence } from 'framer-motion';
 
-// --- ÍCONES PARA A UI ---
+// --- ÍCONES SVG ---
+// Componentes leves para evitar bibliotecas de ícones pesadas
 const IconFilter = () => (
   <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16" aria-hidden="true">
     <path d="M1.5 1.5A.5.5 0 0 1 2 1h12a.5.5 0 0 1 .5.5v2a.5.5 0 0 1-.128.334L10 8.692V13.5a.5.5 0 0 1-.342.474l-3 1.5A.5.5 0 0 1 6 14.5V8.692L1.628 3.834A.5.5 0 0 1 1.5 3.5v-2z" />
@@ -58,6 +59,8 @@ const IconPill = () => (
 );
 
 // --- FUNÇÕES AUXILIARES ---
+
+// Resolve URL da imagem: lida com caminhos locais, URLs completas ou fallback padrão
 const getImageUrl = (imagePath) => {
   const imagemPadrao = "/caixa-medicamento-padrao5.png";
 
@@ -73,6 +76,7 @@ const getImageUrl = (imagePath) => {
   return `${baseUrl}/${imagePath.replace(/\\/g, '/')}`;
 };
 
+// Formata número para Real Brasileiro (R$)
 const formatarMoeda = (valor) => {
   return new Intl.NumberFormat('pt-BR', {
     style: 'currency',
@@ -80,11 +84,11 @@ const formatarMoeda = (valor) => {
   }).format(valor || 0);
 };
 
+// Formata data ISO para DD/MM/AAAA (usando UTC para evitar erros de timezone)
 const formatarData = (dataString) => {
   if (!dataString) return '';
   try {
     const data = new Date(dataString);
-    // Mantendo a lógica correta do UTC
     return new Intl.DateTimeFormat('pt-BR', {
       day: '2-digit',
       month: '2-digit',
@@ -97,6 +101,7 @@ const formatarData = (dataString) => {
   }
 };
 
+// Calcula o preço final subtraindo a porcentagem de desconto
 const calcularPrecoComDesconto = (preco, desconto) => {
   const precoNum = parseFloat(preco || 0);
   const descontoNum = parseFloat(desconto || 0);
@@ -105,6 +110,8 @@ const calcularPrecoComDesconto = (preco, desconto) => {
   }
   return precoNum;
 };
+
+// Lógica de paginação com "ellipsis" (...) se houver muitas páginas
 const gerarNumerosPaginacao = (paginaAtual, totalPaginas) => {
   const vizinhos = 1;
   const paginas = [];
@@ -123,19 +130,20 @@ const gerarNumerosPaginacao = (paginaAtual, totalPaginas) => {
   paginas.push(ultimo);
   return paginas;
 };
+
 const ORDENACAO_MAP = {
   'preco_asc': 'Menor Preço',
   'preco_desc': 'Maior Preço'
 };
 
-// --- Variantes de Animação ---
+// --- VARIANTES DE ANIMAÇÃO (Framer Motion) ---
 const listContainerVariants = {
   hidden: { opacity: 0 },
   visible: {
     opacity: 1,
     transition: {
       when: "beforeChildren",
-      staggerChildren: 0.07
+      staggerChildren: 0.07 // Efeito cascata
     }
   }
 };
@@ -146,8 +154,9 @@ const listItemVariants = {
 };
 
 
-// --- COMPONENTES INTERNOS ---
+// --- SUB-COMPONENTES ---
 
+// Wrapper animado para o card
 const MotionCardProduto = ({ medicamento, onVerDetalhes, animationDelay }) => {
   const cardVariants = {
     hidden: { opacity: 0, y: 20 },
@@ -164,6 +173,7 @@ const MotionCardProduto = ({ medicamento, onVerDetalhes, animationDelay }) => {
   );
 };
 
+// Componente visual do Card
 const CardProduto = ({ medicamento, onVerDetalhes }) => {
   const precoOriginal = medicamento.medp_preco;
   const desconto = medicamento.promo_desconto;
@@ -192,6 +202,7 @@ const CardProduto = ({ medicamento, onVerDetalhes }) => {
   );
 };
 
+// Skeletons para Loading
 const SkeletonCard = () => (
   <div className={`${style.cartaoProduto} ${style.skeleton}`}>
     <div className={style.containerImagemProduto}></div>
@@ -212,6 +223,7 @@ const SkeletonCardList = () => (
   </div>
 );
 
+// Estado Vazio do Modal
 const ModalEmptyState = () => (
   <div className={style.modalEmptyStateContainer}>
     <div className={style.modalEmptyStateIcon}><IconStore /></div>
@@ -220,12 +232,13 @@ const ModalEmptyState = () => (
   </div>
 );
 
+// Item da lista de farmácias dentro do Modal
 const FarmaciaItem = ({ farmacia, index }) => {
   const precoOriginal = farmacia.preco;
   const desconto = farmacia.promo_desconto;
   const temDesconto = desconto > 0;
   const precoFinal = farmacia.precoFinal;
-  const isMelhorPreco = index === 0;
+  const isMelhorPreco = index === 0; // A lista vem ordenada, o primeiro é o melhor preço
 
   const farmSite = farmacia.farm_site || null;
   const farmTelefone = farmacia.farm_telefone || null;
@@ -303,37 +316,45 @@ export default function PaginaInicial() {
   const router = useRouter();
   const imagens = ["/LogoEscrita.png", "/LogoEscrita.png", "/LogoEscrita.png"];
 
+  // --- ESTADOS ---
   const [medicamentos, setMedicamentos] = useState([]);
   const [loading, setLoading] = useState(true);
 
+  // Busca com Debounce (delay para não chamar API a cada tecla)
   const [termoBusca, setTermoBusca] = useState('');
   const [debouncedBusca, setDebouncedBusca] = useState(termoBusca);
 
+  // Filtros
   const [laboratorioFiltro, setLaboratorioFiltro] = useState('');
   const [ordenacao, setOrdenacao] = useState('');
   const [laboratorios, setLaboratorios] = useState([]);
 
+  // Paginação
   const [paginaAtual, setPaginaAtual] = useState(1);
   const [totalPaginas, setTotalPaginas] = useState(1);
   const ITENS_POR_PAGINA = 12;
 
+  // Modal
   const [modalAberto, setModalAberto] = useState(false);
   const [medicamentoSelecionado, setMedicamentoSelecionado] = useState(null);
   const [farmacias, setFarmacias] = useState([]);
   const [loadingModal, setLoadingModal] = useState(false);
 
+  // UI Mobile e Visualização
   const [mobileFiltersOpen, setMobileFiltersOpen] = useState(false);
-
   const [viewMode, setViewMode] = useState('grid');
-
   const [isDescricaoExpanded, setIsDescricaoExpanded] = useState(false);
 
+  // Refs para controle
   const isInitialMount = useRef(true);
   const modalRef = useRef(null);
   const filterModalRef = useRef(null);
-  const openerRef = useRef(null);
-  const produtosRef = useRef(null);
+  const openerRef = useRef(null); // Guarda foco para acessibilidade
+  const produtosRef = useRef(null); // Scroll automático
 
+  // --- EFEITOS (UseEffect) ---
+
+  // 1. Implementa o Debounce da busca (500ms)
   useEffect(() => {
     const timerId = setTimeout(() => {
       setDebouncedBusca(termoBusca);
@@ -341,13 +362,16 @@ export default function PaginaInicial() {
     return () => { clearTimeout(timerId); };
   }, [termoBusca]);
 
+  // 2. Busca principal de Medicamentos
   const fetchMedicamentos = useCallback(async () => {
     setLoading(true);
     try {
+      // Constrói query string
       const params = new URLSearchParams({ page: paginaAtual.toString(), limit: ITENS_POR_PAGINA.toString() });
       if (debouncedBusca) params.append('search', debouncedBusca);
       if (laboratorioFiltro) params.append('lab', laboratorioFiltro);
       if (ordenacao) params.append('sort', ordenacao);
+      
       const response = await api.get(`/medicamentos/todos?${params.toString()}`);
       if (response.data.sucesso) {
         setMedicamentos(response.data.dados);
@@ -363,6 +387,8 @@ export default function PaginaInicial() {
   }, [paginaAtual, laboratorioFiltro, ordenacao, debouncedBusca]);
 
   useEffect(() => { fetchMedicamentos(); }, [fetchMedicamentos]);
+
+  // 3. Busca lista de laboratórios para o filtro
   useEffect(() => {
     const fetchLaboratorios = async () => {
       try {
@@ -372,15 +398,20 @@ export default function PaginaInicial() {
     };
     fetchLaboratorios();
   }, []);
+
+  // 4. Scroll para o topo ao mudar de página
   useEffect(() => {
     if (isInitialMount.current) { return; }
     produtosRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
   }, [paginaAtual]);
+
+  // 5. Reseta paginação se aplicar filtros
   useEffect(() => {
     if (isInitialMount.current) { return; }
     setPaginaAtual(1);
   }, [laboratorioFiltro, ordenacao, debouncedBusca]);
 
+  // 6. Trap de foco para acessibilidade em Modais
   const setupModalTrap = (isOpen, modalRefToFocus, openerRefToFocus) => {
     const handleKeyDown = (event) => {
       if (event.key === 'Escape' && isOpen) {
@@ -400,7 +431,11 @@ export default function PaginaInicial() {
   useEffect(() => setupModalTrap(modalAberto, modalRef, openerRef), [modalAberto]);
   useEffect(() => setupModalTrap(mobileFiltersOpen, filterModalRef, openerRef), [mobileFiltersOpen]);
 
+  // --- HANDLERS ---
+
   const handleBuscaSubmit = (event) => { event.preventDefault(); setDebouncedBusca(termoBusca); };
+  
+  // Abre detalhes e busca farmácias que vendem o produto
   const handleAbrirDetalhes = async (medicamento) => {
     openerRef.current = document.activeElement;
     setMedicamentoSelecionado(medicamento);
@@ -411,10 +446,13 @@ export default function PaginaInicial() {
     try {
       const response = await api.get(`/medicamentos/${medicamento.med_id}/farmacias`);
       let farmaciasEncontradas = response.data.sucesso ? response.data.dados : [];
+      
+      // Calcula preço final e ordena
       farmaciasEncontradas = farmaciasEncontradas.map(f => ({
         ...f,
         precoFinal: calcularPrecoComDesconto(f.preco, f.promo_desconto)
       })).sort((a, b) => a.precoFinal - b.precoFinal);
+      
       setFarmacias(farmaciasEncontradas);
     } catch (error) {
       console.error("Erro ao buscar farmácias:", error);
@@ -422,6 +460,7 @@ export default function PaginaInicial() {
       setLoadingModal(false);
     }
   };
+
   const handleFecharModal = () => { setModalAberto(false); setTimeout(() => setMedicamentoSelecionado(null), 300); };
   const handleRemoveBusca = () => { setTermoBusca(''); setDebouncedBusca(''); };
   const handleRemoveLab = () => setLaboratorioFiltro('');
@@ -436,6 +475,7 @@ export default function PaginaInicial() {
   const selectedLabName = laboratorios.find(lab => lab.lab_id.toString() === laboratorioFiltro)?.lab_nome;
   const selectedSortName = ORDENACAO_MAP[ordenacao];
 
+  // Componente de Estado Vazio
   const EmptyState = () => (
     <div className={style.emptyStateContainer}>
       <IconSearchEmpty />
@@ -444,6 +484,7 @@ export default function PaginaInicial() {
     </div>
   );
 
+  // Componente de Controles de Filtro
   const FilterControls = () => (
     <>
       <div className={style.filterGroup}>
@@ -466,6 +507,7 @@ export default function PaginaInicial() {
 
   const animationKey = `page-${paginaAtual}-lab-${laboratorioFiltro}-sort-${ordenacao}-search-${debouncedBusca}`;
 
+  // Lógica de truncar descrição longa no modal
   const DESCRICAO_CURTA_LIMITE = 200;
   let descricao = "";
   let temDescricao = false;
@@ -479,8 +521,10 @@ export default function PaginaInicial() {
     textoDescricao = isDescricaoExpanded ? descricao : (descricaoLonga ? `${descricao.substring(0, DESCRICAO_CURTA_LIMITE)}...` : descricao);
   }
 
+  // --- RENDERIZAÇÃO ---
   return (
     <div className={style.container}>
+      {/* Hero Section */}
       <section className={style.principal}>
         <h2>Sua saúde em primeiro lugar</h2>
         <p>Encontre os medicamentos que precisa com praticidade e confiança</p>
@@ -492,8 +536,10 @@ export default function PaginaInicial() {
 
       <Slider imagens={imagens} />
 
+      {/* Lista de Produtos */}
       <section className={style.produtos} ref={produtosRef}>
 
+        {/* Barra de Ferramentas: Filtros, View Toggle */}
         <div className={style.filtrosContainer}><FilterControls /></div>
         <div className={style.mobileFilterButtonContainer}>
           <button className={style.mobileFilterButton} onClick={() => { openerRef.current = document.activeElement; setMobileFiltersOpen(true); }} disabled={loading}>
@@ -505,6 +551,8 @@ export default function PaginaInicial() {
           <button className={`${style.viewToggleButton} ${viewMode === 'grid' ? style.viewToggleActive : ''}`} onClick={() => setViewMode('grid')} aria-label="Visualizar em grade" disabled={loading}><IconGrid /></button>
           <button className={`${style.viewToggleButton} ${viewMode === 'list' ? style.viewToggleActive : ''}`} onClick={() => setViewMode('list')} aria-label="Visualizar em lista" disabled={loading}><IconList /></button>
         </div>
+        
+        {/* Chips de filtros ativos */}
         {filtrosAtivos && (
           <div className={style.activeFiltersContainer}>
             {debouncedBusca && (<span className={style.filterChip}>Busca: "{debouncedBusca}"<button onClick={handleRemoveBusca} aria-label="Remover filtro de busca">✕</button></span>)}
@@ -515,6 +563,7 @@ export default function PaginaInicial() {
         )}
         <div role="status" aria-live="polite" className={style.visuallyHidden}>{loading ? 'Carregando medicamentos...' : 'Medicamentos carregados.'}</div>
 
+        {/* Renderização Condicional: Loading / Lista / Vazio */}
         <AnimatePresence mode="wait">
           {(loading && isInitialMount.current) || (loading && medicamentos.length === 0) ? (
             <motion.div key="skeleton" className={`${style.gradeProdutos} ${viewMode === 'list' ? style.gradeProdutosLista : ''}`} initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
@@ -529,6 +578,7 @@ export default function PaginaInicial() {
           )}
         </AnimatePresence>
 
+        {/* Paginação */}
         {totalPaginas > 1 && !loading && (
           <div className={style.paginacao}>
             <button onClick={handlePaginaAnterior} disabled={paginaAtual === 1} aria-label="Página anterior">Anterior</button>
@@ -542,6 +592,7 @@ export default function PaginaInicial() {
         )}
       </section>
 
+      {/* MODAL DE FILTROS (MOBILE) */}
       {mobileFiltersOpen && (
         <div className={style.modalOverlay} onClick={() => setMobileFiltersOpen(false)}>
           <div className={`${style.modal} ${style.filterModal}`} onClick={(e) => e.stopPropagation()} ref={filterModalRef} tabIndex={-1} aria-modal="true" role="dialog" aria-labelledby="filter-modal-titulo">
@@ -557,6 +608,7 @@ export default function PaginaInicial() {
         </div>
       )}
 
+      {/* MODAL DE DETALHES DO MEDICAMENTO */}
       {modalAberto && medicamentoSelecionado && (
         <div className={style.modalOverlay} onClick={handleFecharModal}>
           <div className={style.modal} onClick={(e) => e.stopPropagation()} ref={modalRef} tabIndex={-1} aria-modal="true" role="dialog" aria-labelledby="modal-titulo">
@@ -570,6 +622,7 @@ export default function PaginaInicial() {
             <div className={style.modalContent}>
               <div className={style.detalhesContainer}>
 
+                {/* Info Esquerda: Imagem e Atributos */}
                 <div className={style.infoMedicamento}>
                   <img src={getImageUrl(medicamentoSelecionado.med_imagem)} alt={medicamentoSelecionado.med_nome} className={style.imagemModal} />
 
@@ -581,6 +634,7 @@ export default function PaginaInicial() {
                       </div>
                       <span className={style.atributoValor}>{medicamentoSelecionado.lab_nome || "Não informado"}</span>
                     </div>
+                    {/* Renderiza atributos opcionais (Tipo, Forma) se existirem */}
                     {medicamentoSelecionado.tipo_nome && medicamentoSelecionado.tipo_nome !== 'N/A' && (
                       <div className={style.atributoItem}>
                         <div className={style.atributoChave}>
@@ -616,6 +670,7 @@ export default function PaginaInicial() {
                   </div>
                 </div>
 
+                {/* Info Direita: Lista de Farmácias (Comparador) */}
                 <div className={style.listaFarmacias}>
                   <h4>Encontre pelo melhor preço:</h4>
 

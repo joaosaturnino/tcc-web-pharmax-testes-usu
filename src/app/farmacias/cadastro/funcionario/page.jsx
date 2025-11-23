@@ -1,17 +1,17 @@
-"use client";
-import { useState, useEffect, useCallback, useRef } from "react";
+"use client"; // Next.js: Indica que este componente roda no navegador (Client Side)
+
+import { useState, useEffect, useCallback } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
-import styles from "./funcionario.module.css";
-import api from "../../../services/api";
+import styles from "./funcionario.module.css"; // Importa CSS Modular
+import api from "../../../services/api"; // Configuração do Axios
 
-// Componente de notificação externa (Toast)
+// Lib para notificações (Toast) e Ícones
 import toast, { Toaster } from "react-hot-toast";
-
-// Ícones para validação visual
 import { MdCheckCircle, MdError } from "react-icons/md";
 
-// --- HELPERS DE MÁSCARA ---
+// --- HELPERS DE MÁSCARA (Formatadores) ---
+// Formatam o texto visualmente enquanto o usuário digita
 const maskCPF = (value) => {
     let rawValue = value.replace(/\D/g, ''); 
     if (rawValue.length > 11) rawValue = rawValue.slice(0, 11); 
@@ -34,33 +34,30 @@ const maskTelefone = (value) => {
     }
     return rawValue;
 };
-// -------------------------
 
 export default function CadastroFuncionarioPage() {
   const router = useRouter();
-  const [sidebarOpen, setSidebarOpen] = useState(false);
-  const [loading, setLoading] = useState(false);
-  const [farmaciaInfo, setFarmaciaInfo] = useState(null);
+  
+  // --- ESTADOS DO COMPONENTE ---
+  const [sidebarOpen, setSidebarOpen] = useState(false); // Menu Mobile
+  const [loading, setLoading] = useState(false); // Spinner de carregamento
+  const [farmaciaInfo, setFarmaciaInfo] = useState(null); // Dados da sessão
 
+  // Estado único para os dados do formulário
   const [form, setForm] = useState({
-    nome: "",
-    email: "",
-    telefone: "",
-    cpf: "",
-    dataNascimento: "",
-    endereco: "",
-    usuario: "",
-    senha: "",
-    confirmarSenha: "",
-    nivelAcesso: "1",
+    nome: "", email: "", telefone: "", cpf: "",
+    dataNascimento: "", endereco: "", usuario: "",
+    senha: "", confirmarSenha: "", nivelAcesso: "1",
   });
 
-  // Classes CSS para feedback visual de validação
+  // Helpers de classe CSS para feedback visual (Borda verde/vermelha)
   const valDefault = styles.formControl;
   const valSucesso = `${styles.formControl} ${styles.success}`;
   const valErro = `${styles.formControl} ${styles.error}`;
 
-  // Estado que gerencia a validação de cada campo individualmente
+  // ESTADO DE VALIDAÇÃO INDIVIDUAL
+  // Cada campo tem seu próprio status e lista de mensagens de erro.
+  // Isso permite mostrar erros específicos logo abaixo do input.
   const [valida, setValida] = useState({
     nome: { validado: valDefault, mensagem: [] },
     email: { validado: valDefault, mensagem: [] },
@@ -74,16 +71,15 @@ export default function CadastroFuncionarioPage() {
     nivelAcesso: { validado: valDefault, mensagem: [] }
   });
 
-  // Efeito para carregar o ID da farmácia do local storage
+  // Carrega dados da farmácia (Sessão) ao montar o componente
   useEffect(() => {
     const userDataString = localStorage.getItem("userData");
     if (userDataString) {
       setFarmaciaInfo(JSON.parse(userDataString));
     }
-    // DICA: Adicionar aqui a lógica para fechar o sidebar após o redimensionamento da tela
   }, []);
   
-  // Função auxiliar para aplicar as classes de validação
+  // Função utilitária para atualizar o estado 'valida'
   const aplicarValidacao = (campo, valido, mensagem = []) => {
     setValida(prev => ({ 
       ...prev, 
@@ -91,11 +87,11 @@ export default function CadastroFuncionarioPage() {
     }));
   };
 
+  // Handler genérico para inputs (aplica máscaras se necessário)
   const handleChange = (e) => {
     const { name, value } = e.target;
     let newValue = value;
     
-    // CORREÇÃO: Aplica as máscaras de forma reversa (retira caracteres)
     if (name === 'cpf') newValue = maskCPF(value);
     if (name === 'telefone') newValue = maskTelefone(value);
 
@@ -103,7 +99,9 @@ export default function CadastroFuncionarioPage() {
   };
 
   // =================================================================
-  // FUNÇÕES DE VALIDAÇÃO (useCallback para performance)
+  // FUNÇÕES DE VALIDAÇÃO (useCallback)
+  // O useCallback memoriza a função. Como elas são passadas para eventos 
+  // e usadas no useEffect/Submit, isso previne re-renderizações desnecessárias.
   // =================================================================
 
   const validaNome = useCallback(() => {
@@ -113,6 +111,7 @@ export default function CadastroFuncionarioPage() {
   }, [form.nome]);
 
   const validaEmail = useCallback(() => {
+    // Regex simples para e-mail
     const emailRegex = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
     const valido = form.email !== "" && emailRegex.test(form.email);
     aplicarValidacao('email', valido, valido ? [] : ['Insira um e-mail válido']);
@@ -120,17 +119,16 @@ export default function CadastroFuncionarioPage() {
   }, [form.email]);
 
   const validaTelefone = useCallback(() => {
-    // CORREÇÃO: Conta apenas os dígitos para validação
-    const telefoneLimpo = form.telefone.replace(/\D/g, ''); 
+    const telefoneLimpo = form.telefone.replace(/\D/g, ''); // Remove formatação
     const valido = telefoneLimpo.length >= 10 && telefoneLimpo.length <= 11;
     aplicarValidacao('telefone', valido, valido ? [] : ['Telefone inválido']);
     return valido;
   }, [form.telefone]);
 
   const validaCPF = useCallback(() => {
-    // CORREÇÃO: Conta apenas os 11 dígitos para validação
     const cpfLimpo = form.cpf.replace(/\D/g, ''); 
-    const valido = cpfLimpo.length === 11 && !/^(\d)\1{10}$/.test(cpfLimpo); // Verifica 11 dígitos e se não são todos iguais
+    // Verifica tamanho e se não são todos dígitos iguais (ex: 111.111.111-11)
+    const valido = cpfLimpo.length === 11 && !/^(\d)\1{10}$/.test(cpfLimpo);
     aplicarValidacao('cpf', valido, valido ? [] : ['O CPF deve ter 11 dígitos e ser válido']);
     return valido;
   }, [form.cpf]);
@@ -143,6 +141,7 @@ export default function CadastroFuncionarioPage() {
       valido = false;
       mensagem.push('A data de nascimento é obrigatória');
     } else {
+      // Lógica de cálculo de idade (+18 anos)
       const dataNascimento = new Date(form.dataNascimento);
       const hoje = new Date();
       let idade = hoje.getFullYear() - dataNascimento.getFullYear();
@@ -193,7 +192,7 @@ export default function CadastroFuncionarioPage() {
   }, [form.nivelAcesso]);
 
   // =================================================================
-  // AÇÕES FINAIS (Logout e Submit)
+  // AÇÕES FINAIS
   // =================================================================
 
   const handleLogout = () => {
@@ -205,13 +204,14 @@ export default function CadastroFuncionarioPage() {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    // 1. Executa todas as validações de UI/UX
+    // 1. Roda TODAS as validações antes de enviar
     const validationResults = [
         validaNome(), validaEmail(), validaTelefone(), validaCPF(), 
         validaDataNascimento(), validaEndereco(), validaUsuario(), 
         validaSenha(), validaConfirmarSenha(), validaNivelAcesso()
     ];
     
+    // Se algum retornar false, aborta o envio
     const isFormValid = validationResults.every(result => result);
 
     if (!isFormValid) {
@@ -224,16 +224,18 @@ export default function CadastroFuncionarioPage() {
     try {
       const userData = JSON.parse(localStorage.getItem("userData"));
       const idDaFarmacia = userData?.farm_id;
+      
+      // Segurança: Garante que temos o ID da farmácia para vincular o funcionário
       if (!idDaFarmacia) {
         throw new Error("ID da farmácia não encontrado. Faça o login novamente.");
       }
 
-      // Prepara os dados (limpando máscaras)
+      // 2. Limpeza de Dados (Remove máscaras antes de enviar para o BD)
       const dadosFuncionario = {
         func_nome: form.nome,
         func_email: form.email,
-        func_telefone: form.telefone.replace(/\D/g, ''),
-        func_cpf: form.cpf.replace(/\D/g, ''),
+        func_telefone: form.telefone.replace(/\D/g, ''), // Apenas números
+        func_cpf: form.cpf.replace(/\D/g, ''),         // Apenas números
         func_dtnasc: form.dataNascimento,
         func_endereco: form.endereco,
         farmacia_id: idDaFarmacia,
@@ -246,7 +248,7 @@ export default function CadastroFuncionarioPage() {
 
       if (response.data.sucesso) {
         toast.success("Funcionário cadastrado com sucesso!");
-        // Redireciona após pequeno delay
+        // Redireciona para a lista após 1.5s
         setTimeout(() => {
           router.push("/farmacias/cadastro/funcionario/lista");
         }, 1500);
@@ -263,7 +265,7 @@ export default function CadastroFuncionarioPage() {
 
   return (
     <div className={styles.dashboard}>
-      {/* Componente Toast (Notificações) */}
+      {/* Toast Config: Posicionamento e cores globais */}
       <Toaster
         position="top-right"
         toastOptions={{ duration: 4000, style: { background: '#333', color: '#fff', fontSize: '1.5rem', padding: '1.6rem' }, success: { style: { background: '#458B00' } }, error: { style: { background: '#dc2626' } } }}
@@ -271,70 +273,158 @@ export default function CadastroFuncionarioPage() {
 
       <header className={styles.header}>
         <div className={styles.headerLeft}>
-          <button
-            className={styles.menuToggle}
-            onClick={() => setSidebarOpen(!sidebarOpen)}
-            aria-label="Abrir menu"
-          >
+          <button className={styles.menuToggle} onClick={() => setSidebarOpen(!sidebarOpen)}>
             ☰
           </button>
           <h1 className={styles.title}>Cadastro de Funcionário</h1>
         </div>
       </header>
+      
       <div className={styles.contentWrapper}>
         <aside className={`${styles.sidebar} ${sidebarOpen ? styles.sidebarOpen : ""}`}>
+          {/* ... Conteúdo da Sidebar ... */}
           <div className={styles.sidebarHeader}>
             <div className={styles.logoContainer}>
-              {/* Logo e Nome da Farmácia no Sidebar */}
-              {farmaciaInfo?.farm_logo_url && (<img src={farmaciaInfo.farm_logo_url} alt={`Logo de ${farmaciaInfo.farm_nome}`} className={styles.logoImage} />)}
+              {farmaciaInfo?.farm_logo_url && (<img src={farmaciaInfo.farm_logo_url} alt={`Logo`} className={styles.logoImage} />)}
               <span className={styles.logoText}>{farmaciaInfo?.farm_nome || "Pharma-X"}</span>
             </div>
-            <button className={styles.sidebarClose} onClick={() => setSidebarOpen(false)} aria-label="Fechar menu">×</button>
+            <button className={styles.sidebarClose} onClick={() => setSidebarOpen(false)}>×</button>
           </div>
           <nav className={styles.nav}>
-            <div className={styles.navSection}><p className={styles.navLabel}>Principal</p><Link href="/farmacias/favoritos" className={styles.navLink}><span className={styles.navText}>Favoritos</span></Link><Link href="/farmacias/produtos/medicamentos" className={styles.navLink}><span className={styles.navText}>Medicamentos</span></Link></div>
-            <div className={styles.navSection}><p className={styles.navLabel}>Gestão</p><Link href="/farmacias/cadastro/funcionario/lista" className={`${styles.navLink} ${styles.active}`}><span className={styles.navText}>Funcionários</span></Link><Link href="/farmacias/laboratorio/lista" className={styles.navLink}><span className={styles.navText}>Laboratórios</span></Link></div>
-            <div className={styles.navSection}><p className={styles.navLabel}>Relatórios</p><Link href="/farmacias/relatorios/favoritos" className={styles.navLink}><span className={styles.navText}>Medicamentos Favoritos</span></Link><Link href="/farmacias/relatorios/funcionarios" className={styles.navLink}><span className={styles.navText}>Relatório de Funcionarios</span></Link><Link href="/farmacias/relatorios/laboratorios" className={styles.navLink}><span className={styles.navText}>Relatório de Laboratorios</span></Link></div>
-            <div className={styles.navSection}><p className={styles.navLabel}>Conta</p><Link href="/farmacias/perfil" className={styles.navLink}><span className={styles.navText}>Meu Perfil</span></Link><button onClick={handleLogout} className={styles.navLink} style={{ background: 'none', border: 'none', width: '100%', textAlign: 'left', cursor: 'pointer' }}><span className={styles.navText}>Sair</span></button></div>
+             {/* Links de navegação omitidos para brevidade, mantidos na renderização final */}
+             {/* ... */}
+             <div className={styles.navSection}><p className={styles.navLabel}>Principal</p><Link href="/farmacias/favoritos" className={styles.navLink}><span className={styles.navText}>Favoritos</span></Link><Link href="/farmacias/produtos/medicamentos" className={styles.navLink}><span className={styles.navText}>Medicamentos</span></Link></div>
+             <div className={styles.navSection}><p className={styles.navLabel}>Gestão</p><Link href="/farmacias/cadastro/funcionario/lista" className={`${styles.navLink} ${styles.active}`}><span className={styles.navText}>Funcionários</span></Link><Link href="/farmacias/laboratorio/lista" className={styles.navLink}><span className={styles.navText}>Laboratórios</span></Link></div>
+             <div className={styles.navSection}><p className={styles.navLabel}>Relatórios</p><Link href="/farmacias/relatorios/favoritos" className={styles.navLink}><span className={styles.navText}>Medicamentos Favoritos</span></Link><Link href="/farmacias/relatorios/funcionarios" className={styles.navLink}><span className={styles.navText}>Relatório de Funcionarios</span></Link><Link href="/farmacias/relatorios/laboratorios" className={styles.navLink}><span className={styles.navText}>Relatório de Laboratorios</span></Link></div>
+             <div className={styles.navSection}><p className={styles.navLabel}>Conta</p><Link href="/farmacias/perfil" className={styles.navLink}><span className={styles.navText}>Meu Perfil</span></Link><button onClick={handleLogout} className={styles.navLink} style={{ background: 'none', border: 'none', width: '100%', textAlign: 'left', cursor: 'pointer' }}><span className={styles.navText}>Sair</span></button></div>
           </nav>
         </aside>
+
         {sidebarOpen && (<div className={styles.overlay} onClick={() => setSidebarOpen(false)} />)}
+        
         <main className={styles.mainContent}>
           <div className={styles.formContainer}>
             <div className={styles.formHeader}>
               <h2>Novo Funcionário</h2>
               <p>Preencha os dados do novo membro da equipe</p>
             </div>
+
             <form onSubmit={handleSubmit} className={styles.form} noValidate>
               <div className={styles.formGrid}>
+                
+                {/* Coluna 1: Dados Pessoais */}
                 <div className={styles.formSection}>
                   <h3 className={styles.sectionTitle}>Informações Pessoais</h3>
-                  {/* Nome */}
-                  <div className={valida.nome.validado}><label className={styles.inputLabel}>Nome Completo</label><div className={styles.divInput}><input className={styles.modernInput} type="text" name="nome" value={form.nome} onChange={handleChange} onBlur={validaNome} placeholder="Digite o nome completo" required /><MdCheckCircle className={styles.sucesso} /><MdError className={styles.erro} /></div>{valida.nome.mensagem.map(mens => <small key={mens} className={styles.small}>{mens}</small>)}</div>
-                  {/* Email */}
-                  <div className={valida.email.validado}><label className={styles.inputLabel}>E-mail</label><div className={styles.divInput}><input className={styles.modernInput} type="email" name="email" value={form.email} onChange={handleChange} onBlur={validaEmail} placeholder="exemplo@pharmax.com" required /><MdCheckCircle className={styles.sucesso} /><MdError className={styles.erro} /></div>{valida.email.mensagem.map(mens => <small key={mens} className={styles.small}>{mens}</small>)}</div>
-                  {/* Telefone */}
-                  <div className={valida.telefone.validado}><label className={styles.inputLabel}>Telefone</label><div className={styles.divInput}><input className={styles.modernInput} type="tel" name="telefone" value={form.telefone} onChange={handleChange} onBlur={validaTelefone} placeholder="(11) 99999-9999" required maxLength={16} /><MdCheckCircle className={styles.sucesso} /><MdError className={styles.erro} /></div>{valida.telefone.mensagem.map(mens => <small key={mens} className={styles.small}>{mens}</small>)}</div>
-                  {/* CPF */}
-                  <div className={valida.cpf.validado}><label className={styles.inputLabel}>CPF</label><div className={styles.divInput}><input className={styles.modernInput} type="text" name="cpf" value={form.cpf} onChange={handleChange} onBlur={validaCPF} placeholder="000.000.000-00" required maxLength={14} /><MdCheckCircle className={styles.sucesso} /><MdError className={styles.erro} /></div>{valida.cpf.mensagem.map(mens => <small key={mens} className={styles.small}>{mens}</small>)}</div>
-                  {/* Data Nascimento */}
-                  <div className={valida.dataNascimento.validado}><label className={styles.inputLabel}>Data de Nascimento</label><div className={styles.divInput}><input className={styles.modernInput} type="date" name="dataNascimento" value={form.dataNascimento} onChange={handleChange} onBlur={validaDataNascimento} required /><MdCheckCircle className={styles.sucesso} /><MdError className={styles.erro} /></div>{valida.dataNascimento.mensagem.map(mens => <small key={mens} className={styles.small}>{mens}</small>)}</div>
-                  {/* Endereço */}
-                  <div className={valida.endereco.validado}><label className={styles.inputLabel}>Endereço Completo</label><div className={styles.divInput}><input className={styles.modernInput} type="text" name="endereco" value={form.endereco} onChange={handleChange} onBlur={validaEndereco} placeholder="Rua, número, bairro, cidade - Estado" required /><MdCheckCircle className={styles.sucesso} /><MdError className={styles.erro} /></div>{valida.endereco.mensagem.map(mens => <small key={mens} className={styles.small}>{mens}</small>)}</div>
+                  
+                  {/* Campo com Validação Visual: Borda e Ícone mudam dinamicamente */}
+                  <div className={valida.nome.validado}>
+                      <label className={styles.inputLabel}>Nome Completo</label>
+                      <div className={styles.divInput}>
+                          <input className={styles.modernInput} type="text" name="nome" value={form.nome} onChange={handleChange} onBlur={validaNome} placeholder="Digite o nome completo" required />
+                          <MdCheckCircle className={styles.sucesso} />
+                          <MdError className={styles.erro} />
+                      </div>
+                      {/* Renderiza mensagens de erro se existirem */}
+                      {valida.nome.mensagem.map(mens => <small key={mens} className={styles.small}>{mens}</small>)}
+                  </div>
+
+                  <div className={valida.email.validado}>
+                      <label className={styles.inputLabel}>E-mail</label>
+                      <div className={styles.divInput}>
+                          <input className={styles.modernInput} type="email" name="email" value={form.email} onChange={handleChange} onBlur={validaEmail} placeholder="exemplo@pharmax.com" required />
+                          <MdCheckCircle className={styles.sucesso} /><MdError className={styles.erro} />
+                      </div>
+                      {valida.email.mensagem.map(mens => <small key={mens} className={styles.small}>{mens}</small>)}
+                  </div>
+                  
+                  <div className={valida.telefone.validado}>
+                      <label className={styles.inputLabel}>Telefone</label>
+                      <div className={styles.divInput}>
+                          <input className={styles.modernInput} type="tel" name="telefone" value={form.telefone} onChange={handleChange} onBlur={validaTelefone} placeholder="(11) 99999-9999" required maxLength={16} />
+                          <MdCheckCircle className={styles.sucesso} /><MdError className={styles.erro} />
+                      </div>
+                      {valida.telefone.mensagem.map(mens => <small key={mens} className={styles.small}>{mens}</small>)}
+                  </div>
+
+                  <div className={valida.cpf.validado}>
+                      <label className={styles.inputLabel}>CPF</label>
+                      <div className={styles.divInput}>
+                          <input className={styles.modernInput} type="text" name="cpf" value={form.cpf} onChange={handleChange} onBlur={validaCPF} placeholder="000.000.000-00" required maxLength={14} />
+                          <MdCheckCircle className={styles.sucesso} /><MdError className={styles.erro} />
+                      </div>
+                      {valida.cpf.mensagem.map(mens => <small key={mens} className={styles.small}>{mens}</small>)}
+                  </div>
+
+                  <div className={valida.dataNascimento.validado}>
+                      <label className={styles.inputLabel}>Data de Nascimento</label>
+                      <div className={styles.divInput}>
+                          <input className={styles.modernInput} type="date" name="dataNascimento" value={form.dataNascimento} onChange={handleChange} onBlur={validaDataNascimento} required />
+                          <MdCheckCircle className={styles.sucesso} /><MdError className={styles.erro} />
+                      </div>
+                      {valida.dataNascimento.mensagem.map(mens => <small key={mens} className={styles.small}>{mens}</small>)}
+                  </div>
+
+                  <div className={valida.endereco.validado}>
+                      <label className={styles.inputLabel}>Endereço Completo</label>
+                      <div className={styles.divInput}>
+                          <input className={styles.modernInput} type="text" name="endereco" value={form.endereco} onChange={handleChange} onBlur={validaEndereco} placeholder="Rua, número, bairro, cidade - Estado" required />
+                          <MdCheckCircle className={styles.sucesso} /><MdError className={styles.erro} />
+                      </div>
+                      {valida.endereco.mensagem.map(mens => <small key={mens} className={styles.small}>{mens}</small>)}
+                  </div>
                 </div>
+
+                {/* Coluna 2: Dados de Acesso */}
                 <div className={styles.formSection}>
                   <h3 className={styles.sectionTitle}>Informações de Acesso</h3>
-                  {/* Usuário */}
-                  <div className={valida.usuario.validado}><label className={styles.inputLabel}>Nome de Usuário</label><div className={styles.divInput}><input className={styles.modernInput} type="text" name="usuario" value={form.usuario} onChange={handleChange} onBlur={validaUsuario} placeholder="Digite o nome de usuário" required /><MdCheckCircle className={styles.sucesso} /><MdError className={styles.erro} /></div>{valida.usuario.mensagem.map(mens => <small key={mens} className={styles.small}>{mens}</small>)}</div>
-                  {/* Senha */}
-                  <div className={valida.senha.validado}><label className={styles.inputLabel}>Senha</label><div className={styles.divInput}><input className={styles.modernInput} type="password" name="senha" value={form.senha} onChange={handleChange} onBlur={validaSenha} placeholder="Mínimo 6 caracteres" required /><MdCheckCircle className={styles.sucesso} /><MdError className={styles.erro} /></div>{valida.senha.mensagem.map(mens => <small key={mens} className={styles.small}>{mens}</small>)}</div>
-                  {/* Confirmar Senha */}
-                  <div className={valida.confirmarSenha.validado}><label className={styles.inputLabel}>Confirmar Senha</label><div className={styles.divInput}><input className={styles.modernInput} type="password" name="confirmarSenha" value={form.confirmarSenha} onChange={handleChange} onBlur={validaConfirmarSenha} placeholder="Digite a senha novamente" required /><MdCheckCircle className={styles.sucesso} /><MdError className={styles.erro} /></div>{valida.confirmarSenha.mensagem.map(mens => <small key={mens} className={styles.small}>{mens}</small>)}</div>
-                  {/* Nível de Acesso */}
-                  <div className={valida.nivelAcesso.validado}><label className={styles.inputLabel}>Nível de Acesso</label><div className={styles.divInput}><select className={styles.modernInput} name="nivelAcesso" value={form.nivelAcesso} onChange={handleChange} onBlur={validaNivelAcesso} required><option value="1">Funcionário</option><option value="2">Farmacêutico</option><option value="3">Administrador</option></select></div>{valida.nivelAcesso.mensagem.map(mens => <small key={mens} className={styles.small}>{mens}</small>)}</div>
+                  
+                  <div className={valida.usuario.validado}>
+                      <label className={styles.inputLabel}>Nome de Usuário</label>
+                      <div className={styles.divInput}>
+                          <input className={styles.modernInput} type="text" name="usuario" value={form.usuario} onChange={handleChange} onBlur={validaUsuario} placeholder="Digite o nome de usuário" required />
+                          <MdCheckCircle className={styles.sucesso} /><MdError className={styles.erro} />
+                      </div>
+                      {valida.usuario.mensagem.map(mens => <small key={mens} className={styles.small}>{mens}</small>)}
+                  </div>
+
+                  <div className={valida.senha.validado}>
+                      <label className={styles.inputLabel}>Senha</label>
+                      <div className={styles.divInput}>
+                          <input className={styles.modernInput} type="password" name="senha" value={form.senha} onChange={handleChange} onBlur={validaSenha} placeholder="Mínimo 6 caracteres" required />
+                          <MdCheckCircle className={styles.sucesso} /><MdError className={styles.erro} />
+                      </div>
+                      {valida.senha.mensagem.map(mens => <small key={mens} className={styles.small}>{mens}</small>)}
+                  </div>
+
+                  <div className={valida.confirmarSenha.validado}>
+                      <label className={styles.inputLabel}>Confirmar Senha</label>
+                      <div className={styles.divInput}>
+                          <input className={styles.modernInput} type="password" name="confirmarSenha" value={form.confirmarSenha} onChange={handleChange} onBlur={validaConfirmarSenha} placeholder="Digite a senha novamente" required />
+                          <MdCheckCircle className={styles.sucesso} /><MdError className={styles.erro} />
+                      </div>
+                      {valida.confirmarSenha.mensagem.map(mens => <small key={mens} className={styles.small}>{mens}</small>)}
+                  </div>
+
+                  <div className={valida.nivelAcesso.validado}>
+                      <label className={styles.inputLabel}>Nível de Acesso</label>
+                      <div className={styles.divInput}>
+                          <select className={styles.modernInput} name="nivelAcesso" value={form.nivelAcesso} onChange={handleChange} onBlur={validaNivelAcesso} required>
+                              <option value="1">Funcionário</option>
+                              <option value="2">Farmacêutico</option>
+                              <option value="3">Administrador</option>
+                          </select>
+                      </div>
+                      {valida.nivelAcesso.mensagem.map(mens => <small key={mens} className={styles.small}>{mens}</small>)}
+                  </div>
                 </div>
               </div>
-              <div className={styles.formActions}><button type="button" className={styles.cancelButton} onClick={() => router.push("/farmacias/cadastro/funcionario/lista")} disabled={loading}>Cancelar</button><button type="submit" className={styles.submitButton} disabled={loading}>{loading ? (<><span className={styles.loadingSpinnerSmall}></span> Cadastrando...</>) : "Cadastrar Funcionário"}</button></div>
+
+              <div className={styles.formActions}>
+                  <button type="button" className={styles.cancelButton} onClick={() => router.push("/farmacias/cadastro/funcionario/lista")} disabled={loading}>Cancelar</button>
+                  <button type="submit" className={styles.submitButton} disabled={loading}>
+                      {loading ? (<><span className={styles.loadingSpinnerSmall}></span> Cadastrando...</>) : "Cadastrar Funcionário"}
+                  </button>
+              </div>
             </form>
           </div>
         </main>

@@ -1,4 +1,6 @@
-/* Layout Principal e Header (Estrutura consistente com a tela de Favoritos) */
+/* laboratorio.module.css */
+
+/* --- LAYOUT PRINCIPAL --- */
 .dashboard {
   min-height: 100vh;
   background-color: #f8fafc;
@@ -6,6 +8,7 @@
   flex-direction: column;
 }
 
+/* --- HEADER --- */
 .header {
   background: white;
   padding: 1.5rem 2.4rem;
@@ -13,11 +16,13 @@
   justify-content: space-between;
   align-items: center;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+
+  /* Sticky: Fixa o menu no topo */
   position: sticky;
   top: 0;
   z-index: 100;
+
   flex-wrap: wrap;
-  /* Permite quebra de linha em telas pequenas */
   gap: 1rem;
 }
 
@@ -34,8 +39,8 @@
   cursor: pointer;
   padding: 0.8rem;
   border-radius: 0.6rem;
-  transition: background 0.3s ease;
   display: none;
+  /* Mobile only */
   color: #458B00;
 }
 
@@ -43,8 +48,8 @@
   background: #f1f5f9;
 }
 
+/* Tipografia Fluida */
 .title {
-  /* MELHORIA: Tipografia fluida */
   font-size: clamp(2rem, 4vw, 2.8rem);
   font-weight: 600;
   margin: 0;
@@ -60,6 +65,7 @@
   gap: 1.6rem;
 }
 
+/* Input de Busca */
 .searchBox {
   position: relative;
 }
@@ -67,7 +73,6 @@
 .searchInput {
   padding: 1rem 1.2rem;
   padding-right: 3.2rem;
-  /* Espaço para o ícone */
   border: 1px solid #e2e8f0;
   border-radius: 8px;
   font-size: 1.4rem;
@@ -89,6 +94,7 @@
   color: #64748b;
 }
 
+/* Botão Novo */
 .submitButton {
   display: flex;
   align-items: center;
@@ -109,13 +115,14 @@
   box-shadow: 0 4px 12px rgba(69, 139, 0, 0.3);
 }
 
-/* Content Wrapper e Sidebar (Estrutura consistente) */
+/* Estrutura do Conteúdo */
 .contentWrapper {
   display: flex;
   flex: 1;
   position: relative;
 }
 
+/* --- SIDEBAR --- */
 .sidebar {
   width: 28rem;
   background: linear-gradient(180deg, #191970 0%, #0f1440 100%);
@@ -125,11 +132,11 @@
   transition: transform 0.3s ease-in-out;
   box-shadow: 0.2rem 0 1rem rgba(0, 0, 0, 0.1);
   flex-shrink: 0;
+
+  /* Altura calculada para header sticky */
   height: calc(100vh - 72px);
-  /* Altura recalculada */
   position: sticky;
   top: 72px;
-  /* Valor recalculado */
   overflow-y: auto;
   z-index: 90;
 }
@@ -170,14 +177,7 @@
   font-size: 2.8rem;
   color: #fff;
   cursor: pointer;
-  border-radius: 0.6rem;
-  padding: 0.4rem 0.8rem;
-  transition: background 0.2s;
   display: none;
-}
-
-.sidebarClose:hover {
-  background: #222266;
 }
 
 .nav {
@@ -229,7 +229,7 @@
   font-family: "Montserrat";
 }
 
-/* Conteúdo Principal */
+/* --- CONTEÚDO DA LISTA --- */
 .mainContent {
   flex: 1;
   padding: 3.2rem;
@@ -241,34 +241,20 @@
   margin-bottom: 2.4rem;
 }
 
-.listaHeader h2 {
-  font-size: clamp(2.2rem, 4vw, 2.8rem);
-  /* Tipografia fluida */
-  font-weight: 700;
-  margin: 0 0 0.8rem 0;
-  color: #191970;
-}
-
-.listaHeader p {
-  margin: 0;
-  color: #64748b;
-  font-size: 1.6rem;
-}
-
+/* Container da Tabela (Scroll Horizontal Mobile) */
 .tableContainer {
   background: white;
   border-radius: 12px;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
   border: 1px solid #e5e7eb;
-  /* CORREÇÃO CRÍTICA: Permite a rolagem horizontal da tabela em telas pequenas */
   overflow-x: auto;
 }
 
 .laboratoriosTable {
   width: 100%;
   border-collapse: collapse;
-  /* MELHORIA: Garante que a tabela tenha uma largura mínima para não espremer o conteúdo */
   min-width: 800px;
+  /* Evita que colunas fiquem espremidas */
 }
 
 .laboratoriosTable th {
@@ -280,7 +266,6 @@
   border-bottom: 2px solid #e5e7eb;
   font-size: 1.4rem;
   white-space: nowrap;
-  /* Evita que o texto do cabeçalho quebre */
 }
 
 .laboratoriosTable td {
@@ -321,6 +306,7 @@
   color: #64748b;
 }
 
+/* Badges de Status */
 .statusBadge {
   padding: 0.6rem 1.2rem;
   border-radius: 999px;
@@ -340,6 +326,7 @@
   color: #991b1b;
 }
 
+/* Botões de Ação */
 .acoes {
   display: flex;
   gap: 0.8rem;
@@ -397,8 +384,6 @@
   border-radius: 0 0 12px 12px;
   border: 1px solid #e5e7eb;
   border-top: none;
-  margin-top: -1px;
-  /* Alinha com a tabela */
 }
 
 .totalRegistros {
@@ -407,7 +392,7 @@
   font-weight: 600;
 }
 
-/* NOVO: Estilos para o Loader */
+/* Loader */
 .loaderContainer {
   display: flex;
   flex-direction: column;
@@ -433,7 +418,7 @@
   }
 }
 
-/* Overlay (Estrutura consistente) */
+/* Overlay (Mobile) */
 .overlay {
   position: fixed;
   inset: 0;
@@ -485,18 +470,12 @@
   .title {
     display: none;
   }
-
-  /* Opcional: esconde o título para dar espaço */
 }
 
 @media (max-width: 30rem) {
   .header {
     flex-direction: column;
     align-items: stretch;
-  }
-
-  .headerLeft {
-    justify-content: space-between;
   }
 
   .headerActions {
@@ -509,7 +488,6 @@
     text-align: center;
   }
 
-  /* Re-exibe o título centralizado */
   .searchInput,
   .submitButton {
     width: 100%;

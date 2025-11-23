@@ -1,4 +1,7 @@
-/* Layout Principal e Componentes (Estrutura consistente com as outras telas) */
+/* =========================================
+   LAYOUT PRINCIPAL E ESTRUTURA
+   ========================================= */
+/* Define o layout base, garantindo altura mínima de 100vh e fundo claro */
 .dashboard {
   min-height: 100vh;
   background-color: #f8fafc;
@@ -6,6 +9,7 @@
   flex-direction: column;
 }
 
+/* Header fixo no topo */
 .header {
   background: white;
   padding: 1.5rem 2.4rem;
@@ -14,6 +18,7 @@
   align-items: center;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
   position: sticky;
+  /* Mantém o header fixo ao rolar */
   top: 0;
   z-index: 100;
 }
@@ -33,11 +38,14 @@
   border-radius: 0.6rem;
   transition: background 0.3s ease;
   display: none;
+  /* Escondido em Desktop */
   color: #458B00;
 }
 
+/* Título com gradiente */
 .title {
   font-size: clamp(2rem, 4vw, 2.8rem);
+  /* Responsivo: min 2rem, ideal 4vw, max 2.8rem */
   font-weight: 600;
   margin: 0;
   background: linear-gradient(135deg, #191970 0%, #458B00 100%);
@@ -52,6 +60,9 @@
   position: relative;
 }
 
+/* =========================================
+   SIDEBAR (MENU LATERAL)
+   ========================================= */
 .sidebar {
   width: 28rem;
   background: linear-gradient(180deg, #191970 0%, #0f1440 100%);
@@ -59,9 +70,11 @@
   display: flex;
   flex-direction: column;
   transition: transform 0.3s ease-in-out;
+  /* Suaviza abertura/fechamento */
   box-shadow: 0.2rem 0 1rem rgba(0, 0, 0, 0.1);
   flex-shrink: 0;
   height: calc(100vh - 7.2rem);
+  /* Altura total menos o header */
   position: sticky;
   top: 7.2rem;
   overflow-y: auto;
@@ -85,15 +98,12 @@
   gap: 1.2rem;
 }
 
-/* === ATUALIZADO === */
 .logoImage {
   height: 60px;
   width: 60px;
   border-radius: 5%;
   object-fit: cover;
 }
-
-/* === FIM DA ATUALIZAÇÃO === */
 
 .logoText {
   font-size: 2rem;
@@ -110,15 +120,14 @@
   border-radius: 0.6rem;
   padding: 0.4rem 0.8rem;
   display: none;
+  /* Apenas visível no mobile */
 }
 
-/* === ADICIONADO === */
 .sidebarClose:hover {
   background: #222266;
 }
 
-/* === FIM DA ADIÇÃO === */
-
+/* Navegação */
 .nav {
   flex: 1;
   padding: 1rem;
@@ -136,7 +145,6 @@
   letter-spacing: 0.5px;
 }
 
-/* === ATUALIZADO === */
 .navLink {
   display: flex;
   align-items: center;
@@ -165,13 +173,13 @@
   box-shadow: 0 4px 12px rgba(69, 139, 0, 0.3);
 }
 
-/* === FIM DA ATUALIZAÇÃO === */
-
 .navText {
   font-family: "Montserrat";
 }
 
-/* REESTRUTURADO: Conteúdo Principal e Formulário para consistência */
+/* =========================================
+   ÁREA PRINCIPAL E FORMULÁRIO
+   ========================================= */
 .mainContent {
   flex: 1;
   padding: 3.2rem;
@@ -192,6 +200,7 @@
   border: 1px solid #e5e7eb;
 }
 
+/* Grid para organizar os inputs em duas colunas em telas grandes */
 .formGrid {
   display: grid;
   grid-template-columns: 1fr 1fr;
@@ -210,6 +219,7 @@
   padding-bottom: 1.2rem;
   border-bottom: 1px solid #e5e7eb;
   grid-column: 1 / -1;
+  /* Ocupa toda a largura da grid */
 }
 
 .formGroup {
@@ -230,6 +240,7 @@
   margin-bottom: 0.8rem;
 }
 
+/* Estilização unificada para Inputs e Textareas */
 .modernInput,
 .modernTextarea,
 .modernSelect {
@@ -256,6 +267,7 @@
   min-height: 10rem;
 }
 
+/* Customização da seta do Select */
 .modernSelect {
   appearance: none;
   background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
@@ -265,7 +277,9 @@
   padding-right: 4rem;
 }
 
-/* Upload e Preview de Imagem */
+/* =========================================
+   UPLOAD E PREVIEW DE IMAGEM
+   ========================================= */
 .imageUploadSection {
   display: grid;
   grid-template-columns: auto 1fr;
@@ -301,8 +315,10 @@
 
 .fileInput {
   display: none;
+  /* Esconde o input de arquivo padrão feio */
 }
 
+/* Label estilizada que age como botão de upload */
 .fileInputLabel {
   display: flex;
   align-items: center;
@@ -331,7 +347,9 @@
   text-overflow: ellipsis;
 }
 
-/* Ações do Formulário e Mensagens */
+/* =========================================
+   AÇÕES E FEEDBACK
+   ========================================= */
 .formActions {
   display: flex;
   align-items: center;
@@ -397,7 +415,7 @@
   cursor: not-allowed;
 }
 
-/* Loader e Overlay */
+/* Loader */
 .loadingContainer {
   display: flex;
   flex-direction: column;
@@ -423,7 +441,7 @@
   }
 }
 
-/* === ATUALIZADO === */
+/* Overlay Mobile */
 .overlay {
   position: fixed;
   inset: 0;
@@ -434,32 +452,38 @@
   transition: opacity 0.3s ease-in-out;
 }
 
-/* === FIM DA ATUALIZAÇÃO === */
-
 .sidebar.sidebarOpen~.overlay {
   display: block;
   opacity: 1;
 }
 
-/* --- RESPONSIVIDADE --- */
+/* =========================================
+   RESPONSIVIDADE
+   ========================================= */
 @media (max-width: 64rem) {
+
+  /* Transforma formulário em uma coluna só em tablets */
   .formGrid {
     grid-template-columns: 1fr;
   }
 }
 
 @media (max-width: 48rem) {
+
+  /* Configurações para Mobile */
   .sidebar {
     position: fixed;
     left: 0;
     top: 0;
     height: 100vh;
     transform: translateX(-100%);
+    /* Esconde sidebar por padrão */
     z-index: 110;
   }
 
   .sidebar.sidebarOpen {
     transform: translateX(0);
+    /* Mostra sidebar */
   }
 
   .menuToggle,
@@ -478,10 +502,12 @@
   .formRow,
   .imageUploadSection {
     grid-template-columns: 1fr;
+    /* Empilha upload de imagem */
   }
 
   .formActions {
     flex-direction: column-reverse;
+    /* Botão de salvar em cima no mobile */
   }
 
   .cancelButton,

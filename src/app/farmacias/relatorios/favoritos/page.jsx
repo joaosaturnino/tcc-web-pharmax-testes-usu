@@ -1,4 +1,4 @@
-"use client";
+"use client"; // Indica que este é um componente React Client-Side
 import Link from "next/link";
 import { useEffect, useState, useRef, useMemo } from "react";
 import { useRouter } from "next/navigation";
@@ -7,10 +7,14 @@ import AuthGuard from "../../../componentes/AuthGuard";
 import api from "../../../services/api";
 
 export default function RelatorioFavoritosPage() {
-  const [medicamentos, setMedicamentos] = useState([]);
+  // === Estados de Dados e UI ===
+  const [medicamentos, setMedicamentos] = useState([]); // Lista de dados da tabela
   const [loading, setLoading] = useState(true);
-  const [sidebarOpen, setSidebarOpen] = useState(false);
-  const [userInfo, setUserInfo] = useState(null);
+  const [sidebarOpen, setSidebarOpen] = useState(false); // Menu mobile
+  const [userInfo, setUserInfo] = useState(null); // Dados da farmácia logada
+
+  // === Estado de Filtro de Data ===
+  // Inicializa com: Início = 1 ano atrás, Fim = Hoje
   const [dateRange, setDateRange] = useState(() => {
     const endDate = new Date();
     const startDate = new Date();
@@ -20,10 +24,12 @@ export default function RelatorioFavoritosPage() {
       end: endDate.toISOString().split("T")[0],
     };
   });
+  
   const [error, setError] = useState("");
-  const reportRef = useRef(null);
+  const reportRef = useRef(null); // Referência ao elemento do relatório (opcional com window.print)
   const router = useRouter();
 
+  // === Efeito: Busca de Dados ===
   useEffect(() => {
     const fetchFavoritos = async () => {
       setLoading(true);
@@ -32,6 +38,7 @@ export default function RelatorioFavoritosPage() {
       let userData = userInfo;
 
       try {
+        // 1. Verificação de Autenticação (LocalStorage)
         // Garante que userInfo seja carregado antes de fazer a chamada da API
         if (!userData) {
           const userDataString = localStorage.getItem("userData");
@@ -47,7 +54,8 @@ export default function RelatorioFavoritosPage() {
           throw new Error("Não foi possível identificar sua farmácia. Faça o login novamente.");
         }
 
-        // ✅ MELHORIA: Enviando o filtro de data para a API
+        // 2. Chamada à API
+        // ✅ MELHORIA: Enviando o filtro de data para a API via query params
         const response = await api.get(`/favoritos/${idDaFarmacia}/favoritos`, {
           params: {
             dataInicio: dateRange.start,
@@ -55,13 +63,15 @@ export default function RelatorioFavoritosPage() {
           }
         });
 
+        // 3. Processamento da Resposta
         if (response.data.sucesso) {
+          // Mapeia os dados brutos para o formato da tabela
           setMedicamentos(response.data.dados.map(med => ({
             id: med.med_id,
             nome: med.med_nome,
             fabricante: med.fabricante_nome,
             dosagem: med.med_dosagem,
-            favoritacoes: med.favoritacoes_count,
+            favoritacoes: med.favoritacoes_count, // Contagem do SQL
             dataFavorito: med.med_data_atualizacao,
           })));
         } else {
@@ -80,13 +90,16 @@ export default function RelatorioFavoritosPage() {
     // ✅ MELHORIA: O useEffect agora depende do dateRange e executa novamente quando ele muda
   }, [dateRange]);
 
-  // ✅ MELHORIA: O useMemo agora apenas ordena, pois a API já filtrou
+  // === Ordenação (Memoization) ===
+  // ✅ MELHORIA: O useMemo ordena os dados por número de favoritadas (decrescente)
+  // Isso evita reordenar toda vez que o componente renderiza, apenas quando 'medicamentos' muda
   const sortedMedicamentos = useMemo(() => {
     return [...medicamentos].sort((a, b) => b.favoritacoes - a.favoritacoes);
   }, [medicamentos]);
 
+  // === Função de Impressão ===
   const generateReport = () => {
-    // ✅ MELHORIA: Simplificado. O CSS @media print cuida da formatação.
+    // ✅ MELHORIA: Simplificado. O CSS @media print cuida da formatação (oculta sidebar, etc).
     window.print();
   };
 
@@ -96,6 +109,7 @@ export default function RelatorioFavoritosPage() {
     router.push("/home");
   };
 
+  // Renderização de Loading Inicial
   if (loading && !userInfo) {
     return (
       <div className={styles.loaderContainer}>
@@ -108,6 +122,7 @@ export default function RelatorioFavoritosPage() {
   return (
     <AuthGuard>
       <div className={styles.dashboard}>
+        {/* Cabeçalho com botão de Gerar Relatório */}
         <header className={styles.header}>
           <div className={styles.headerLeft}>
             <button className={styles.menuToggle} onClick={() => setSidebarOpen(!sidebarOpen)} aria-label="Abrir menu">☰</button>
@@ -119,6 +134,7 @@ export default function RelatorioFavoritosPage() {
         </header>
 
         <div className={styles.contentWrapper}>
+          {/* Sidebar de Navegação */}
           <aside className={`${styles.sidebar} ${sidebarOpen ? styles.sidebarOpen : ""}`}>
             <div className={styles.sidebarHeader}>
               <div className={styles.logoContainer}>
@@ -140,22 +156,30 @@ export default function RelatorioFavoritosPage() {
 
           <main className={styles.mainContent}>
             {error && (<div className={styles.errorMessage}><span>{error}</span></div>)}
+            
+            {/* Controles de Filtro (Data Início e Fim) */}
             <div className={styles.controls}>
               <div className={styles.filters}>
                 <div className={styles.filterGroup}>
                   <label>Período de Referência:</label>
+                  {/* Ao mudar o input, o estado 'dateRange' atualiza e dispara o useEffect */}
                   <input type="date" value={dateRange.start} onChange={(e) => setDateRange({ ...dateRange, start: e.target.value })} />
                   <span>até</span>
                   <input type="date" value={dateRange.end} onChange={(e) => setDateRange({ ...dateRange, end: e.target.value })} />
                 </div>
               </div>
             </div>
+
+            {/* Container do Relatório (Esta é a parte visível na impressão) */}
             {/* ✅ MELHORIA: Removida a classe 'reportMode' desnecessária */}
             <div ref={reportRef} className={styles.reportContainer}>
+              {/* Cabeçalho do Relatório (Visível apenas na impressão ou aqui) */}
               <div className={styles.reportHeader}>
                 {userInfo?.farm_logo_url && <img src={userInfo.farm_logo_url} alt={`Logo de ${userInfo.farm_nome}`} className={styles.printLogo} />}
                 <div className={styles.reportTitle}><h1>Relatório de Medicamentos Mais Favoritados</h1><p>Período: {new Date(dateRange.start).toLocaleDateString("pt-BR", { timeZone: 'UTC' })} a {new Date(dateRange.end).toLocaleDateString("pt-BR", { timeZone: 'UTC' })}</p><p>Data do relatório: {new Date().toLocaleDateString("pt-BR")}</p></div>
               </div>
+              
+              {/* Tabela de Dados */}
               <table className={styles.reportTable}>
                 <thead><tr><th>Ranking</th><th>Medicamento</th><th>Dosagem</th><th>Fabricante</th><th>Nº de Favoritações</th></tr></thead>
                 <tbody>
@@ -176,6 +200,8 @@ export default function RelatorioFavoritosPage() {
                   )}
                 </tbody>
               </table>
+
+              {/* Resumo Estatístico */}
               <div className={styles.reportSummary}>
                 <h2>Resumo do Relatório</h2>
                 <div className={styles.summaryGrid}>
@@ -183,6 +209,8 @@ export default function RelatorioFavoritosPage() {
                   <div className={styles.summaryItem}><span className={styles.summaryLabel}>Total de Favoritações</span><span className={styles.summaryValue}>{sortedMedicamentos.reduce((acc, med) => acc + med.favoritacoes, 0)}</span></div>
                 </div>
               </div>
+
+              {/* Rodapé (Visível apenas na impressão) */}
               <div className={styles.reportFooter}><p>Relatório gerado em: {new Date().toLocaleString("pt-BR")}</p><p>{userInfo?.farm_nome} - Sistema de Gestão PharmaX</p></div>
             </div>
           </main>

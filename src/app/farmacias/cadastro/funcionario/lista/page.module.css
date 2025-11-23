@@ -1,4 +1,48 @@
-/* Layout Principal, Header, Sidebar (Estrutura consistente com as outras telas) */
+/* --- ESTILOS DO TOAST CUSTOMIZADO (MODAL) --- */
+.toastContainer {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1.2rem;
+  color: #333;
+  font-weight: 500;
+  min-width: 280px; /* Garante largura mínima para leitura */
+}
+
+.toastActions {
+  display: flex;
+  gap: 1rem;
+  width: 100%;
+  justify-content: center;
+  margin-top: 0.5rem;
+}
+
+.btnCancel, .btnConfirm {
+  flex: 1;
+  padding: 0.8rem 1.2rem;
+  border-radius: 0.6rem;
+  font-weight: 600;
+  cursor: pointer;
+  border: none;
+  font-size: 1.3rem;
+  transition: filter 0.2s;
+}
+
+.btnCancel {
+  background-color: #e5e7eb;
+  color: #374151;
+}
+
+.btnConfirm {
+  background-color: #dc2626;
+  color: white;
+}
+
+.btnCancel:hover, .btnConfirm:hover {
+  filter: brightness(0.95); 
+}
+
+/* --- LAYOUT GERAL DA PÁGINA --- */
 .dashboard {
   min-height: 100vh;
   background-color: #f8fafc;
@@ -41,7 +85,6 @@
 }
 
 .title {
-  /* MELHORIA: Tipografia fluida */
   font-size: clamp(2rem, 4vw, 2.8rem);
   font-weight: 600;
   margin: 0;
@@ -57,6 +100,7 @@
   position: relative;
 }
 
+/* --- SIDEBAR (MENU LATERAL) --- */
 .sidebar {
   width: 28rem;
   background: linear-gradient(180deg, #191970 0%, #0f1440 100%);
@@ -115,6 +159,7 @@
   display: none;
 }
 
+/* --- LINKS DE NAVEGAÇÃO --- */
 .nav {
   flex: 1;
   padding: 1rem;
@@ -164,7 +209,7 @@
   font-family: "Montserrat";
 }
 
-/* Conteúdo Principal */
+/* --- ÁREA DE CONTEÚDO PRINCIPAL --- */
 .mainContent {
   flex: 1;
   padding: 3.2rem;
@@ -228,7 +273,7 @@
   cursor: not-allowed;
 }
 
-/* Filtro */
+/* --- CAMPO DE FILTRO --- */
 .filtroContainer {
   margin-bottom: 2.4rem;
 }
@@ -250,7 +295,7 @@
   box-shadow: 0 0 0 3px rgba(69, 139, 0, 0.1);
 }
 
-/* Tabela */
+/* --- TABELA --- */
 .tableContainer {
   overflow-x: auto;
 }
@@ -398,7 +443,6 @@
   gap: 1rem;
 }
 
-/* Footer da Lista */
 .listaFooter {
   display: flex;
   justify-content: flex-end;
@@ -458,8 +502,6 @@
 
 /* --- RESPONSIVIDADE --- */
 @media (max-width: 48rem) {
-
-  /* 768px */
   .sidebar {
     position: fixed;
     left: 0;
@@ -497,21 +539,17 @@
     justify-content: center;
   }
 
-  /* --- INÍCIO DAS ADIÇÕES --- */
-  /* Estilos da Tabela Responsiva (Cards) */
+  /* Tabela Responsiva (Cards) */
   .funcionariosTable {
     min-width: unset;
-    /* Remove o min-width */
   }
 
   .funcionariosTable thead {
     display: none;
-    /* Oculta o cabeçalho no mobile */
   }
 
   .funcionariosTable tr {
     display: block;
-    /* Faz cada linha parecer um card */
     margin-bottom: 1.6rem;
     border: 1px solid #e5e7eb;
     border-radius: 0.8rem;
@@ -521,29 +559,22 @@
 
   .funcionariosTable tr:hover {
     background: white;
-    /* Reseta o hover de linha */
   }
 
   .funcionariosTable td {
     display: block;
-    /* Células em modo bloco */
     text-align: right;
-    /* Alinha o valor à direita */
     padding: 1.2rem 1.6rem;
     border-bottom: 1px solid #f3f4f6;
-    /* Separador leve */
     position: relative;
     padding-left: 50%;
-    /* Espaço para o "label" */
   }
 
   .funcionariosTable td::before {
     content: attr(data-label);
-    /* Pega o label do data-attribute */
     position: absolute;
     left: 1.6rem;
     width: calc(50% - 3.2rem);
-    /* Calcula o espaço do label */
     font-weight: 600;
     color: #374151;
     text-align: left;
@@ -552,25 +583,18 @@
 
   .funcionariosTable td:last-child {
     border-bottom: 0;
-    /* Remove a borda da última célula (Ações) */
   }
 
   .acoes {
     justify-content: flex-end;
-    /* Alinha botões à direita */
   }
 
   .funcionarioInfo {
     justify-content: flex-end;
-    /* Alinha o avatar e nome à direita */
   }
-
-  /* --- FIM DAS ADIÇÕES --- */
 }
 
 @media (max-width: 30rem) {
-
-  /* 480px */
   .header {
     flex-direction: column;
     gap: 1.6rem;
@@ -586,7 +610,6 @@
     font-size: 2.2rem;
   }
 
-  /* --- INÍCIO DAS ADIÇÕES --- */
   /* Ajuste fino para telas muito pequenas */
   .funcionariosTable td {
     padding-left: 1.6rem;
@@ -608,6 +631,4 @@
   .funcionarioInfo {
     justify-content: flex-start;
   }
-
-  /* --- FIM DAS ADIÇÕES --- */
 }

@@ -1,26 +1,23 @@
-/* Layout Principal */
+/* --- LAYOUT PRINCIPAL --- */
 .dashboard {
   min-height: 100vh;
   background: #f8fafc;
-  /* Simplificado */
   display: flex;
   flex-direction: column;
 }
 
-/* Header */
+/* --- HEADER (CABEÇALHO) --- */
 .header {
   background: #ffffff;
   padding: 1.5rem 2.4rem;
-  /* Ajuste no padding */
   display: flex;
   justify-content: space-between;
   align-items: center;
   box-shadow: 0 0.2rem 0.4rem rgba(0, 0, 0, 0.05);
-  /* Sombra mais suave */
+  /* Sticky: Fixa o topo ao rolar */
   position: sticky;
   top: 0;
   z-index: 100;
-  /* Z-index ajustado */
 }
 
 .headerLeft {
@@ -33,13 +30,11 @@
   background: none;
   border: none;
   font-size: 2.4rem;
-  /* Tamanho ajustado */
   cursor: pointer;
   padding: 0.8rem;
   border-radius: 0.6rem;
   transition: background 0.3s ease;
   display: none;
-  /* Escondido por padrão em telas maiores */
   color: #458B00;
 }
 
@@ -48,7 +43,7 @@
 }
 
 .title {
-  /* MELHORIA: Tipografia fluida para se adaptar à tela */
+  /* Tipografia Fluida: Escala entre 2rem e 2.8rem */
   font-size: clamp(2rem, 4vw, 2.8rem);
   font-weight: 600;
   color: #1e293b;
@@ -59,33 +54,28 @@
   background-clip: text;
 }
 
-/* Wrapper de Conteúdo */
 .contentWrapper {
   display: flex;
   flex: 1;
   position: relative;
 }
 
-/* Sidebar - Estilo melhorado */
+/* --- SIDEBAR (MENU LATERAL) --- */
 .sidebar {
   width: 28rem;
-  /* Largura ajustada */
   background: linear-gradient(180deg, #191970 0%, #0f1440 100%);
   color: #CDC1C5;
   display: flex;
   flex-direction: column;
   transition: transform 0.3s ease-in-out;
-  /* Transição mais suave */
   box-shadow: 0.2rem 0 1rem rgba(0, 0, 0, 0.1);
   flex-shrink: 0;
+  /* Altura calculada para respeitar o header sticky */
   height: calc(100vh - 72px);
-  /* Altura recalculada com base no padding do header */
   position: sticky;
   top: 72px;
-  /* Valor recalculado */
   overflow-y: auto;
   z-index: 90;
-  /* Abaixo do header */
 }
 
 .sidebarHeader {
@@ -107,15 +97,13 @@
 
 .logoImage {
   width: 60px;
-  /* Tamanho ajustado */
   height: 60px;
-  border-radius: 5%;
+  border-radius: 5px;
   object-fit: cover;
 }
 
 .logoText {
   font-size: 2rem;
-  /* Tamanho ajustado */
   font-weight: 600;
   color: #fff;
 }
@@ -124,14 +112,12 @@
   background: none;
   border: none;
   font-size: 2.8rem;
-  /* Tamanho ajustado */
   color: #fff;
   cursor: pointer;
   border-radius: 0.6rem;
   padding: 0.4rem 0.8rem;
   transition: background 0.2s;
   display: none;
-  /* Escondido por padrão */
 }
 
 .sidebarClose:hover {
@@ -141,7 +127,6 @@
 .nav {
   flex: 1;
   padding: 1rem;
-  /* REMOVIDO: overflow: hidden era redundante pois o .sidebar já tem overflow-y: auto */
 }
 
 .navSection {
@@ -152,7 +137,6 @@
   font-size: 1.3rem;
   color: #b0b0b0;
   margin: 1rem 0 0.6rem 1rem;
-  /* Margem ajustada */
   text-transform: uppercase;
   letter-spacing: 0.5px;
 }
@@ -161,7 +145,6 @@
   display: flex;
   align-items: center;
   padding: 1.2rem 1.4rem;
-  /* Padding ajustado */
   color: #CDC1C5;
   text-decoration: none;
   border-radius: 0.6rem;
@@ -170,7 +153,6 @@
   font-size: 1.5rem;
   border-left: 4px solid transparent;
   gap: 1.2rem;
-  /* Gap ajustado */
 }
 
 .navLink:hover {
@@ -191,25 +173,25 @@
   font-family: "Montserrat";
 }
 
-/* Conteúdo Principal */
+/* --- CONTEÚDO PRINCIPAL --- */
 .mainContent {
   flex: 1;
   padding: 3.2rem;
   background: #f8fafc;
   overflow-y: auto;
-  /* REMOVIDO: min-height é desnecessário com flex: 1 */
 }
 
-/* Grid de Favoritos */
+/* GRID AUTOMÁTICO RESPONSIVO */
 .grid {
   display: grid;
+  /* Cria colunas de min 380px e preenche o espaço restante */
   grid-template-columns: repeat(auto-fill, minmax(380px, 1fr));
   gap: 2.4rem;
 }
 
+/* CARD */
 .card {
   background: #ffffff;
-  /* Simplificado */
   border-radius: 12px;
   box-shadow: 0 0.2rem 0.8rem rgba(0, 0, 0, 0.04);
   padding: 2.4rem;
@@ -218,9 +200,7 @@
   position: relative;
   overflow: hidden;
   display: flex;
-  /* Adicionado para melhor controle do conteúdo interno */
   flex-direction: column;
-  /* Adicionado */
 }
 
 .card::before {
@@ -241,7 +221,6 @@
 .cardHeader {
   display: flex;
   align-items: flex-start;
-  /* Alinhamento ajustado */
   margin-bottom: 1.6rem;
   padding-bottom: 1.6rem;
   border-bottom: 0.1rem solid #e5e7eb;
@@ -250,24 +229,19 @@
 .cardUserInfo {
   display: flex;
   align-items: center;
-  /* Alinhamento ajustado */
   gap: 1.6rem;
-  /* Gap ajustado */
   flex: 1;
-  /* Para ocupar o espaço disponível */
 }
 
 .userAvatar {
   width: 5rem;
   height: 5rem;
   border-radius: 50%;
-  /* MELHORIA: Avatar circular */
   background: linear-gradient(135deg, #458B00 0%, #191970 100%);
   display: flex;
   align-items: center;
   justify-content: center;
   font-size: 1.8rem;
-  /* Tamanho ajustado */
   color: white;
   flex-shrink: 0;
   font-weight: bold;
@@ -275,7 +249,6 @@
 
 .cardUserInfo h2 {
   font-size: clamp(1.6rem, 2vw, 1.8rem);
-  /* Tipografia Fluida */
   font-weight: 600;
   color: #191970;
   margin: 0 0 0.2rem 0;
@@ -292,16 +265,13 @@
   color: #94a3b8;
   margin-top: 0.4rem;
   display: block;
-  /* Garante que ocupe a linha */
 }
 
-/* Lista de Medicamentos */
 .medList {
   display: flex;
   flex-direction: column;
   gap: 1.2rem;
   margin-top: auto;
-  /* Empurra a lista para o final do card */
 }
 
 .medItem {
@@ -313,9 +283,7 @@
   border-radius: 8px;
   border: 0.1rem solid #e5e7eb;
   flex-wrap: wrap;
-  /* Permite quebrar linha em telas pequenas */
   gap: 1rem;
-  /* Espaçamento entre itens quando quebrar linha */
 }
 
 .medInfo {
@@ -335,12 +303,11 @@
   color: #64748b;
 }
 
+/* Badges */
 .badge {
   padding: 0.6rem 1.2rem;
   border-radius: 9999px;
-  /* Formato de pílula */
   font-size: 1.2rem;
-  /* Tamanho ajustado */
   font-weight: 600;
   text-align: center;
   border: 1px solid;
@@ -372,7 +339,6 @@
   background: white;
   border-radius: 1.6rem;
   margin-top: 3rem;
-  /* Margem ajustada */
   box-shadow: 0 0.2rem 0.8rem rgba(0, 0, 0, 0.04);
 }
 
@@ -419,38 +385,30 @@
   }
 }
 
-/* Overlay para mobile */
+/* Overlay Mobile */
 .overlay {
   position: fixed;
   inset: 0;
   background: rgba(0, 0, 0, 0.4);
-  /* Mais escuro para melhor contraste */
   z-index: 105;
-  /* CORREÇÃO: Deve estar acima de outros conteúdos, mas abaixo da sidebar */
   display: none;
-  /* Controlado pelo estado do componente */
   opacity: 0;
   transition: opacity 0.3s ease-in-out;
 }
 
 .sidebar.sidebarOpen~.overlay {
-  /* Mostra o overlay quando a sidebar estiver aberta */
   display: block;
   opacity: 1;
 }
 
-
-/* Controles de paginação */
+/* PAGINAÇÃO */
 .paginationControls {
   display: flex;
   align-items: center;
   gap: 0.8rem;
-  /* Gap ajustado */
   justify-content: center;
   margin-top: 3.2rem;
-  /* Margem superior para separar do grid */
   flex-wrap: wrap;
-  /* Permite quebrar linha em telas muito pequenas */
 }
 
 .paginationBtn,
@@ -458,7 +416,6 @@
   padding: 1rem 1.6rem;
   border: 1px solid #e2e8f0;
   border-radius: 0.8rem;
-  /* Bordas mais arredondadas */
   background: #ffffff;
   color: #191970;
   font-weight: 600;
@@ -490,8 +447,6 @@
 }
 
 /* --- RESPONSIVIDADE --- */
-
-/* Telas de Tablet (até 1024px) */
 @media (max-width: 64rem) {
   .mainContent {
     padding: 2.4rem;
@@ -507,20 +462,14 @@
   }
 }
 
-/* Telas de Tablet Pequeno e Mobile (até 768px) */
 @media (max-width: 48rem) {
   .sidebar {
     position: fixed;
     left: 0;
     top: 0;
-    height: 100%;
-    /* Ocupa a altura toda */
+    height: 100vh;
     transform: translateX(-100%);
     z-index: 110;
-    /* CORREÇÃO: Deve estar acima do overlay */
-    /* Remove o sticky e a altura calculada */
-    height: 100vh;
-    top: 0;
   }
 
   .sidebar.sidebarOpen {
@@ -530,7 +479,6 @@
   .menuToggle,
   .sidebarClose {
     display: block;
-    /* Mostra os botões de controle do menu */
   }
 
   .mainContent {
@@ -542,20 +490,16 @@
   }
 }
 
-/* Telas de Celular (até 480px) */
 @media (max-width: 30rem) {
   .header {
     padding: 1.2rem 1.6rem;
-    /* MELHORIA: Evita o layout quebrado, mantendo os itens alinhados */
     flex-wrap: wrap;
     gap: 1rem;
   }
 
   .title {
     flex-basis: 100%;
-    /* O título ocupa a linha inteira se necessário */
     text-align: center;
-    /* Centraliza o título */
   }
 
   .card {

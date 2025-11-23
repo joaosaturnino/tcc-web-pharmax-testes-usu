@@ -1,11 +1,16 @@
-/* Layout Principal e Componentes (Estrutura consistente com as outras telas) */
+/* ============================================================
+   LAYOUT GLOBAL E ESTRUTURA
+   ============================================================ */
 .dashboard {
   min-height: 100vh;
   background-color: #f8fafc;
   display: flex;
-  flex-direction: column;
+  flex-direction: column; /* Organiza header e conteúdo verticalmente */
 }
 
+/* ============================================================
+   HEADER (CABEÇALHO FIXO)
+   ============================================================ */
 .header {
   background: white;
   padding: 1.5rem 2.4rem;
@@ -13,6 +18,7 @@
   justify-content: space-between;
   align-items: center;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+  /* Mantém o cabeçalho fixo no topo durante a rolagem */
   position: sticky;
   top: 0;
   z-index: 100;
@@ -32,12 +38,12 @@
   padding: 0.8rem;
   border-radius: 0.6rem;
   transition: background 0.3s ease;
-  display: none;
+  display: none; /* Escondido no desktop */
   color: #458B00;
 }
 
 .title {
-  font-size: clamp(2rem, 4vw, 2.8rem);
+  font-size: clamp(2rem, 4vw, 2.8rem); /* Fonte responsiva */
   font-weight: 600;
   margin: 0;
   background: linear-gradient(135deg, #191970 0%, #458B00 100%);
@@ -52,6 +58,9 @@
   position: relative;
 }
 
+/* ============================================================
+   SIDEBAR (MENU LATERAL)
+   ============================================================ */
 .sidebar {
   width: 28rem;
   background: linear-gradient(180deg, #191970 0%, #0f1440 100%);
@@ -61,6 +70,7 @@
   transition: transform 0.3s ease-in-out;
   box-shadow: 0.2rem 0 1rem rgba(0, 0, 0, 0.1);
   flex-shrink: 0;
+  /* Altura calcula o total menos o tamanho do header fixo */
   height: calc(100vh - 7.2rem);
   position: sticky;
   top: 7.2rem;
@@ -176,7 +186,9 @@
   font-family: "Montserrat";
 }
 
-/* REESTRUTURADO: Conteúdo Principal e Relatório */
+/* ============================================================
+   CONTEÚDO PRINCIPAL E TABELA
+   ============================================================ */
 .mainContent {
   flex: 1;
   padding: 3.2rem;
@@ -204,6 +216,7 @@
   box-shadow: 0 4px 12px rgba(69, 139, 0, 0.3);
 }
 
+/* Área de Filtros */
 .controls {
   background: white;
   border-radius: 1.2rem;
@@ -246,7 +259,7 @@
   font-size: 1.4rem;
 }
 
-/* Container do Relatório */
+/* Container do Relatório (Visualização na tela) */
 .reportContainer {
   background: #fff;
   border-radius: 1.2rem;
@@ -268,7 +281,7 @@
 }
 
 .printLogo {
-  display: none;
+  display: none; /* Escondido na tela normal */
   height: 6rem;
   width: auto;
   object-fit: contain;
@@ -289,7 +302,7 @@
 
 .reportTable {
   width: 100%;
-  min-width: 900px;
+  min-width: 900px; /* Força scroll horizontal se necessário */
   border-collapse: collapse;
   margin-bottom: 3.2rem;
 }
@@ -328,7 +341,10 @@
   color: #1e293b;
 }
 
-/* Badges de status */
+/* ============================================================
+   BADGES DE STATUS E NÍVEL
+   Classes dinâmicas baseadas no valor do banco de dados
+   ============================================================ */
 .statusBadge {
   display: inline-block;
   padding: 0.4rem 1rem;
@@ -347,6 +363,7 @@
   color: #475569;
 }
 
+/* Cores específicas por cargo */
 .administrador {
   background: #fef2f2;
   color: #991b1b;
@@ -365,7 +382,7 @@
   color: #3f6212;
 }
 
-/* Resumo */
+/* Resumo e Estatísticas */
 .reportSummary {
   margin-top: 1.2rem;
 }
@@ -405,6 +422,7 @@
   color: #458B00;
 }
 
+/* Spinner de carregamento */
 .loaderContainer {
   display: flex;
   flex-direction: column;
@@ -430,7 +448,7 @@
   }
 }
 
-/* Overlay, Erro, Paginação e Footer */
+/* Elementos de UI e Overlay */
 /* === ATUALIZADO === */
 .overlay {
   position: fixed;
@@ -460,9 +478,10 @@
 }
 
 .reportFooter {
-  display: none;
+  display: none; /* Visível apenas na impressão */
 }
 
+/* Paginação */
 .paginationControls {
   display: flex;
   align-items: center;
@@ -504,7 +523,10 @@
   color: #64748b;
 }
 
-/* ESTILOS DE IMPRESSÃO */
+/* ============================================================
+   ESTILOS DE IMPRESSÃO (@media print)
+   Define o que aparece e o que some ao imprimir (CTRL+P)
+   ============================================================ */
 @media print {
 
   body,
@@ -512,15 +534,18 @@
     background: #fff !important;
   }
 
+  /* 1. Esconde TUDO da página */
   body * {
     visibility: hidden !important;
   }
 
+  /* 2. Torna visível APENAS o container do relatório */
   .reportContainer,
   .reportContainer * {
     visibility: visible !important;
   }
 
+  /* 3. Reposiciona o relatório para ocupar a folha */
   .reportContainer {
     position: absolute;
     left: 0;
@@ -531,6 +556,7 @@
     border: none;
   }
 
+  /* 4. Esconde Sidebar, Header, Filtros e Paginação */
   .sidebar,
   .header,
   .controls,
@@ -539,6 +565,7 @@
     display: none !important;
   }
 
+  /* 5. Exibe elementos exclusivos de impressão (Logo e Footer) */
   .printLogo {
     display: block !important;
   }
@@ -563,7 +590,9 @@
   }
 }
 
-/* RESPONSIVIDADE */
+/* ============================================================
+   RESPONSIVIDADE (MOBILE)
+   ============================================================ */
 @media (max-width: 48rem) {
   .sidebar {
     position: fixed;

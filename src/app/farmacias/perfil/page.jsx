@@ -1,24 +1,26 @@
-"use client";
+"use client"; // Indica que este componente roda no navegador (necessário para useState e useEffect)
 
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
-import styles from "./perfil.module.css";
-import api from "../../services/api";
-import toast, { Toaster } from "react-hot-toast";
+import styles from "./perfil.module.css"; // Importa o CSS Modular
+import api from "../../services/api"; // Configuração do Axios
+import toast, { Toaster } from "react-hot-toast"; // Biblioteca de notificações visuais
 
 export default function PerfilUsuarioPage() {
-  const [userData, setUserData] = useState(null);
-  const [loading, setLoading] = useState(true);
-  const [sidebarOpen, setSidebarOpen] = useState(false);
-  const [editing, setEditing] = useState(false);
+  // --- ESTADOS DE CONTROLE ---
+  const [userData, setUserData] = useState(null); // Armazena os dados originais vindos do banco (para cancelar edição)
+  const [loading, setLoading] = useState(true);   // Spinner de carregamento inicial
+  const [sidebarOpen, setSidebarOpen] = useState(false); // Menu mobile
+  const [editing, setEditing] = useState(false);  // Controla o modo da tela: Visualização (false) ou Edição (true)
   
-  // Estado do formulário
+  // Estado do formulário (separado do userData para permitir edição sem alterar a visualização imediatamente)
   const [formData, setFormData] = useState({
     nome: "",
     email: "",
     telefone: "",
     cnpj: "",
+    // Objeto aninhado para facilitar a manipulação do endereço
     endereco: {
       cep: "",
       rua: "",
@@ -29,56 +31,75 @@ export default function PerfilUsuarioPage() {
     },
   });
   
-  const [logoFile, setLogoFile] = useState(null);
-  const [cepLoading, setCepLoading] = useState(false);
+  // Estados para Upload de Imagem e API de CEP
+  const [logoFile, setLogoFile] = useState(null); // Armazena o arquivo de imagem selecionado
+  const [cepLoading, setCepLoading] = useState(false); // Spinner específico dentro do input de CEP
 
-  // Estados do Modal de Senha
+  // --- ESTADOS DO MODAL DE SENHA ---
   const [showPasswordModal, setShowPasswordModal] = useState(false);
-  const [passwordData, setPasswordData] = useState({ currentPassword: "", newPassword: "", confirmPassword: "" });
-  const [passwordErrors, setPasswordErrors] = useState({});
-  const [isChangingPassword, setIsChangingPassword] = useState(false);
+  const [passwordData, setPasswordData] = useState({ 
+    currentPassword: "", 
+    newPassword: "", 
+    confirmPassword: "" 
+  });
+  const [passwordErrors, setPasswordErrors] = useState({}); // Armazena erros de validação da senha
+  const [isChangingPassword, setIsChangingPassword] = useState(false); // Loading do botão de salvar senha
 
   const router = useRouter();
 
-  // --- BUSCAR DADOS ---
+  // --- BUSCA DE DADOS AO CARREGAR A PÁGINA ---
   useEffect(() => {
     const fetchUserData = async () => {
       try {
+        // 1. Validação de Segurança (Sessão)
         const userDataString = localStorage.getItem("userData");
         if (!userDataString) { router.push("/login"); return; }
 
         const userDataFromStorage = JSON.parse(userDataString);
         const farmaciaId = userDataFromStorage.farm_id;
-        if (!farmaciaId) { localStorage.clear(); router.push("/login"); return; }
+        
+        if (!farmaciaId) { 
+            localStorage.clear(); 
+            router.push("/login"); 
+            return; 
+        }
 
+        // 2. Chamada à API para pegar dados atualizados
         const response = await api.get(`/farmacias/${farmaciaId}`);
+        
         if (response.data.sucesso) {
           const apiData = response.data.dados;
 
-          // Tratamento da URL do Avatar
+          // 3. Tratamento da URL da Logo (Avatar)
+          // Garante que a URL da imagem esteja correta (caminho relativo vs absoluto)
           let fullAvatarUrl = apiData.farm_logo_url || apiData.farm_logo;
           if (fullAvatarUrl && !fullAvatarUrl.startsWith('http')) {
+            // Se a API base terminar com '/', remove para não duplicar barras
             const baseUrl = api.defaults.baseURL.endsWith('/') ? api.defaults.baseURL.slice(0, -1) : api.defaults.baseURL;
             const avatarPath = fullAvatarUrl.startsWith('/') ? fullAvatarUrl : `/${fullAvatarUrl}`;
             fullAvatarUrl = `${baseUrl}${avatarPath}`;
           }
           
-          // LÓGICA DE PARSING DO ENDEREÇO
-          // Tenta separar a string "Rua, Num - Bairro, Cidade/UF - CEP: 00000" em campos
+          // 4. LÓGICA DE "PARSING" DO ENDEREÇO (IMPORTANTE)
+          // O banco salva o endereço como uma única string: "Rua X, 123 - Bairro, Cidade/UF - CEP: 00000"
+          // Precisamos "quebrar" essa string em campos separados para preencher o formulário.
           const addressString = apiData.farm_endereco || "";
-          // Regex: Captura (Rua), (Num) - (Bairro), (Cidade)/(UF) [- CEP: (Cep)] opcional
+          
+          // Expressão Regular (Regex) para capturar as partes do endereço
+          // Explicação rápida: (.*) pega tudo até a vírgula, (.*?) pega até o traço, etc.
           const addressRegex = /^(.*),\s*(.*?)\s*-\s*(.*?),\s*(.*?)\/(.*?)(?:\s*-\s*CEP:\s*(.*))?$/;
           const match = addressString.match(addressRegex);
 
           let enderecoObj = {
             cep: "",
-            rua: addressString, // Fallback: se não der match, mostra tudo na rua
+            rua: addressString, // Se o regex falhar, coloca tudo na rua para não perder dados
             numero: "",
             bairro: "",
             cidade: "",
             estado: ""
           };
 
+          // Se a string do banco seguir o padrão esperado, preenchemos o objeto corretamente
           if (match) {
             enderecoObj = {
               rua: match[1],
@@ -90,6 +111,7 @@ export default function PerfilUsuarioPage() {
             };
           }
           
+          // Monta o objeto final formatado
           const formattedData = {
             id: apiData.farm_id,
             nome: apiData.farm_nome,
@@ -99,12 +121,13 @@ export default function PerfilUsuarioPage() {
             cnpj: apiData.farm_cnpj,
             endereco: enderecoObj,
           };
-          setUserData(formattedData);
-          setFormData(formattedData);
+          
+          setUserData(formattedData); // Dados usados para exibição (Visualização)
+          setFormData(formattedData); // Dados usados nos inputs (Edição)
         }
       } catch (error) {
-        console.error("Erro ao buscar dados da farmácia:", error);
-        toast.error("Não foi possível carregar os dados do perfil.");
+        console.error("Erro ao buscar perfil:", error);
+        toast.error("Não foi possível carregar os dados.");
       } finally {
         setLoading(false);
       }
@@ -118,27 +141,36 @@ export default function PerfilUsuarioPage() {
     router.push("/home");
   };
 
-  // --- HANDLERS DE INPUT ---
+  // --- HANDLERS DE INPUT (ATUALIZAÇÃO DO ESTADO) ---
+  
+  // Para campos de primeiro nível (nome, email, telefone)
   const handleInputChange = (e) => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
+  // Para campos aninhados dentro de 'endereco'
   const handleAddressChange = (e) => {
     const { name, value } = e.target;
-    setFormData((prev) => ({ ...prev, endereco: { ...prev.endereco, [name]: value } }));
+    setFormData((prev) => ({ 
+      ...prev, 
+      endereco: { ...prev.endereco, [name]: value } 
+    }));
   };
 
-  // --- BUSCA DE CEP ---
+  // --- INTEGRAÇÃO COM VIACEP ---
+  // Disparado no evento onBlur (quando o usuário sai do campo CEP)
   const handleCepBlur = async (e) => {
-    const cep = e.target.value.replace(/\D/g, '');
+    const cep = e.target.value.replace(/\D/g, ''); // Remove caracteres não numéricos
     if (cep.length !== 8) return;
 
     setCepLoading(true);
     try {
       const response = await fetch(`https://viacep.com.br/ws/${cep}/json/`);
       const data = await response.json();
+      
       if (!data.erro) {
+        // Preenche automaticamente os campos de endereço
         setFormData((prev) => ({
           ...prev,
           endereco: {
@@ -149,50 +181,59 @@ export default function PerfilUsuarioPage() {
             estado: data.uf
           }
         }));
+        toast.success("Endereço encontrado!");
       } else {
         toast.error("CEP não encontrado.");
       }
     } catch (error) {
-      toast.error("Não foi possível buscar o endereço. Tente novamente.");
+      toast.error("Erro ao buscar CEP.");
     } finally {
       setCepLoading(false);
     }
   };
 
+  // Handler para quando o usuário seleciona um arquivo de imagem
   const handleFileChange = (e) => {
     if (e.target.files && e.target.files[0]) {
       setLogoFile(e.target.files[0]);
     }
   };
 
-  // --- SALVAR ALTERAÇÕES ---
+  // --- SALVAR DADOS DO PERFIL ---
   const handleSave = async () => {
     try {
+      // Cria um objeto FormData (necessário para enviar arquivos + texto via HTTP)
       const payload = new FormData();
       
+      // Reconstrói a string única de endereço para salvar no banco de dados
       const { rua, numero, bairro, cidade, estado, cep } = formData.endereco;
-      // Formata a string para incluir o CEP no final, permitindo o parsing no futuro
       const enderecoCompleto = `${rua || ''}, ${numero || 'S/N'} - ${bairro || ''}, ${cidade || ''}/${estado || ''} - CEP: ${cep || ''}`;
 
+      // Adiciona os campos ao FormData
       payload.append("farm_nome", formData.nome);
       payload.append("farm_email", formData.email);
       payload.append("farm_telefone", formData.telefone);
       payload.append("farm_cnpj", formData.cnpj);
       payload.append("farm_endereco", enderecoCompleto);
       
+      // Só adiciona a logo se um novo arquivo foi selecionado
       if (logoFile) {
         payload.append("farm_logo", logoFile);
       }
 
+      // Envia PUT para atualizar
       const response = await api.put(`/farmacias/${userData.id}`, payload);
       
       if (response.data.sucesso) {
         toast.success("Perfil atualizado com sucesso!");
 
+        // Atualiza o estado local com os novos dados para refletir na tela imediatamente
         let updatedUserData = { ...userData, ...formData };
         
+        // Se o backend retornou a nova URL da logo, atualizamos o estado
         if (response.data.dados?.farm_logo_url) {
           let newAvatarUrl = response.data.dados.farm_logo_url;
+          // Garante URL absoluta para exibição
           if (!newAvatarUrl.startsWith('http')) {
             const baseUrl = api.defaults.baseURL.endsWith('/') ? api.defaults.baseURL.slice(0, -1) : api.defaults.baseURL;
             newAvatarUrl = `${baseUrl}${newAvatarUrl.startsWith('/') ? '' : '/'}${newAvatarUrl}`;
@@ -200,6 +241,7 @@ export default function PerfilUsuarioPage() {
           updatedUserData.avatar = newAvatarUrl;
         }
 
+        // Atualiza também o LocalStorage para manter consistência no header/sidebar
         const storedData = JSON.parse(localStorage.getItem("userData") || "{}");
         const newStoredData = { 
             ...storedData, 
@@ -209,37 +251,42 @@ export default function PerfilUsuarioPage() {
         };
         localStorage.setItem("userData", JSON.stringify(newStoredData));
 
-        setUserData(updatedUserData);
-        setFormData(updatedUserData);
-        setEditing(false);
-        setLogoFile(null);
+        setUserData(updatedUserData); // Atualiza visualização
+        setFormData(updatedUserData); // Sincroniza form
+        setEditing(false); // Sai do modo edição
+        setLogoFile(null); // Limpa arquivo temporário
       } else {
-        toast.error("Erro ao atualizar o perfil: " + response.data.mensagem);
+        toast.error("Erro ao atualizar: " + response.data.mensagem);
       }
     } catch (error) {
       toast.error("Erro ao salvar: " + (error.response?.data?.mensagem || error.message));
     }
   };
 
+  // Cancela edição e reverte os dados
   const handleCancel = () => {
-    setFormData(userData);
+    setFormData(userData); // Volta para os dados originais (userData)
     setEditing(false);
     setLogoFile(null);
   };
 
-  // --- Funções do Modal de Senha ---
+  // --- LÓGICA DO MODAL DE SENHA ---
   const handlePasswordChange = (e) => {
     const { name, value } = e.target;
     setPasswordData((prev) => ({ ...prev, [name]: value }));
   };
 
+  // Validação simples dos campos de senha
   const validatePasswordForm = () => {
     const errors = {};
     if (!passwordData.currentPassword) errors.currentPassword = "Senha atual é obrigatória";
+    
     if (!passwordData.newPassword) errors.newPassword = "Nova senha é obrigatória";
-    else if (passwordData.newPassword.length < 6) errors.newPassword = "A senha deve ter pelo menos 6 caracteres";
-    if (!passwordData.confirmPassword) errors.confirmPassword = "Confirmação de senha é obrigatória";
+    else if (passwordData.newPassword.length < 6) errors.newPassword = "A senha deve ter no mínimo 6 caracteres";
+    
+    if (!passwordData.confirmPassword) errors.confirmPassword = "Confirmação é obrigatória";
     else if (passwordData.newPassword !== passwordData.confirmPassword) errors.confirmPassword = "As senhas não coincidem";
+    
     setPasswordErrors(errors);
     return Object.keys(errors).length === 0;
   };
@@ -247,17 +294,21 @@ export default function PerfilUsuarioPage() {
   const handlePasswordSubmit = async (e) => {
     e.preventDefault();
     if (!validatePasswordForm()) return;
+    
     setIsChangingPassword(true);
     setPasswordErrors({});
+
     try {
+      // Rota específica para troca de senha
       const response = await api.put(`/farmacias/${userData.id}/senha`, {
         senha_atual: passwordData.currentPassword,
         nova_senha: passwordData.newPassword
       });
+
       if (response.data.sucesso) {
         toast.success("Senha alterada com sucesso!");
         setPasswordData({ currentPassword: "", newPassword: "", confirmPassword: "" });
-        setTimeout(() => { closePasswordModal(); }, 2000);
+        setTimeout(() => { closePasswordModal(); }, 1500);
       } else {
         toast.error(response.data.mensagem || "Não foi possível alterar a senha.");
       }
@@ -274,20 +325,14 @@ export default function PerfilUsuarioPage() {
     setPasswordErrors({});
   };
 
-  if (loading) { return (<div className={styles.loaderContainer}><div className={styles.spinner}></div><p>Carregando perfil...</p></div>); }
-  if (!userData) { return (<div className={styles.loaderContainer}><p>Não foi possível carregar os dados.</p></div>); }
+  // --- RENDERIZAÇÃO (JSX) ---
+  
+  if (loading) return <div className={styles.loaderContainer}><div className={styles.spinner}></div><p>Carregando perfil...</p></div>;
+  if (!userData) return <div className={styles.loaderContainer}><p>Erro ao carregar dados.</p></div>;
 
   return (
     <div className={styles.dashboard}>
-      <Toaster
-        position="top-right"
-        toastOptions={{
-          duration: 4000,
-          style: { background: '#333', color: '#fff', fontSize: '1.5rem', padding: '1.6rem' },
-          success: { style: { background: '#458B00' } },
-          error: { style: { background: '#dc2626' } },
-        }}
-      />
+      <Toaster position="top-right" />
 
       <header className={styles.header}>
         <div className={styles.headerLeft}>
@@ -297,7 +342,7 @@ export default function PerfilUsuarioPage() {
       </header>
       
       <div className={styles.contentWrapper}>
-        {/* SIDEBAR */}
+        {/* SIDEBAR (Estrutura padrão) */}
         <aside className={`${styles.sidebar} ${sidebarOpen ? styles.sidebarOpen : ""}`}>
           <div className={styles.sidebarHeader}>
             <div className={styles.logoContainer}>
@@ -317,17 +362,23 @@ export default function PerfilUsuarioPage() {
         {sidebarOpen && (<div className={styles.overlay} onClick={() => setSidebarOpen(false)} />)}
         
         <main className={styles.mainContent}>
+          {/* CABEÇALHO DO PERFIL COM AVATAR */}
           <div className={styles.profileHeader}>
             <div className={styles.avatarSection}>
                 <div className={styles.avatarLarge}>
+                    {/* Condicional: Mostra preview local se estiver editando, ou imagem do banco */}
                     {editing && logoFile ? (
-                        <img src={URL.createObjectURL(logoFile)} alt="Nova Logo Preview" className={styles.avatarImage} />
+                        <img src={URL.createObjectURL(logoFile)} alt="Preview" className={styles.avatarImage} />
                     ) : (
-                        userData.avatar ? (<img src={userData.avatar} alt="Logo da Farmácia" className={styles.avatarImage} />) : (<span>{userData.nome ? userData.nome[0] : 'P'}</span>)
+                        userData.avatar ? (<img src={userData.avatar} alt="Logo" className={styles.avatarImage} />) : (<span>{userData.nome?.[0]}</span>)
                     )}
                 </div>
+                {/* Botão de troca de logo (disfarçado de label para input file) */}
                 {editing && (
-                    <label htmlFor="logo-upload" className={styles.changeAvatarBtn}>Trocar Logo<input type="file" id="logo-upload" accept="image/*" onChange={handleFileChange} style={{ display: 'none' }} /></label>
+                    <label htmlFor="logo-upload" className={styles.changeAvatarBtn}>
+                        Trocar Logo
+                        <input type="file" id="logo-upload" accept="image/*" onChange={handleFileChange} style={{ display: 'none' }} />
+                    </label>
                 )}
                 <h2>{userData.nome}</h2>
             </div>
@@ -336,6 +387,7 @@ export default function PerfilUsuarioPage() {
           <div className={styles.profileContent}>
             <div className={styles.sectionHeader}>
                 <h3>Informações da Farmácia</h3>
+                {/* Botões condicionais: Editar OU Salvar/Cancelar */}
                 {!editing ? (
                     <button className={styles.actionButton} onClick={() => setEditing(true)}>Editar Perfil</button>
                 ) : (
@@ -346,92 +398,68 @@ export default function PerfilUsuarioPage() {
                 )}
             </div>
             
+            {/* FORMULÁRIO DE DADOS GERAIS */}
             <div className={styles.formGrid}>
                 <div className={styles.formGroup}>
                     <label>Nome da Farmácia</label>
-                    {editing ? (<input className={styles.modernInput} type="text" name="nome" value={formData.nome || ''} onChange={handleInputChange} />) : (<p>{userData.nome}</p>)}
+                    {/* Se editing=true, renderiza Input. Se false, renderiza Texto <p> */}
+                    {editing ? (<input className={styles.modernInput} type="text" name="nome" value={formData.nome} onChange={handleInputChange} />) : (<p>{userData.nome}</p>)}
                 </div>
                 <div className={styles.formGroup}>
                     <label>Email de Contato</label>
-                    {editing ? (<input className={styles.modernInput} type="email" name="email" value={formData.email || ''} onChange={handleInputChange} />) : (<p>{userData.email}</p>)}
+                    {editing ? (<input className={styles.modernInput} type="email" name="email" value={formData.email} onChange={handleInputChange} />) : (<p>{userData.email}</p>)}
                 </div>
                 <div className={styles.formGroup}>
                     <label>CNPJ</label>
-                    {editing ? (
-                        <input className={styles.modernInput} type="text" name="cnpj" value={formData.cnpj || ''} onChange={handleInputChange} />
-                    ) : (
-                        <p>{userData.cnpj}</p>
-                    )}
+                    {editing ? (<input className={styles.modernInput} type="text" name="cnpj" value={formData.cnpj} onChange={handleInputChange} />) : (<p>{userData.cnpj}</p>)}
                 </div>
                 <div className={styles.formGroup}>
                     <label>Telefone</label>
-                    {editing ? (<input className={styles.modernInput} type="tel" name="telefone" value={formData.telefone || ''} onChange={handleInputChange} />) : (<p>{userData.telefone}</p>)}
+                    {editing ? (<input className={styles.modernInput} type="tel" name="telefone" value={formData.telefone} onChange={handleInputChange} />) : (<p>{userData.telefone}</p>)}
                 </div>
             </div>
             
             <div className={styles.sectionHeader}><h3>Endereço</h3></div>
             
-            {/* ÁREA DO ENDEREÇO: AGORA MOSTRA TUDO SEJA EDITANDO OU VISUALIZANDO */}
-            {editing ? (
-                <div className={styles.addressGrid}>
-                    <div className={`${styles.formGroup} ${styles.cepGroup}`}>
-                        <label>CEP</label>
-                        <div className={styles.cepInputContainer}>
-                            <input className={styles.modernInput} type="text" name="cep" value={formData.endereco.cep || ''} onChange={handleAddressChange} onBlur={handleCepBlur} placeholder="00000-000" />
-                            {cepLoading && <div className={styles.cepSpinner}></div>}
-                        </div>
-                    </div>
-                    <div className={`${styles.formGroup} ${styles.ruaGroup}`}>
-                        <label>Rua / Logradouro</label>
-                        <input className={styles.modernInput} type="text" name="rua" value={formData.endereco.rua || ''} onChange={handleAddressChange} />
-                    </div>
-                    <div className={`${styles.formGroup} ${styles.numeroGroup}`}>
-                        <label>Número</label>
-                        <input className={styles.modernInput} type="text" name="numero" value={formData.endereco.numero || ''} onChange={handleAddressChange} />
-                    </div>
-                    <div className={`${styles.formGroup} ${styles.bairroGroup}`}>
-                        <label>Bairro</label>
-                        <input className={styles.modernInput} type="text" name="bairro" value={formData.endereco.bairro || ''} onChange={handleAddressChange} />
-                    </div>
-                    <div className={`${styles.formGroup} ${styles.cidadeGroup}`}>
-                        <label>Cidade</label>
-                        <input className={styles.modernInput} type="text" name="cidade" value={formData.endereco.cidade || ''} onChange={handleAddressChange} />
-                    </div>
-                    <div className={`${styles.formGroup} ${styles.estadoGroup}`}>
-                        <label>Estado</label>
-                        <input className={styles.modernInput} type="text" name="estado" value={formData.endereco.estado || ''} onChange={handleAddressChange} />
-                    </div>
+            {/* FORMULÁRIO DE ENDEREÇO */}
+            <div className={styles.addressGrid}>
+                <div className={`${styles.formGroup} ${styles.cepGroup}`}>
+                    <label>CEP</label>
+                    {editing ? (
+                      <div className={styles.cepInputContainer}>
+                          <input className={styles.modernInput} type="text" name="cep" value={formData.endereco.cep} onChange={handleAddressChange} onBlur={handleCepBlur} placeholder="00000-000" />
+                          {cepLoading && <div className={styles.cepSpinner}></div>}
+                      </div>
+                    ) : (<p>{userData.endereco.cep || '-'}</p>)}
                 </div>
-            ) : (
-                // MUDANÇA AQUI: Visualização expandida (Grid) ao invés de um único <p>
-                <div className={styles.addressGrid}>
-                    <div className={`${styles.formGroup} ${styles.cepGroup}`}>
-                        <label>CEP</label>
-                        <p>{userData.endereco.cep || '-'}</p>
-                    </div>
-                    <div className={`${styles.formGroup} ${styles.ruaGroup}`}>
-                        <label>Rua / Logradouro</label>
-                        <p>{userData.endereco.rua || '-'}</p>
-                    </div>
-                    <div className={`${styles.formGroup} ${styles.numeroGroup}`}>
-                        <label>Número</label>
-                        <p>{userData.endereco.numero || '-'}</p>
-                    </div>
-                    <div className={`${styles.formGroup} ${styles.bairroGroup}`}>
-                        <label>Bairro</label>
-                        <p>{userData.endereco.bairro || '-'}</p>
-                    </div>
-                    <div className={`${styles.formGroup} ${styles.cidadeGroup}`}>
-                        <label>Cidade</label>
-                        <p>{userData.endereco.cidade || '-'}</p>
-                    </div>
-                    <div className={`${styles.formGroup} ${styles.estadoGroup}`}>
-                        <label>Estado</label>
-                        <p>{userData.endereco.estado || '-'}</p>
-                    </div>
+                
+                <div className={`${styles.formGroup} ${styles.ruaGroup}`}>
+                    <label>Rua / Logradouro</label>
+                    {editing ? (<input className={styles.modernInput} type="text" name="rua" value={formData.endereco.rua} onChange={handleAddressChange} />) : (<p>{userData.endereco.rua || '-'}</p>)}
                 </div>
-            )}
+                
+                <div className={`${styles.formGroup} ${styles.numeroGroup}`}>
+                    <label>Número</label>
+                    {editing ? (<input className={styles.modernInput} type="text" name="numero" value={formData.endereco.numero} onChange={handleAddressChange} />) : (<p>{userData.endereco.numero || '-'}</p>)}
+                </div>
+                
+                <div className={`${styles.formGroup} ${styles.bairroGroup}`}>
+                    <label>Bairro</label>
+                    {editing ? (<input className={styles.modernInput} type="text" name="bairro" value={formData.endereco.bairro} onChange={handleAddressChange} />) : (<p>{userData.endereco.bairro || '-'}</p>)}
+                </div>
+                
+                <div className={`${styles.formGroup} ${styles.cidadeGroup}`}>
+                    <label>Cidade</label>
+                    {editing ? (<input className={styles.modernInput} type="text" name="cidade" value={formData.endereco.cidade} onChange={handleAddressChange} />) : (<p>{userData.endereco.cidade || '-'}</p>)}
+                </div>
+                
+                <div className={`${styles.formGroup} ${styles.estadoGroup}`}>
+                    <label>Estado</label>
+                    {editing ? (<input className={styles.modernInput} type="text" name="estado" value={formData.endereco.estado} onChange={handleAddressChange} />) : (<p>{userData.endereco.estado || '-'}</p>)}
+                </div>
+            </div>
             
+            {/* Botão para alterar senha */}
             <div className={styles.sectionHeader} style={{ marginTop: '3.2rem' }}>
                 <button className={styles.actionButtonAlt} onClick={() => setShowPasswordModal(true)}>Alterar Senha</button>
             </div>
@@ -439,7 +467,7 @@ export default function PerfilUsuarioPage() {
         </main>
       </div>
 
-      {/* MODAL DE SENHA */}
+      {/* MODAL DE ALTERAÇÃO DE SENHA */}
       {showPasswordModal && (
         <div className={styles.modalOverlay}>
           <div className={styles.modal}>
@@ -447,26 +475,52 @@ export default function PerfilUsuarioPage() {
                 <h2>Alterar Senha</h2>
                 <button className={styles.modalClose} onClick={closePasswordModal}>✕</button>
             </div>
+            
             <form onSubmit={handlePasswordSubmit} className={styles.modalForm}>
               <div className={styles.formGroup}>
                   <label htmlFor="currentPassword">Senha Atual</label>
-                  <input className={styles.modernInput} type="password" id="currentPassword" name="currentPassword" value={passwordData.currentPassword} onChange={handlePasswordChange} />
+                  <input 
+                    className={styles.modernInput} 
+                    type="password" 
+                    id="currentPassword" 
+                    name="currentPassword" 
+                    value={passwordData.currentPassword} 
+                    onChange={handlePasswordChange} 
+                  />
                   {passwordErrors.currentPassword && (<span className={styles.errorText}>{passwordErrors.currentPassword}</span>)}
               </div>
+              
               <div className={styles.formGroup}>
                   <label htmlFor="newPassword">Nova Senha</label>
-                  <input className={styles.modernInput} type="password" id="newPassword" name="newPassword" value={passwordData.newPassword} onChange={handlePasswordChange} />
+                  <input 
+                    className={styles.modernInput} 
+                    type="password" 
+                    id="newPassword" 
+                    name="newPassword" 
+                    value={passwordData.newPassword} 
+                    onChange={handlePasswordChange} 
+                  />
                   {passwordErrors.newPassword && (<span className={styles.errorText}>{passwordErrors.newPassword}</span>)}
               </div>
+              
               <div className={styles.formGroup}>
                   <label htmlFor="confirmPassword">Confirmar Nova Senha</label>
-                  <input className={styles.modernInput} type="password" id="confirmPassword" name="confirmPassword" value={passwordData.confirmPassword} onChange={handlePasswordChange} />
+                  <input 
+                    className={styles.modernInput} 
+                    type="password" 
+                    id="confirmPassword" 
+                    name="confirmPassword" 
+                    value={passwordData.confirmPassword} 
+                    onChange={handlePasswordChange} 
+                  />
                   {passwordErrors.confirmPassword && (<span className={styles.errorText}>{passwordErrors.confirmPassword}</span>)}
               </div>
               
               <div className={styles.modalActions}>
                   <button type="button" className={styles.cancelButton} onClick={closePasswordModal}>Cancelar</button>
-                  <button type="submit" className={styles.saveButton} disabled={isChangingPassword}>{isChangingPassword ? 'Alterando...' : 'Alterar Senha'}</button>
+                  <button type="submit" className={styles.saveButton} disabled={isChangingPassword}>
+                    {isChangingPassword ? 'Alterando...' : 'Alterar Senha'}
+                  </button>
               </div>
             </form>
           </div>

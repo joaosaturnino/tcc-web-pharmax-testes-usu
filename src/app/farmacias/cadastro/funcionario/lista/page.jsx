@@ -1,18 +1,24 @@
-"use client";
+"use client"; // Diretiva obrigatória para componentes que usam hooks (useState, useEffect) no Next.js App Router
 
 import { useState, useEffect, useMemo } from "react";
-import { useRouter } from "next/navigation";
+import { useRouter } from "next/navigation"; // Hook de navegação
 import Link from "next/link";
-import useSWR from "swr";
-import { Toaster, toast } from "react-hot-toast";
-import styles from "./page.module.css";
-import { MdEdit, MdDelete, MdError } from "react-icons/md";
-import api from "../../../../services/api";
-import { useDebounce } from "../../../../hooks/useDebounce";
+import useSWR from "swr"; // Biblioteca poderosa para buscar dados (Data Fetching) com cache e revalidação
+import { Toaster, toast } from "react-hot-toast"; // Biblioteca de notificações visuais
+import styles from "./page.module.css"; // Importação do CSS Modular
 
+// Ícones da interface
+import { MdEdit, MdDelete, MdError, MdSearch, MdPersonAdd } from "react-icons/md";
+
+// Serviços e Hooks personalizados
+import api from "../../../../services/api"; 
+import { useDebounce } from "../../../../hooks/useDebounce"; 
+
+// Função 'fetcher': É usada pelo SWR para saber como buscar os dados. 
+// Aqui, ela usa nossa instância do Axios ('api') para fazer o GET.
 const fetcher = (url) => api.get(url).then((res) => res.data);
 
-// Mapeamento de classes
+// Objeto auxiliar para mapear o texto do 'nível de acesso' para a classe CSS correspondente (cores das badges)
 const badgeClasses = {
   administrador: styles.administrador,
   farmacêutico: styles.farmaceutico,
@@ -21,21 +27,30 @@ const badgeClasses = {
 
 export default function ListaFuncionariosPage() {
   const router = useRouter();
-  const [sidebarOpen, setSidebarOpen] = useState(false);
-  const [filtro, setFiltro] = useState("");
-  const [farmaciaInfo, setFarmaciaInfo] = useState(null);
-  const [farmaciaId, setFarmaciaId] = useState(null);
+  
+  // --- ESTADOS (State) ---
+  const [sidebarOpen, setSidebarOpen] = useState(false); // Controla se o menu lateral está aberto (mobile)
+  const [filtro, setFiltro] = useState(""); // Armazena o texto digitado na busca
+  const [farmaciaInfo, setFarmaciaInfo] = useState(null); // Dados da farmácia logada (para exibir no menu)
+  const [farmaciaId, setFarmaciaId] = useState(null); // ID usado para fazer as requisições à API
 
+  // --- DEBOUNCE ---
+  // O hook useDebounce atrasa a atualização do valor 'filtro' em 300ms.
+  // Isso evita que a lista seja filtrada a cada letra digitada, melhorando a performance.
   const debouncedFiltro = useDebounce(filtro, 300);
 
+  // --- EFEITO: VERIFICAÇÃO DE AUTENTICAÇÃO ---
+  // Roda apenas uma vez ao carregar a página.
   useEffect(() => {
     try {
       const userDataString = localStorage.getItem("userData");
       if (userDataString) {
         const userData = JSON.parse(userDataString);
         setFarmaciaInfo(userData);
+        // Define o ID da farmácia. O SWR precisa desse ID para disparar a busca.
         setFarmaciaId(userData.farm_id);
       } else {
+        // Se não houver dados no localStorage, força o logout
         toast.error("Usuário não autenticado. Faça o login.");
         router.push("/home");
       }
@@ -45,19 +60,25 @@ export default function ListaFuncionariosPage() {
     }
   }, [router]);
 
+  // --- SWR: DATA FETCHING INTELIGENTE ---
+  // 'apiUrl' é a chave do SWR. Se for null (farmaciaId ainda não carregou), o SWR não faz a requisição (Conditional Fetching).
   const apiUrl = farmaciaId ? `/funcionario?farmacia_id=${farmaciaId}` : null;
+  
   const {
-    data: apiResponse,
-    error: swrError,
-    isLoading,
-    mutate: refetchFuncionarios
+    data: apiResponse, // Os dados retornados pela API
+    error: swrError,   // Erro, se houver
+    isLoading,         // Verdadeiro enquanto está carregando
+    mutate: refetchFuncionarios // Função para forçar a atualização da lista manualmente (útil após deletar)
   } = useSWR(apiUrl, fetcher, {
-    revalidateOnFocus: true,
+    revalidateOnFocus: true, // Recarrega os dados se o usuário trocar de aba e voltar
   });
 
+  // --- MEMOIZAÇÃO: PROCESSAMENTO DE DADOS ---
+  // useMemo garante que essa transformação de dados só ocorra quando 'apiResponse' mudar.
   const funcionarios = useMemo(() => {
     if (!apiResponse?.sucesso) return [];
 
+    // Transforma os dados brutos do banco em um formato mais amigável para o Frontend
     return apiResponse.dados.map((func) => ({
       id: func.func_id,
       nome: func.func_nome,
@@ -68,14 +89,19 @@ export default function ListaFuncionariosPage() {
       endereco: func.func_endereco,
       usuario: func.func_usuario,
       nivelAcesso: func.func_nivel,
+      // Converte string de data para objeto Date para formatação correta na tabela
       dataCadastro: func.func_data_cadastro
         ? new Date(func.func_data_cadastro)
         : null,
     }));
   }, [apiResponse]);
 
+  // --- MEMOIZAÇÃO: FILTRAGEM ---
+  // Filtra a lista de funcionários com base no texto digitado (debouncedFiltro).
   const funcionariosFiltrados = useMemo(() => {
     const filtroLower = debouncedFiltro.toLowerCase();
+    
+    // Se não houver filtro, retorna a lista completa
     return funcionarios.filter(
       (funcionario) =>
         funcionario.nome.toLowerCase().includes(filtroLower) ||
@@ -85,10 +111,13 @@ export default function ListaFuncionariosPage() {
     );
   }, [funcionarios, debouncedFiltro]);
 
+  // Lógica para extrair mensagem de erro (seja da API ou da rede)
   const errorMessage =
     (apiResponse && !apiResponse.sucesso ? apiResponse.mensagem : null) ||
     swrError?.response?.data?.mensagem ||
     swrError?.message;
+
+  // --- HANDLERS (Funções de Ação) ---
 
   const handleEditar = (id) => {
     router.push(`/farmacias/cadastro/funcionario/editar/${id}`);
@@ -98,18 +127,20 @@ export default function ListaFuncionariosPage() {
     router.push("/farmacias/cadastro/funcionario");
   };
 
-  // === MUDANÇA 1: Função que executa a exclusão após o "Sim" ===
+  // --- LÓGICA DE EXCLUSÃO: PARTE 2 (EXECUÇÃO) ---
+  // Esta função é chamada apenas quando o usuário clica em "Sim" no modal.
   const confirmarExclusao = async (funcionario, toastId) => {
-    toast.dismiss(toastId); // Fecha a pergunta
+    toast.dismiss(toastId); // Fecha o modal de pergunta
 
     try {
+      // Chama a API passando o ID do funcionário na URL e o ID da farmácia como parâmetro de segurança
       const response = await api.delete(`/funcionario/${funcionario.id}`, {
         params: { farmacia_id: farmaciaId },
       });
 
       if (response.data.sucesso) {
         toast.success(`Funcionário ${funcionario.nome} excluído com sucesso!`);
-        refetchFuncionarios();
+        refetchFuncionarios(); // Atualiza a lista na tela imediatamente sem recarregar a página
       } else {
         toast.error(response.data.mensagem || "Erro ao excluir funcionário.");
       }
@@ -119,47 +150,38 @@ export default function ListaFuncionariosPage() {
     }
   };
 
-  // === MUDANÇA 2: Exibe o Toast customizado (Substitui window.confirm e toast.promise direto) ===
+  // --- LÓGICA DE EXCLUSÃO: PARTE 1 (CONFIRMAÇÃO VISUAL) ---
+  // Substitui o window.confirm nativo por um Toast customizado e bonito.
   const handleExcluir = (funcionario) => {
+    // Regra de Negócio: Administradores não podem ser apagados por segurança básica
     if (funcionario.nivelAcesso === "Administrador") {
       toast.error("Não é possível excluir um usuário Administrador.");
       return;
     }
 
+    // Exibe o Toast customizado (funciona como um Modal pequeno)
     toast((t) => (
       <div style={{ display: 'flex', flexDirection: 'column', gap: '12px', alignItems: 'center', minWidth: '280px' }}>
         <span style={{ fontSize: '1.4rem', color: '#333', textAlign: 'center', lineHeight: '1.5' }}>
           Tem certeza que deseja excluir <br /> <strong>{funcionario.nome}</strong>?
         </span>
         <div style={{ display: 'flex', gap: '12px', width: '100%', justifyContent: 'center', marginTop: '8px' }}>
+          {/* Botão Cancelar: Apenas fecha o toast */}
           <button
             onClick={() => toast.dismiss(t.id)}
             style={{
-              padding: '8px 16px',
-              backgroundColor: '#e5e7eb',
-              color: '#374151',
-              border: 'none',
-              borderRadius: '6px',
-              cursor: 'pointer',
-              fontSize: '1.3rem',
-              fontWeight: '600',
-              flex: 1
+              padding: '8px 16px', backgroundColor: '#e5e7eb', color: '#374151',
+              border: 'none', borderRadius: '6px', cursor: 'pointer', fontSize: '1.3rem', fontWeight: '600', flex: 1
             }}
           >
             Cancelar
           </button>
+          {/* Botão Confirmar: Chama a função que realmente apaga */}
           <button
             onClick={() => confirmarExclusao(funcionario, t.id)}
             style={{
-              padding: '8px 16px',
-              backgroundColor: '#dc2626',
-              color: 'white',
-              border: 'none',
-              borderRadius: '6px',
-              cursor: 'pointer',
-              fontSize: '1.3rem',
-              fontWeight: '600',
-              flex: 1
+              padding: '8px 16px', backgroundColor: '#dc2626', color: 'white',
+              border: 'none', borderRadius: '6px', cursor: 'pointer', fontSize: '1.3rem', fontWeight: '600', flex: 1
             }}
           >
             Sim, excluir
@@ -167,13 +189,9 @@ export default function ListaFuncionariosPage() {
         </div>
       </div>
     ), {
-      duration: Infinity,
+      duration: Infinity, // Não some sozinho, obriga o usuário a clicar
       style: {
-        padding: '20px',
-        background: '#fff',
-        boxShadow: '0 10px 25px rgba(0,0,0,0.15)',
-        borderRadius: '12px',
-        border: '1px solid #e5e7eb'
+        padding: '20px', background: '#fff', boxShadow: '0 10px 25px rgba(0,0,0,0.15)', borderRadius: '12px', border: '1px solid #e5e7eb'
       }
     });
   };
@@ -184,6 +202,7 @@ export default function ListaFuncionariosPage() {
     router.push("/home");
   };
 
+  // Gera uma cor de fundo baseada no nome para o avatar (estética)
   const getAvatarColor = (nome) => {
     const colors = ["#3498db", "#2ecc71", "#e74c3c", "#f39c12", "#9b59b6", "#1abc9c", "#d35400"];
     const index = (nome.charCodeAt(0) + (nome.length || 0)) % colors.length;
@@ -192,44 +211,27 @@ export default function ListaFuncionariosPage() {
 
   return (
     <div className={styles.dashboard}>
-      {/* === MUDANÇA 3: Toaster Padronizado === */}
+      {/* Configuração global das notificações (Toasts) */}
       <Toaster
         position="top-right"
         toastOptions={{
           duration: 4000,
-          style: {
-            background: '#333',
-            color: '#fff',
-            fontSize: '1.5rem',
-            padding: '1.6rem',
-          },
-          success: {
-            style: {
-              background: '#458B00',
-            },
-          },
-          error: {
-            style: {
-              background: '#dc2626',
-            },
-          },
+          style: { background: '#333', color: '#fff', fontSize: '1.5rem', padding: '1.6rem' },
+          success: { style: { background: '#458B00' } },
+          error: { style: { background: '#dc2626' } },
         }}
       />
 
+      {/* HEADER */}
       <header className={styles.header}>
         <div className={styles.headerLeft}>
-          <button
-            className={styles.menuToggle}
-            onClick={() => setSidebarOpen(!sidebarOpen)}
-            aria-label="Abrir menu"
-          >
-            ☰
-          </button>
+          <button className={styles.menuToggle} onClick={() => setSidebarOpen(!sidebarOpen)} aria-label="Abrir menu">☰</button>
           <h1 className={styles.title}>Lista de Funcionários</h1>
         </div>
       </header>
 
       <div className={styles.contentWrapper}>
+        {/* SIDEBAR (Menu Lateral) */}
         <aside className={`${styles.sidebar} ${sidebarOpen ? styles.sidebarOpen : ""}`}>
           <div className={styles.sidebarHeader}>
             <div className={styles.logoContainer}>
@@ -238,13 +240,10 @@ export default function ListaFuncionariosPage() {
               )}
               <span className={styles.logoText}>{farmaciaInfo?.farm_nome || "Pharma-X"}</span>
             </div>
-            <button
-              className={styles.sidebarClose}
-              onClick={() => setSidebarOpen(false)}
-              aria-label="Fechar menu"
-            >×</button>
+            <button className={styles.sidebarClose} onClick={() => setSidebarOpen(false)} aria-label="Fechar menu">×</button>
           </div>
           <nav className={styles.nav}>
+            {/* Links de Navegação */}
             <div className={styles.navSection}><p className={styles.navLabel}>Principal</p><Link href="/farmacias/favoritos" className={styles.navLink}><span className={styles.navText}>Favoritos</span></Link><Link href="/farmacias/produtos/medicamentos" className={styles.navLink}><span className={styles.navText}>Medicamentos</span></Link></div>
             <div className={styles.navSection}><p className={styles.navLabel}>Gestão</p><Link href="/farmacias/cadastro/funcionario/lista" className={`${styles.navLink} ${styles.active}`}><span className={styles.navText}>Funcionários</span></Link><Link href="/farmacias/laboratorio/lista" className={styles.navLink}><span className={styles.navText}>Laboratórios</span></Link></div>
             <div className={styles.navSection}><p className={styles.navLabel}>Relatórios</p><Link href="/farmacias/relatorios/favoritos" className={styles.navLink}><span className={styles.navText}>Medicamentos Favoritos</span></Link><Link href="/farmacias/relatorios/funcionarios" className={styles.navLink}><span className={styles.navText}>Relatório de Funcionarios</span></Link><Link href="/farmacias/relatorios/laboratorios" className={styles.navLink}><span className={styles.navText}>Relatório de Laboratorios</span></Link></div>
@@ -252,10 +251,14 @@ export default function ListaFuncionariosPage() {
           </nav>
         </aside>
 
+        {/* Overlay para fechar o menu no mobile */}
         {sidebarOpen && (<div className={styles.overlay} onClick={() => setSidebarOpen(false)} />)}
 
+        {/* CONTEÚDO PRINCIPAL */}
         <main className={styles.mainContent}>
           <div className={styles.contentContainer}>
+            
+            {/* Exibição de Erros Críticos */}
             {errorMessage && (
               <div className={styles.errorMessage}>
                 <MdError size={20} />
@@ -263,6 +266,7 @@ export default function ListaFuncionariosPage() {
               </div>
             )}
 
+            {/* Cabeçalho da Lista + Botão Novo */}
             <div className={styles.listaHeader}>
               <div>
                 <h2>Funcionários Cadastrados</h2>
@@ -271,13 +275,14 @@ export default function ListaFuncionariosPage() {
               <button
                 className={styles.actionButton}
                 onClick={handleNovoFuncionario}
-                disabled={isLoading}
+                disabled={isLoading} // Desabilita enquanto carrega
               >
                 <span>+</span>
                 Novo Funcionário
               </button>
             </div>
 
+            {/* Campo de Filtro */}
             <div className={styles.filtroContainer}>
               <input
                 type="text"
@@ -289,6 +294,7 @@ export default function ListaFuncionariosPage() {
               />
             </div>
 
+            {/* Tabela de Dados */}
             <div className={styles.tableContainer}>
               <table className={styles.funcionariosTable}>
                 <thead>
@@ -302,6 +308,7 @@ export default function ListaFuncionariosPage() {
                   </tr>
                 </thead>
                 <tbody>
+                  {/* Estado de Loading */}
                   {isLoading ? (
                     <tr>
                       <td colSpan="6" className={styles.loadingRow}>
@@ -309,6 +316,7 @@ export default function ListaFuncionariosPage() {
                       </td>
                     </tr>
                   ) : funcionariosFiltrados.length > 0 ? (
+                    // Renderização da Lista Filtrada
                     funcionariosFiltrados.map((funcionario) => (
                       <tr key={funcionario.id}>
                         <td data-label="Nome">
@@ -379,10 +387,11 @@ export default function ListaFuncionariosPage() {
                       </tr>
                     ))
                   ) : (
+                    // Estado Vazio
                     <tr>
                       <td colSpan="6" className={styles.semRegistros}>
                         {filtro
-                          ? "Nenhum resultado"
+                          ? "Nenhum resultado para sua busca"
                           : "Nenhum funcionário cadastrado"}
                       </td>
                     </tr>
@@ -391,6 +400,7 @@ export default function ListaFuncionariosPage() {
               </table>
             </div>
 
+            {/* Rodapé da Lista */}
             <div className={styles.listaFooter}>
               <div className={styles.totalRegistros}>
                 Total: {funcionariosFiltrados.length} funcionário(s)

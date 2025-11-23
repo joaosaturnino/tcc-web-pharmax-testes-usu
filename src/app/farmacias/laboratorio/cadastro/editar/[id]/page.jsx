@@ -1,20 +1,20 @@
-"use client";
+"use client"; // Indica componente Client-Side (React + Hooks)
 
 import { useState, useEffect } from "react";
-import { useRouter, useParams } from "next/navigation";
+import { useRouter, useParams } from "next/navigation"; // useParams pega o ID da URL
 import Link from "next/link";
 import styles from "./edita.module.css";
 import api from "../../../../../services/api";
-// === MUDANÇA 1: Import do Toast ===
-import toast, { Toaster } from "react-hot-toast";
+import toast, { Toaster } from "react-hot-toast"; // Biblioteca de notificações
 
 export default function EditarLaboratorioPage() {
   const router = useRouter();
   const params = useParams();
-  const { id: lab_id } = params;
+  const { id: lab_id } = params; // Extrai o ID da URL (ex: /editar/15)
 
+  // --- ESTADOS ---
   const [sidebarOpen, setSidebarOpen] = useState(false);
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(true); // Controla o spinner
   const [farmaciaInfo, setFarmaciaInfo] = useState(null);
 
   const [form, setForm] = useState({
@@ -25,16 +25,21 @@ export default function EditarLaboratorioPage() {
     lab_email: "",
     lab_ativo: 1,
   });
-  const [logoFile, setLogoFile] = useState(null);
-  const [preview, setPreview] = useState(null);
+
+  // Estados específicos para imagem
+  const [logoFile, setLogoFile] = useState(null); // O arquivo binário (novo upload)
+  const [preview, setPreview] = useState(null);   // URL para exibir a imagem (nova ou antiga)
   const [dataCadastro, setDataCadastro] = useState("");
 
+  // --- BUSCA DE DADOS INICIAL ---
   useEffect(() => {
+    // 1. Carrega dados do usuário (Sessão)
     const userDataString = localStorage.getItem("userData");
     if (userDataString) {
       setFarmaciaInfo(JSON.parse(userDataString));
     }
 
+    // 2. Busca dados do laboratório para preencher o formulário
     if (lab_id) {
       const fetchLaboratorio = async () => {
         setLoading(true);
@@ -43,6 +48,8 @@ export default function EditarLaboratorioPage() {
 
           if (response.data.sucesso) {
             const laboratorioData = response.data.dados;
+
+            // Popula o estado do formulário
             setForm({
               lab_nome: laboratorioData.lab_nome || "",
               lab_cnpj: laboratorioData.lab_cnpj || "",
@@ -52,8 +59,10 @@ export default function EditarLaboratorioPage() {
               lab_ativo: laboratorioData.lab_ativo,
             });
 
+            // Formata data para exibição
             setDataCadastro(new Date(laboratorioData.lab_data_cadastro).toISOString().split('T')[0]);
 
+            // Tratamento da URL da Logo (Caminho absoluto vs relativo)
             if (laboratorioData.lab_logo) {
               let logoUrl = laboratorioData.lab_logo;
               if (!logoUrl.startsWith('http')) {
@@ -61,16 +70,14 @@ export default function EditarLaboratorioPage() {
                 const logoPath = logoUrl.startsWith('/') ? logoUrl : `/${logoUrl}`;
                 logoUrl = `${baseUrl}${logoPath}`;
               }
-              setPreview(logoUrl);
+              setPreview(logoUrl); // Mostra a logo atual do banco
             }
           } else {
-            // === MUDANÇA 2: Erro de carregamento com Toast ===
             toast.error('Laboratório não encontrado!');
             router.push('/farmacias/laboratorio/lista');
           }
         } catch (error) {
-          console.error('Erro ao buscar dados do laboratório:', error);
-          // === MUDANÇA 3: Erro de catch com Toast ===
+          console.error('Erro ao buscar dados:', error);
           toast.error('Não foi possível carregar os dados do laboratório.');
         } finally {
           setLoading(false);
@@ -80,12 +87,16 @@ export default function EditarLaboratorioPage() {
     }
   }, [lab_id, router]);
 
+  // --- HANDLERS ---
+
   const handleChange = (e) => {
     const { name, value, type, files } = e.target;
+
+    // Lógica especial para INPUT DE ARQUIVO
     if (type === "file" && files.length > 0) {
       const file = files[0];
-      setLogoFile(file);
-      setPreview(URL.createObjectURL(file));
+      setLogoFile(file); // Salva o arquivo para envio
+      setPreview(URL.createObjectURL(file)); // Cria preview local imediato
     } else {
       setForm({ ...form, [name]: value });
     }
@@ -94,6 +105,7 @@ export default function EditarLaboratorioPage() {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
+    // Uso de FORMDATA: Essencial para envio de arquivos + texto
     const formData = new FormData();
     formData.append("lab_nome", form.lab_nome);
     formData.append("lab_cnpj", form.lab_cnpj);
@@ -102,26 +114,26 @@ export default function EditarLaboratorioPage() {
     formData.append("lab_email", form.lab_email);
     formData.append("lab_ativo", form.lab_ativo);
 
+    // Só anexa 'lab_logo' se o usuário selecionou um NOVO arquivo.
+    // Se não, o backend mantém a logo antiga.
     if (logoFile) {
       formData.append("lab_logo", logoFile);
     }
 
     try {
+      // Método PUT para atualização
       await api.put(`/laboratorios/${lab_id}`, formData, {
         headers: { 'Content-Type': 'multipart/form-data' },
       });
-      
-      // === MUDANÇA 4: Sucesso com Toast e Timeout ===
+
       toast.success('Laboratório atualizado com sucesso!');
       setTimeout(() => {
         router.push('/farmacias/laboratorio/lista');
       }, 1500);
 
     } catch (error) {
-      console.error("Erro ao atualizar o laboratório:", error);
+      console.error("Erro ao atualizar:", error);
       const errorMsg = error.response?.data?.mensagem || "Verifique os dados e tente novamente.";
-      
-      // === MUDANÇA 5: Erro de submit com Toast ===
       toast.error(`Erro ao atualizar: ${errorMsg}`);
     }
   };
@@ -134,59 +146,35 @@ export default function EditarLaboratorioPage() {
 
   return (
     <div className={styles.dashboard}>
-      {/* === MUDANÇA 6: Componente Toaster igual ao de Medicamento === */}
+      {/* Configuração do Toast Notification */}
       <Toaster
         position="top-right"
         toastOptions={{
           duration: 4000,
-          style: {
-            background: '#333',
-            color: '#fff',
-            fontSize: '1.5rem',
-            padding: '1.6rem',
-          },
-          success: {
-            style: {
-              background: '#458B00',
-            },
-          },
-          error: {
-            style: {
-              background: '#dc2626',
-            },
-          },
+          style: { background: '#333', color: '#fff', fontSize: '1.5rem', padding: '1.6rem' },
+          success: { style: { background: '#458B00' } },
+          error: { style: { background: '#dc2626' } },
         }}
       />
 
       <header className={styles.header}>
         <div className={styles.headerLeft}>
-          <button
-            className={styles.menuToggle}
-            onClick={() => setSidebarOpen(!sidebarOpen)}
-            aria-label="Abrir menu"
-          >
-            ☰
-          </button>
+          <button className={styles.menuToggle} onClick={() => setSidebarOpen(!sidebarOpen)}>☰</button>
           <h1 className={styles.title}>Editar Laboratório</h1>
         </div>
       </header>
 
       <div className={styles.contentWrapper}>
+        {/* Sidebar Dinâmica */}
         <aside className={`${styles.sidebar} ${sidebarOpen ? styles.sidebarOpen : ""}`}>
           <div className={styles.sidebarHeader}>
             <div className={styles.logoContainer}>
               {farmaciaInfo?.farm_logo_url && (
-                <img src={farmaciaInfo.farm_logo_url} alt={`Logo de ${farmaciaInfo.farm_nome}`} className={styles.logoImage} />
+                <img src={farmaciaInfo.farm_logo_url} alt="Logo" className={styles.logoImage} />
               )}
               <span className={styles.logoText}>{farmaciaInfo?.farm_nome || "Pharma-X"}</span>
             </div>
-            <button
-              className={styles.sidebarClose}
-              onClick={() => setSidebarOpen(false)}
-              aria-label="Fechar menu"
-            >
-              ×
-            </button>
+            <button className={styles.sidebarClose} onClick={() => setSidebarOpen(false)}>×</button>
           </div>
 
           <nav className={styles.nav}>
@@ -214,6 +202,7 @@ export default function EditarLaboratorioPage() {
 
               <form onSubmit={handleSubmit} className={styles.form}>
                 <div className={styles.formGrid}>
+                  {/* COLUNA 1 */}
                   <div className={styles.formSection}>
                     <h3 className={styles.sectionTitle}>Informações do Laboratório</h3>
                     <div className={styles.formGroup}><label className={styles.inputLabel}>Nome do Laboratório</label><input className={styles.modernInput} type="text" name="lab_nome" value={form.lab_nome} onChange={handleChange} required /></div>
@@ -221,11 +210,33 @@ export default function EditarLaboratorioPage() {
                     <div className={styles.formGroup}><label className={styles.inputLabel}>E-mail</label><input className={styles.modernInput} type="email" name="lab_email" value={form.lab_email} onChange={handleChange} required /></div>
                     <div className={styles.formGroup}><label className={styles.inputLabel}>Telefone</label><input className={styles.modernInput} type="tel" name="lab_telefone" value={form.lab_telefone} onChange={handleChange} /></div>
                   </div>
+
+                  {/* COLUNA 2 */}
                   <div className={styles.formSection}>
                     <h3 className={styles.sectionTitle}>Localização e Identidade Visual</h3>
                     <div className={styles.formGroup}><label className={styles.inputLabel}>Endereço Completo</label><input className={styles.modernInput} type="text" name="lab_endereco" value={form.lab_endereco} onChange={handleChange} required /></div>
-                    <div className={styles.formGroup}><label className={styles.inputLabel}>Alterar Logo</label><div className={styles.fileUploadGroup}><input type="file" name="logo" onChange={handleChange} className={styles.fileInput} id="logo-upload" accept="image/*" /><label htmlFor="logo-upload" className={styles.fileLabel}><span>📁</span>{logoFile ? "Alterar arquivo" : "Selecionar novo arquivo"}</label>{logoFile && (<span className={styles.fileName}>{logoFile.name}</span>)}</div></div>
-                    {preview && (<div className={styles.formGroup}><label className={styles.inputLabel}>Pré-visualização</label><div className={styles.imagePreview}><img src={preview} alt="Pré-visualização do logo" className={styles.previewImage} /></div></div>)}
+
+                    {/* Upload de Logo */}
+                    <div className={styles.formGroup}>
+                      <label className={styles.inputLabel}>Alterar Logo</label>
+                      <div className={styles.fileUploadGroup}>
+                        <input type="file" name="logo" onChange={handleChange} className={styles.fileInput} id="logo-upload" accept="image/*" />
+                        <label htmlFor="logo-upload" className={styles.fileLabel}>
+                          <span>📁</span>{logoFile ? "Alterar arquivo" : "Selecionar novo arquivo"}
+                        </label>
+                        {logoFile && (<span className={styles.fileName}>{logoFile.name}</span>)}
+                      </div>
+                    </div>
+
+                    {/* Pré-visualização (Mostra a antiga ou a nova) */}
+                    {preview && (
+                      <div className={styles.formGroup}>
+                        <label className={styles.inputLabel}>Pré-visualização</label>
+                        <div className={styles.imagePreview}>
+                          <img src={preview} alt="Pré-visualização do logo" className={styles.previewImage} />
+                        </div>
+                      </div>
+                    )}
                   </div>
                 </div>
                 <div className={styles.formActions}><button type="button" className={styles.cancelButton} onClick={() => router.push("/farmacias/laboratorio/lista")}>Cancelar</button><button type="submit" className={styles.submitButton}>Atualizar Laboratório</button></div>

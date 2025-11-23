@@ -10,6 +10,9 @@ import CabecalhoTerciario from "./componentes/cabecalhoTerciario";
 import Rodape from "./componentes/rodape";
 import Alert from "./componentes/Alert";
 
+// 1. Importação do Contexto de Notificação
+import { NotificationProvider } from "../app/contexts/NotificationContext.jsx";
+
 const geistSans = Geist({
   variable: "--font-geist-sans",
   subsets: ["latin"],
@@ -41,10 +44,13 @@ export default function RootLayout({ children }) {
   return (
     <html lang="pt-BR">
       <body className={`${geistSans.variable} ${geistMono.variable}`}>
-        {renderHeader()}
-        <Alert />
-        <main>{children}</main>
-        <Rodape />
+        {/* 2. Envolvendo a aplicação com o Provider */}
+        <NotificationProvider>
+          {renderHeader()}
+          <Alert />
+          <main>{children}</main>
+          <Rodape />
+        </NotificationProvider>
       </body>
     </html>
   );

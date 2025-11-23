@@ -8,9 +8,10 @@ import api from "../../../services/api";
 import { BsUpcScan, BsFillPatchCheckFill, BsFillPatchQuestionFill, BsFillExclamationTriangleFill } from "react-icons/bs";
 import toast, { Toaster } from "react-hot-toast";
 
+// Formatador de moeda (Real Brasileiro)
 const currency = new Intl.NumberFormat("pt-BR", { style: "currency", currency: "BRL" });
 
-// === Funções de Data ===
+// === Funções Auxiliares de Data ===
 const formatDate = (date) => {
   const d = new Date(date);
   let month = '' + (d.getMonth() + 1);
@@ -37,36 +38,43 @@ const formatDateForDisplay = (dateString) => {
     return "Data inválida";
   }
 };
-// === FIM Funções de Data ===
 
 function ListagemMedicamentos() {
+  // === Estados de Dados ===
   const [medicamentos, setMedicamentos] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [sidebarOpen, setSidebarOpen] = useState(false);
   const [farmaciaInfo, setFarmaciaInfo] = useState(null);
-  const [modalAberto, setModalAberto] = useState(false);
+  const [tiposProduto, setTiposProduto] = useState([]);
+  const [promocoesAtivas, setPromocoesAtivas] = useState([]);
+  
+  // === Estados de UI (Modais e Sidebar) ===
+  const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [modalAberto, setModalAberto] = useState(false); // Modal novo medicamento
   const [modalDetalhesAberto, setModalDetalhesAberto] = useState(false);
+  const [modalPromocaoAberto, setModalPromocaoAberto] = useState(false);
+  
+  // === Estados de Seleção e Formulários ===
   const [medicamentoSelecionado, setMedicamentoSelecionado] = useState(null);
   const [codigoBarras, setCodigoBarras] = useState("");
   const [medicamentoExistente, setMedicamentoExistente] = useState(null);
   const [produtoNaoEncontrado, setProdutoNaoEncontrado] = useState(false);
-  const [erro, setErro] = useState("");
-  const [erroApi, setErroApi] = useState("");
-  const [verificandoCodigo, setVerificandoCodigo] = useState(false);
+  
+  // === Estados de Filtros, Busca e Paginação ===
   const [termoPesquisa, setTermoPesquisa] = useState("");
   const [filtroStatus, setFiltroStatus] = useState("todos");
   const [filtroCategoria, setFiltroCategoria] = useState("todos");
-  const [tiposProduto, setTiposProduto] = useState([]);
-  const [promocoesAtivas, setPromocoesAtivas] = useState([]);
   const [ordenacao, setOrdenacao] = useState("nome");
-  const [carregandoFiltro, setCarregandoFiltro] = useState(false);
   const [visualizacao, setVisualizacao] = useState("tabela");
   const [paginaAtual, setPaginaAtual] = useState(1);
   const [itensPorPagina, setItensPorPagina] = useState(10);
-  const router = useRouter();
+  
+  // === Estados de Controle e Erro ===
+  const [erro, setErro] = useState("");
+  const [erroApi, setErroApi] = useState("");
+  const [verificandoCodigo, setVerificandoCodigo] = useState(false);
+  const [carregandoFiltro, setCarregandoFiltro] = useState(false);
 
-  // States para o Modal de Promoção
-  const [modalPromocaoAberto, setModalPromocaoAberto] = useState(false);
+  // === Promoção e Confirmação ===
   const [promoErro, setPromoErro] = useState("");
   const [isSubmittingPromo, setIsSubmittingPromo] = useState(false);
   const [promoDados, setPromoDados] = useState({
@@ -83,14 +91,19 @@ function ListagemMedicamentos() {
     isDanger: false,
   });
 
+  const router = useRouter();
+
+  // Processa os dados crus da API combinando Medicamentos + Promoções
   const processarMedicamentos = (medicamentosData, promocoesData) => {
     return medicamentosData.map(med => {
       const promocaoInfo = promocoesData.find(p => p.medicamento_id === med.med_id);
       let precoPromocional = null;
+      
       if (promocaoInfo) {
         const desconto = parseFloat(promocaoInfo.promo_desconto) / 100;
         precoPromocional = (med.medp_preco * (1 - desconto));
       }
+      
       return {
         preco_original: med.medp_preco || 0,
         id: med.med_id,
@@ -119,6 +132,7 @@ function ListagemMedicamentos() {
     });
   };
 
+  // Busca inicial de dados
   const fetchDadosIniciais = async () => {
     setErroApi("");
     let farmaciaId;
@@ -128,29 +142,30 @@ function ListagemMedicamentos() {
       const userData = JSON.parse(userDataString);
       setFarmaciaInfo(userData);
       farmaciaId = userData.farm_id;
+      
       if (!farmaciaId) throw new Error("ID da farmácia não encontrado.");
+      
       const [responseMedicamentos, responseTipos, responsePromocoes] = await Promise.all([
         api.get(`/medicamentos?farmacia_id=${farmaciaId}`),
         api.get('/tipoproduto'),
         api.get(`/promocoes?farmacia_id=${farmaciaId}`)
       ]);
+
       let promocoes = [];
       if (responsePromocoes.data.sucesso) {
         promocoes = responsePromocoes.data.dados;
         setPromocoesAtivas(promocoes);
-      } else {
-        console.warn("Não foi possível carregar as promoções.");
       }
+
       if (responseMedicamentos.data.sucesso) {
         const processedMedicamentos = processarMedicamentos(responseMedicamentos.data.dados, promocoes);
         setMedicamentos(processedMedicamentos);
       } else {
         setErroApi(responseMedicamentos.data.mensagem);
       }
+
       if (responseTipos.data.sucesso) {
         setTiposProduto(responseTipos.data.dados);
-      } else {
-        console.warn("Não foi possível carregar os tipos de produto para o filtro.");
       }
     } catch (error) {
       const mensagem = error.response?.data?.mensagem || error.message || "Não foi possível conectar ao servidor.";
@@ -165,14 +180,17 @@ function ListagemMedicamentos() {
     fetchDadosIniciais();
   }, []);
 
+  // Efeito de debounce para filtros
   useEffect(() => {
     setCarregandoFiltro(true);
     const timer = setTimeout(() => setCarregandoFiltro(false), 300);
     return () => clearTimeout(timer);
   }, [termoPesquisa, filtroStatus, filtroCategoria, ordenacao]);
 
+  // Lógica de Filtro e Ordenação
   const medicamentosFiltrados = useMemo(() => {
     let resultado = [...medicamentos];
+    
     if (termoPesquisa) {
       const termo = termoPesquisa.toLowerCase();
       resultado = resultado.filter(
@@ -184,12 +202,15 @@ function ListagemMedicamentos() {
           med.categoria.toLowerCase().includes(termo)
       );
     }
+    
     if (filtroStatus !== "todos") {
       resultado = resultado.filter((med) => med.status === filtroStatus);
     }
+    
     if (filtroCategoria !== "todos") {
       resultado = resultado.filter((med) => med.tipo === filtroCategoria);
     }
+    
     resultado.sort((a, b) => {
       switch (ordenacao) {
         case "nome": return a.nome.localeCompare(b.nome);
@@ -209,6 +230,7 @@ function ListagemMedicamentos() {
   const indiceInicial = (paginaAtual - 1) * itensPorPagina;
   const medicamentosPaginados = medicamentosFiltrados.slice(indiceInicial, indiceInicial + itensPorPagina);
 
+  // Funções de Controle de Modais e Ações
   const fecharConfirmacao = () => {
     setConfirmacao({ isOpen: false, title: "", message: "", onConfirm: () => { }, isDanger: false });
   };
@@ -249,15 +271,14 @@ function ListagemMedicamentos() {
     });
   };
 
-  // === MUDANÇA: Função separada para executar a alteração de status ===
+  // Atualiza status (ativo/inativo)
   const executarAlteracaoStatus = async (id, toastId) => {
-    toast.dismiss(toastId); // Fecha a caixa de confirmação
+    toast.dismiss(toastId);
 
     try {
       const medicamento = medicamentos.find(med => med.id === id);
       if (!medicamento) return;
       const farmaciaId = farmaciaInfo?.farm_id;
-      if (!farmaciaId) throw new Error("ID da farmácia não encontrado.");
       const novoStatusBooleano = !medicamento.med_ativo;
 
       const response = await api.put(`/medicamentos/${id}`, {
@@ -277,10 +298,10 @@ function ListagemMedicamentos() {
     }
   };
 
-  // === MUDANÇA: Função para chamar o Toast de Confirmação do Status ===
+  // Toast customizado para confirmar alteração de status
   const handleToggleStatus = (medicamento) => {
     const acao = medicamento.status === "ativo" ? "Desativar" : "Ativar";
-    const isDanger = medicamento.status === "ativo"; // Desativar é "perigoso"
+    const isDanger = medicamento.status === "ativo";
 
     toast((t) => (
       <div style={{ display: 'flex', flexDirection: 'column', gap: '12px', alignItems: 'center', minWidth: '280px' }}>
@@ -334,6 +355,7 @@ function ListagemMedicamentos() {
     });
   };
 
+  // Controle do Formulário de Promoção
   const handlePromoChange = (e) => {
     const { name, value } = e.target;
     setPromoDados(prev => ({ ...prev, [name]: value }));
@@ -427,6 +449,7 @@ function ListagemMedicamentos() {
     });
   };
 
+  // Navegação e Modais Auxiliares
   const handleEditar = (id) => router.push(`/farmacias/produtos/medicamentos/editar/${id}`);
   const abrirDetalhes = (medicamento) => { setMedicamentoSelecionado(medicamento); setModalDetalhesAberto(true); };
   const abrirModal = () => { setModalAberto(true); setCodigoBarras(""); setMedicamentoExistente(null); setProdutoNaoEncontrado(false); setErro(""); };
@@ -472,16 +495,8 @@ function ListagemMedicamentos() {
             fontSize: '1.5rem',
             padding: '1.6rem',
           },
-          success: {
-            style: {
-              background: '#458B00',
-            },
-          },
-          error: {
-            style: {
-              background: '#dc2626',
-            },
-          },
+          success: { style: { background: '#458B00' } },
+          error: { style: { background: '#dc2626' } },
         }}
       />
 
@@ -540,41 +555,78 @@ function ListagemMedicamentos() {
             </div>
 
             <div className={styles.tableContainer}>
-              {carregandoFiltro ? (<div className={styles.carregando}><div className={styles.spinner}></div><p>Filtrando...</p></div>) : medicamentosPaginados.length === 0 ? (<div className={styles.semResultados}><p>Nenhum medicamento encontrado.</p><button onClick={abrirModal} className={styles.actionButton}>+ Adicionar Medicamento</button></div>) : visualizacao === "tabela" ? (<table className={styles.tabela}><thead><tr><th>Imagem</th><th>Nome</th><th>Dosagem</th><th>Conteúdo</th><th>Preço</th><th>Status</th><th>Ações</th></tr></thead><tbody>{medicamentosPaginados.map((med) => (<tr key={med.id} className={`${styles.tableRow} ${med.status === "inativo" ? styles.inativo : ""}`}><td><img src={med.imagem} alt={med.nome} className={styles.medicamentoImagem} /></td><td><div className={styles.nomeContainer}><span className={styles.nome}>{med.nome}</span>
-                <span className={styles.categoria}>{med.tipo}</span>
-                {med.promocao && <span className={styles.promoTag}>PROMOÇÃO</span>}
-              </div></td><td>{med.dosagem}</td><td><span className={styles.quantidade}>{med.quantidade}</span></td>
-                <td>
-                  {med.promocao ? (
-                    <div>
-                      <span className={styles.precoOriginal}>{currency.format(med.preco_original)}</span>
-                      <span className={styles.precoPromocional}>{currency.format(med.preco_promocional)}</span>
-                    </div>
-                  ) : (
-                    currency.format(med.preco_original)
-                  )}
-                </td>
-                <td><span className={`${styles.status} ${med.status === "ativo" ? styles.statusAtivo : styles.statusInativo}`}>{med.status}</span></td><td><div className={styles.acoes}><button onClick={() => abrirDetalhes(med)} className={styles.botaoAcao}>Detalhes</button></div></td></tr>))}</tbody></table>) : (<div className={styles.gradeContainer}>{medicamentosPaginados.map((med) => (<div key={med.id} className={`${styles.medicamentoCard} ${med.status === "inativo" ? styles.inativo : ""}`}><div className={styles.cardHeader}><img src={med.imagem} alt={med.nome} className={styles.cardImagem} />
-                  {med.promocao && <span className={styles.cardPromoTag}>PROMO</span>}
-                  <span className={`${styles.cardStatus} ${med.status === "ativo" ? styles.statusAtivo : styles.statusInativo}`}>{med.status}</span></div><div className={styles.cardContent}><h3 className={styles.cardNome}>{med.nome}</h3><p className={styles.cardDosagem}>{med.dosagem}</p><div className={styles.cardInfo}><div className={styles.infoItem}><span className={styles.infoLabel}>Conteúdo:</span><span className={styles.infoValue}>{med.quantidade}</span></div>
-                    <div className={styles.infoItem}>
-                      <span className={styles.infoLabel}>Preço:</span>
-                      {med.promocao ? (
-                        <div className={styles.precoContainerGrade}>
-                          <span className={styles.precoOriginal}>{currency.format(med.preco_original)}</span>
-                          <span className={styles.precoPromocional}>{currency.format(med.preco_promocional)}</span>
+              {carregandoFiltro ? (<div className={styles.carregando}><div className={styles.spinner}></div><p>Filtrando...</p></div>) : medicamentosPaginados.length === 0 ? (<div className={styles.semResultados}><p>Nenhum medicamento encontrado.</p><button onClick={abrirModal} className={styles.actionButton}>+ Adicionar Medicamento</button></div>) : visualizacao === "tabela" ? (
+                
+                /* === VISUALIZAÇÃO EM TABELA === */
+                <table className={styles.tabela}>
+                  <thead><tr><th>Imagem</th><th>Nome</th><th>Dosagem</th><th>Conteúdo</th><th>Preço</th><th>Status</th><th>Ações</th></tr></thead>
+                  <tbody>
+                    {medicamentosPaginados.map((med) => (
+                      <tr key={med.id} className={`${styles.tableRow} ${med.status === "inativo" ? styles.inativo : ""}`}>
+                        <td><img src={med.imagem} alt={med.nome} className={styles.medicamentoImagem} /></td>
+                        <td>
+                          <div className={styles.nomeContainer}>
+                            <span className={styles.nome}>{med.nome}</span>
+                            <span className={styles.categoria}>{med.tipo}</span>
+                            {med.promocao && <span className={styles.promoTag}>PROMOÇÃO</span>}
+                          </div>
+                        </td>
+                        <td>{med.dosagem}</td>
+                        <td><span className={styles.quantidade}>{med.quantidade}</span></td>
+                        <td>
+                          {med.promocao ? (
+                            <div>
+                              <span className={styles.precoOriginal}>{currency.format(med.preco_original)}</span>
+                              <span className={styles.precoPromocional}>{currency.format(med.preco_promocional)}</span>
+                            </div>
+                          ) : (currency.format(med.preco_original))}
+                        </td>
+                        <td><span className={`${styles.status} ${med.status === "ativo" ? styles.statusAtivo : styles.statusInativo}`}>{med.status}</span></td>
+                        <td><div className={styles.acoes}><button onClick={() => abrirDetalhes(med)} className={styles.botaoAcao}>Detalhes</button></div></td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+
+              ) : (
+                
+                /* === VISUALIZAÇÃO EM GRADE === */
+                <div className={styles.gradeContainer}>
+                  {medicamentosPaginados.map((med) => (
+                    <div key={med.id} className={`${styles.medicamentoCard} ${med.status === "inativo" ? styles.inativo : ""}`}>
+                      <div className={styles.cardHeader}>
+                        <img src={med.imagem} alt={med.nome} className={styles.cardImagem} />
+                        {med.promocao && <span className={styles.cardPromoTag}>PROMO</span>}
+                        <span className={`${styles.cardStatus} ${med.status === "ativo" ? styles.statusAtivo : styles.statusInativo}`}>{med.status}</span>
+                      </div>
+                      <div className={styles.cardContent}>
+                        <h3 className={styles.cardNome}>{med.nome}</h3>
+                        <p className={styles.cardDosagem}>{med.dosagem}</p>
+                        <div className={styles.cardInfo}>
+                          <div className={styles.infoItem}><span className={styles.infoLabel}>Conteúdo:</span><span className={styles.infoValue}>{med.quantidade}</span></div>
+                          <div className={styles.infoItem}>
+                            <span className={styles.infoLabel}>Preço:</span>
+                            {med.promocao ? (
+                              <div className={styles.precoContainerGrade}>
+                                <span className={styles.precoOriginal}>{currency.format(med.preco_original)}</span>
+                                <span className={styles.precoPromocional}>{currency.format(med.preco_promocional)}</span>
+                              </div>
+                            ) : (<span className={styles.infoValue}>{currency.format(med.preco_original)}</span>)}
+                          </div>
                         </div>
-                      ) : (
-                        <span className={styles.infoValue}>{currency.format(med.preco_original)}</span>
-                      )}
+                      </div>
+                      <div className={styles.cardActions}><button onClick={() => abrirDetalhes(med)} className={styles.botaoAcaoCard}>Detalhes</button></div>
                     </div>
-                  </div></div><div className={styles.cardActions}><button onClick={() => abrirDetalhes(med)} className={styles.botaoAcaoCard}>Detalhes</button></div></div>))}</div>)}
+                  ))}
+                </div>
+              )}
             </div>
 
             {totalPaginas > 1 && (<div className={styles.paginacao}></div>)}
           </main>
         </div>
 
+        {/* === MODAL: Verificar Código de Barras === */}
         {modalAberto && (
           <div className={styles.modalOverlay}>
             <div className={styles.modal}>
@@ -632,6 +684,7 @@ function ListagemMedicamentos() {
           </div>
         )}
 
+        {/* === MODAL: Detalhes do Medicamento === */}
         {modalDetalhesAberto && medicamentoSelecionado && (
           <div className={styles.modalOverlay}>
             <div className={styles.modal}>
@@ -683,22 +736,11 @@ function ListagemMedicamentos() {
                 <button onClick={() => handleExcluir(medicamentoSelecionado.id)} className={styles.dangerButton}>Excluir</button>
 
                 {medicamentoSelecionado.promocao ? (
-                  <button
-                    onClick={() => handleRemoverPromocao(medicamentoSelecionado.promocao_id)}
-                    className={styles.promoRemoveButton}
-                  >
-                    Remover Promoção
-                  </button>
+                  <button onClick={() => handleRemoverPromocao(medicamentoSelecionado.promocao_id)} className={styles.promoRemoveButton}>Remover Promoção</button>
                 ) : (
-                  <button
-                    onClick={abrirModalPromocao}
-                    className={styles.promoButton}
-                  >
-                    Ativar Promoção
-                  </button>
+                  <button onClick={abrirModalPromocao} className={styles.promoButton}>Ativar Promoção</button>
                 )}
 
-                {/* === MUDANÇA AQUI: Botão agora chama handleToggleStatus === */}
                 <button onClick={() => handleToggleStatus(medicamentoSelecionado)} className={styles.cancelButton}>{medicamentoSelecionado.status === "ativo" ? "Desativar" : "Ativar"}</button>
                 
                 <button onClick={() => handleEditar(medicamentoSelecionado.id)} className={styles.actionButton}>Editar</button>
@@ -707,6 +749,7 @@ function ListagemMedicamentos() {
           </div>
         )}
 
+        {/* === MODAL: Formulário de Promoção === */}
         {modalPromocaoAberto && (
           <div className={styles.modalOverlay} style={{ zIndex: 1010 }}>
             <div className={styles.modal} style={{ maxWidth: '50rem' }}>
@@ -744,6 +787,7 @@ function ListagemMedicamentos() {
           </div>
         )}
 
+        {/* === MODAL: Confirmação Genérica === */}
         {confirmacao.isOpen && (
           <div className={styles.modalOverlay} style={{ zIndex: 1020 }}>
             <div className={styles.modal} style={{ maxWidth: '50rem' }}>
@@ -757,15 +801,8 @@ function ListagemMedicamentos() {
                 </div>
               </div>
               <div className={styles.modalConfirmFooter}>
-                <button onClick={fecharConfirmacao} className={styles.cancelButton}>
-                  Cancelar
-                </button>
-                <button
-                  onClick={handleConfirmar}
-                  className={confirmacao.isDanger ? styles.dangerButton : styles.actionButton}
-                >
-                  Confirmar
-                </button>
+                <button onClick={fecharConfirmacao} className={styles.cancelButton}>Cancelar</button>
+                <button onClick={handleConfirmar} className={confirmacao.isDanger ? styles.dangerButton : styles.actionButton}>Confirmar</button>
               </div>
             </div>
           </div>

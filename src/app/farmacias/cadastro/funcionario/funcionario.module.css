@@ -1,11 +1,13 @@
-/* Layout Principal, Header, Sidebar (Estrutura consistente com as outras telas) */
+/* --- ESTRUTURA DO LAYOUT (DASHBOARD) --- */
 .dashboard {
   min-height: 100vh;
+  /* Garante que o fundo cubra 100% da altura da tela */
   background-color: #f8fafc;
   display: flex;
   flex-direction: column;
 }
 
+/* --- HEADER (CABEÇALHO) --- */
 .header {
   background: white;
   padding: 1.5rem 2.4rem;
@@ -13,9 +15,12 @@
   justify-content: space-between;
   align-items: center;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+
+  /* POSITION STICKY: Mantém o header fixo no topo ao rolar a página */
   position: sticky;
   top: 0;
   z-index: 100;
+  /* Garante que fique acima de outros elementos */
 }
 
 .headerLeft {
@@ -24,6 +29,7 @@
   gap: 1.6rem;
 }
 
+/* Botão Hambúrguer (Só aparece no Mobile via Media Query) */
 .menuToggle {
   background: none;
   border: none;
@@ -33,6 +39,7 @@
   border-radius: 0.6rem;
   transition: background 0.3s ease;
   display: none;
+  /* Oculto por padrão (Desktop) */
   color: #458B00;
 }
 
@@ -40,12 +47,16 @@
   background: #f1f5f9;
 }
 
+/* --- TIPOGRAFIA FLUIDA --- */
 .title {
-  /* MELHORIA: Tipografia fluida */
+  /* CLAMP(min, ideal, max): 
+     A fonte escala suavemente entre 2rem e 2.8rem baseada na largura da tela (4vw).
+     Isso elimina a necessidade de muitos media queries para texto. */
   font-size: clamp(2rem, 4vw, 2.8rem);
   font-weight: 600;
   margin: 0;
-  /* Gradiente de cor para o título */
+
+  /* Efeito de Gradiente no Texto (Identidade Visual PharmaX) */
   background: linear-gradient(135deg, #191970 0%, #458B00 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
@@ -55,10 +66,11 @@
 .contentWrapper {
   display: flex;
   flex: 1;
+  /* Ocupa o espaço restante abaixo do header */
   position: relative;
 }
 
-/* --- SIDEBAR --- */
+/* --- SIDEBAR (MENU LATERAL) --- */
 .sidebar {
   width: 28rem;
   background: linear-gradient(180deg, #191970 0%, #0f1440 100%);
@@ -66,12 +78,17 @@
   display: flex;
   flex-direction: column;
   transition: transform 0.3s ease-in-out;
+  /* Animação suave de entrada */
   box-shadow: 0.2rem 0 1rem rgba(0, 0, 0, 0.1);
   flex-shrink: 0;
+  /* Impede que a sidebar encolha */
+
+  /* Sticky Sidebar: Acompanha a rolagem, mas respeita o Header (top: 72px) */
   height: calc(100vh - 72px);
   position: sticky;
   top: 72px;
   overflow-y: auto;
+  /* Scroll interno se o menu for muito longo */
   z-index: 90;
 }
 
@@ -117,6 +134,7 @@
   display: none;
 }
 
+/* --- NAVEGAÇÃO --- */
 .nav {
   flex: 1;
   padding: 1rem;
@@ -145,6 +163,7 @@
   transition: all 0.3s ease;
   font-size: 1.5rem;
   border-left: 4px solid transparent;
+  /* Prepara borda para hover */
   gap: 1.2rem;
 }
 
@@ -152,7 +171,9 @@
   background: rgba(69, 139, 0, 0.15);
   color: #fff;
   border-left-color: #458B00;
+  /* Borda verde no hover */
   transform: translateX(5px);
+  /* Leve movimento para direita */
 }
 
 .navLink.active {
@@ -166,7 +187,7 @@
   font-family: "Montserrat";
 }
 
-/* --- CONTEÚDO PRINCIPAL E FORMULÁRIO --- */
+/* --- CONTEÚDO PRINCIPAL (FORMULÁRIO) --- */
 .mainContent {
   flex: 1;
   padding: 3.2rem;
@@ -176,6 +197,7 @@
 
 .formContainer {
   max-width: 96rem;
+  /* Limita largura em telas ultra-wide */
   margin: 0 auto;
 }
 
@@ -205,6 +227,7 @@
   border: 1px solid #e5e7eb;
 }
 
+/* GRID LAYOUT: Cria 2 colunas de tamanho igual */
 .formGrid {
   display: grid;
   grid-template-columns: 1fr 1fr;
@@ -226,7 +249,7 @@
   border-bottom: 1px solid #e5e7eb;
 }
 
-/* --- ESTILOS DE INPUT E VALIDAÇÃO --- */
+/* --- ESTILOS DE INPUT E VALIDAÇÃO VISUAL --- */
 .inputLabel {
   display: block;
   font-size: 1.4rem;
@@ -237,6 +260,7 @@
 
 .divInput {
   position: relative;
+  /* Permite posicionar os ícones (check/erro) absolutamente */
 }
 
 .modernInput {
@@ -252,39 +276,42 @@
 .modernInput:focus {
   outline: none;
   border-color: #458B00;
+  /* Foco Verde */
   background: white;
   box-shadow: 0 0 0 3px rgba(69, 139, 0, 0.1);
+  /* Glow suave */
 }
 
 .modernInput[type="date"] {
-  color-scheme: light; /* Estiliza o calendário nativo para cores claras */
+  color-scheme: light;
 }
 
+/* Customização do Select para remover seta padrão e usar SVG */
 select.modernInput {
-  appearance: none; /* Remove a seta padrão do select */
+  appearance: none;
   background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
   background-repeat: no-repeat;
   background-position: right 1.6rem center;
   background-size: 1.6rem;
-  padding-right: 4rem; /* Garante espaço para a seta personalizada */
+  padding-right: 4rem;
 }
 
-/* Classe de controle (parent) */
+/* VALIDAÇÃO: Classes aplicadas dinamicamente pelo React */
 .formControl {
   position: relative;
 }
 
-/* Validação: Borda verde em caso de sucesso */
+/* Borda Verde se .success estiver presente */
 .success .modernInput {
   border-color: #458B00;
 }
 
-/* Validação: Borda vermelha em caso de erro */
+/* Borda Vermelha se .error estiver presente */
 .error .modernInput {
   border-color: #ef4444;
 }
 
-/* Ícones de validação (aparecem no canto do input) */
+/* Ícones de Feedback (posicionados dentro do input) */
 .sucesso,
 .erro {
   position: absolute;
@@ -293,6 +320,7 @@ select.modernInput {
   transform: translateY(-50%);
   font-size: 2rem;
   pointer-events: none;
+  /* Permite clicar no input através do ícone */
   display: none;
 }
 
@@ -304,6 +332,7 @@ select.modernInput {
   color: #ef4444;
 }
 
+/* Mostra o ícone correto baseado na classe pai */
 .success .sucesso,
 .error .erro {
   display: block;
@@ -370,6 +399,7 @@ select.modernInput {
   box-shadow: none;
 }
 
+/* Animação de Loading (Spinner) dentro do botão */
 .loadingSpinnerSmall {
   width: 1.6rem;
   height: 1.6rem;
@@ -386,21 +416,24 @@ select.modernInput {
 }
 
 /* --- RESPONSIVIDADE --- */
+
+/* Mobile: Ajusta Sidebar e Grid */
 @media (max-width: 48rem) {
 
-  /* até 768px */
+  /* Sidebar vira Off-Canvas (sai da tela) */
   .sidebar {
-    /* CORREÇÃO: Necessário para o modal funcionar no mobile */
     position: fixed;
     left: 0;
     top: 0;
     height: 100vh;
     transform: translateX(-100%);
+    /* Esconde à esquerda */
     z-index: 110;
   }
 
   .sidebar.sidebarOpen {
     transform: translateX(0);
+    /* Traz para tela */
   }
 
   .menuToggle,
@@ -416,13 +449,15 @@ select.modernInput {
     padding: 2.4rem;
   }
 
+  /* Quebra o formulário em uma única coluna */
   .formGrid {
-    grid-template-columns: 1fr; /* Coluna única no mobile */
+    grid-template-columns: 1fr;
     gap: 1.6rem;
   }
 
+  /* Botões empilhados, com Salvar em cima */
   .formActions {
-    flex-direction: column-reverse; /* Inverte a ordem Salvar/Cancelar */
+    flex-direction: column-reverse;
     gap: 1rem;
   }
 
@@ -433,8 +468,6 @@ select.modernInput {
 }
 
 @media (max-width: 30rem) {
-
-  /* até 480px */
   .header {
     flex-direction: column;
     gap: 1.6rem;
