@@ -14,7 +14,6 @@
   justify-content: space-between;
   align-items: center;
   box-shadow: 0 0.2rem 0.4rem rgba(0, 0, 0, 0.05);
-  /* Sticky: Fixa o topo ao rolar */
   position: sticky;
   top: 0;
   z-index: 100;
@@ -43,7 +42,6 @@
 }
 
 .title {
-  /* Tipografia Fluida: Escala entre 2rem e 2.8rem */
   font-size: clamp(2rem, 4vw, 2.8rem);
   font-weight: 600;
   color: #1e293b;
@@ -70,7 +68,6 @@
   transition: transform 0.3s ease-in-out;
   box-shadow: 0.2rem 0 1rem rgba(0, 0, 0, 0.1);
   flex-shrink: 0;
-  /* Altura calculada para respeitar o header sticky */
   height: calc(100vh - 72px);
   position: sticky;
   top: 72px;
@@ -98,7 +95,7 @@
 .logoImage {
   width: 60px;
   height: 60px;
-  border-radius: 5px;
+  border-radius: 50%;
   object-fit: cover;
 }
 
@@ -153,6 +150,7 @@
   font-size: 1.5rem;
   border-left: 4px solid transparent;
   gap: 1.2rem;
+  cursor: pointer; /* Adicionado para divs clicáveis */
 }
 
 .navLink:hover {
@@ -184,12 +182,11 @@
 /* GRID AUTOMÁTICO RESPONSIVO */
 .grid {
   display: grid;
-  /* Cria colunas de min 380px e preenche o espaço restante */
   grid-template-columns: repeat(auto-fill, minmax(380px, 1fr));
   gap: 2.4rem;
 }
 
-/* CARD */
+/* CARD MEDICAMENTO */
 .card {
   background: #ffffff;
   border-radius: 12px;
@@ -517,4 +514,85 @@
     height: 4rem;
     font-size: 1.6rem;
   }
+}
+
+/* ==================================================
+   ESTILOS NOVOS PARA AVALIAÇÕES (CARD E ESTRELAS)
+   ================================================== */
+
+.reviewCard {
+  background: #ffffff;
+  border-radius: 12px;
+  box-shadow: 0 0.2rem 0.8rem rgba(0, 0, 0, 0.04);
+  padding: 2.4rem;
+  border: 1px solid #e5e7eb;
+  display: flex;
+  flex-direction: column;
+  gap: 1.2rem;
+  transition: transform 0.2s;
+}
+
+.reviewCard:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 0.6rem 1.5rem rgba(0, 0, 0, 0.08);
+}
+
+.reviewHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+}
+
+.reviewUser {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.reviewAvatar {
+  width: 4rem;
+  height: 4rem;
+  background: #e0f2fe;
+  color: #0284c7;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: bold;
+  font-size: 1.4rem;
+  flex-shrink: 0;
+}
+
+.reviewMeta h3 {
+  font-size: 1.5rem;
+  color: #1e293b;
+  margin: 0;
+  font-weight: 600;
+}
+
+.starRating {
+  display: flex;
+  gap: 0.4rem;
+  color: #fbbf24; /* Cor amarela das estrelas */
+  font-size: 1.6rem;
+}
+
+.reviewComment {
+  background: #f8fafc;
+  padding: 1.2rem;
+  border-radius: 8px;
+  color: #475569;
+  font-size: 1.4rem;
+  line-height: 1.5;
+  font-style: italic;
+}
+
+.reviewBadge {
+  align-self: flex-start;
+  background: #f0fdf4;
+  color: #166534;
+  padding: 0.4rem 1rem;
+  border-radius: 2rem;
+  font-size: 1.2rem;
+  font-weight: 600;
 }

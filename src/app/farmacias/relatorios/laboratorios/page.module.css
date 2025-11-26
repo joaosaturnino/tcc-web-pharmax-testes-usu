@@ -99,7 +99,7 @@
 .sidebarAvatar {
   width: 60px;
   height: 60px;
-  border-radius: 5%;
+  border-radius: 50%;
   object-fit: cover;
 }
 

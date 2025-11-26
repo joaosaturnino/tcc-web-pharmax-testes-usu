@@ -13,15 +13,19 @@ export function NotificationProvider({ children }) {
   // Estado para sinalizar atualização para as páginas
   const [updateSignal, setUpdateSignal] = useState(0);
 
-  const previousCountRef = useRef(null);
+  // Refs para Favoritos
+  const previousMapRef = useRef(null); 
+  
+  // NOVO: Ref para Avaliações (Agora armazena um Map com os dados completos, não apenas IDs)
+  const previousReviewsRef = useRef(null);
+  
   const isFetchingRef = useRef(false);
 
   // --- FUNÇÃO DE SOM ---
   const playSound = (actionType) => {
+    // actionType: 'add' (sucesso/novo) ou 'remove' (aviso/perda)
     const fileName = actionType === 'add' ? 'success.mp3' : 'removed.mp3';
     const audio = new Audio(`/sounds/${fileName}`);
-    
-    // VOLUME MÁXIMO (Alterado de 0.5 para 1.0)
     audio.volume = 1.0; 
     
     audio.play()
@@ -33,28 +37,27 @@ export function NotificationProvider({ children }) {
 
   const unlockAudio = () => {
     const audio = new Audio("/sounds/success.mp3");
-    
-    // VOLUME MÁXIMO TAMBÉM NO DESBLOQUEIO
     audio.volume = 1.0;
-    
     audio.play().then(() => setAudioBlocked(false));
   };
 
   const addNotification = (title, message, type = "success") => {
     const id = Math.random().toString(36).substr(2, 9);
     setNotifications((prev) => [...prev, { id, title, message, type }]);
+    
+    // Auto-remove após 8 segundos
     setTimeout(() => {
       setNotifications((prev) => prev.filter((notif) => notif.id !== id));
-    }, 5000);
+    }, 8000); 
   };
 
   const removeNotification = (id) => {
     setNotifications((prev) => prev.filter((notif) => notif.id !== id));
   };
 
-  // --- MONITORAMENTO ---
+  // --- MONITORAMENTO UNIFICADO (FAVORITOS E AVALIAÇÕES) ---
   useEffect(() => {
-    const checkFavorites = async () => {
+    const checkUpdates = async () => {
       if (isFetchingRef.current) return;
 
       try {
@@ -64,41 +67,102 @@ export function NotificationProvider({ children }) {
         const userData = JSON.parse(userDataString);
         if (!userData.farm_id) return;
 
-        const response = await api.get(`/favoritos/${userData.farm_id}/favoritos`);
+        let hasGlobalChanges = false;
 
-        if (response.data.sucesso) {
-          const currentData = response.data.dados || [];
-          const currentTotalFavorites = currentData.reduce((acc, item) => acc + (item.favoritacoes_count || 0), 0);
+        // 1. VERIFICAÇÃO DE FAVORITOS (Mantido igual)
+        try {
+          const responseFav = await api.get(`/favoritos/${userData.farm_id}/favoritos`);
+          if (responseFav.data.sucesso) {
+            const currentData = responseFav.data.dados || [];
+            const currentMap = new Map();
+            currentData.forEach(item => currentMap.set(item.med_id, item));
 
-          if (previousCountRef.current === null) {
-            previousCountRef.current = currentTotalFavorites;
-            return;
-          }
+            if (previousMapRef.current !== null) {
+              const previousMap = previousMapRef.current;
+              const allIds = new Set([...currentMap.keys(), ...previousMap.keys()]);
 
-          if (currentTotalFavorites !== previousCountRef.current) {
-            
-            if (currentTotalFavorites > previousCountRef.current) {
-              addNotification("Novo Favorito! ⭐", "Medicamento favoritado.", "success");
-              playSound('add');
-            } else {
-              addNotification("Desfavoritado ⚠️", "Favorito removido.", "warning");
-              playSound('remove');
+              allIds.forEach(id => {
+                const currentItem = currentMap.get(id);
+                const prevItem = previousMap.get(id);
+                const currentCount = currentItem ? (currentItem.favoritacoes_count || 0) : 0;
+                const prevCount = prevItem ? (prevItem.favoritacoes_count || 0) : 0;
+                const medName = currentItem?.med_nome || prevItem?.med_nome || "Medicamento";
+
+                if (currentCount !== prevCount) {
+                  hasGlobalChanges = true;
+                  if (currentCount > prevCount) {
+                    addNotification("Novo Favorito! ⭐", `${medName} foi favoritado.`, "success");
+                    playSound('add');
+                  } else {
+                    addNotification("Desfavoritado ⚠️", `${medName} perdeu um favorito.`, "warning");
+                    playSound('remove');
+                  }
+                }
+              });
             }
-
-            setUpdateSignal(prev => prev + 1);
+            previousMapRef.current = currentMap;
           }
-
-          previousCountRef.current = currentTotalFavorites;
+        } catch (err) {
+          console.error("Erro check favoritos", err);
         }
+
+        // 2. VERIFICAÇÃO DE AVALIAÇÕES (ATUALIZADO PARA DETECTAR REMOÇÃO)
+        try {
+          const responseAva = await api.get(`/avaliacao?farmacia_id=${userData.farm_id}`);
+          if (responseAva.data.sucesso) {
+             const currentReviews = responseAva.data.dados || [];
+             
+             // Cria um Mapa (ID -> Objeto Avaliação)
+             const currentReviewsMap = new Map();
+             currentReviews.forEach(r => currentReviewsMap.set(r.ava_id, r));
+
+             if (previousReviewsRef.current !== null) {
+                const prevReviewsMap = previousReviewsRef.current;
+
+                // A. DETECTAR NOVAS (Estão no Atual, não no Anterior)
+                currentReviewsMap.forEach((review, id) => {
+                   if (!prevReviewsMap.has(id)) {
+                      hasGlobalChanges = true;
+                      addNotification("Nova Avaliação! 💬", `Nota ${review.ava_nota}: ${review.ava_comentario || "Sem comentário"}`, "success");
+                      playSound('add');
+                   }
+                });
+
+                // B. DETECTAR REMOVIDAS (Estavam no Anterior, não no Atual)
+                prevReviewsMap.forEach((review, id) => {
+                   if (!currentReviewsMap.has(id)) {
+                      hasGlobalChanges = true;
+                      // Notificação de remoção com estilo "warning" (laranja)
+                      addNotification("Avaliação Removida 🗑️", `A avaliação de nota ${review.ava_nota} foi apagada.`, "warning");
+                      playSound('remove');
+                   }
+                });
+
+             } else {
+                // Primeira carga
+                previousReviewsRef.current = currentReviewsMap; 
+             }
+             
+             // Atualiza a referência
+             previousReviewsRef.current = currentReviewsMap;
+          }
+        } catch (err) {
+           console.error("Erro check avaliações", err);
+        }
+
+        if (hasGlobalChanges) {
+          setUpdateSignal(prev => prev + 1);
+        }
+
       } catch (error) {
-        console.error("Erro API:", error);
+        console.error("Erro Geral API Monitor:", error);
       } finally {
         isFetchingRef.current = false;
       }
     };
 
-    checkFavorites();
-    const intervalId = setInterval(checkFavorites, 1500); 
+    checkUpdates();
+    const intervalId = setInterval(checkUpdates, 1500); 
     return () => clearInterval(intervalId);
   }, []);
 
@@ -120,7 +184,7 @@ export function NotificationProvider({ children }) {
               alignItems: 'center',
               gap: '8px'
             }}>
-             <span>🔊</span> Clique para ativar sons (Volume Máximo)
+             <span>🔊</span> Clique para ativar sons
           </div>
         )}
         {notifications.map((notif) => (

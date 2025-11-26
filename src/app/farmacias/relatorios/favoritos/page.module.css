@@ -118,7 +118,7 @@
 .sidebarAvatar {
   width: 6rem;
   height: 6rem;
-  border-radius: 5%;
+  border-radius: 50%;
   object-fit: cover;
 }
 
