@@ -1,0 +1,162 @@
+/* --- LAYOUT & ESTRUTURA (Baseado em favoritos.module.css) --- */
+.dashboard {
+  min-height: 100vh;
+  background: #f8fafc;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Header & Sidebar (Idênticos ao original) */
+.header {
+  background: #ffffff;
+  padding: 1.5rem 2.4rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  box-shadow: 0 0.1rem 0.3rem rgba(0, 0, 0, 0.05);
+  position: sticky;
+  top: 0;
+  z-index: 100;
+}
+
+.headerLeft { display: flex; align-items: center; gap: 1.6rem; }
+.menuToggle { display: none; background: none; border: none; font-size: 2.4rem; color: #458B00; cursor: pointer; }
+.title {
+  font-size: clamp(2rem, 4vw, 2.6rem);
+  font-weight: 700;
+  background: linear-gradient(135deg, #191970 0%, #458B00 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  margin: 0;
+}
+
+.contentWrapper { display: flex; flex: 1; position: relative; }
+
+/* Sidebar */
+.sidebar {
+  width: 28rem;
+  background: linear-gradient(180deg, #191970 0%, #0f1440 100%);
+  color: #CDC1C5;
+  display: flex;
+  flex-direction: column;
+  transition: transform 0.3s ease-in-out;
+  height: calc(100vh - 72px);
+  position: sticky;
+  top: 72px;
+  overflow-y: auto;
+  z-index: 90;
+}
+.sidebarHeader { padding: 2rem; display: flex; align-items: center; gap: 1.2rem; background: rgba(25, 25, 112, 0.95); position: sticky; top: 0; z-index: 10; }
+.logoImage { width: 60px; height: 60px; border-radius: 50%; object-fit: cover; }
+.logoText { font-size: 2rem; font-weight: 600; color: #fff; }
+.sidebarClose { display: none; color: #fff; background: none; border: none; font-size: 2.8rem; cursor: pointer; }
+
+.nav { padding: 1rem; flex: 1; }
+.navSection { margin-bottom: 1.8rem; }
+.navLabel { font-size: 1.3rem; color: #b0b0b0; margin: 1rem 0 0.6rem 1rem; text-transform: uppercase; letter-spacing: 0.5px; }
+.navLink {
+  display: flex; align-items: center; padding: 1.2rem 1.4rem; color: #CDC1C5;
+  text-decoration: none; border-radius: 0.6rem; margin-bottom: 0.4rem;
+  transition: all 0.3s ease; font-size: 1.5rem; border-left: 4px solid transparent; gap: 1.2rem; cursor: pointer;
+}
+.navLink:hover { background: rgba(69, 139, 0, 0.15); color: #fff; border-left-color: #458B00; transform: translateX(5px); }
+.navLink.active { background: linear-gradient(135deg, #458B00 0%, #2e7d32 100%); color: #fff; border-left-color: #fff; box-shadow: 0 4px 12px rgba(69, 139, 0, 0.3); }
+
+/* Main Content */
+.mainContent { flex: 1; padding: 3.2rem; background: #f1f5f9; overflow-y: auto; }
+
+/* Toolbar & Filters */
+.toolbar {
+  display: flex; justify-content: space-between; align-items: center;
+  margin-bottom: 2.4rem; flex-wrap: wrap; gap: 1.6rem;
+  background: #fff; padding: 1.2rem 2rem; border-radius: 12px;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.05); border: 1px solid #e2e8f0;
+}
+.searchContainer { position: relative; flex: 1; min-width: 300px; }
+.searchIcon { position: absolute; left: 1.2rem; top: 50%; transform: translateY(-50%); color: #64748b; }
+.searchInput {
+  width: 100%; padding: 1rem 1rem 1rem 4rem; border: 1px solid #e2e8f0;
+  border-radius: 0.8rem; font-size: 1.4rem; color: #1e293b; outline: none; background: #f8fafc; transition: all 0.2s;
+}
+.searchInput:focus { background: #fff; border-color: #458B00; box-shadow: 0 0 0 3px rgba(69, 139, 0, 0.1); }
+.filterSelect {
+  padding: 1rem 3.6rem 1rem 1.6rem; border: 1px solid #e2e8f0; border-radius: 0.8rem;
+  font-size: 1.4rem; color: #334155; background-color: #f8fafc; cursor: pointer; min-width: 200px;
+}
+
+/* Stats Cards */
+.statsContainer { display: flex; gap: 2rem; margin-bottom: 2.4rem; flex-wrap: wrap; }
+.statCard {
+  background: #fff; padding: 2rem; border-radius: 12px;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.05); border: 1px solid #e2e8f0; flex: 1; min-width: 200px;
+  display: flex; align-items: center; gap: 1.6rem;
+}
+.statIcon { width: 4.8rem; height: 4.8rem; border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 2.4rem; }
+.iconMoney { background: #ecfdf5; color: #059669; } /* Verde Dinheiro */
+.iconPending { background: #fff7ed; color: #ea580c; } /* Laranja Pendente */
+
+/* --- CARD DE RESERVA (Novo) --- */
+.grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(380px, 1fr)); gap: 2.4rem; }
+
+@keyframes slideIn {
+  from { opacity: 0; transform: translateY(30px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.reservaCard {
+  background: #ffffff; border-radius: 12px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05); padding: 2.4rem;
+  border: 1px solid #e2e8f0; position: relative; overflow: hidden;
+  display: flex; flex-direction: column; gap: 1.6rem;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  opacity: 0; animation: slideIn 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94) both;
+}
+.reservaCard:hover { transform: translateY(-4px); box-shadow: 0 10px 20px rgba(0, 0, 0, 0.08); border-color: #cbd5e1; }
+
+/* Status da Reserva */
+.cardTop { display: flex; justify-content: space-between; align-items: center; padding-bottom: 1.2rem; border-bottom: 1px dashed #e2e8f0; }
+.dateLabel { font-size: 1.2rem; color: #94a3b8; display: flex; align-items: center; gap: 0.5rem; }
+
+.statusBadge { padding: 0.4rem 1rem; border-radius: 20px; font-size: 1.1rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; }
+.statusPendente { background: #fff7ed; color: #c2410c; border: 1px solid #fdba74; }
+.statusConfirmado { background: #eff6ff; color: #1d4ed8; border: 1px solid #93c5fd; }
+.statusRetirado { background: #f0fdf4; color: #15803d; border: 1px solid #86efac; }
+.statusCancelado { background: #fef2f2; color: #b91c1c; border: 1px solid #fca5a5; }
+
+/* Info do Produto e Cliente */
+.cardContent { display: flex; flex-direction: column; gap: 1rem; }
+.clientInfo { display: flex; align-items: center; gap: 1rem; }
+.clientAvatar { width: 3.5rem; height: 3.5rem; border-radius: 50%; background: #e2e8f0; display: flex; align-items: center; justify-content: center; font-weight: 700; color: #475569; font-size: 1.2rem; }
+
+.medInfo h3 { margin: 0; color: #191970; font-size: 1.8rem; font-weight: 600; }
+.medInfo p { margin: 0.4rem 0 0 0; color: #64748b; font-size: 1.4rem; }
+.priceRow { display: flex; justify-content: space-between; align-items: center; margin-top: 0.5rem; }
+.priceTag { font-size: 1.8rem; font-weight: 700; color: #458B00; }
+
+/* Ações */
+.cardActions { display: flex; gap: 1rem; margin-top: auto; padding-top: 1.6rem; border-top: 1px solid #f1f5f9; }
+.btnAction { flex: 1; padding: 1rem; border-radius: 0.8rem; border: none; font-weight: 600; cursor: pointer; transition: filter 0.2s; font-size: 1.4rem; }
+.btnConfirm { background: #458B00; color: white; }
+.btnCancel { background: #f1f5f9; color: #ef4444; }
+.btnAction:hover { filter: brightness(0.9); }
+.btnAction:disabled { opacity: 0.5; cursor: not-allowed; }
+
+/* Modal & Skeleton (Reaproveitados) */
+.modalOverlay { position: fixed; inset: 0; background: rgba(15, 23, 42, 0.6); backdrop-filter: blur(4px); display: flex; align-items: center; justify-content: center; z-index: 200; animation: fadeIn 0.2s ease-out; }
+.modalContent { background: #ffffff; padding: 3.2rem; border-radius: 1.6rem; width: 90%; max-width: 40rem; text-align: center; animation: slideUp 0.3s; }
+.modalActions { display: flex; gap: 1.2rem; margin-top: 2rem; }
+.btnModalConfirm { background: #458B00; color: #fff; padding: 1.2rem; border-radius: 0.8rem; border: none; cursor: pointer; flex: 1; font-size: 1.5rem; }
+.btnModalCancel { background: #f1f5f9; color: #475569; padding: 1.2rem; border-radius: 0.8rem; border: none; cursor: pointer; flex: 1; font-size: 1.5rem; }
+
+/* Responsividade */
+@media (max-width: 48rem) {
+  .sidebar { position: fixed; transform: translateX(-100%); left: 0; top: 0; height: 100vh; width: 80%; z-index: 110; }
+  .sidebarOpen { transform: translateX(0); }
+  .menuToggle, .sidebarClose { display: block; }
+  .grid { grid-template-columns: 1fr; }
+  .overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.5); z-index: 100; }
+}
+
+@keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+@keyframes slideUp { from { transform: translateY(20px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }

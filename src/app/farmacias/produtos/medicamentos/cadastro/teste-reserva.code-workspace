@@ -1,0 +1,14 @@
+{
+	"folders": [
+		{
+			"path": "../../../../../.."
+		},
+		{
+			"path": "../../../../../../../tcc-api-farmacia"
+		},
+		{
+			"path": "../../../../../../../tcc-expo-pharmax"
+		}
+	],
+	"settings": {}
+}
