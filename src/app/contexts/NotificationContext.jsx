@@ -14,14 +14,16 @@ export function NotificationProvider({ children }) {
   // Refs para armazenar o estado anterior dos dados
   const previousMapRef = useRef(null); 
   const previousReviewsRef = useRef(null);
+  const previousReservasRef = useRef(null); // <--- NOVO: Ref para Reservas
   
-  // NOVO: Ref para rastrear qual farmácia estava logada na última verificação
+  // Ref para rastrear qual farmácia estava logada na última verificação
   const lastFarmIdRef = useRef(null);
   
   const isFetchingRef = useRef(false);
 
   // --- FUNÇÃO DE SOM ---
   const playSound = (actionType) => {
+    // actionType: 'add' (sucesso/novo) ou 'remove' (aviso/cancelado)
     const fileName = actionType === 'add' ? 'success.mp3' : 'removed.mp3';
     const audio = new Audio(`/sounds/${fileName}`);
     audio.volume = 1.0; 
@@ -62,10 +64,10 @@ export function NotificationProvider({ children }) {
         const userDataString = localStorage.getItem("userData");
 
         // 1. LÓGICA DE RESET AO DESLOGAR
-        // Se não houver usuário, limpamos as referências para garantir que o próximo login seja "limpo"
         if (!userDataString) {
             previousMapRef.current = null;
             previousReviewsRef.current = null;
+            previousReservasRef.current = null; // <--- Resetar Reservas
             lastFarmIdRef.current = null;
             isFetchingRef.current = false;
             return;
@@ -73,17 +75,16 @@ export function NotificationProvider({ children }) {
 
         const userData = JSON.parse(userDataString);
         
-        // Se não tiver ID de farmácia, sai
         if (!userData.farm_id) {
             isFetchingRef.current = false;
             return;
         }
 
         // 2. LÓGICA DE DETECÇÃO DE NOVO LOGIN / TROCA DE CONTA
-        // Se o ID da farmácia mudou desde a última vez (ex: acabou de logar), forçamos o reset
         if (lastFarmIdRef.current !== userData.farm_id) {
             previousMapRef.current = null;
             previousReviewsRef.current = null;
+            previousReservasRef.current = null; // <--- Resetar Reservas
             lastFarmIdRef.current = userData.farm_id;
         }
 
@@ -97,7 +98,6 @@ export function NotificationProvider({ children }) {
             const currentMap = new Map();
             currentData.forEach(item => currentMap.set(item.med_id, item));
 
-            // Só comparamos se previousMapRef NÃO for null (ou seja, não é a primeira carga deste login)
             if (previousMapRef.current !== null) {
               const previousMap = previousMapRef.current;
               const allIds = new Set([...currentMap.keys(), ...previousMap.keys()]);
@@ -121,7 +121,6 @@ export function NotificationProvider({ children }) {
                 }
               });
             }
-            // Atualiza a referência para o próximo ciclo
             previousMapRef.current = currentMap;
           }
         } catch (err) {
@@ -136,11 +135,9 @@ export function NotificationProvider({ children }) {
              const currentReviewsMap = new Map();
              currentReviews.forEach(r => currentReviewsMap.set(r.ava_id, r));
 
-             // Só comparamos se previousReviewsRef NÃO for null
              if (previousReviewsRef.current !== null) {
                 const prevReviewsMap = previousReviewsRef.current;
 
-                // Detectar Novas
                 currentReviewsMap.forEach((review, id) => {
                    if (!prevReviewsMap.has(id)) {
                       hasGlobalChanges = true;
@@ -149,7 +146,6 @@ export function NotificationProvider({ children }) {
                    }
                 });
 
-                // Detectar Removidas
                 prevReviewsMap.forEach((review, id) => {
                    if (!currentReviewsMap.has(id)) {
                       hasGlobalChanges = true;
@@ -158,12 +154,56 @@ export function NotificationProvider({ children }) {
                    }
                 });
              }
-             
-             // Atualiza a referência (Se era null, agora deixa de ser, mas sem notificar na primeira vez)
              previousReviewsRef.current = currentReviewsMap;
           }
         } catch (err) {
            console.error("Erro check avaliações", err);
+        }
+
+        // --- C. VERIFICAÇÃO DE RESERVAS (NOVO BLOCO) ---
+        try {
+            const responseRes = await api.get(`/reservas/farmacia/${userData.farm_id}`);
+            if (responseRes.data.sucesso) {
+                const currentReservas = responseRes.data.dados || [];
+                const currentResMap = new Map();
+                // Usa reserva_id ou id, dependendo de como o backend retorna
+                currentReservas.forEach(r => currentResMap.set(r.reserva_id || r.id, r));
+
+                if (previousReservasRef.current !== null) {
+                    const prevResMap = previousReservasRef.current;
+
+                    // 1. Detectar NOVAS reservas (que não existiam antes)
+                    currentResMap.forEach((reserva, id) => {
+                        if (!prevResMap.has(id)) {
+                            // Só notifica se for PENDENTE (novo pedido chegando)
+                            if (reserva.status === 'PENDENTE') {
+                                hasGlobalChanges = true;
+                                addNotification(
+                                    "Novo Pedido! 📦", 
+                                    `Cliente: ${reserva.usuario_nome || 'Cliente'} pediu ${reserva.medicamento_nome}`, 
+                                    "success"
+                                );
+                                playSound('add');
+                            }
+                        }
+                    });
+
+                    // (Opcional) Detectar CANCELAMENTOS feitos pelo usuário
+                    /*
+                    currentResMap.forEach((reserva, id) => {
+                        const prevRes = prevResMap.get(id);
+                        if (prevRes && prevRes.status !== 'CANCELADO' && reserva.status === 'CANCELADO') {
+                             hasGlobalChanges = true;
+                             addNotification("Pedido Cancelado ❌", `O pedido de ${reserva.usuario_nome} foi cancelado.`, "warning");
+                             playSound('remove');
+                        }
+                    });
+                    */
+                }
+                previousReservasRef.current = currentResMap;
+            }
+        } catch (err) {
+            console.error("Erro check reservas", err);
         }
 
         if (hasGlobalChanges) {
@@ -178,9 +218,10 @@ export function NotificationProvider({ children }) {
     };
 
     checkUpdates();
+    // Verifica a cada 1.5 segundos
     const intervalId = setInterval(checkUpdates, 1500); 
     return () => clearInterval(intervalId);
-  }, []); // Mantemos o array vazio pois controlamos tudo via Refs
+  }, []);
 
   return (
     <NotificationContext.Provider value={{ addNotification, updateSignal }}>

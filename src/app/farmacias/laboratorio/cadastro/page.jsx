@@ -258,6 +258,9 @@ export default function CadastroLaboratorioPage() {
             </div>
             <div className={styles.navSection}>
               <p className={styles.navLabel}>Gestão</p>
+              <Link href="/farmacias/reservas" className={styles.navLink}>
+                  <span className={styles.navText}>Reservas</span>
+                </Link>
               <Link href="/farmacias/cadastro/funcionario/lista" className={styles.navLink}>
                 <span className={styles.navText}>Funcionários</span>
               </Link>

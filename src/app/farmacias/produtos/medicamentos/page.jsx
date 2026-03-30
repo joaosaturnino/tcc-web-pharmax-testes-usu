@@ -46,19 +46,19 @@ function ListagemMedicamentos() {
   const [farmaciaInfo, setFarmaciaInfo] = useState(null);
   const [tiposProduto, setTiposProduto] = useState([]);
   const [promocoesAtivas, setPromocoesAtivas] = useState([]);
-  
+
   // === Estados de UI (Modais e Sidebar) ===
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [modalAberto, setModalAberto] = useState(false); // Modal novo medicamento
   const [modalDetalhesAberto, setModalDetalhesAberto] = useState(false);
   const [modalPromocaoAberto, setModalPromocaoAberto] = useState(false);
-  
+
   // === Estados de Seleção e Formulários ===
   const [medicamentoSelecionado, setMedicamentoSelecionado] = useState(null);
   const [codigoBarras, setCodigoBarras] = useState("");
   const [medicamentoExistente, setMedicamentoExistente] = useState(null);
   const [produtoNaoEncontrado, setProdutoNaoEncontrado] = useState(false);
-  
+
   // === Estados de Filtros, Busca e Paginação ===
   const [termoPesquisa, setTermoPesquisa] = useState("");
   const [filtroStatus, setFiltroStatus] = useState("todos");
@@ -67,7 +67,7 @@ function ListagemMedicamentos() {
   const [visualizacao, setVisualizacao] = useState("tabela");
   const [paginaAtual, setPaginaAtual] = useState(1);
   const [itensPorPagina, setItensPorPagina] = useState(10);
-  
+
   // === Estados de Controle e Erro ===
   const [erro, setErro] = useState("");
   const [erroApi, setErroApi] = useState("");
@@ -98,12 +98,12 @@ function ListagemMedicamentos() {
     return medicamentosData.map(med => {
       const promocaoInfo = promocoesData.find(p => p.medicamento_id === med.med_id);
       let precoPromocional = null;
-      
+
       if (promocaoInfo) {
         const desconto = parseFloat(promocaoInfo.promo_desconto) / 100;
         precoPromocional = (med.medp_preco * (1 - desconto));
       }
-      
+
       return {
         preco_original: med.medp_preco || 0,
         id: med.med_id,
@@ -142,9 +142,9 @@ function ListagemMedicamentos() {
       const userData = JSON.parse(userDataString);
       setFarmaciaInfo(userData);
       farmaciaId = userData.farm_id;
-      
+
       if (!farmaciaId) throw new Error("ID da farmácia não encontrado.");
-      
+
       const [responseMedicamentos, responseTipos, responsePromocoes] = await Promise.all([
         api.get(`/medicamentos?farmacia_id=${farmaciaId}`),
         api.get('/tipoproduto'),
@@ -190,7 +190,7 @@ function ListagemMedicamentos() {
   // Lógica de Filtro e Ordenação
   const medicamentosFiltrados = useMemo(() => {
     let resultado = [...medicamentos];
-    
+
     if (termoPesquisa) {
       const termo = termoPesquisa.toLowerCase();
       resultado = resultado.filter(
@@ -202,15 +202,15 @@ function ListagemMedicamentos() {
           med.categoria.toLowerCase().includes(termo)
       );
     }
-    
+
     if (filtroStatus !== "todos") {
       resultado = resultado.filter((med) => med.status === filtroStatus);
     }
-    
+
     if (filtroCategoria !== "todos") {
       resultado = resultado.filter((med) => med.tipo === filtroCategoria);
     }
-    
+
     resultado.sort((a, b) => {
       switch (ordenacao) {
         case "nome": return a.nome.localeCompare(b.nome);
@@ -526,7 +526,10 @@ function ListagemMedicamentos() {
             </div>
             <nav className={styles.nav}>
               <div className={styles.navSection}><p className={styles.navLabel}>Principal</p><Link href="/farmacias/favoritos" className={styles.navLink}><span className={styles.navText}>Favoritos</span></Link><Link href="/farmacias/produtos/medicamentos" className={`${styles.navLink} ${styles.active}`}><span className={styles.navText}>Medicamentos</span></Link></div>
-              <div className={styles.navSection}><p className={styles.navLabel}>Gestão</p><Link href="/farmacias/cadastro/funcionario/lista" className={styles.navLink}><span className={styles.navText}>Funcionários</span></Link><Link href="/farmacias/laboratorio/lista" className={styles.navLink}><span className={styles.navText}>Laboratórios</span></Link></div>
+              <div className={styles.navSection}><p className={styles.navLabel}>Gestão</p>
+              <Link href="/farmacias/reservas" className={styles.navLink}>
+                  <span className={styles.navText}>Reservas</span>
+                </Link><Link href="/farmacias/cadastro/funcionario/lista" className={styles.navLink}><span className={styles.navText}>Funcionários</span></Link><Link href="/farmacias/laboratorio/lista" className={styles.navLink}><span className={styles.navText}>Laboratórios</span></Link></div>
               <div className={styles.navSection}><p className={styles.navLabel}>Relatórios</p><Link href="/farmacias/relatorios/favoritos" className={styles.navLink}><span className={styles.navText}>Medicamentos Favoritos</span></Link><Link href="/farmacias/relatorios/funcionarios" className={styles.navLink}><span className={styles.navText}>Relatório de Funcionarios</span></Link><Link href="/farmacias/relatorios/laboratorios" className={styles.navLink}><span className={styles.navText}>Relatório de Laboratorios</span></Link></div>
               <div className={styles.navSection}><p className={styles.navLabel}>Conta</p><Link href="/farmacias/perfil" className={styles.navLink}><span className={styles.navText}>Meu Perfil</span></Link><button onClick={handleLogout} className={styles.navLink} style={{ all: 'unset', cursor: 'pointer', width: '100%' }}><span className={styles.navText}>Sair</span></button></div>
             </nav>
@@ -556,7 +559,7 @@ function ListagemMedicamentos() {
 
             <div className={styles.tableContainer}>
               {carregandoFiltro ? (<div className={styles.carregando}><div className={styles.spinner}></div><p>Filtrando...</p></div>) : medicamentosPaginados.length === 0 ? (<div className={styles.semResultados}><p>Nenhum medicamento encontrado.</p><button onClick={abrirModal} className={styles.actionButton}>+ Adicionar Medicamento</button></div>) : visualizacao === "tabela" ? (
-                
+
                 /* === VISUALIZAÇÃO EM TABELA === */
                 <table className={styles.tabela}>
                   <thead><tr><th>Imagem</th><th>Nome</th><th>Dosagem</th><th>Conteúdo</th><th>Preço</th><th>Status</th><th>Ações</th></tr></thead>
@@ -589,7 +592,7 @@ function ListagemMedicamentos() {
                 </table>
 
               ) : (
-                
+
                 /* === VISUALIZAÇÃO EM GRADE === */
                 <div className={styles.gradeContainer}>
                   {medicamentosPaginados.map((med) => (
@@ -742,7 +745,7 @@ function ListagemMedicamentos() {
                 )}
 
                 <button onClick={() => handleToggleStatus(medicamentoSelecionado)} className={styles.cancelButton}>{medicamentoSelecionado.status === "ativo" ? "Desativar" : "Ativar"}</button>
-                
+
                 <button onClick={() => handleEditar(medicamentoSelecionado.id)} className={styles.actionButton}>Editar</button>
               </div>
             </div>

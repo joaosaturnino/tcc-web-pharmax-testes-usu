@@ -3,7 +3,7 @@
 // --- CONFIGURAÇÃO ---
 const TEST_TIMEOUT_MS = 5000; // Define o timeout de 5 segundos
 // URL CORRIGIDA: Usa o IP e a porta que definimos no projeto (3334), removendo o prefixo /api.
-const API_BASE_URL = 'http://172.16.0.34:3334';
+const API_BASE_URL = 'http://10.101.130.164:3334';
 
 const testConnection = async () => {
   console.log('🔍 Testando conexão com a API...');
